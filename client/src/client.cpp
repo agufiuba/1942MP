@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 	cout << endl << "Cerrando cliente..." << endl;
 	break;
       default:
-	cout << "Invalid option!" << endl;
+	cout << "La opcion ingresada es invalida!" << endl;
     }
   }
 
