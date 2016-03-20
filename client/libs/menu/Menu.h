@@ -9,6 +9,8 @@ class Menu {
     std::map<int, std::string> options;
     std::map<int, std::string> actions;
     int optionNumber;
+    bool validInput(std::string input);
+    int requireOption();
 
   public:
     Menu(std::string title);
