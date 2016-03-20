@@ -10,10 +10,10 @@ Menu::Menu(string title) {
   this->optionNumber = 0;
 }
 
-void Menu::addOption(string optionName, string action) {
+void Menu::addOption(string optionName, function<void()> action) {
  this->optionNumber++;
  this->options.insert(pair<int, string>(this->optionNumber, optionName)); 
- this->actions.insert(pair<int, string>(this->optionNumber, action));
+ this->actions.insert(pair<int, function<void()>>(this->optionNumber, action));
 }
 
 void Menu::removeOption(string optionName) {
@@ -52,11 +52,20 @@ int Menu::requireOption() {
   return stoi(input, &sz);
 }
 
+void Menu::triggerOption(int input) {
+  // get corresponding input action
+  map<int, function<void()>>::iterator it = this->actions.find(input);
+  // trigger function
+  it->second();
+}
+
 void Menu::display() {
   cout << endl << "----\t" << this->title << "\t----" << endl << endl;
   for(map<int, string>::iterator it = this->options.begin(); it!=this->options.end(); it++) {
-    cout << it->first << ". " << it->second << " with action: " << this->actions[it->first] << endl;
+    cout << it->first << ". " << it->second << endl;
   }
 
   int input = this->requireOption();
+
+  this->triggerOption(input);
 }
