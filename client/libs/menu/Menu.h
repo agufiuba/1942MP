@@ -12,7 +12,7 @@ class Menu {
     int optionNumber;
     bool validInput(std::string input);
     int requireOption();
-    void triggerOption(int input);
+    void triggerOption(int optionNumber);
 
   public:
     Menu(std::string title);

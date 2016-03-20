@@ -52,10 +52,10 @@ int Menu::requireOption() {
   return stoi(input, &sz);
 }
 
-void Menu::triggerOption(int input) {
-  // get corresponding input action
-  map<int, function<void()>>::iterator it = this->actions.find(input);
-  // trigger function
+void Menu::triggerOption(int optionNumber) {
+  // get corresponding option number action
+  map<int, function<void()>>::iterator it = this->actions.find(optionNumber);
+  // trigger action 
   it->second();
 }
 
