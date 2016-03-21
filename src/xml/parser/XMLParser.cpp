@@ -11,8 +11,8 @@ using namespace std;
 ServerConf* XMLParser::parseServerConf(string fn) {
 	XMLDocument doc;
 	int maxClients = Defaults::serverMaxClients;
-	bool createFile = false;
 	int port = Defaults::serverPort;
+	bool createFile = false;
 	if (!doc.LoadFile(fn.c_str())) {
 		cout << "Info - Loading server configuration from file " << fn << endl;
 		XMLElement* serverElement;
@@ -46,8 +46,8 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 			<< ", port: " << port << " }" << endl;
 	ServerConf* sc = new ServerConf(maxClients, port);
 	if (createFile) {
-		createXML(sc);
 		cout << "Info - Saving default server configuration XML file" << endl;
+		createXML(sc);
 	}
 	return sc;
 }
