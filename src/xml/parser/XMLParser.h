@@ -17,7 +17,7 @@ private:
 	static void loadDefaultServerMaxClients(ServerConf*);
 	static bool getElement(XMLElement*, const char*, XMLElement*&);
 	static bool getElement(XMLDocument*, const char*, XMLElement*&);
-	static bool parseInt(XMLElement*, int&);
+	static bool validInt(XMLElement*);
 	static void createXML(ServerConf*);
 };
 

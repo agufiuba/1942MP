@@ -1,6 +1,7 @@
 #include "XMLParser.h"
 
 #include <iostream>
+#include <regex>
 
 #include "../../utils/Defaults.h"
 
@@ -20,14 +21,18 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 			bool parsed = getElement(serverElement, "maxClients",
 					maxClientsElement);
 			if (parsed)
-				parsed = parseInt(maxClientsElement, maxClients);
-			if (!parsed)
+				parsed = validInt(maxClientsElement);
+			if (parsed)
+				maxClientsElement->QueryIntText(&maxClients);
+			else
 				cout << "Info - Loading default server maxClients" << endl;
 			XMLElement* portElement;
 			parsed = getElement(serverElement, "port", portElement);
 			if (parsed)
-				parsed = parseInt(portElement, port);
-			if (!parsed)
+				parsed = validInt(portElement);
+			if (parsed)
+				portElement->QueryIntText(&port);
+			else
 				cout << "Info - Loading default server port" << endl;
 		} else {
 			cout << "Info - Loading default server configuration" << endl;
@@ -67,13 +72,13 @@ bool XMLParser::getElement(XMLDocument* root, const char* en, XMLElement*& e) {
 	}
 }
 
-bool XMLParser::parseInt(XMLElement* e, int& i) {
-	if (e->QueryIntText(&i) == XML_SUCCESS)
-		return true;
-	else {
+bool XMLParser::validInt(XMLElement* e) {
+	const char* rstr = "^[1-9]\\d*$";
+	regex r = regex(rstr);
+	bool match = regex_match(e->GetText(), r);
+	if (!match)
 		cout << "Error - Parsing `int` from " << e->Name() << endl;
-		return false;
-	}
+	return match;
 }
 
 void XMLParser::createXML(ServerConf* sc) {
