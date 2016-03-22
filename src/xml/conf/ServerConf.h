@@ -1,5 +1,5 @@
-#ifndef XMLSERVER_H
-#define XMLSERVER_H
+#ifndef SRC_XML_CONF_SERVERCONF_H_
+#define SRC_XML_CONF_SERVERCONF_H_
 
 class ServerConf {
 public:
