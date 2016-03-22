@@ -6,6 +6,7 @@ public:
     static int serverMaxClients;
     static int serverPort;
     static int defaultType;
+    static const char* serverIP;
 };
 
 #endif

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <regex>
 
+#include "../../utils/Colors.h"
 #include "../../utils/Defaults.h"
 
 using namespace tinyxml2;
@@ -52,24 +53,68 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 	return sc;
 }
 
+ClientConf* XMLParser::parseClientConf(string fn) {
+	XMLDocument doc;
+	int serverPort = Defaults::serverPort;
+	const char* serverIP = Defaults::serverIP;
+	vector<Msg*> messages = vector<Msg*>();
+	if (!doc.LoadFile(fn.c_str())) {
+		cout << "Info - Loading client configuration from file " << fn << endl;
+		XMLElement* clientElement;
+		if (getElement(&doc, "client", clientElement)) {
+			XMLElement* serverIPElement;
+			bool parsed = getElement(clientElement, "serverIP",
+					serverIPElement);
+			if (parsed)
+				parsed = validIP(serverIPElement->GetText());
+			if (parsed)
+				serverIP = serverIPElement->GetText();
+			else
+				cout << "Warn - Loading default client server IP" << endl;
+			XMLElement* serverPortElement;
+			parsed = getElement(clientElement, "serverPort", serverPortElement);
+			if (parsed)
+				parsed = validInt(serverPortElement);
+			if (parsed)
+				serverPortElement->QueryIntText(&serverPort);
+			else
+				cout << "Warn - Loading default client server port" << endl;
+			messages = parseMsgs(clientElement);
+		} else {
+			cout << "Warn - Loading default client configuration" << endl;
+		}
+	} else {
+		cout << "Error - Loading file" << endl;
+		cout << "Warn - Loading default client configuration" << endl;
+	}
+	cout << "Info - Loaded configuration { serverIP: " << serverIP
+			<< ", serverPort: " << serverPort << " }" << endl;
+	return new ClientConf(serverIP, serverPort, messages);
+}
+
 Msg* XMLParser::parseMsg(XMLElement* msg) {
 	cout << "Info - Reading message" << endl;
+
 	// Validar id
 	string id = msg->FirstChildElement("id")->GetText();
+
 	int type = Defaults::defaultType;
 	XMLElement* typeElement = msg->FirstChildElement("type");
 	if (validInt(typeElement, ("message " + id + "#type").c_str()))
 		typeElement->QueryIntText(&type);
 	else
 		cout << "Warn - Loading default message type: String" << endl;
+
+	// Validar valor segun el tipo
 	string value = msg->FirstChildElement("value")->GetText();
+
 	cout << "Info - Read message { id: " << id << ", type: " << type
 			<< ", value: " << value << " }" << endl;
 	return new Msg(id, type, value);
 }
 
 vector<Msg*> XMLParser::parseMsgs(XMLElement* e) {
-	cout << "Info - Reading list of messages from client XXXXXXXXXXXXX" << endl;
+	cout << "Info - Reading list of messages" << endl;
 	vector<Msg*> msgs;
 	for (XMLElement* msgElement = e->FirstChildElement("message");
 			msgElement != NULL;
@@ -114,6 +159,16 @@ bool XMLParser::validInt(XMLElement* e, const char* end) {
 	bool match = regex_match(e->GetText(), r);
 	if (!match)
 		cout << "Error - Parsing `int` from " << end << endl;
+	return match;
+}
+
+bool XMLParser::validIP(const char* ip) {
+	const char* rstr =
+			"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+	regex r = regex(rstr);
+	bool match = regex_match(ip, r);
+	if (!match)
+		cout << "Error - Parsing `IP` from serverIP" << endl;
 	return match;
 }
 
