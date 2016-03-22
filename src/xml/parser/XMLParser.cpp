@@ -25,7 +25,7 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 			if (parsed)
 				maxClientsElement->QueryIntText(&maxClients);
 			else
-				cout << "Info - Loading default server maxClients" << endl;
+				cout << "Warn - Loading default server maxClients" << endl;
 			XMLElement* portElement;
 			parsed = getElement(serverElement, "port", portElement);
 			if (parsed)
@@ -33,14 +33,14 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 			if (parsed)
 				portElement->QueryIntText(&port);
 			else
-				cout << "Info - Loading default server port" << endl;
+				cout << "Warn - Loading default server port" << endl;
 		} else {
-			cout << "Info - Loading default server configuration" << endl;
+			cout << "Warn - Loading default server configuration" << endl;
 		}
 	} else {
 		createFile = true;
 		cout << "Error - Loading file" << endl;
-		cout << "Info - Loading default server configuration" << endl;
+		cout << "Warn - Loading default server configuration" << endl;
 	}
 	cout << "Info - Loaded configuration { maxClients: " << maxClients
 			<< ", port: " << port << " }" << endl;
@@ -50,6 +50,33 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 		cout << "Info - Saving default server configuration XML file" << endl;
 	}
 	return sc;
+}
+
+Msg* XMLParser::parseMsg(XMLElement* msg) {
+	cout << "Info - Reading message" << endl;
+	// Validar id
+	string id = msg->FirstChildElement("id")->GetText();
+	int type = Defaults::defaultType;
+	XMLElement* typeElement = msg->FirstChildElement("type");
+	if (validInt(typeElement, ("message " + id + "#type").c_str()))
+		typeElement->QueryIntText(&type);
+	else
+		cout << "Warn - Loading default message type: String" << endl;
+	string value = msg->FirstChildElement("value")->GetText();
+	cout << "Info - Read message { id: " << id << ", type: " << type
+			<< ", value: " << value << " }" << endl;
+	return new Msg(id, type, value);
+}
+
+vector<Msg*> XMLParser::parseMsgs(XMLElement* e) {
+	cout << "Info - Reading list of messages from client XXXXXXXXXXXXX" << endl;
+	vector<Msg*> msgs;
+	for (XMLElement* msgElement = e->FirstChildElement("message");
+			msgElement != NULL;
+			msgElement = msgElement->NextSiblingElement("message")) {
+		msgs.push_back(parseMsg(msgElement));
+	}
+	return msgs;
 }
 
 bool XMLParser::getElement(XMLElement* root, const char* en, XMLElement*& e) {
@@ -78,6 +105,15 @@ bool XMLParser::validInt(XMLElement* e) {
 	bool match = regex_match(e->GetText(), r);
 	if (!match)
 		cout << "Error - Parsing `int` from " << e->Name() << endl;
+	return match;
+}
+
+bool XMLParser::validInt(XMLElement* e, const char* end) {
+	const char* rstr = "^[1-9]\\d*$";
+	regex r = regex(rstr);
+	bool match = regex_match(e->GetText(), r);
+	if (!match)
+		cout << "Error - Parsing `int` from " << end << endl;
 	return match;
 }
 
