@@ -3,10 +3,10 @@
 
 class Defaults {
 public:
-    static int serverMaxClients;
-    static int serverPort;
-    static int defaultType;
-    static const char* serverIP;
+	const static int serverMaxClients;
+	const static int serverPort;
+	const static unsigned short int defaultType;
+	const static char* serverIP;
 };
 
 #endif
