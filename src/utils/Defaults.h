@@ -5,6 +5,7 @@ class Defaults {
 public:
     static int serverMaxClients;
     static int serverPort;
+    static int defaultType;
 };
 
 #endif
