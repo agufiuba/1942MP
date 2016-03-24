@@ -2,9 +2,10 @@
 
 using namespace std;
 
-const int MAX_LENGHT_FILE_LOG = 400;
+const int MAX_LENGHT_FILE_LOG = 100;
 Logger* loggerInstance = NULL;
 string fileLogPath = "logs/logger.log";
+string fileLogName = "logger.log";
 ofstream fileLog;
 
 Logger::Logger(){
@@ -57,10 +58,25 @@ string Logger::timeCurrent(){
 }
 
 int Logger::lengthFileLog(){
-
-    return 100;
+	fileLog.seekp(0, ios::end);
+	int fileLogSize = static_cast <int> (fileLog.tellp());
+    return fileLogSize;
 }
 
 void Logger::truncateFileLog(){
+    string fileLogPathOld = "logs/"+this->timeCurrent()+" - "+fileLogName;
+    cout << "Archivo Nuevo: "+fileLogPathOld <<endl;
+    rename(fileLogPath.c_str(), fileLogPathOld.c_str());
+
+    fileLog.close();
+
+    ofstream file(fileLogPath.c_str(), ios::app | ios::binary);
+
+	if (!file) {
+        // si no se pudo crear el archivo arroja una excepción/
+        throw std::ios_base::failure("El archivo log no pudo ser abierto");
+    }
+
+	fileLog.open(fileLogPath.c_str(), ios::app | ios::binary); // abro el logger.log
 
 }

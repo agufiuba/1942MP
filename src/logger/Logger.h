@@ -12,6 +12,7 @@ using namespace std;
 class Logger
 {
     public:
+		int lengthFileLog();
         static Logger* instanceLogger();
         void writeLog(string typeMsj,string msj);
     protected:
@@ -22,7 +23,6 @@ class Logger
         static Logger* loggerInst;
         virtual ~Logger();
         string timeCurrent();
-        int lengthFileLog();
         void truncateFileLog();
 };
 
