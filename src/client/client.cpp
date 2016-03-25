@@ -33,9 +33,25 @@ int main() {
 
   bzero(&(server.sin_zero), 8);
 
-  if(connect(sfd, (struct sockaddr*) &server, sizeof(struct sockaddr)) == -1) {
-    cout << "connect error" << endl;
-    exit(-1);
+  /* Connect to server */
+  bool connected = false;
+  short triesLeft = 3;
+
+  while(!connected) {
+    if(triesLeft == 0) {
+      cout << "Couldn't establish a connection with the server." << endl 
+	   << "Please try again later." << endl;
+      exit(-1);
+    }
+
+    if(connect(sfd, (struct sockaddr*) &server, sizeof(struct sockaddr)) == -1) {
+      cout << "Conection error." << endl << "Retrying connection..." << endl << endl;
+      triesLeft--;
+      /* 5s delay for retry */
+      usleep(5000000);
+    } else {
+      connected = true;
+    }
   }
 
   if((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
