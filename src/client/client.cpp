@@ -19,7 +19,6 @@ Menu clientMenu("Menu de opciones del Cliente");
 void srvConnect() {
   if(connected) {
     cout << endl << "Ya hay una conexion activa" << endl;
-    clientMenu.display();
     return;
   }
 
@@ -58,7 +57,7 @@ void srvConnect() {
       usleep(5000000);
     } else {
       connected = true;
-      cout << "Se establecio una conexion con: " << IP << endl;
+      cout << endl << "Se establecio una conexion con: " << IP << endl;
     }
 
     if(triesLeft == 0) {
@@ -67,8 +66,6 @@ void srvConnect() {
     }
   }
   
-  clientMenu.display();
-
   /*
   while(connected) {
     if((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
@@ -84,20 +81,28 @@ void srvConnect() {
   //close(sfd);
 }
 
+void closeConnection() {
+  close(gfd);  
+  connected = false;
+  cout << endl << "Se cerro la conexion con el servidor." << endl;
+}
+
 void srvDisconnect() {
   if(connected) {
-    close(gfd);  
-    connected = false;
-    cout << endl << "Se cerro la conexion con el servidor." << endl;
+    closeConnection();
   } else {
     cout << endl << "No hay una conexion activa" << endl;
   }
-  clientMenu.display();
 }
 
 void cycle() {}
 
-void exitPgm() {}
+void exitPgm() {
+  if(connected) closeConnection();
+
+  cout << endl << "Cerrando el cliente..." << endl;
+  exit(1);
+}
 
 int main(int argc, char* argv[]) {
   
