@@ -17,6 +17,7 @@ int main() {
   int sfd, numBytesRead;
   char buf[MAX_DATA_SIZE]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
+  const char* IP = "192.168.1.101";
 
   /* Create socket */
   if((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -26,8 +27,8 @@ int main() {
 
   server.sin_family = AF_INET;
   server.sin_port = htons(PORT);
-  if((inet_aton("192.168.1.101", &server.sin_addr)) == 0) {
-    cout << "Invalid IP" << endl;
+  if((inet_aton(IP, &server.sin_addr)) == 0) {
+    cout << "invalid IP" << endl;
     exit(-1);
   }
 
@@ -39,18 +40,19 @@ int main() {
 
   while(!connected) {
     if(triesLeft == 0) {
-      cout << "Couldn't establish a connection with the server." << endl 
-	   << "Please try again later." << endl;
+      cout << "No se pudo establecer una conexion con el servidor: " << IP 
+           << endl << "Por favor intente nuevamente mas tarde." << endl;
       exit(-1);
     }
 
     if(connect(sfd, (struct sockaddr*) &server, sizeof(struct sockaddr)) == -1) {
-      cout << "Conection error." << endl << "Retrying connection..." << endl << endl;
+      cout << "Error de conexion." << endl << "Reintentando conexion..." << endl << endl;
       triesLeft--;
       /* 5s delay for retry */
       usleep(5000000);
     } else {
       connected = true;
+      cout << "Se establecio una conexion con: " << IP << endl;
     }
   }
 
@@ -60,7 +62,7 @@ int main() {
   }
 
   buf[numBytesRead] = '\0';
-  cout << "Mensaje del server: " << buf << endl;
+  cout << "Mensaje del servidor: " << buf << endl;
   close(sfd);
 
   return 0;
