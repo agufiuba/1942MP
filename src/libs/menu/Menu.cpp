@@ -57,6 +57,7 @@ void Menu::triggerOption(int optionNumber) {
   map<int, function<void()>>::iterator it = this->actions.find(optionNumber);
   // trigger action 
   it->second();
+  this->display();
 }
 
 void Menu::display() {
