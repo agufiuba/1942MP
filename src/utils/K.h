@@ -7,6 +7,5 @@ public:
 	static const unsigned short int typeString = 2;
 	static const unsigned short int typeDouble = 3;
 	static const unsigned short int typeChar = 4;
-};
 
 #endif
