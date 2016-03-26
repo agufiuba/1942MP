@@ -9,10 +9,22 @@
 #include <cstdlib> /* exit() */
 #include <cstring> /* memset(,,) */
 #include <iostream>
+#include "../libs/menu/Menu.h"
 
 using namespace std;
 
-int main() {
+Menu serverMenu("Menu de opciones del Servidor");
+
+int gfd = 0;
+bool listening = false;
+
+void closeConnection() {
+  close(gfd);
+  listening = false;
+  cout << endl << "Desconectando servidor..." << endl;
+}
+
+void serverInit() {
 
   uint32_t seqNum = 0;
   int sfd, cfd;
@@ -34,6 +46,8 @@ int main() {
     exit(-1);
   }
 
+  gfd = sfd;
+
   server.sin_family = AF_INET;
   server.sin_port = htons(PORT);
   server.sin_addr.s_addr = INADDR_ANY;
@@ -51,20 +65,40 @@ int main() {
     cout << "listen error" << endl;
     exit(-1);
   }
-
+  
+  listening = true;
+  cout << endl << "Se ha iniciado el servidor" << endl
+       << "Para cerrar el servidor, ingrese la tecla 's' seguida de enter: ";
+  char input;
   /* Accept connections */
-  for(;;) {
+  while(listening && input != 's') {
+   cin >> input;
    sinSize = sizeof(struct sockaddr);
    if((cfd = accept(sfd, (struct sockaddr*) &client, &sinSize)) == -1) {
     cout << "accept error" << endl;
     exit(-1);
    }
 
-   cout << "Se inicio una conexion con el cliente: " << inet_ntoa(client.sin_addr) << endl;
-   send(cfd, "Bienvenido a mi servidor.\n", 25, 0);
+   //cout << "Se inicio una conexion con el cliente: " << inet_ntoa(client.sin_addr) << endl;
+   //send(cfd, "Bienvenido a mi servidor.\n", 25, 0);
 
    close(cfd);
   }
+
+  closeConnection();
+}
+
+
+void exitPgm() {
+  cout << endl << "Cerrando el servidor..." << endl;
+  exit(0);
+}
+
+int main() {
+  serverMenu.addOption("Iniciar servidor", serverInit);
+  serverMenu.addOption("Salir", exitPgm);
+
+  serverMenu.display();
 
   return 0;
 }
