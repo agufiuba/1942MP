@@ -8,6 +8,7 @@
 #include <cstring> /* memset(), bzero() */
 #include <iostream>
 #include "../libs/menu/Menu.h"
+#include "../libs/palette/palette.h"
 
 using namespace std;
 
@@ -18,7 +19,7 @@ Menu clientMenu("Menu de opciones del Cliente");
 
 void srvConnect() {
   if(connected) {
-    cout << endl << "Ya hay una conexion activa" << endl;
+    cout << endl << warning("Ya hay una conexion activa") << endl;
     return;
   }
 
@@ -27,7 +28,7 @@ void srvConnect() {
   int sfd, numBytesRead;
   char buf[MAX_DATA_SIZE]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
-  const char* IP = "192.168.1.108";
+  const char* IP = "192.168.1.101";
 
   /* Create socket */
   if((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -51,17 +52,17 @@ void srvConnect() {
 
   while(!connected && triesLeft > 0) {
     if(connect(sfd, (struct sockaddr*) &server, sizeof(struct sockaddr)) == -1) {
-      cout << endl << "Error de conexion." << endl << "Reintentando conexion..." << endl;
+      cout << endl << warning("Error de conexion.") << endl << "Reintentando conexion..." << endl;
       triesLeft--;
       /* 5s delay for retry */
       usleep(5000000);
     } else {
       connected = true;
-      cout << endl << "Se establecio una conexion con: " << IP << endl;
+      cout << endl << notice("Se establecio una conexion con: ") << IP << endl;
     }
 
     if(triesLeft == 0) {
-      cout << endl << "No se pudo establecer una conexion con el servidor: " << IP 
+      cout << endl << warning("No se pudo establecer una conexion con el servidor: ") << IP 
            << endl << "Por favor intente nuevamente mas tarde." << endl;
     }
   }
@@ -84,14 +85,14 @@ void srvConnect() {
 void closeConnection() {
   close(gfd);  
   connected = false;
-  cout << endl << "Se cerro la conexion con el servidor." << endl;
+  cout << endl << warning("Se cerro la conexion con el servidor.") << endl;
 }
 
 void srvDisconnect() {
   if(connected) {
     closeConnection();
   } else {
-    cout << endl << "No hay una conexion activa" << endl;
+    cout << endl << warning("No hay una conexion activa") << endl;
   }
 }
 
@@ -100,7 +101,7 @@ void cycle() {}
 void exitPgm() {
   if(connected) closeConnection();
 
-  cout << endl << "Cerrando el cliente..." << endl;
+  cout << endl << warning("Cerrando el cliente...") << endl;
   exit(1);
 }
 
