@@ -10,6 +10,7 @@
 #include <cstring> /* memset(,,) */
 #include <iostream>
 #include "../libs/menu/Menu.h"
+#include "../libs/palette/palette.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ bool listening = false;
 void closeConnection() {
   close(gfd);
   listening = false;
-  cout << endl << "Desconectando servidor..." << endl;
+  cout << endl << warning("Desconectando servidor...") << endl;
 }
 
 void serverInit() {
@@ -67,7 +68,7 @@ void serverInit() {
   }
   
   listening = true;
-  cout << endl << "Se ha iniciado el servidor" << endl
+  cout << endl << notice("Se ha iniciado el servidor") << endl
        << "Para cerrar el servidor, ingrese la tecla 's' seguida de enter: ";
   char input;
   /* Accept connections */
@@ -90,11 +91,12 @@ void serverInit() {
 
 
 void exitPgm() {
-  cout << endl << "Cerrando el servidor..." << endl;
+  cout << endl << warning("Cerrando el servidor...") << endl;
   exit(0);
 }
 
 int main() {
+
   serverMenu.addOption("Iniciar servidor", serverInit);
   serverMenu.addOption("Salir", exitPgm);
 
