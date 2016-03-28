@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const int MAX_LENGHT_FILE_LOG = 100;
+const int MAX_LENGHT_FILE_LOG = 10000;
 Logger* loggerInstance = NULL;
 string fileLogPath = "logs/logger.log";
 string fileLogName = "logger.log";
