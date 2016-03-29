@@ -1,5 +1,6 @@
 // server.cpp
-#include <sys/socket.h>
+#include <sys/socket.h> /* socket, bind, listen, accept, connect, close */
+#include <sys/types.h> /* socket, bind, listen, accept, connect, close */
 #include <netdb.h> /* addrinfo */
 #include <netinet/in.h>
 #include <unistd.h> /* close() */
@@ -25,43 +26,71 @@ void closeConnection() {
   cout << endl << warning("Desconectando servidor...") << endl;
 }
 
+// get sockaddr, IPv4 
+void* get_in_addr(struct sockaddr* sa) {
+  if(sa->sa_family == AF_INET) {
+    return &(((struct sockaddr_in*)sa)->sin_addr);
+  }
+}
+
 void serverInit() {
-
-  uint32_t seqNum = 0;
-  int sfd, cfd;
-  socklen_t sinSize;
-  struct sockaddr_in server, client;
-  const int PORT = 5340;
+  const char* PORT = "5340";
   const int BACKLOG = 5;
+  const int MAX_DATA_SIZE = 100;
+  char buf[MAX_DATA_SIZE]; // data buffer
+  int sfd, cfd; // socket and client file descriptors
+  struct addrinfo hints, *servinfo, *p; // configuration structs
+  struct sockaddr_storage client_addr; // client address information
+  socklen_t sinSize;
+  char clientIP[INET_ADDRSTRLEN]; // connected client IP
+  int rv, numBytesRead;
 
-  /* Prevent the server from receiving the SIGPIPE signal
-     instead the write() fails with the error EPIPE */
-  if(signal(SIGPIPE, SIG_IGN) == SIG_ERR) {
-    cout << "signal error" << endl;
-    exit(EXIT_FAILURE);    
+  // init hints struct with 0
+  memset(&hints, 0, sizeof hints);
+
+  // set hints struct values
+  hints.ai_family = AF_INET;
+  hints.ai_socktype = SOCK_STREAM;
+  hints.ai_flags = AI_PASSIVE; // use host IP
+
+  // fill configuration structs
+  if((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
+   cout << "getaddrinfo error" << gai_strerror(rv) << endl; 
+   exit(-1);
   }
-
-  /* Create TCP socket */
-  if((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    cout << "socket error" << endl;
-    exit(-1);
-  }
-
-  gfd = sfd;
-
-  server.sin_family = AF_INET;
-  server.sin_port = htons(PORT);
-  server.sin_addr.s_addr = INADDR_ANY;
   
-  bzero(&(server.sin_zero), 8);
+  int yes = 1;
+  // loop through results and bind to one of them
+  for(p = servinfo; p != NULL; p = p->ai_next) {
+    // try to create TCP socket
+    if((sfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
+      cout << "socket error" << endl;
+      continue; // try next one
+    }
 
-  /* Bind socket */
-  if(bind(sfd, (struct sockaddr*) &server, sizeof(struct sockaddr)) == -1) {
-    cout << "bind error" << endl;
+    // allow port reuse to avoid bind error
+    if(setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+      cout << "setsockopt error" << endl;
+      exit(-1);
+    }
+
+    // bind socket
+    if(bind(sfd, p->ai_addr, p->ai_addrlen) == -1) {
+      close(sfd);
+      cout << "bind error" << endl;
+      continue; // try next one
+    }
+
+    break; // socket created and binded
+  }
+  freeaddrinfo(servinfo); // free memory
+
+  if(p == NULL) {
+    cout << "server failed to bind" << endl;
     exit(-1);
   }
 
-  /* Listen for connections */
+  // listen for connections
   if(listen(sfd, BACKLOG) == -1) {
     cout << "listen error" << endl;
     exit(-1);
@@ -69,24 +98,41 @@ void serverInit() {
   
   listening = true;
   cout << endl << notice("Se ha iniciado el servidor") << endl
-       << "Para cerrar el servidor, ingrese la tecla 's' seguida de enter: ";
-  char input;
-  /* Accept connections */
-  while(listening && input != 's') {
-   cin >> input;
-   sinSize = sizeof(struct sockaddr);
-   if((cfd = accept(sfd, (struct sockaddr*) &client, &sinSize)) == -1) {
-    cout << "accept error" << endl;
-    exit(-1);
-   }
+       << "Esperando conexiones..." << endl;
 
-   //cout << "Se inicio una conexion con el cliente: " << inet_ntoa(client.sin_addr) << endl;
-   //send(cfd, "Bienvenido a mi servidor.\n", 25, 0);
+  // accept connections
+  while(listening) {
+    sinSize = sizeof client_addr;
+    if((cfd = accept(sfd, (struct sockaddr*) &client_addr, &sinSize)) == -1) {
+      cout << "accept error" << endl;
+      exit(-1);
+    }
 
-   close(cfd);
+    // get connected host IP in presentation format
+    inet_ntop(client_addr.ss_family, 
+	      get_in_addr((struct sockaddr*) &client_addr), 
+	      clientIP, sizeof clientIP);
+    cout << endl << notice("Se inicio una conexion con el host: ") << clientIP << endl;
+
+    if(!fork()) {
+      //closeConnection();
+      //listening = false;
+      if(send(cfd, "Hola cliente", 12, 0) == -1) {
+	cout << "send error" << endl;
+      }
+      if((numBytesRead = recv(cfd, buf, MAX_DATA_SIZE, 0)) == -1) {
+	cout << "recv error" << endl;
+      }
+
+      if(numBytesRead) {
+	buf[numBytesRead] = '\0';
+	cout << endl << "Mensaje del cliente: " << buf << endl;
+      } else {
+	cout << endl << warning("El cliente ") << clientIP << warning(" se desconecto") << endl;
+	close(cfd);
+      }
+    }
   }
-
-  closeConnection();
 }
 
 
