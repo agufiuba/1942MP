@@ -1,5 +1,6 @@
 // client.cpp
-#include <sys/socket.h>
+#include <sys/socket.h> /* socket() */
+#include <sys/types.h> /* socket() */
 #include <netinet/in.h> /* IPv4 & IPv6 presentation strings max.length constants (INET6?_ADDRSTRLEN) */
 #include <arpa/inet.h> /* inet_aton(,) */
 #include <netdb.h> /* hostent */
@@ -16,6 +17,12 @@ int gfd = 0;
 bool connected = false;
 
 Menu clientMenu("Menu de opciones del Cliente");
+
+void closeConnection() {
+  close(gfd);  
+  connected = false;
+  cout << endl << warning("Se cerro la conexion con el servidor.") << endl;
+}
 
 void srvConnect() {
   if(connected) {
@@ -67,8 +74,7 @@ void srvConnect() {
     }
   }
   
-  /*
-  while(connected) {
+ // while(connected) {
     if((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
       cout << "recv error" << endl;
       exit(-1);
@@ -77,15 +83,12 @@ void srvConnect() {
     if(numBytesRead) {
       buf[numBytesRead] = '\0';
       cout << "Mensaje del servidor: " << buf << endl;
+    } else {
+      cout << endl << warning("Se perdio la conexion con el servidor.") << endl;
+      connected = false;
+      close(sfd); 
     }
-  }*/
-  //close(sfd);
-}
-
-void closeConnection() {
-  close(gfd);  
-  connected = false;
-  cout << endl << warning("Se cerro la conexion con el servidor.") << endl;
+  //}
 }
 
 void srvDisconnect() {
