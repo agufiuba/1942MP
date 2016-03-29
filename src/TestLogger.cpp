@@ -7,7 +7,7 @@
 
 using namespace std;
 
-std::mutex theMutex;
+mutex theMutex;
 static const int num_threads = 4;
 
 void threadPruebaConMutex(int i){
@@ -16,7 +16,7 @@ void threadPruebaConMutex(int i){
 	Logger* logger = Logger::instanceLogger();
 	string msj = "Un msj de error escrito por:";
 	msj +=static_cast<std::ostringstream*>(&(std::ostringstream() << i))->str();
-	logger->writeLog("Error", msj);
+	logger->error(msj);
 	cout << "Fin de Thread\n" << endl;
 	theMutex.unlock();
 }
