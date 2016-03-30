@@ -15,6 +15,10 @@ void cycle() {
   cout << "Cycle function trigger" << endl;
 }
 
+void sendMsg(int msg) {
+  cout << "ID del mensaje: " << msg << endl;
+}
+
 void salir() {
   cout << "Cerrando el cliente..." << endl;
 }
@@ -24,6 +28,7 @@ int main() {
 
   menu.addOption("Conectar", connect);
   menu.addOption("Desconectar", disconnect); 
+  menu.addOption("Enviar mensaje <id>", sendMsg, 37);
   menu.addOption("Ciclar", cycle);
   menu.addOption("Salir", salir);
 
