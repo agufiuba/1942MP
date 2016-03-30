@@ -120,16 +120,21 @@ void serverInit() {
       if(send(cfd, "Hola cliente", 12, 0) == -1) {
 	cout << "send error" << endl;
       }
-      if((numBytesRead = recv(cfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-	cout << "recv error" << endl;
-      }
 
-      if(numBytesRead) {
-	buf[numBytesRead] = '\0';
-	cout << endl << "Mensaje del cliente: " << buf << endl;
-      } else {
-	cout << endl << warning("El cliente ") << clientIP << warning(" se desconecto") << endl;
-	close(cfd);
+      bool receiving = true;
+      while(receiving) {
+	if((numBytesRead = recv(cfd, buf, MAX_DATA_SIZE, 0)) == -1) {
+	  cout << "recv error" << endl;
+	}
+
+	if(numBytesRead) {
+	  buf[numBytesRead] = '\0';
+	  cout << endl << "Mensaje del cliente: " << buf << endl;
+	} else {
+	  receiving = false;
+	  cout << endl << warning("El cliente ") << clientIP << warning(" se desconecto") << endl;
+	  close(cfd);
+	}
       }
     }
   }
