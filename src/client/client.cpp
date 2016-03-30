@@ -17,6 +17,8 @@ int gfd = 0;
 bool connected = false;
 
 Menu clientMenu("Menu de opciones del Cliente");
+const int MSG_QUANTITY = 4;
+string msgQueue[MSG_QUANTITY] = {"hola", "mundo", "chau", "gente"};
 
 void closeConnection() {
   close(gfd);  
@@ -91,6 +93,12 @@ void srvConnect() {
   //}
 }
 
+void sendData(string data, int dataLength) {
+  if(send(gfd, data.c_str(), dataLength, 0) == -1) {
+    cout << "send error" << endl;
+  }
+}
+
 void srvDisconnect() {
   if(connected) {
     closeConnection();
@@ -108,12 +116,32 @@ void exitPgm() {
   exit(1);
 }
 
+void sendMsg(int id) {
+  if(!connected) {
+    cout << endl << warning("Para mandar un mensaje debe estar conectado al servidor.") << endl;
+    return;
+  }
+
+  string data = msgQueue[id];
+  int dataLength = msgQueue[id].length();
+  cout << endl << "Se envio '" << notice(data) << "' al servidor" << endl; 
+  sendData(data, dataLength);
+}
+
+void addMsgOptions() {
+  for(int i = 0; i < MSG_QUANTITY; i++) {
+    string optionName = "Enviar mensaje " + to_string(i) + " "; 
+    clientMenu.addOption(optionName, sendMsg, i);
+  }
+}
+
 int main(int argc, char* argv[]) {
   
   const char* fileName = argv[1] ? argv[1] : "default.xml";
 
   clientMenu.addOption("Conectar", srvConnect);
   clientMenu.addOption("Desconectar", srvDisconnect);
+  addMsgOptions();
   clientMenu.addOption("Ciclar", cycle);
   clientMenu.addOption("Salir", exitPgm);
 
