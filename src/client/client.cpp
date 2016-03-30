@@ -107,8 +107,6 @@ void srvDisconnect() {
   }
 }
 
-void cycle() {}
-
 void exitPgm() {
   if(connected) closeConnection();
 
@@ -133,6 +131,17 @@ void addMsgOptions() {
     string optionName = "Enviar mensaje " + to_string(i) + " "; 
     clientMenu.addOption(optionName, sendMsg, i);
   }
+}
+
+void cycle() {
+  int timeout = 0;
+  cout << "Ingrese duracion (en milisegundos): ";
+  cin >> timeout;
+
+  // TODO: implement timer
+  for(int i = 0; i < MSG_QUANTITY; i++) {
+   sendMsg(i);
+  } 
 }
 
 int main(int argc, char* argv[]) {
