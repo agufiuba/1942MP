@@ -9,6 +9,7 @@ class Menu {
     std::string title;
     std::map<int, std::string> options;
     std::map<int, std::function<void()>> actions;
+    std::map<int, std::map<int, std::function<void(int)>> > iactions;
     int optionNumber;
     bool validInput(std::string input);
     int requireOption();
@@ -17,6 +18,7 @@ class Menu {
   public:
     Menu(std::string title);
     void addOption(std::string optionName, std::function<void()>); 
+    void addOption(std::string optionName, std::function<void(int)>, int); 
     void removeOption(std::string optionName);
     void display();
 };
