@@ -3,7 +3,6 @@
 #include <iostream>
 #include <regex>
 
-#include "../../utils/Colors.h"
 #include "../../utils/Defaults.h"
 
 using namespace tinyxml2;
