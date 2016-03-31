@@ -12,7 +12,7 @@ using namespace std;
 class Logger
 {
     public:
-        static Logger* instanceLogger();
+        static Logger* instance();
         void error(string);
         void warn(string);
         void info(string);

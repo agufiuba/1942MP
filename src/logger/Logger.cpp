@@ -26,7 +26,7 @@ Logger::~Logger() {
 	fileLog.close();
 }
 
-Logger* Logger::instanceLogger() {
+Logger* Logger::instance() {
 	if (!loggerInstance)
 		loggerInstance = new Logger();
 	return loggerInstance;

@@ -7,13 +7,13 @@
 
 class ClientConf {
 public:
-	ClientConf(const char*, int, vector<Msg*>);
-	const char* getServerIP();
+	ClientConf(string, int, vector<Msg*>);
+	string getServerIP();
 	int getServerPort();
 	vector<Msg*> getMessages();
 	virtual ~ClientConf();
 private:
-	const char* serverIP;
+	string serverIP;
 	int serverPort;
 	vector<Msg*> messages;
 };
