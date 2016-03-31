@@ -37,7 +37,7 @@ void srvConnect() {
   int sfd, numBytesRead;
   char buf[MAX_DATA_SIZE]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
-  const char* IP = "192.168.1.101";
+  const char* IP = "127.0.0.1";
 
   /* Create socket */
   if((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -141,6 +141,9 @@ void cycle() {
   // TODO: implement timer
   for(int i = 0; i < MSG_QUANTITY; i++) {
    sendMsg(i);
+   if(i != MSG_QUANTITY-1){
+   	 usleep(timeout*1000);
+   }
   } 
 }
 
