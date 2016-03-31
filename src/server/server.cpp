@@ -12,7 +12,6 @@
 #include <iostream>
 #include "../libs/menu/Menu.h"
 #include "../libs/palette/palette.h"
-//#include "../models/msgProcessor/msgProcessor.h"
 #include <mutex>
 #include <thread>
 #include <queue>
@@ -42,7 +41,8 @@ void* get_in_addr(struct sockaddr* sa) {
 	}
 }
 
-void recieveClientData(int cfd,struct sockaddr_storage client_addr,bool coneccionAceptable ) {
+void recieveClientData(int cfd, struct sockaddr_storage client_addr,
+		bool coneccionAceptable) {
 
 	int numBytesRead;
 	char clientIP[INET_ADDRSTRLEN]; // connected client IP
@@ -54,9 +54,10 @@ void recieveClientData(int cfd,struct sockaddr_storage client_addr,bool coneccio
 			get_in_addr((struct sockaddr*) (&client_addr)), clientIP,
 			sizeof clientIP);
 
-	cout << endl << notice("Se inicio una conexion con el host: ") << clientIP<< endl;
+	cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
+			<< endl;
 
-	if (coneccionAceptable){
+	if (coneccionAceptable) {
 		if (send(cfd, "Aceptado", 12, 0) == -1) {
 			cout << "send error" << endl;
 		}
@@ -80,20 +81,17 @@ void recieveClientData(int cfd,struct sockaddr_storage client_addr,bool coneccio
 				close(cfd);
 				theMutex.lock();
 				cantidadClientes--;
-				cout<<"cantidad "<<cantidadClientes<<endl;
+				cout << "cantidad " << cantidadClientes << endl;
 				theMutex.unlock();
 			}
 		}
-	}else{
-		if (send(cfd, "Rechazada", 12, 0) == -1) {
-			cout << "send error" << endl;
-		}
+	} else {
 		cout << endl << warning("El cliente ") << clientIP
 				<< warning(" se rechazo") << endl;
 		close(cfd);
 		theMutex.lock();
 		cantidadClientes--;
-		cout<<"cantidad "<<cantidadClientes<<endl;
+		cout << "cantidad " << cantidadClientes << endl;
 		theMutex.unlock();
 
 	}
@@ -102,14 +100,11 @@ void recieveClientData(int cfd,struct sockaddr_storage client_addr,bool coneccio
 void serverInit() {
 	const char* PORT = "5340";
 	const int BACKLOG = 5;
-	//const int MAX_DATA_SIZE = 100;
-	//char buf[MAX_DATA_SIZE]; // data buffer
 	int sfd, cfd; // socket and client file descriptors
 	struct addrinfo hints, *servinfo, *p; // configuration structs
 	struct sockaddr_storage client_addr; // client address information
 	socklen_t sinSize;
-	//char clientIP[INET_ADDRSTRLEN]; // connected client IP
-	int rv;//, numBytesRead;
+	int rv; //, numBytesRead;
 
 	// init hints struct with 0
 	memset(&hints, 0, sizeof hints);
@@ -178,10 +173,10 @@ void serverInit() {
 		}
 
 		cantidadClientes++;
-		cout<<"cantidad "<<cantidadClientes<<endl;
+		cout << "cantidad " << cantidadClientes << endl;
 		bool coneccionAceptable = (cantidadClientes <= cantidadMaximaClientes);
 
-		thread process(recieveClientData,cfd,client_addr,coneccionAceptable);
+		thread process(recieveClientData, cfd, client_addr, coneccionAceptable);
 		process.detach();
 	}
 
@@ -192,10 +187,9 @@ void exitPgm() {
 	exit(0);
 }
 
-
-void threadProcesador(){
-	while(true){
-		if(!colaDeMensajes->empty()){
+void threadProcesador() {
+	while (true) {
+		if (!colaDeMensajes->empty()) {
 			theMutex.lock();
 			cout << "------------------------------------" << endl;
 			cout << "Saco Msj de la cola" << endl;
@@ -207,17 +201,13 @@ void threadProcesador(){
 	}
 }
 
-
 int main() {
-	//MsgProcessor msgProcessor = new MsgProcessor();
-
 	std::thread t1(threadProcesador);
 
 	serverMenu.addOption("Iniciar servidor", serverInit);
 	serverMenu.addOption("Salir", exitPgm);
 
 	serverMenu.display();
-	//process.join();
 	t1.join();
 	return 0;
 }
