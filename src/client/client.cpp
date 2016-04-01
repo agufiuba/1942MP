@@ -144,7 +144,6 @@ void cycle() {
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
 
-  // TODO: implement timer
   for (int i = 0; i < MSG_QUANTITY; i++) {
     sendMsg(i);
     if (i != MSG_QUANTITY - 1) {

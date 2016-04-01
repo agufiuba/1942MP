@@ -19,11 +19,11 @@
 using namespace std;
 
 Menu serverMenu("Menu de opciones del Servidor");
-queue<const char*>* colaDeMensajes = new queue<const char*>;
+queue<const char*>* msgQueue = new queue<const char*>;
 mutex theMutex;
 
-int cantidadMaximaClientes = 2;
-int cantidadClientes = 0;
+int maxClientCount = 2;
+int clientCount = 0;
 
 int gfd = 0;
 bool listening = false;
@@ -34,6 +34,14 @@ void closeConnection() {
   cout << endl << warning("Desconectando servidor...") << endl;
 }
 
+void closeClient(int cfd) {
+  close(cfd);
+  theMutex.lock();
+  clientCount--;
+  cout << "cantidad " << clientCount << endl;
+  theMutex.unlock();
+}
+
 // get sockaddr, IPv4 
 void* get_in_addr(struct sockaddr* sa) {
   if (sa->sa_family == AF_INET) {
@@ -41,9 +49,7 @@ void* get_in_addr(struct sockaddr* sa) {
   }
 }
 
-void recieveClientData(int cfd, struct sockaddr_storage client_addr,
-    bool coneccionAceptable) {
-
+void recieveClientData(int cfd, struct sockaddr_storage client_addr, bool allowConnections) {
   int numBytesRead;
   char clientIP[INET_ADDRSTRLEN]; // connected client IP
   const int MAX_DATA_SIZE = 100;
@@ -55,9 +61,9 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
       sizeof clientIP);
 
   cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
-    << endl;
+       << endl;
 
-  if (coneccionAceptable) {
+  if (allowConnections) {
     if (send(cfd, "Aceptado", 12, 0) == -1) {
       cout << "send error" << endl;
     }
@@ -70,30 +76,21 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 	buf[numBytesRead] = '\0';
 	cout << "************************" << endl;
 	theMutex.lock();
-	colaDeMensajes->push(buf);
+	msgQueue->push(buf);
 	cout << endl << "Pongo mensaje del cliente: " << buf << endl;
 	theMutex.unlock();
 	cout << "************************" << endl;
       } else {
 	receiving = false;
 	cout << endl << warning("El cliente ") << clientIP
-	  << warning(" se desconecto") << endl;
-	close(cfd);
-	theMutex.lock();
-	cantidadClientes--;
-	cout << "cantidad " << cantidadClientes << endl;
-	theMutex.unlock();
+	     << warning(" se desconecto") << endl;
+	closeClient(cfd);
       }
     }
   } else {
     cout << endl << warning("El cliente ") << clientIP
-      << warning(" se rechazo") << endl;
-    close(cfd);
-    theMutex.lock();
-    cantidadClientes--;
-    cout << "cantidad " << cantidadClientes << endl;
-    theMutex.unlock();
-
+	 << warning(" se rechazo") << endl;
+    closeClient(cfd);
   }
 }
 
@@ -172,11 +169,10 @@ void serverInit() {
       exit(-1);
     }
 
-    cantidadClientes++;
-    cout << "cantidad " << cantidadClientes << endl;
-    bool coneccionAceptable = (cantidadClientes <= cantidadMaximaClientes);
+    clientCount++;
+    bool allowConnections = (clientCount <= maxClientCount);
 
-    thread process(recieveClientData, cfd, client_addr, coneccionAceptable);
+    thread process(recieveClientData, cfd, client_addr, allowConnections);
     process.detach();
   }
 
@@ -189,12 +185,12 @@ void exitPgm() {
 
 void threadProcesador() {
   while (true) {
-    if (!colaDeMensajes->empty()) {
+    if (!msgQueue->empty()) {
       theMutex.lock();
       cout << "------------------------------------" << endl;
       cout << "Saco Msj de la cola" << endl;
-      cout << colaDeMensajes->front() << endl;
-      colaDeMensajes->pop();
+      cout << msgQueue->front() << endl;
+      msgQueue->pop();
       cout << "------------------------------------" << endl;
       theMutex.unlock();
     }
