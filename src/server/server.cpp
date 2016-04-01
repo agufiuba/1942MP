@@ -27,6 +27,11 @@ int clientCount = 0;
 
 int gfd = 0;
 bool listening = false;
+bool serverConnected = false;
+
+int sfd, cfd;
+struct sockaddr_storage client_addr; // client address information
+socklen_t sinSize;
 
 void closeConnection() {
   close(gfd);
@@ -94,13 +99,31 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr, bool allowC
   }
 }
 
+void serverListening() {
+	// accept connections
+	while (listening) {
+		sinSize = sizeof client_addr;
+		if ((cfd = accept(sfd, (struct sockaddr*) (&client_addr), &sinSize))
+				== -1) {
+			cout << "accept error" << endl;
+			exit(-1);
+		}
+		clientCount++;
+		bool allowConnections = (clientCount <= maxClientCount);
+		thread process(recieveClientData, cfd, client_addr, allowConnections);
+		process.detach();
+	}
+}
+
 void serverInit() {
+  if (serverConnected) {
+	  cout << endl << warning("El servidor ya se encuentra conectado") << endl;
+	  serverMenu.display();
+  } else {
   const char* PORT = "5340";
   const int BACKLOG = 5;
-  int sfd, cfd; // socket and client file descriptors
+   // socket and client file descriptors
   struct addrinfo hints, *servinfo, *p; // configuration structs
-  struct sockaddr_storage client_addr; // client address information
-  socklen_t sinSize;
   int rv; //, numBytesRead;
 
   // init hints struct with 0
@@ -159,21 +182,11 @@ void serverInit() {
   listening = true;
   cout << endl << notice("Se ha iniciado el servidor") << endl
     << "Esperando conexiones..." << endl;
+  serverConnected = true;
 
   // accept connections
-  while (listening) {
-    sinSize = sizeof client_addr;
-    if ((cfd = accept(sfd, (struct sockaddr*) &client_addr, &sinSize))
-	== -1) {
-      cout << "accept error" << endl;
-      exit(-1);
-    }
-
-    clientCount++;
-    bool allowConnections = (clientCount <= maxClientCount);
-
-    thread process(recieveClientData, cfd, client_addr, allowConnections);
-    process.detach();
+  std::thread t2 (serverListening);
+  t2.detach();
   }
 
 }
