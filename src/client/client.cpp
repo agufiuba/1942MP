@@ -9,14 +9,17 @@
 #include <cstring> /* memset(), bzero() */
 #include <iostream>
 #include <thread>
+#include <string>
 #include "../libs/menu/Menu.h"
 #include "../libs/palette/palette.h"
+#include "../logger/Logger.h"
 
 using namespace std;
 
 int gfd = 0;
 bool connected = false;
 
+Logger* logger = Logger::instance();
 Menu clientMenu("Menu de opciones del Cliente");
 const int MSG_QUANTITY = 4;
 string msgQueue[MSG_QUANTITY] = { "hola", "mundo", "chau", "gente" };
@@ -24,21 +27,21 @@ string msgQueue[MSG_QUANTITY] = { "hola", "mundo", "chau", "gente" };
 void closeConnection() {
   close(gfd);
   connected = false;
-  cout << endl << warning("Se cerro la conexion con el servidor.") << endl;
+  logger->warn("Se cerro la conexion con el servidor.");
 }
 
 void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char * IP){
 	int numBytesRead = 1;
 	while (numBytesRead != 0 && numBytesRead != -1) {
 	  if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-	    cout << "recv error" << endl;
+	  	logger->error("Recv error");
 	    exit(-1);
 	  }
 	  if (numBytesRead) {
 	    buf[numBytesRead] = '\0';
-	    cout << "Mensaje del servidor: " << buf << endl;
+	    logger->info("Mensaje del servidor: " + string(buf));
 	  } else {
-	    cout << endl << warning("Se perdio la conexion con el servidor.") << endl;
+	  	logger->warn("Se perdio la conexion con el servidor.");
 	    connected = false;
 	    close(sfd);
 	  }
@@ -47,8 +50,9 @@ void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char * IP){
 
 void srvConnect() {
   if (connected) {
-    cout << endl << warning("Ya hay una conexion activa") << endl;
-    return;
+  	logger->warn("Ya hay una conexion activa");
+  	cout << "Ya hay una conexion activa" << endl;
+  	return;
   }
 
   const int PORT = 5340;
@@ -60,7 +64,7 @@ void srvConnect() {
 
   /* Create socket */
   if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    cout << "socket error" << endl;
+    logger->error("socket error");
     exit(-1);
   }
 
@@ -69,7 +73,7 @@ void srvConnect() {
   server.sin_family = AF_INET;
   server.sin_port = htons(PORT);
   if ((inet_aton(IP, &server.sin_addr)) == 0) {
-    cout << "invalid IP" << endl;
+  	logger->error("invalid IP");
     exit(-1);
   }
 
@@ -84,11 +88,13 @@ void srvConnect() {
       triesLeft--;
       /* 5s delay for retry */
       if(triesLeft) {
-	cout << endl << warning("Error de conexion.") << endl
-	     << "Reintentando conexion..." << endl;
+      	logger->error("Error de conexion. Reintentando conexion...");
+      	cout<< "Error de conexion, Reintentando conexion..." << endl;
 	usleep(5000000);
       } else {
-	cout << endl << warning("No se pudo establecer una conexion con el servidor: ")
+      	logger->warn("No se pudo establecer una conexion con el servidor: "
+      			+string(IP)+" Por favor intente nuevamente mas tarde.");
+      	cout << endl << warning("No se pudo establecer una conexion con el servidor: ")
 	     << IP << endl << "Por favor intente nuevamente mas tarde." << endl;
 	return;
       }
@@ -97,14 +103,17 @@ void srvConnect() {
     }
   }
   if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-    cout << "recv error" << endl;
-    exit(-1);
+    logger->error("recv error");
+  	exit(-1);
   }
   if (numBytesRead) {
+  	logger->info("Se establecio una conexion con: "+string(IP));
     cout << endl << notice("Se establecio una conexion con: ") << IP << endl;
     buf[numBytesRead] = '\0';
+    logger->info("Mensaje del servidor: " +string(buf) );
     cout << "Mensaje del servidor: " << buf << endl;
   } else {
+    logger->warn("Se perdio la conexion con el servidor.");
     cout << endl << warning("Se perdio la conexion con el servidor.") << endl;
     connected = false;
     close(sfd);
@@ -116,7 +125,7 @@ void srvConnect() {
 
 void sendData(string data, int dataLength) {
   if (send(gfd, data.c_str(), dataLength, 0) == -1) {
-    cout << "send error" << endl;
+    logger->error("send error");
   }
 }
 
@@ -124,6 +133,7 @@ void srvDisconnect() {
   if (connected) {
     closeConnection();
   } else {
+  	logger->warn("No hay una conexion activa");
     cout << endl << warning("No hay una conexion activa") << endl;
   }
 }
@@ -131,22 +141,24 @@ void srvDisconnect() {
 void exitPgm() {
   if (connected)
     closeConnection();
-
-  cout << endl << warning("Cerrando el cliente...") << endl;
+  	logger->warn("Cerrando el cliente...");
+  	cout << endl << warning("Cerrando el cliente...") << endl;
   exit(1);
 }
 
 void sendMsg(int id) {
   if (!connected) {
-    cout << endl
+  		cout << endl
       << warning("Para mandar un mensaje debe estar conectado al servidor.")
       << endl;
+  		logger->warn("Para mandar un mensaje debe estar conectado al servidor.");
     return;
   }
 
   string data = msgQueue[id];
   int dataLength = msgQueue[id].length();
   cout << endl << "Se envio '" << notice(data) << "' al servidor" << endl;
+  logger->info("Se envio '" + data + "' al servidor");
   sendData(data, dataLength);
 }
 
@@ -161,6 +173,7 @@ void cycle() {
   int timeout = 0;
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
+  logger->info("Ejecuando Ciclar. Envio msj cada: "+to_string(timeout)+" milisegundos.");
 
   for (int i = 0; i < MSG_QUANTITY; i++) {
     sendMsg(i);

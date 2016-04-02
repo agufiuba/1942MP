@@ -5,6 +5,7 @@
 
 MENU = ./src/libs/menu/Menu.cpp
 PALETTE = ./src/libs/palette/palette.cpp
+LOGGER = ./src/logger/Logger.cpp
 
 ifeq ($(p), client)
 	PROGRAM = src/client/client
@@ -13,7 +14,7 @@ ifeq ($(p), server)
 	PROGRAM = src/server/server
 endif
 
-OBJS = $(MENU) $(PALETTE) ./$(PROGRAM).cpp
+OBJS = $(MENU) $(PALETTE) $(LOGGER) ./$(PROGRAM).cpp
 
 CC = g++
 
