@@ -16,16 +16,17 @@ using namespace std;
 
 int gfd = 0;
 bool connected = false;
+const int MSG_COUNT = 2;
 
-Menu clientMenu("Menu de opciones del Cliente");
-const int MSG_QUANTITY = 4;
-string msgQueue[MSG_QUANTITY] = { "hola", "mundo", "chau", "gente" };
-
-typedef struct Mensaje {
+typedef struct Mensaje{
   string id;
   string tipo;
   string valor;
 } Mensaje;
+
+Mensaje* mejus[MSG_COUNT];
+
+Menu clientMenu("Menu de opciones del Cliente");
 
 void closeConnection() {
   close(gfd);
@@ -62,7 +63,7 @@ void srvConnect() {
   int sfd, numBytesRead;
   char buf[MAX_DATA_SIZE]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
-  const char* IP = "127.0.0.1";
+  const char* IP = "192.168.1.109";
 
   /* Create socket */
   if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -120,8 +121,8 @@ void srvConnect() {
   tReceiving.detach();
 }
 
-void sendData(string data, int dataLength) {
-  if (send(gfd, data.c_str(), dataLength, 0) == -1) {
+void sendData(Mensaje data, int dataLength) {
+  if (send(gfd, &data, dataLength, 0) == -1) {
     cout << "send error" << endl;
   }
 }
@@ -142,7 +143,7 @@ void exitPgm() {
   exit(1);
 }
 
-void sendMsg(int id) {
+void sendMsg(string id) {  
   if (!connected) {
     cout << endl
       << warning("Para mandar un mensaje debe estar conectado al servidor.")
@@ -150,16 +151,38 @@ void sendMsg(int id) {
     return;
   }
 
-  string data = msgQueue[id];
-  int dataLength = msgQueue[id].length();
-  cout << endl << "Se envio '" << notice(data) << "' al servidor" << endl;
-  sendData(data, dataLength);
+  Mensaje* msgToSend;
+
+  for (int i = 0; i < MSG_COUNT; i++) {
+    if(mejus[i]->id == id) {
+      msgToSend = mejus[i];
+      break;
+    }
+  }
+
+  int dataLength = sizeof(Mensaje); 
+  cout << msgToSend;
+  cout << endl << "Se envio '" << notice(msgToSend->valor) << "' al servidor" << endl;
+  sendData(*msgToSend, dataLength);
 }
 
 void addMsgOptions() {
-  for (int i = 0; i < MSG_QUANTITY; i++) {
-    string optionName = "Enviar mensaje " + to_string(i) + " ";
-    clientMenu.addOption(optionName, sendMsg, i);
+  Mensaje* msg1 = new Mensaje;
+  msg1->id = "id8912";
+  msg1->tipo = "int";
+  msg1->valor = "28";
+
+  Mensaje* msg2 = new Mensaje;
+  msg2->id = "id1238";
+  msg2->tipo = "string";
+  msg2->valor = "kkkeeeeeeeeeeeeyyyyyyyy";
+
+  mejus[0] = msg1;
+  mejus[1] = msg2;
+
+  for (int i = 0; i < MSG_COUNT; i++) {
+    string optionName = "Enviar mensaje " + mejus[i]->id;
+    clientMenu.addOption(optionName, sendMsg, mejus[i]->id);
   }
 }
 
@@ -168,16 +191,15 @@ void cycle() {
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
 
-  for (int i = 0; i < MSG_QUANTITY; i++) {
-    sendMsg(i);
-    if (i != MSG_QUANTITY - 1) {
+  for (int i = 0; i < MSG_COUNT; i++) {
+    sendMsg(mejus[i]->id);
+    if (i != MSG_COUNT- 1) {
       usleep(timeout * 1000);
     }
   }
 }
 
 int main(int argc, char* argv[]) {
-
   const char* fileName = argv[1] ? argv[1] : "default.xml";
 
   clientMenu.addOption("Conectar", srvConnect);

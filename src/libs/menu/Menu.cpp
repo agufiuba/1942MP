@@ -16,12 +16,12 @@ void Menu::addOption(string optionName, function<void()> action) {
   this->actions.insert(pair<int, function<void()>>(this->optionNumber, action));
 }
 
-void Menu::addOption(string optionName, function<void(int)> action, int argument) {
+void Menu::addOption(string optionName, function<void(string)> action, string argument) {
   this->optionNumber++;
   this->options.insert(pair<int, string>(this->optionNumber, optionName)); 
-  map<int, function<void(int)>> f;
+  map<string, function<void(string)>> f;
   f.insert(make_pair(argument, action));
-  this->iactions.insert(pair<int, map<int, function<void(int)>> >(this->optionNumber, f));
+  this->iactions.insert(pair<int, map<string, function<void(string)>> >(this->optionNumber, f));
 }
 
 void Menu::removeOption(string optionName) {
@@ -66,9 +66,9 @@ void Menu::triggerOption(int optionNumber) {
  
   // if option not found on actions, search iactions
   if(it == this->actions.end()) {
-    map<int, map<int, function<void(int)>> >::iterator it = this->iactions.find(optionNumber);
-    map<int, function<void(int)>>::iterator it2 = (it->second).begin();
-    int arg = it2->first;
+    map<int, map<string, function<void(string)>> >::iterator it = this->iactions.find(optionNumber);
+    map<string, function<void(string)>>::iterator it2 = (it->second).begin();
+    string arg = it2->first;
     it2->second(arg);
   } else {
     // trigger action 
