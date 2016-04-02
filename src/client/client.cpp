@@ -31,6 +31,7 @@ void closeConnection() {
   close(gfd);
   connected = false;
   logger->warn("Se cerro la conexion con el servidor.");
+  cout << endl << warning("Se cerro la conexion con el servidor.") << endl;
 }
 
 void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char * IP){
@@ -42,9 +43,11 @@ void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char * IP){
 	  }
 	  if (numBytesRead) {
 	    buf[numBytesRead] = '\0';
+	    cout << endl << "Mensaje del servidor: " << string(buf) <<endl;
 	    logger->info("Mensaje del servidor: " + string(buf));
 	  } else {
 	  	logger->warn("Se perdio la conexion con el servidor.");
+	  	cout << endl << warning("Se perdio la conexion con el servidor.") << endl;
 	    connected = false;
 	    close(sfd);
 	  }
@@ -59,7 +62,7 @@ void srvConnect() {
   }
 
 //  const int PORT = 5340;
-  const int MAX_DATA_SIZE = 100; /* Max. number of bytes for recv */
+  const int MAX_DATA_SIZE = 10000; /* Max. number of bytes for recv */
   int sfd, numBytesRead;
   char buf[MAX_DATA_SIZE]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
@@ -183,6 +186,8 @@ void cycle() {
       usleep(timeout * 1000);
     }
   }
+  usleep(5000);/*agregado solo para que reciba el ultimo mensaje del servidor, antes de hacer display
+  							del menu*/
 }
 
 int main(int argc, char* argv[]) {

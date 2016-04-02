@@ -22,12 +22,20 @@
 using namespace std;
 
 Logger* logger = Logger::instance();
+
+const int MAX_CHAR_LENGTH = 20;
+
 Menu serverMenu("Menu de opciones del Servidor");
-queue<const char*>* msgQueue = new queue<const char*>;
+//queue<const char*>* msgQueue = new queue<const char*>;
+queue<map<int,char*>*>* msgQueue = new queue<map<int,char*>*>;
+
 mutex theMutex;
 ServerConf* sc;
 
 int clientCount = 0;
+
+
+map<int,char*>* clientFD;
 
 int gfd = 0;
 bool listening = false;
@@ -60,7 +68,7 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
     bool allowConnections) {
 	int numBytesRead;
 	char clientIP[INET_ADDRSTRLEN]; // connected client IP
-	const int MAX_DATA_SIZE = 100;
+	const int MAX_DATA_SIZE = 10000;
 	char buf[MAX_DATA_SIZE]; // data buffer
 
 	// get connected host IP in presentation format
@@ -84,7 +92,11 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 			if (numBytesRead) {
 				buf[numBytesRead] = '\0';
 				theMutex.lock();
-				msgQueue->push(buf);
+
+				clientFD = new map<int,char*>();
+				clientFD->insert(pair<int,char*>(cfd,buf));
+				msgQueue->push(clientFD);
+
 				cout << endl << "Pongo mensaje del cliente: " << buf << endl;
 				theMutex.unlock();
 			} else {
@@ -101,6 +113,7 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 		logger->warn("El cliente " + string(clientIP) + " se rechazo");
 		closeClient(cfd);
 	}
+
 }
 
 void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, socklen_t sinSize) {
@@ -205,15 +218,32 @@ void exitPgm() {
 	exit(0);
 }
 
+void sendingData(int cfd, string data, int dataLength){
+	bool notSent = true;
+	while (notSent){
+		if (send(cfd, data.c_str(), dataLength, 0) == -1) {
+		    cout << "send error" << endl;
+		}else{
+			notSent = false;
+		}
+	}
+}
+
 void threadProcesador() {
 	while (true) {
 		if (!msgQueue->empty()) {
 			theMutex.lock();
 			cout << "Saco Msj de la cola" << endl;
-			cout << msgQueue->front() << endl;
-			logger->info("Msj de cliente: " + string(msgQueue->front()));
+      map<int,char*>* data = msgQueue->front();
 			msgQueue->pop();
 			theMutex.unlock();
+
+      map<int,char*>::iterator it = data->begin();
+      cout << "IP cliente: " << it->first << " --  Mensaje: " << it->second << endl;
+
+			logger->info("Msj de cliente: " + string(it->second));
+			thread tSending(sendingData, it->first, it->second , MAX_CHAR_LENGTH);
+			tSending.detach();
 		}
 	}
 }
