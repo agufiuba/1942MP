@@ -18,12 +18,18 @@
 
 using namespace std;
 
+const int MAX_CHAR_LENGTH = 2;
 Menu serverMenu("Menu de opciones del Servidor");
-queue<const char*>* msgQueue = new queue<const char*>;
+//queue<const char*>* msgQueue = new queue<const char*>;
+queue<map<int,char*>*>* msgQueue = new queue<map<int,char*>*>;
+
 mutex theMutex;
 
 int maxClientCount = 2;
 int clientCount = 0;
+
+
+map<int,char*>* clientFD;
 
 int gfd = 0;
 bool listening = false;
@@ -77,7 +83,14 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr, bool allowC
 	buf[numBytesRead] = '\0';
 	cout << "************************" << endl;
 	theMutex.lock();
-	msgQueue->push(buf);
+	//msgQueue->push(buf);
+
+	clientFD = new map<int,char*>();
+
+	clientFD->insert(pair<int,char*>(cfd,buf));
+	//clientFD[cfd] = buf;
+	msgQueue->push(clientFD);
+
 	cout << endl << "Pongo mensaje del cliente: " << buf << endl;
 	theMutex.unlock();
 	cout << "************************" << endl;
@@ -194,16 +207,33 @@ void exitPgm() {
   exit(0);
 }
 
+void sendingData(int cfd, string data, int dataLength){
+	bool notSent = true;
+	while (notSent){
+		if (send(cfd, data.c_str(), dataLength, 0) == -1) {
+		    cout << "send error" << endl;
+		}else{
+			notSent = false;
+		}
+	}
+}
+
 void threadProcesador() {
   while (true) {
     if (!msgQueue->empty()) {
       theMutex.lock();
       cout << "------------------------------------" << endl;
       cout << "Saco Msj de la cola" << endl;
-      cout << msgQueue->front() << endl;
+      map<int,char*>* data = msgQueue->front();
       msgQueue->pop();
       cout << "------------------------------------" << endl;
       theMutex.unlock();
+
+      map<int,char*>::iterator it = data->begin();
+      cout << it->first << it->second << endl;
+
+			thread tSending(sendingData, it->first, it->second , MAX_CHAR_LENGTH);
+			tSending.detach();
     }
   }
 }

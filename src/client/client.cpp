@@ -32,7 +32,6 @@ void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char * IP){
 	while (numBytesRead != 0 && numBytesRead != -1) {
 	  if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
 	    cout << "recv error" << endl;
-	    exit(-1);
 	  }
 	  if (numBytesRead) {
 	    buf[numBytesRead] = '\0';
