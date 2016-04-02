@@ -34,7 +34,7 @@ void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char * IP){
 	int numBytesRead = 1;
 	while (numBytesRead != 0 && numBytesRead != -1) {
 	  if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-	  	logger->error("Recv error");
+	  	logger->error("Falla al recibir el Msj");
 	    exit(-1);
 	  }
 	  if (numBytesRead) {
@@ -64,7 +64,7 @@ void srvConnect() {
 
   /* Create socket */
   if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    logger->error("socket error");
+    logger->error("Falla en el Socket");
     exit(-1);
   }
 
@@ -73,7 +73,7 @@ void srvConnect() {
   server.sin_family = AF_INET;
   server.sin_port = htons(PORT);
   if ((inet_aton(IP, &server.sin_addr)) == 0) {
-  	logger->error("invalid IP");
+  	logger->error("IP Invalido");
     exit(-1);
   }
 
@@ -103,7 +103,7 @@ void srvConnect() {
     }
   }
   if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-    logger->error("recv error");
+    logger->error("Error al recibir Msj");
   	exit(-1);
   }
   if (numBytesRead) {
@@ -125,7 +125,7 @@ void srvConnect() {
 
 void sendData(string data, int dataLength) {
   if (send(gfd, data.c_str(), dataLength, 0) == -1) {
-    logger->error("send error");
+    logger->error("Falla al Enviar");
   }
 }
 
