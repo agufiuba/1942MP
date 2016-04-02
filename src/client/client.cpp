@@ -8,6 +8,7 @@
 #include <cstdlib> /* exit() */
 #include <cstring> /* memset(), bzero() */
 #include <iostream>
+#include <thread>
 #include "../libs/menu/Menu.h"
 #include "../libs/palette/palette.h"
 
@@ -24,6 +25,24 @@ void closeConnection() {
   close(gfd);
   connected = false;
   cout << endl << warning("Se cerro la conexion con el servidor.") << endl;
+}
+
+void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char * IP){
+	int numBytesRead = 1;
+	while (numBytesRead != 0 && numBytesRead != -1) {
+	  if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
+	    cout << "recv error" << endl;
+	    exit(-1);
+	  }
+	  if (numBytesRead) {
+	    buf[numBytesRead] = '\0';
+	    cout << "Mensaje del servidor: " << buf << endl;
+	  } else {
+	    cout << endl << warning("Se perdio la conexion con el servidor.") << endl;
+	    connected = false;
+	    close(sfd);
+	  }
+	}
 }
 
 void srvConnect() {
@@ -77,13 +96,10 @@ void srvConnect() {
       connected = true;
     }
   }
-
-  // while(connected) {
   if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
     cout << "recv error" << endl;
     exit(-1);
   }
-
   if (numBytesRead) {
     cout << endl << notice("Se establecio una conexion con: ") << IP << endl;
     buf[numBytesRead] = '\0';
@@ -93,7 +109,9 @@ void srvConnect() {
     connected = false;
     close(sfd);
   }
-  //}
+
+  std::thread tReceiving (receiving, sfd, buf, MAX_DATA_SIZE, IP);
+  tReceiving.detach();
 }
 
 void sendData(string data, int dataLength) {
