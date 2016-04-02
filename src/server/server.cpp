@@ -29,10 +29,6 @@ int gfd = 0;
 bool listening = false;
 bool serverConnected = false;
 
-int sfd, cfd;
-struct sockaddr_storage client_addr; // client address information
-socklen_t sinSize;
-
 void closeConnection() {
   close(gfd);
   listening = false;
@@ -99,23 +95,25 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr, bool allowC
   }
 }
 
-void serverListening() {
-	// accept connections
-	while (listening) {
-		sinSize = sizeof client_addr;
-		if ((cfd = accept(sfd, (struct sockaddr*) (&client_addr), &sinSize))
-				== -1) {
-			cout << "accept error" << endl;
-			exit(-1);
-		}
-		clientCount++;
-		bool allowConnections = (clientCount <= maxClientCount);
-		thread process(recieveClientData, cfd, client_addr, allowConnections);
-		process.detach();
+void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, socklen_t sinSize) {
+  // accept connections
+  while (listening) {
+    sinSize = sizeof client_addr;
+	if ((cfd = accept(sfd, (struct sockaddr*) (&client_addr), &sinSize)) == -1) {
+	  cout << "accept error" << endl;
+	  exit(-1);
 	}
+	clientCount++;
+	bool allowConnections = (clientCount <= maxClientCount);
+	thread process(recieveClientData, cfd, client_addr, allowConnections);
+	process.detach();
+  }
 }
 
 void serverInit() {
+  int sfd, cfd;
+  struct sockaddr_storage client_addr; // client address information
+  socklen_t sinSize;
   if (serverConnected) {
 	  cout << endl << warning("El servidor ya se encuentra conectado") << endl;
 	  serverMenu.display();
@@ -185,7 +183,7 @@ void serverInit() {
   serverConnected = true;
 
   // accept connections
-  std::thread t2 (serverListening);
+  std::thread t2 (serverListening, sfd, cfd, client_addr, sinSize);
   t2.detach();
   }
 
