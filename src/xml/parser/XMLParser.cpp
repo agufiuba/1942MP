@@ -3,18 +3,20 @@
 #include <iostream>
 #include <regex>
 
+#include "../../logger/Logger.h"
 #include "../../utils/Defaults.h"
 
 using namespace tinyxml2;
 using namespace std;
 
 ServerConf* XMLParser::parseServerConf(string fn) {
+	Logger* l = Logger::instance();
 	XMLDocument doc;
 	int maxClients = Defaults::serverMaxClients;
 	int port = Defaults::serverPort;
 	bool createFile = false;
 	if (!doc.LoadFile(fn.c_str())) {
-		cout << "Info - Loading server configuration from file " << fn << endl;
+		l->info("Loading server configuration from file " + fn);
 		XMLElement* serverElement;
 		if (getElement(&doc, "server", serverElement)) {
 			XMLElement* maxClientsElement;
@@ -25,7 +27,7 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 			if (parsed)
 				maxClientsElement->QueryIntText(&maxClients);
 			else
-				cout << "Warn - Loading default server maxClients" << endl;
+				l->warn("Loading default server maxClients");
 			XMLElement* portElement;
 			parsed = getElement(serverElement, "port", portElement);
 			if (parsed)
@@ -33,32 +35,34 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 			if (parsed)
 				portElement->QueryIntText(&port);
 			else
-				cout << "Warn - Loading default server port" << endl;
+				l->warn("Loading default server port");
 		} else {
-			cout << "Warn - Loading default server configuration" << endl;
+			l->warn("Loading default server configuration");
 		}
 	} else {
 		createFile = true;
-		cout << "Error - Loading file" << endl;
-		cout << "Warn - Loading default server configuration" << endl;
+		l->error("Loading file");
+		l->warn("Loading default server configuration");
 	}
-	cout << "Info - Loaded configuration { maxClients: " << maxClients
-			<< ", port: " << port << " }" << endl;
+	l->info(
+			"Loaded configuration { maxClients: " + to_string(maxClients)
+					+ ", port: " + to_string(port) + " }");
 	ServerConf* sc = new ServerConf(maxClients, port);
 	if (createFile) {
-		cout << "Info - Saving default server configuration XML file" << endl;
+		l->info("Saving default server configuration XML file");
 		createXML(sc);
 	}
 	return sc;
 }
 
 ClientConf* XMLParser::parseClientConf(string fn) {
+	Logger* l = Logger::instance();
 	XMLDocument doc;
 	int serverPort = Defaults::serverPort;
-	const char* serverIP = Defaults::serverIP;
+	string serverIP = Defaults::serverIP;
 	vector<Msg*> messages = vector<Msg*>();
 	if (!doc.LoadFile(fn.c_str())) {
-		cout << "Info - Loading client configuration from file " << fn << endl;
+		l->info("Loading client configuration from file " + fn);
 		XMLElement* clientElement;
 		if (getElement(&doc, "client", clientElement)) {
 			XMLElement* serverIPElement;
@@ -69,7 +73,7 @@ ClientConf* XMLParser::parseClientConf(string fn) {
 			if (parsed)
 				serverIP = serverIPElement->GetText();
 			else
-				cout << "Warn - Loading default client server IP" << endl;
+				l->warn("Loading default client server IP");
 			XMLElement* serverPortElement;
 			parsed = getElement(clientElement, "serverPort", serverPortElement);
 			if (parsed)
@@ -77,22 +81,24 @@ ClientConf* XMLParser::parseClientConf(string fn) {
 			if (parsed)
 				serverPortElement->QueryIntText(&serverPort);
 			else
-				cout << "Warn - Loading default client server port" << endl;
+				l->warn("Loading default client server port");
 			messages = parseMsgs(clientElement);
 		} else {
-			cout << "Warn - Loading default client configuration" << endl;
+			l->warn("Loading default client configuration");
 		}
 	} else {
-		cout << "Error - Loading file" << endl;
-		cout << "Warn - Loading default client configuration" << endl;
+		l->error("Loading file");
+		l->warn("Loading default client configuration");
 	}
-	cout << "Info - Loaded configuration { serverIP: " << serverIP
-			<< ", serverPort: " << serverPort << " }" << endl;
+	l->info(
+			"Loaded configuration { serverIP: " + serverIP + ", serverPort: "
+					+ to_string(serverPort) + " }");
 	return new ClientConf(serverIP, serverPort, messages);
 }
 
 Msg* XMLParser::parseMsg(XMLElement* msg) {
-	cout << "Info - Reading message" << endl;
+	Logger* l = Logger::instance();
+	l->info("Reading message");
 
 	// Validar id
 	string id = msg->FirstChildElement("id")->GetText();
@@ -102,18 +108,20 @@ Msg* XMLParser::parseMsg(XMLElement* msg) {
 	if (validInt(typeElement, ("message " + id + "#type").c_str()))
 		typeElement->QueryIntText(&type);
 	else
-		cout << "Warn - Loading default message type: String" << endl;
+		l->warn("Loading default message type: String");
 
 	// Validar valor segun el tipo
 	string value = msg->FirstChildElement("value")->GetText();
 
-	cout << "Info - Read message { id: " << id << ", type: " << type
-			<< ", value: " << value << " }" << endl;
+	l->info(
+			"Read message { id: " + id + ", type: " + to_string(type)
+					+ ", value: " + value + " }");
 	return new Msg(id, type, value);
 }
 
 vector<Msg*> XMLParser::parseMsgs(XMLElement* e) {
-	cout << "Info - Reading list of messages" << endl;
+	Logger* l = Logger::instance();
+	l->info("Reading list of messages");
 	vector<Msg*> msgs;
 	for (XMLElement* msgElement = e->FirstChildElement("message");
 			msgElement != NULL;
@@ -123,51 +131,56 @@ vector<Msg*> XMLParser::parseMsgs(XMLElement* e) {
 	return msgs;
 }
 
-bool XMLParser::getElement(XMLElement* root, const char* en, XMLElement*& e) {
-	e = root->FirstChildElement(en);
+bool XMLParser::getElement(XMLElement* root, string en, XMLElement*& e) {
+	Logger* l = Logger::instance();
+	e = root->FirstChildElement(en.c_str());
 	if (e)
 		return true;
 	else {
-		cout << "Error - Element '" << en << "' not found" << endl;
+		l->error("Element '" + en + "' not found");
 		return false;
 	}
 }
 
-bool XMLParser::getElement(XMLDocument* root, const char* en, XMLElement*& e) {
-	e = root->FirstChildElement(en);
+bool XMLParser::getElement(XMLDocument* root, string en, XMLElement*& e) {
+	Logger* l = Logger::instance();
+	e = root->FirstChildElement(en.c_str());
 	if (e)
 		return true;
 	else {
-		cout << "Error - Element '" << en << "' not found" << endl;
+		l->error("Element '" + en + "' not found");
 		return false;
 	}
 }
 
 bool XMLParser::validInt(XMLElement* e) {
+	Logger* l = Logger::instance();
 	const char* rstr = "^[1-9]\\d*$";
 	regex r = regex(rstr);
 	bool match = regex_match(e->GetText(), r);
 	if (!match)
-		cout << "Error - Parsing `int` from " << e->Name() << endl;
+		l->error(strcat("Parsing `int` from ", e->Name()));
 	return match;
 }
 
-bool XMLParser::validInt(XMLElement* e, const char* end) {
+bool XMLParser::validInt(XMLElement* e, string end) {
+	Logger* l = Logger::instance();
 	const char* rstr = "^[1-9]\\d*$";
 	regex r = regex(rstr);
 	bool match = regex_match(e->GetText(), r);
 	if (!match)
-		cout << "Error - Parsing `int` from " << end << endl;
+		l->error("Parsing `int` from " + end);
 	return match;
 }
 
 bool XMLParser::validIP(const char* ip) {
+	Logger* l = Logger::instance();
 	const char* rstr =
 			"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
 	regex r = regex(rstr);
 	bool match = regex_match(ip, r);
 	if (!match)
-		cout << "Error - Parsing `IP` from serverIP" << endl;
+		l->error("Parsing `IP` from serverIP");
 	return match;
 }
 
