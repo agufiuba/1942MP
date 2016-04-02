@@ -21,6 +21,12 @@ Menu clientMenu("Menu de opciones del Cliente");
 const int MSG_QUANTITY = 4;
 string msgQueue[MSG_QUANTITY] = { "hola", "mundo", "chau", "gente" };
 
+typedef struct Mensaje {
+  string id;
+  string tipo;
+  string valor;
+} Mensaje;
+
 void closeConnection() {
   close(gfd);
   connected = false;
@@ -28,21 +34,21 @@ void closeConnection() {
 }
 
 void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char * IP){
-	int numBytesRead = 1;
-	while (numBytesRead != 0 && numBytesRead != -1) {
-	  if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-	    cout << "recv error" << endl;
-	    exit(-1);
-	  }
-	  if (numBytesRead) {
-	    buf[numBytesRead] = '\0';
-	    cout << "Mensaje del servidor: " << buf << endl;
-	  } else {
-	    cout << endl << warning("Se perdio la conexion con el servidor.") << endl;
-	    connected = false;
-	    close(sfd);
-	  }
-	}
+  int numBytesRead = 1;
+  while(numBytesRead != 0 && numBytesRead != -1) {
+    if((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
+      cout << "recv error" << endl;
+      exit(-1);
+    }
+    if(numBytesRead) {
+      buf[numBytesRead] = '\0';
+      cout << "Mensaje del servidor: " << buf << endl;
+    } else {
+      cout << endl << warning("Se perdio la conexion con el servidor.") << endl;
+      connected = false;
+      close(sfd);
+    }
+  }
 }
 
 void srvConnect() {
@@ -85,11 +91,11 @@ void srvConnect() {
       /* 5s delay for retry */
       if(triesLeft) {
 	cout << endl << warning("Error de conexion.") << endl
-	     << "Reintentando conexion..." << endl;
+	  << "Reintentando conexion..." << endl;
 	usleep(5000000);
       } else {
 	cout << endl << warning("No se pudo establecer una conexion con el servidor: ")
-	     << IP << endl << "Por favor intente nuevamente mas tarde." << endl;
+	  << IP << endl << "Por favor intente nuevamente mas tarde." << endl;
 	return;
       }
     } else {
