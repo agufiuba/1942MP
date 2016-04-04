@@ -11,11 +11,14 @@
 #include <thread>
 #include "../libs/menu/Menu.h"
 #include "../libs/palette/palette.h"
+#include "../xml/parser/XMLParser.h"
+#include "../xml/conf/ClientConf.h"
 
 using namespace std;
 
 int gfd = 0;
 bool connected = false;
+ClientConf* cc;
 
 Menu clientMenu("Menu de opciones del Cliente");
 const int MSG_QUANTITY = 4;
@@ -51,12 +54,12 @@ void srvConnect() {
     return;
   }
 
-  const int PORT = 5340;
+//  const int PORT = 5340;
   const int MAX_DATA_SIZE = 100; /* Max. number of bytes for recv */
   int sfd, numBytesRead;
   char buf[MAX_DATA_SIZE]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
-  const char* IP = "127.0.0.1";
+//  const char* IP = "127.0.0.1";
 
   /* Create socket */
   if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -67,8 +70,8 @@ void srvConnect() {
   gfd = sfd;
 
   server.sin_family = AF_INET;
-  server.sin_port = htons(PORT);
-  if ((inet_aton(IP, &server.sin_addr)) == 0) {
+  server.sin_port = htons(cc->getServerPort());
+  if ((inet_aton(cc->getServerIP().c_str(), &server.sin_addr)) == 0) {
     cout << "invalid IP" << endl;
     exit(-1);
   }
@@ -89,7 +92,7 @@ void srvConnect() {
 	usleep(5000000);
       } else {
 	cout << endl << warning("No se pudo establecer una conexion con el servidor: ")
-	     << IP << endl << "Por favor intente nuevamente mas tarde." << endl;
+	     << cc->getServerIP() << endl << "Por favor intente nuevamente mas tarde." << endl;
 	return;
       }
     } else {
@@ -101,7 +104,7 @@ void srvConnect() {
     exit(-1);
   }
   if (numBytesRead) {
-    cout << endl << notice("Se establecio una conexion con: ") << IP << endl;
+    cout << endl << notice("Se establecio una conexion con: ") << cc->getServerIP() << endl;
     buf[numBytesRead] = '\0';
     cout << "Mensaje del servidor: " << buf << endl;
   } else {
@@ -110,7 +113,7 @@ void srvConnect() {
     close(sfd);
   }
 
-  std::thread tReceiving (receiving, sfd, buf, MAX_DATA_SIZE, IP);
+  std::thread tReceiving (receiving, sfd, buf, MAX_DATA_SIZE, cc->getServerIP().c_str());
   tReceiving.detach();
 }
 
@@ -172,7 +175,8 @@ void cycle() {
 
 int main(int argc, char* argv[]) {
 
-  const char* fileName = argv[1] ? argv[1] : "default.xml";
+  const char* fileName = argv[1] ? argv[1] : "default-cc.xml";
+  cc = XMLParser::parseClientConf(fileName);
 
   clientMenu.addOption("Conectar", srvConnect);
   clientMenu.addOption("Desconectar", srvDisconnect);

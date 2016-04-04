@@ -17,8 +17,8 @@ class Menu {
 
   public:
     Menu(std::string title);
-    void addOption(std::string optionName, std::function<void()>); 
-    void addOption(std::string optionName, std::function<void(int)>, int); 
+    void addOption(std::string optionName, std::function<void()>);
+    void addOption(std::string optionName, std::function<void(int)>, int);
     void removeOption(std::string optionName);
     void display();
 };
