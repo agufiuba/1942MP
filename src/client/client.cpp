@@ -61,6 +61,7 @@ void srvConnect() {
   	return;
   }
 
+
 //  const int PORT = 5340;
   const int MAX_DATA_SIZE = 10000; /* Max. number of bytes for recv */
   int sfd, numBytesRead;

@@ -34,7 +34,6 @@ ServerConf* sc;
 
 int clientCount = 0;
 
-
 map<int,char*>* clientFD;
 
 int gfd = 0;
@@ -223,6 +222,7 @@ void exitPgm() {
 
 void sendingData(int cfd, string data, int dataLength){
 	bool notSent = true;
+	//TODO: falta agregar de que no loopee si llega a estar desconectado el cliente
 	while (notSent){
 		if (send(cfd, data.c_str(), dataLength, 0) == -1) {
 		    cout << "send error" << endl;
@@ -244,6 +244,7 @@ void threadProcesador() {
       cout << "IP cliente: " << it->first << " --  Mensaje: " << it->second << endl;
 
 			logger->info("Msj de cliente: " + string(it->second));
+
 			thread tSending(sendingData, it->first, it->second , MAX_CHAR_LENGTH);
 			tSending.detach();
 
