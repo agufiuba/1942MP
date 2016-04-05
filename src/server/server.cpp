@@ -95,15 +95,18 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 
 				clientFD = new map<int,char*>();
 				clientFD->insert(pair<int,char*>(cfd,buf));
+
 				msgQueue->push(clientFD);
 
 				cout << endl << "Pongo mensaje del cliente: " << buf << endl;
 				theMutex.unlock();
+
 			} else {
 				receiving = false;
 				cout << endl << warning("El cliente ") << clientIP
 				    << warning(" se desconecto") << endl;
 				logger->warn("El Cliente " + string(clientIP) + " se desconecto");
+
 				closeClient(cfd);
 			}
 		}
@@ -113,7 +116,6 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 		logger->warn("El cliente " + string(clientIP) + " se rechazo");
 		closeClient(cfd);
 	}
-
 }
 
 void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, socklen_t sinSize) {
@@ -215,6 +217,7 @@ void serverInit() {
 void exitPgm() {
 	cout << endl << warning("Cerrando el servidor...") << endl;
 	logger->warn("Cerrando el servidor...");
+	delete msgQueue;
 	exit(0);
 }
 
@@ -236,7 +239,6 @@ void threadProcesador() {
 			cout << "Saco Msj de la cola" << endl;
       map<int,char*>* data = msgQueue->front();
 			msgQueue->pop();
-			theMutex.unlock();
 
       map<int,char*>::iterator it = data->begin();
       cout << "IP cliente: " << it->first << " --  Mensaje: " << it->second << endl;
@@ -244,6 +246,10 @@ void threadProcesador() {
 			logger->info("Msj de cliente: " + string(it->second));
 			thread tSending(sendingData, it->first, it->second , MAX_CHAR_LENGTH);
 			tSending.detach();
+
+			delete clientFD;
+
+			theMutex.unlock();
 		}
 	}
 }
