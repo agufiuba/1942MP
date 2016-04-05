@@ -4,6 +4,8 @@
 *.lo
 *.o
 *.obj
+/src/server/server
+/src/client/client
 
 # Precompiled Headers
 *.gch
