@@ -51,7 +51,7 @@ void srvConnect() {
   }
 
   const int PORT = 5340;
-  const int MAX_DATA_SIZE = 100; /* Max. number of bytes for recv */
+  const int MAX_DATA_SIZE = 10000; /* Max. number of bytes for recv */
   int sfd, numBytesRead;
   char buf[MAX_DATA_SIZE]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
@@ -167,6 +167,7 @@ void cycle() {
       usleep(timeout * 1000);
     }
   }
+  usleep(5000);//agregado solo para que reciba el ultimo mensaje del servidor
 }
 
 int main(int argc, char* argv[]) {

@@ -18,7 +18,7 @@
 
 using namespace std;
 
-const int MAX_CHAR_LENGTH = 2;
+const int MAX_CHAR_LENGTH = 10;
 Menu serverMenu("Menu de opciones del Servidor");
 //queue<const char*>* msgQueue = new queue<const char*>;
 queue<map<int,char*>*>* msgQueue = new queue<map<int,char*>*>;
@@ -27,7 +27,6 @@ mutex theMutex;
 
 int maxClientCount = 2;
 int clientCount = 0;
-
 
 map<int,char*>* clientFD;
 
@@ -84,12 +83,10 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 				buf[numBytesRead] = '\0';
 				cout << "************************" << endl;
 				theMutex.lock();
-				//msgQueue->push(buf);
 
 				clientFD = new map<int, char*>();
-
 				clientFD->insert(pair<int, char*>(cfd, buf));
-				//clientFD[cfd] = buf;
+
 				msgQueue->push(clientFD);
 
 				cout << endl << "Pongo mensaje del cliente: " << buf << endl;
@@ -212,6 +209,7 @@ void exitPgm() {
 
 void sendingData(int cfd, string data, int dataLength){
 	bool notSent = true;
+	//TODO: falta agregar de que no loopee si llega a estar desconectado el cliente
 	while (notSent){
 		if (send(cfd, data.c_str(), dataLength, 0) == -1) {
 		    cout << "send error" << endl;
@@ -225,7 +223,7 @@ void threadProcesador() {
   while (true) {
     if (!msgQueue->empty()) {
       theMutex.lock();
-      cout << "------------------------------------" << endl;
+      cout << endl << "------------------------------------" << endl;
       cout << "Saco Msj de la cola" << endl;
       clientFD = msgQueue->front();
       msgQueue->pop();
