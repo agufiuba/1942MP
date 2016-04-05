@@ -56,56 +56,57 @@ void* get_in_addr(struct sockaddr* sa) {
   }
 }
 
-void recieveClientData(int cfd, struct sockaddr_storage client_addr, bool allowConnections) {
-  int numBytesRead;
-  char clientIP[INET_ADDRSTRLEN]; // connected client IP
-  const int MAX_DATA_SIZE = 100;
-  char buf[MAX_DATA_SIZE]; // data buffer
+void recieveClientData(int cfd, struct sockaddr_storage client_addr,
+		bool allowConnections) {
+	int numBytesRead;
+	char clientIP[INET_ADDRSTRLEN]; // connected client IP
+	const int MAX_DATA_SIZE = 100;
+	char buf[MAX_DATA_SIZE]; // data buffer
 
-  // get connected host IP in presentation format
-  inet_ntop(client_addr.ss_family,
-      get_in_addr((struct sockaddr*) (&client_addr)), clientIP,
-      sizeof clientIP);
+	// get connected host IP in presentation format
+	inet_ntop(client_addr.ss_family,
+			get_in_addr((struct sockaddr*) (&client_addr)), clientIP,
+			sizeof clientIP);
 
-  cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
-       << endl;
+	cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
+			<< endl;
 
-  if (allowConnections) {
-    if (send(cfd, "Aceptado", 12, 0) == -1) {
-      cout << "send error" << endl;
-    }
-    bool receiving = true;
-    while (receiving) {
-      if ((numBytesRead = recv(cfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-	cout << "recv error" << endl;
-      }
-      if (numBytesRead) {
-	buf[numBytesRead] = '\0';
-	cout << "************************" << endl;
-	theMutex.lock();
-	//msgQueue->push(buf);
+	if (allowConnections) {
+		if (send(cfd, "Aceptado", 12, 0) == -1) {
+			cout << "send error" << endl;
+		}
+		bool receiving = true;
+		while (receiving) {
+			if ((numBytesRead = recv(cfd, buf, MAX_DATA_SIZE, 0)) == -1) {
+				cout << "recv error" << endl;
+			}
+			if (numBytesRead) {
+				buf[numBytesRead] = '\0';
+				cout << "************************" << endl;
+				theMutex.lock();
+				//msgQueue->push(buf);
 
-	clientFD = new map<int,char*>();
+				clientFD = new map<int, char*>();
 
-	clientFD->insert(pair<int,char*>(cfd,buf));
-	//clientFD[cfd] = buf;
-	msgQueue->push(clientFD);
+				clientFD->insert(pair<int, char*>(cfd, buf));
+				//clientFD[cfd] = buf;
+				msgQueue->push(clientFD);
 
-	cout << endl << "Pongo mensaje del cliente: " << buf << endl;
-	theMutex.unlock();
-	cout << "************************" << endl;
-      } else {
-	receiving = false;
-	cout << endl << warning("El cliente ") << clientIP
-	     << warning(" se desconecto") << endl;
-	closeClient(cfd);
-      }
-    }
-  } else {
-    cout << endl << warning("El cliente ") << clientIP
-	 << warning(" se rechazo") << endl;
-    closeClient(cfd);
-  }
+				cout << endl << "Pongo mensaje del cliente: " << buf << endl;
+				theMutex.unlock();
+				cout << "************************" << endl;
+			} else {
+				receiving = false;
+				cout << endl << warning("El cliente ") << clientIP
+						<< warning(" se desconecto") << endl;
+				closeClient(cfd);
+			}
+		}
+	} else {
+		cout << endl << warning("El cliente ") << clientIP << warning(" se rechazo")
+				<< endl;
+		closeClient(cfd);
+	}
 }
 
 void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, socklen_t sinSize) {
@@ -204,6 +205,8 @@ void serverInit() {
 
 void exitPgm() {
   cout << endl << warning("Cerrando el servidor...") << endl;
+  delete msgQueue;
+
   exit(0);
 }
 
@@ -224,16 +227,18 @@ void threadProcesador() {
       theMutex.lock();
       cout << "------------------------------------" << endl;
       cout << "Saco Msj de la cola" << endl;
-      map<int,char*>* data = msgQueue->front();
+      clientFD = msgQueue->front();
       msgQueue->pop();
       cout << "------------------------------------" << endl;
-      theMutex.unlock();
 
-      map<int,char*>::iterator it = data->begin();
+      map<int,char*>::iterator it = clientFD->begin();
       cout << it->first << it->second << endl;
-
 			thread tSending(sendingData, it->first, it->second , MAX_CHAR_LENGTH);
 			tSending.detach();
+
+		  delete clientFD;
+
+			theMutex.unlock();
     }
   }
 }
