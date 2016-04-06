@@ -13,13 +13,16 @@
 #include "../libs/menu/Menu.h"
 #include "../libs/palette/palette.h"
 #include "../logger/Logger.h"
+#include "../xml/parser/XMLParser.h"
+#include "../xml/conf/ClientConf.h"
 
 using namespace std;
 
 int gfd = 0;
 bool connected = false;
-
+ClientConf* cc;
 Logger* logger = Logger::instance();
+
 Menu clientMenu("Menu de opciones del Cliente");
 const int MSG_QUANTITY = 4;
 string msgQueue[MSG_QUANTITY] = { "hola", "mundo", "chau", "gente" };
@@ -55,12 +58,12 @@ void srvConnect() {
   	return;
   }
 
-  const int PORT = 5340;
+//  const int PORT = 5340;
   const int MAX_DATA_SIZE = 100; /* Max. number of bytes for recv */
   int sfd, numBytesRead;
   char buf[MAX_DATA_SIZE]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
-  const char* IP = "127.0.0.1";
+//  const char* IP = "127.0.0.1";
 
   /* Create socket */
   if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -71,9 +74,9 @@ void srvConnect() {
   gfd = sfd;
 
   server.sin_family = AF_INET;
-  server.sin_port = htons(PORT);
-  if ((inet_aton(IP, &server.sin_addr)) == 0) {
-  	logger->error("IP Invalido");
+  server.sin_port = htons(cc->getServerPort());
+  if ((inet_aton(cc->getServerIP().c_str(), &server.sin_addr)) == 0) {
+    logger->error("IP invalido");
     exit(-1);
   }
 
@@ -93,9 +96,9 @@ void srvConnect() {
 	usleep(5000000);
       } else {
       	logger->warn("No se pudo establecer una conexion con el servidor: "
-      			+string(IP)+" Por favor intente nuevamente mas tarde.");
+      			+cc->getServerIP()+" Por favor intente nuevamente mas tarde.");
       	cout << endl << warning("No se pudo establecer una conexion con el servidor: ")
-	     << IP << endl << "Por favor intente nuevamente mas tarde." << endl;
+	     << cc->getServerIP() << endl << "Por favor intente nuevamente mas tarde." << endl;
 	return;
       }
     } else {
@@ -107,8 +110,8 @@ void srvConnect() {
   	exit(-1);
   }
   if (numBytesRead) {
-  	logger->info("Se establecio una conexion con: "+string(IP));
-    cout << endl << notice("Se establecio una conexion con: ") << IP << endl;
+  	logger->info("Se establecio una conexion con: "+cc->getServerIP());
+    cout << endl << notice("Se establecio una conexion con: ") << cc->getServerIP() << endl;
     buf[numBytesRead] = '\0';
     logger->info("Mensaje del servidor: " +string(buf) );
     cout << "Mensaje del servidor: " << buf << endl;
@@ -119,13 +122,13 @@ void srvConnect() {
     close(sfd);
   }
 
-  std::thread tReceiving (receiving, sfd, buf, MAX_DATA_SIZE, IP);
+  std::thread tReceiving (receiving, sfd, buf, MAX_DATA_SIZE, cc->getServerIP().c_str());
   tReceiving.detach();
 }
 
 void sendData(string data, int dataLength) {
   if (send(gfd, data.c_str(), dataLength, 0) == -1) {
-    logger->error("Falla al Enviar");
+    cout << "send error" << endl;
   }
 }
 
@@ -133,7 +136,6 @@ void srvDisconnect() {
   if (connected) {
     closeConnection();
   } else {
-  	logger->warn("No hay una conexion activa");
     cout << endl << warning("No hay una conexion activa") << endl;
   }
 }
@@ -141,24 +143,22 @@ void srvDisconnect() {
 void exitPgm() {
   if (connected)
     closeConnection();
-  	logger->warn("Cerrando el cliente...");
-  	cout << endl << warning("Cerrando el cliente...") << endl;
+
+  cout << endl << warning("Cerrando el cliente...") << endl;
   exit(1);
 }
 
 void sendMsg(int id) {
   if (!connected) {
-  		cout << endl
+    cout << endl
       << warning("Para mandar un mensaje debe estar conectado al servidor.")
       << endl;
-  		logger->warn("Para mandar un mensaje debe estar conectado al servidor.");
     return;
   }
 
   string data = msgQueue[id];
   int dataLength = msgQueue[id].length();
   cout << endl << "Se envio '" << notice(data) << "' al servidor" << endl;
-  logger->info("Se envio '" + data + "' al servidor");
   sendData(data, dataLength);
 }
 
@@ -173,7 +173,6 @@ void cycle() {
   int timeout = 0;
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
-  logger->info("Ejecuando Ciclar. Envio msj cada: "+to_string(timeout)+" milisegundos.");
 
   for (int i = 0; i < MSG_QUANTITY; i++) {
     sendMsg(i);

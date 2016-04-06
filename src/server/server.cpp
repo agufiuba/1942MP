@@ -16,6 +16,8 @@
 #include <thread>
 #include <queue>
 #include "../logger/Logger.h"
+#include "../xml/parser/XMLParser.h"
+#include "../xml/conf/ServerConf.h"
 
 using namespace std;
 
@@ -23,8 +25,8 @@ Logger* logger = Logger::instance();
 Menu serverMenu("Menu de opciones del Servidor");
 queue<const char*>* msgQueue = new queue<const char*>;
 mutex theMutex;
+ServerConf* sc;
 
-int maxClientCount = 2;
 int clientCount = 0;
 
 int gfd = 0;
@@ -112,10 +114,14 @@ void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr,
 			exit(-1);
 		}
 		clientCount++;
-		bool allowConnections = (clientCount <= maxClientCount);
+		bool allowConnections = (clientCount <= sc->getMaxClients());
 		thread process(recieveClientData, cfd, client_addr, allowConnections);
 		process.detach();
 	}
+	clientCount++;
+	bool allowConnections = (clientCount <= sc->getMaxClients());
+	thread process(recieveClientData, cfd, client_addr, allowConnections);
+	process.detach();
 }
 
 void serverInit() {
