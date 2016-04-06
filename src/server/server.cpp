@@ -18,8 +18,10 @@
 
 using namespace std;
 
-typedef struct {
-	string id;
+typedef struct Mensaje{
+  string id;
+  string tipo;
+  string valor;
 } Mensaje;
 
 Menu serverMenu("Menu de opciones del Servidor");
@@ -54,12 +56,39 @@ void* get_in_addr(struct sockaddr* sa) {
 	}
 }
 
+void desSerialize(char* data, Mensaje* mensaje) {
+	cout << "desSerializando:" << data << endl;
+	string dataString(data);
+	string separador = "-";
+	int separadores = 0;
+
+	for (unsigned int i = 0 ; i < dataString.length(); i++) {
+
+		string letra = dataString.substr(i,1);
+		if (letra.compare("\0") != 0) {
+
+			if (separadores < 3 && letra.compare(separador) == 0 ) {
+				separadores++;
+				continue;
+			}
+
+			if (separadores == 0) {
+				mensaje->id += letra;
+			} else if (separadores == 1) {
+				mensaje->tipo += letra;
+			} else {
+				mensaje->valor += letra;
+			}
+		}
+	}
+}
+
 void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 		bool allowConnections) {
 	int numBytesRead;
 	char clientIP[INET_ADDRSTRLEN]; // connected client IP
 	const int MAX_DATA_SIZE = 100;
-	Mensaje* buf; // data buffer
+	Mensaje* buf = new Mensaje; // data buffer
 
 	// get connected host IP in presentation format
 	inet_ntop(client_addr.ss_family,
@@ -78,12 +107,11 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 		}
 
 		bool receiving = true;
+		char* data;
 		while (receiving) {
-
-			char* ray;
-
-			if ((numBytesRead = recv(cfd, buf, sizeof(buf), 0)) == -1) {
+			if ((numBytesRead = recv(cfd, data, sizeof(buf), 0)) == -1) {
 				cout << "recv error" << endl;
+				receiving = false;
 			}
 
 			if (numBytesRead) {
@@ -91,11 +119,12 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 				theMutex.lock();
 				msgQueue->push(buf);
 
-				if (ray == NULL) {
-					cout << endl << "No se recibio mensaje. culpa de key " << endl;
+				if (data == NULL) {
+					cout << endl << "No se recibio mensaje " << endl;
 				} else {
-					cout << endl << "Pongo mensaje: " << buf << endl;
-					//cout << endl << "Pongo mensaje valor: " << buf->id << endl;
+
+					//desSerialize(data, buf);
+					cout << endl << "Pongo mensaje: " << data << endl;
 				}
 
 				theMutex.unlock();

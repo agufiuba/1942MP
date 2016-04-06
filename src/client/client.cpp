@@ -63,7 +63,7 @@ void srvConnect() {
   int sfd, numBytesRead;
   char buf[MAX_DATA_SIZE]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
-  const char* IP = "192.168.1.109";
+  const char* IP = "127.0.0.1";
 
   /* Create socket */
   if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -121,8 +121,29 @@ void srvConnect() {
   tReceiving.detach();
 }
 
-void sendData(Mensaje data, int dataLength) {
-  if (send(gfd, &data, dataLength, 0) == -1) {
+void serialize(Mensaje* mensaje, char* data) {
+
+	char *id = new char[sizeof(mensaje->id)];
+	char *tipo = new char[sizeof(mensaje->tipo)];
+	char *valor = new char[sizeof(mensaje->valor)];
+
+	std::copy(mensaje->id.begin(),mensaje->id.end(), id);
+	std::copy(mensaje->tipo.begin(),mensaje->tipo.end(),tipo);
+	std::copy(mensaje->valor.begin(),mensaje->valor.end(),valor);
+
+	strcat(data,id);
+	strcat(data,"-");
+	strcat(data,tipo);
+	strcat(data,"-");
+	strcat(data,valor);
+
+	cout << "serializando: "<< data << endl;
+}
+
+void sendData(Mensaje* data, int dataLength) {
+	char* dataSerialize = new char[dataLength];
+	serialize(data, dataSerialize);
+  if (send(gfd, dataSerialize, dataLength, 0) == -1) {
     cout << "send error" << endl;
   }
 }
@@ -161,21 +182,20 @@ void sendMsg(string id) {
   }
 
   int dataLength = sizeof(Mensaje); 
-  cout << msgToSend;
-  cout << endl << "Se envio '" << notice(msgToSend->valor) << "' al servidor" << endl;
-  sendData(*msgToSend, dataLength);
+//  cout << msgToSend;
+  sendData(msgToSend, dataLength);
 }
 
 void addMsgOptions() {
   Mensaje* msg1 = new Mensaje;
-  msg1->id = "id8912";
+  msg1->id = "01";
   msg1->tipo = "int";
-  msg1->valor = "28";
+  msg1->valor = "valor del 01";
 
   Mensaje* msg2 = new Mensaje;
-  msg2->id = "id1238";
+  msg2->id = "02";
   msg2->tipo = "string";
-  msg2->valor = "kkkeeeeeeeeeeeeyyyyyyyy";
+  msg2->valor = "valor 02";
 
   mejus[0] = msg1;
   mejus[1] = msg2;

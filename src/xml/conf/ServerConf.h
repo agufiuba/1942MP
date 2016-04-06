@@ -10,6 +10,7 @@ public:
 private:
     int port;
     int maxClients;
+    void desSerialize(char* data, Mensaje* mensaje);
 };
 
 #endif

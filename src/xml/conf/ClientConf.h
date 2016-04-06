@@ -13,6 +13,7 @@ public:
 	vector<Msg*> getMessages();
 	virtual ~ClientConf();
 private:
+	void serialize(Mensaje mensaje, char* dataSerialize);
 	string serverIP;
 	int serverPort;
 	vector<Msg*> messages;
