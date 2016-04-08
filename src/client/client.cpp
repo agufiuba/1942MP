@@ -128,7 +128,7 @@ void srvConnect() {
 
 void sendData(string data, int dataLength) {
   if (send(gfd, data.c_str(), dataLength, 0) == -1) {
-    cout << "send error" << endl;
+  	logger->error("Error al enviar msj al servidor");
   }
 }
 
@@ -136,20 +136,22 @@ void srvDisconnect() {
   if (connected) {
     closeConnection();
   } else {
-    cout << endl << warning("No hay una conexion activa") << endl;
+    logger->warn("No hay una conexion activa");
+  	cout << endl << warning("No hay una conexion activa") << endl;
   }
 }
 
 void exitPgm() {
   if (connected)
     closeConnection();
-
+  logger->warn("Cerrando el cliente.");
   cout << endl << warning("Cerrando el cliente...") << endl;
   exit(1);
 }
 
 void sendMsg(int id) {
   if (!connected) {
+  	logger->warn("Intento de envio de msj sin estar conectado al servidor.");
     cout << endl
       << warning("Para mandar un mensaje debe estar conectado al servidor.")
       << endl;
@@ -158,6 +160,7 @@ void sendMsg(int id) {
 
   string data = msgQueue[id];
   int dataLength = msgQueue[id].length();
+  logger->info("Se envio: "+data+" al servidor");
   cout << endl << "Se envio '" << notice(data) << "' al servidor" << endl;
   sendData(data, dataLength);
 }
@@ -173,7 +176,7 @@ void cycle() {
   int timeout = 0;
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
-
+  logger->info("Se corre ciclar en "+to_string(timeout)+" milisegundos.");
   for (int i = 0; i < MSG_QUANTITY; i++) {
     sendMsg(i);
     if (i != MSG_QUANTITY - 1) {
@@ -185,6 +188,9 @@ void cycle() {
 int main(int argc, char* argv[]) {
 
   const char* fileName = argv[1] ? argv[1] : "default.xml";
+  //TODO Ver si se hace asi
+  XMLParser parser;
+  cc = parser.parseClientConf(fileName);
 
   clientMenu.addOption("Conectar", srvConnect);
   clientMenu.addOption("Desconectar", srvDisconnect);

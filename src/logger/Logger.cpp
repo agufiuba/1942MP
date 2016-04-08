@@ -4,12 +4,14 @@ using namespace std;
 
 const int MAX_LENGHT_FILE_LOG = 10000;
 Logger* loggerInstance = NULL;
-string fileLogPath = "logs/logger.log";
+string directory = "./logs/";
 string fileLogName = "logger.log";
+string fileLogPath = directory+fileLogName;
 ofstream fileLog;
 
 Logger::Logger() {
-
+	string createDir = "mkdir -p "+directory;
+	system(createDir.c_str());
 	ofstream file(fileLogPath.c_str(), ios::app | ios::binary);
 
 	if (!file) {

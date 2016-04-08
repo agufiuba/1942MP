@@ -25,7 +25,7 @@ class Logger
         virtual ~Logger();
         string timeCurrent();
         void truncateFileLog();
-		int lengthFileLog();
+        int lengthFileLog();
 };
 
 #endif // LOGGER_H
