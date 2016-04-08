@@ -237,7 +237,7 @@ string serverProcess (string tipo, string valor){
 	} else {
 
 		if (tipo == "DOUBLE"){
-			expr = "^-?([0-2]e-?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[0-9]{1,3}|[//.0-9]+)$";
+			expr = "^-?([0-2]e-?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
 			r = regex(expr);
 			if (regex_match(valor, r)) respuesta = true;
 
