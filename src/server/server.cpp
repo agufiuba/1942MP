@@ -87,7 +87,6 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 
 	msgQueue->push(clientFD);
 
-	cout << endl << "Pongo mensaje del cliente: " << buf << endl;
 	theMutex.unlock();
 
       } else {
@@ -212,7 +211,8 @@ void exitPgm() {
   if(serverConnected)
     closeConnection();
   logger->warn(SERVER_CLOSE);
-  DEBUG_WARN(SERVER_CLOSE);
+  //DEBUG_WARN(SERVER_CLOSE);
+
   exit(0);
 }
 
