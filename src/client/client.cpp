@@ -5,6 +5,7 @@
 #include "../xml/parser/XMLParser.h"
 #include "../xml/conf/ClientConf.h"
 #include <thread>
+#include <mutex>
 #include <iostream>
 #define DEBUG 1
 #include "../libs/debug/dg_msg.h"
@@ -15,7 +16,7 @@ int gfd = 0;
 bool connected = false;
 ClientConf* cc;
 Logger* logger = Logger::instance();
-
+mutex theMutex;
 Menu clientMenu("Menu de opciones del Cliente");
 const int MSG_QUANTITY = 4;
 string msgQueue[MSG_QUANTITY] = { "hola", "mundo", "chau", "gente" };
@@ -29,12 +30,12 @@ void closeConnection() {
 
 void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
   int numBytesRead = 1;
-  while (numBytesRead != 0 && numBytesRead != -1) {
+  while (numBytesRead>0) {
     if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
       logger->error(RECV_FAIL);
-      exit(-1);
     }
-    if (numBytesRead) {
+    theMutex.lock();
+    if (numBytesRead>0) {
       buf[numBytesRead] = '\0';
       string recvMsg = string(buf);
       logger->info(SERVER_MSG(recvMsg));
@@ -45,13 +46,16 @@ void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
       connected = false;
       close(sfd);
     }
+    theMutex.unlock();
   }
 }
 
 void srvConnect() {
   if (connected) {
     logger->warn(CONNECTION_ACTIVE);
+    theMutex.lock();
     DEBUG_WARN(CONNECTION_ACTIVE);
+    theMutex.unlock();
     return;
   }
 
@@ -88,11 +92,15 @@ void srvConnect() {
       /* 5s delay for retry */
       if(triesLeft) {
 	logger->error(CONNECTION_RETRY);
+	theMutex.lock();
 	DEBUG_WARN(CONNECTION_RETRY);
+	theMutex.unlock();
 	usleep(5000000);
       } else {
 	logger->warn(CONNECTION_ERROR(serverIP));
+	theMutex.lock();
 	DEBUG_PRINT(CONNECTION_ERROR(serverIP));
+	theMutex.unlock();
 	return;
       }
     } else {
@@ -103,18 +111,21 @@ void srvConnect() {
   // Get server welcome message
   if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
     logger->error(RECV_FAIL);
-    exit(-1);
   }
-  if (numBytesRead) {
+  if (numBytesRead>0) {
     logger->info(CONNECTION_SUCCESS(serverIP));
+    theMutex.lock();
     DEBUG_PRINT(CONNECTION_SUCCESS(serverIP));
     buf[numBytesRead] = '\0';
     string recvMsg = string(buf);
     logger->info(SERVER_MSG(recvMsg));
     DEBUG_PRINT(SERVER_MSG(recvMsg));
+    theMutex.unlock();
   } else {
     logger->warn(CONNECTION_LOST);
+    theMutex.lock();
     DEBUG_WARN(CONNECTION_LOST);
+    theMutex.unlock();
     connected = false;
     close(sfd);
   }
@@ -129,7 +140,9 @@ void srvDisconnect() {
     closeConnection();
   } else {
     logger->warn(CONNECTION_NOT_ACTIVE);
+    theMutex.lock();
     DEBUG_WARN(CONNECTION_NOT_ACTIVE);
+    theMutex.unlock();
   }
 }
 
@@ -137,14 +150,18 @@ void exitPgm() {
   if(connected)
     closeConnection();
   logger->warn(CLIENT_CLOSE);
+  theMutex.lock();
   DEBUG_WARN(CLIENT_CLOSE);
+  theMutex.unlock();
   exit(0);
 }
 
 bool sendData(string data, int dataLength) {
   if(send(gfd, data.c_str(), dataLength, 0) == -1) {
     logger->error(SEND_FAIL);
+    theMutex.lock();
     DEBUG_WARN(SEND_FAIL);
+    theMutex.unlock();
     return false;
   }
   return true;
@@ -153,14 +170,18 @@ bool sendData(string data, int dataLength) {
 bool sendMsg(int id) {
   if(!connected) {
     logger->warn(SEND_CERROR);
+    theMutex.lock();
     DEBUG_WARN(SEND_CERROR);
+    theMutex.unlock();
     return false;
   }
 
   string data = msgQueue[id];
   int dataLength = msgQueue[id].length();
   logger->info(SENT_DATA(data));
+  theMutex.lock();
   DEBUG_PRINT(SENT_DATA(data));
+  theMutex.unlock();
   return sendData(data, dataLength);
 }
 
