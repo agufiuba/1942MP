@@ -30,23 +30,38 @@ void closeConnection() {
 
 void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
   int numBytesRead = 1;
-  while (numBytesRead>0) {
+	timeval timeout;
+	timeout.tv_sec = 1;
+	timeout.tv_usec = 0;
+
+  while (connected) {
+
+		// seteo el timeout de recepcion de mensajes
+		if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
+			cout << "Error sockopt" << endl;
+			exit(1);
+		}
+
     if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-      logger->error(RECV_FAIL);
+			if (!connected) {
+				connected = false;
+				close(sfd);
+			} else {
+				logger->error(RECV_FAIL);
+			}
     }
-    theMutex.lock();
     if (numBytesRead>0) {
       buf[numBytesRead] = '\0';
       string recvMsg = string(buf);
       logger->info(SERVER_MSG(recvMsg));
       DEBUG_PRINT(SERVER_MSG(recvMsg));
-    } else {
-      logger->warn(CONNECTION_LOST);
-      DEBUG_WARN(CONNECTION_LOST);
-      connected = false;
-      close(sfd);
     }
-    theMutex.unlock();
+    if (numBytesRead == 0){
+			logger->warn(CONNECTION_LOST);
+			DEBUG_WARN(CONNECTION_LOST);
+			connected = false;
+			close(sfd);
+    }
   }
 }
 
