@@ -30,7 +30,7 @@ LINKER = -pthread
 WARN = -Wno-write-strings
 
 all : $(OBJS) 
-	$(CC) $(COMPILER) $(LINKER) $(WARN) $(OBJS) -o $(PROGRAM)
+	$(CC) $(COMPILER) $(LINKER) $(WARN) $(OBJS) -o $(PROGRAM).exe
 
 run:
-	./$(PROGRAM)
+	./$(PROGRAM).exe
