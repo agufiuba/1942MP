@@ -33,6 +33,11 @@ using namespace std;
 #define CONNECTION_ERROR(X) warning("No se pudo establecer una conexion con el servidor: ") \
 			    + X + "\nIntente nuevamente mas tarde." 
 #define CONNECTION_SUCCESS(X) notice("Se establecio una conexion con: ") + X
+#define RECV_FAIL "No se pudo recibir el mensaje."
+#define SEND_FAIL "No se pudo enviar el mensaje."
+#define SEND_CERROR "Debe estar conectado para poder enviar un mensaje."
+#define SOCKET_ERROR "No se pudo crear el socket."
+#define SERVER_MSG(X) "Se recibio del servidor el mensaje: " + notice(X)
 
 int gfd = 0;
 bool connected = false;
@@ -50,17 +55,18 @@ void closeConnection() {
   DEBUG_WARN(CONNECTION_CLOSE);
 }
 
-void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char * IP){
+void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
   int numBytesRead = 1;
   while (numBytesRead != 0 && numBytesRead != -1) {
     if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-      logger->error("Falla al recibir el Msj");
+      logger->error(RECV_FAIL);
       exit(-1);
     }
     if (numBytesRead) {
       buf[numBytesRead] = '\0';
-      logger->info("Mensaje del servidor: " + string(buf));
-      DEBUG_PRINT("Mensaje del servidor: " + string(buf));
+      string recvMsg = string(buf);
+      logger->info(SERVER_MSG(recvMsg));
+      DEBUG_PRINT(SERVER_MSG(recvMsg));
     } else {
       logger->warn(CONNECTION_LOST);
       DEBUG_WARN(CONNECTION_LOST);
@@ -85,7 +91,7 @@ void srvConnect() {
 
   /* Create socket */
   if ((sfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-    logger->error("Falla en el Socket");
+    logger->error(SOCKET_ERROR);
     exit(-1);
   }
 
@@ -93,7 +99,7 @@ void srvConnect() {
 
   server.sin_family = AF_INET;
   server.sin_port = htons(cc->getServerPort());
-  if ((inet_aton(cc->getServerIP().c_str(), &server.sin_addr)) == 0) {
+  if ((inet_aton(serverIP.c_str(), &server.sin_addr)) == 0) {
     logger->error("IP invalido");
     exit(-1);
   }
@@ -122,15 +128,16 @@ void srvConnect() {
     }
   }
   if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-    logger->error("Error al recibir Msj");
+    logger->error(RECV_FAIL);
     exit(-1);
   }
   if (numBytesRead) {
     logger->info(CONNECTION_SUCCESS(serverIP));
     DEBUG_PRINT(CONNECTION_SUCCESS(serverIP));
     buf[numBytesRead] = '\0';
-    logger->info("Mensaje del servidor: " +string(buf) );
-    cout << "Mensaje del servidor: " << buf << endl;
+    string recvMsg = string(buf);
+    logger->info(SERVER_MSG(recvMsg));
+    DEBUG_PRINT(SERVER_MSG(recvMsg));
   } else {
     logger->warn(CONNECTION_LOST);
     DEBUG_WARN(CONNECTION_LOST);
@@ -140,12 +147,6 @@ void srvConnect() {
 
   thread tReceiving(receiving, sfd, buf, MAX_DATA_SIZE, cc->getServerIP().c_str());
   tReceiving.detach();
-}
-
-void sendData(string data, int dataLength) {
-  if (send(gfd, data.c_str(), dataLength, 0) == -1) {
-    logger->error("Error al enviar msj al servidor");
-  }
 }
 
 void srvDisconnect() {
@@ -158,32 +159,39 @@ void srvDisconnect() {
 }
 
 void exitPgm() {
-  if (connected)
+  if(connected)
     closeConnection();
   logger->warn(CLIENT_CLOSE);
   DEBUG_WARN(CLIENT_CLOSE);
   exit(1);
 }
 
-void sendMsg(int id) {
-  if (!connected) {
-    logger->warn("Intento de envio de msj sin estar conectado al servidor.");
-    cout << endl
-      << warning("Para mandar un mensaje debe estar conectado al servidor.")
-      << endl;
-    return;
+bool sendData(string data, int dataLength) {
+  if(send(gfd, data.c_str(), dataLength, 0) == -1) {
+    logger->error(SEND_FAIL);
+    DEBUG_WARN(SEND_FAIL);
+    return false;
+  }
+  return true;
+}
+
+bool sendMsg(int id) {
+  if(!connected) {
+    logger->warn(SEND_CERROR);
+    DEBUG_WARN(SEND_CERROR);
+    return false;
   }
 
   string data = msgQueue[id];
   int dataLength = msgQueue[id].length();
   logger->info(SENT_DATA(data));
   DEBUG_PRINT(SENT_DATA(data));
-  sendData(data, dataLength);
+  return sendData(data, dataLength);
 }
 
 void addMsgOptions() {
   for (int i = 0; i < MSG_QUANTITY; i++) {
-    string optionName = "Enviar mensaje " + to_string(i) + " ";
+    string optionName = "Enviar mensaje " + to_string(i);
     clientMenu.addOption(optionName, sendMsg, i);
   }
 }
@@ -192,15 +200,15 @@ void cycle() {
   int timeout = 0;
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
-  logger->info("Se corre ciclar en "+to_string(timeout)+" milisegundos.");
+  logger->info("Se corre ciclar en " + to_string(timeout) + " milisegundos.");
   for (int i = 0; i < MSG_QUANTITY; i++) {
-    sendMsg(i);
+    if(!sendMsg(i)) return;
     if (i != MSG_QUANTITY - 1) {
       usleep(timeout * 1000);
     }
   }
-  usleep(5000);/*agregado solo para que reciba el ultimo mensaje del servidor, antes de hacer display
-  							del menu*/
+  usleep(5000);/* agregado solo para que reciba el ultimo mensaje del servidor, 
+		  antes de hacer display del menu*/
 }
 
 int main(int argc, char* argv[]) {
