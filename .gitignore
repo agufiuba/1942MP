@@ -28,9 +28,10 @@
 *.out
 *.app
 
+# Logs
+logs/
 
 ### Eclipse ###
-
 .metadata
 bin/
 tmp/
