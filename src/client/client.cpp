@@ -187,10 +187,8 @@ void cycle() {
 
 int main(int argc, char* argv[]) {
 
-  const char* fileName = argv[1] ? argv[1] : "default.xml";
-  //TODO Ver si se hace asi
-  XMLParser parser;
-  cc = parser.parseClientConf(fileName);
+	const char* fileName = argv[1] ? argv[1] : "default-cc.xml";
+	cc = XMLParser::parseClientConf(fileName);
 
   clientMenu.addOption("Conectar", srvConnect);
   clientMenu.addOption("Desconectar", srvDisconnect);

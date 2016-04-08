@@ -103,8 +103,7 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 	}
 }
 
-void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr,
-    socklen_t sinSize) {
+void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, socklen_t sinSize) {
 	// accept connections
 	while (listening) {
 		sinSize = sizeof client_addr;
@@ -118,10 +117,6 @@ void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr,
 		thread process(recieveClientData, cfd, client_addr, allowConnections);
 		process.detach();
 	}
-	clientCount++;
-	bool allowConnections = (clientCount <= sc->getMaxClients());
-	thread process(recieveClientData, cfd, client_addr, allowConnections);
-	process.detach();
 }
 
 void serverInit() {
@@ -133,7 +128,7 @@ void serverInit() {
 		logger->warn("El servidor ya se encuentra conectado");
 		serverMenu.display();
 	} else {
-		const char* PORT = "5340";
+//		const char* PORT = "5340";
 		const int BACKLOG = 5;
 		// socket and client file descriptors
 		struct addrinfo hints, *servinfo, *p; // configuration structs
@@ -148,7 +143,7 @@ void serverInit() {
 		hints.ai_flags = AI_PASSIVE; // use host IP
 
 		// fill configuration structs
-		if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
+		if ((rv = getaddrinfo(NULL, to_string(sc->getPort()).c_str(), &hints, &servinfo)) != 0) {
 			logger->error(
 			    "Error al obtener la direccion, " + string(gai_strerror(rv)));
 			exit(-1);
@@ -223,8 +218,10 @@ void threadProcesador() {
 	}
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	std::thread t1(threadProcesador);
+	const char* fileName = argv[1] ? argv[1] : "default-sc.xml";
+	sc = XMLParser::parseServerConf(fileName);
 
 	serverMenu.addOption("Iniciar servidor", serverInit);
 	serverMenu.addOption("Salir", exitPgm);
