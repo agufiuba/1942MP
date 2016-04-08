@@ -25,6 +25,9 @@
 *.a
 *.lib
 
+# XML
+*.xml
+
 # Executables
 *.exe
 *.out
