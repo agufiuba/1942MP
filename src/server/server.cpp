@@ -1,30 +1,20 @@
-// server.cpp
-#include <sys/socket.h> /* socket, bind, listen, accept, connect, close */
-#include <sys/types.h> /* socket, bind, listen, accept, connect, close */
-#include <netdb.h> /* addrinfo */
-#include <netinet/in.h>
-#include <unistd.h> /* close() */
-#include <arpa/inet.h> /* inet_ntop() */
-#include <cstdint> /* uint32_t */
-#include <csignal> /* signal(,) */
-#include <cstdlib> /* exit() */
-#include <cstring> /* memset(,,) */
-#include <iostream>
+#include "../libs/socket/sock_dep.h" /* socket dependencies */
 #include "../libs/menu/Menu.h"
 #include "../libs/palette/palette.h"
-#include <mutex>
-#include <thread>
-#include <queue>
 #include "../logger/Logger.h"
 #include "../xml/parser/XMLParser.h"
 #include "../xml/conf/ServerConf.h"
+#include <thread>
+#include <mutex>
+#include <queue>
+#include <iostream>
+#define DEBUG 1
+#include "../libs/debug/dg_msg.h"
 
 using namespace std;
 
 Logger* logger = Logger::instance();
-
 const int MAX_CHAR_LENGTH = 20;
-
 Menu serverMenu("Menu de opciones del Servidor");
 queue<map<int,char*>*>* msgQueue = new queue<map<int,char*>*>;
 
@@ -32,7 +22,6 @@ mutex theMutex;
 ServerConf* sc;
 
 int clientCount = 0;
-
 map<int,char*>* clientFD;
 
 int gfd = 0;
@@ -40,10 +29,12 @@ bool listening = false;
 bool serverConnected = false;
 
 void closeConnection() {
+  delete msgQueue;
   close(gfd);
   listening = false;
-  cout << endl << warning("Desconectando servidor...") << endl;
-  logger->warn("Desconectando servidor...");
+  serverConnected = false;
+  logger->warn(SERVER_DISCONNECT);
+  DEBUG_WARN(SERVER_DISCONNECT);
 }
 
 void closeClient(int cfd) {
@@ -134,8 +125,8 @@ void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, sock
 
 void serverInit() {
   if (serverConnected) {
-    cout << endl << warning("El servidor ya se encuentra conectado") << endl;
-    logger->warn("El servidor ya se encuentra conectado");
+    logger->warn(CONNECTION_ACTIVE);
+    DEBUG_WARN(CONNECTION_ACTIVE);
     serverMenu.display();
   } else {
     int sfd, cfd; // socket and client file descriptors
@@ -155,8 +146,7 @@ void serverInit() {
 
     // fill configuration structs
     if ((rv = getaddrinfo(NULL, to_string(sc->getPort()).c_str(), &hints, &servinfo)) != 0) {
-      logger->error(
-	  "Error al obtener la direccion, " + string(gai_strerror(rv)));
+      logger->error("Error al obtener la direccion, " + string(gai_strerror(rv)));
       exit(-1);
     }
 
@@ -165,20 +155,20 @@ void serverInit() {
     for (p = servinfo; p != NULL; p = p->ai_next) {
       // try to create TCP socket
       if ((sfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
-	logger->error("Error en el socket");
+	logger->error(SOCKET_ERROR);
 	continue; // try next one
       }
 
       // allow port reuse to avoid bind error
       if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
-	logger->error("Falla en la configuracion del socket");
+	logger->error(SOCKET_REUSE_ERROR);
 	exit(-1);
       }
 
       // bind socket
       if (bind(sfd, p->ai_addr, p->ai_addrlen) == -1) {
 	close(sfd);
-	logger->error("bind error");
+	logger->error(BIND_ERROR);
 	continue; // try next one
       }
 
@@ -187,20 +177,19 @@ void serverInit() {
     freeaddrinfo(servinfo); // free memory
 
     if (p == NULL) {
-      logger->error("Falla en el bind del servidor");
+      logger->error(BIND_CERROR);
       exit(-1);
     }
 
     // listen for connections
     if (listen(sfd, BACKLOG) == -1) {
-      logger->error("listen error");
+      logger->error(LISTEN_ERROR);
       exit(-1);
     }
 
     listening = true;
-    cout << endl << notice("Se ha iniciado el servidor") << endl
-      << "Esperando conexiones..." << endl;
-    logger->info("se ha iniciado el servidor. Esperando conexiones...");
+    logger->info(SERVER_START);
+    DEBUG_NOTICE(SERVER_START);
     serverConnected = true;
 
     // accept connections
@@ -210,10 +199,20 @@ void serverInit() {
 
 }
 
+void srvDisconnect() {
+  if(serverConnected) {
+    closeConnection();
+  } else {
+    logger->warn(CONNECTION_NOT_ACTIVE); 
+    DEBUG_WARN(CONNECTION_NOT_ACTIVE);
+  }
+}
+
 void exitPgm() {
-  cout << endl << warning("Cerrando el servidor...") << endl;
-  logger->warn("Cerrando el servidor...");
-  delete msgQueue;
+  if(serverConnected)
+    closeConnection();
+  logger->warn(SERVER_CLOSE);
+  DEBUG_WARN(SERVER_CLOSE);
   exit(0);
 }
 
@@ -222,7 +221,8 @@ void sendingData(int cfd, string data, int dataLength){
   //TODO: falta agregar de que no loopee si llega a estar desconectado el cliente
   while (notSent){
     if (send(cfd, data.c_str(), dataLength, 0) == -1) {
-      cout << "send error" << endl;
+      logger->warn(SEND_FAIL);
+      DEBUG_WARN(SEND_FAIL);
     }else{
       notSent = false;
     }
@@ -258,6 +258,7 @@ int main(int argc, char* argv[]) {
   sc = XMLParser::parseServerConf(fileName);
 
   serverMenu.addOption("Iniciar servidor", serverInit);
+  // TODO: add disconnect option using srvDisconnect
   serverMenu.addOption("Salir", exitPgm);
 
   serverMenu.display();

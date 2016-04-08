@@ -1,43 +1,15 @@
-// client.cpp
-#include <sys/socket.h> /* socket() */
-#include <sys/types.h> /* socket() */
-#include <netinet/in.h> /* IPv4 & IPv6 presentation strings max.length constants (INET6?_ADDRSTRLEN) */
-#include <arpa/inet.h> /* inet_aton(,) */
-#include <netdb.h> /* hostent */
-#include <unistd.h> /* close() */
-#include <cstdlib> /* exit() */
-#include <cstring> /* memset(), bzero() */
-#include <iostream>
-#include <thread>
-#include <string>
+#include "../libs/socket/sock_dep.h" /* socket dependencies */
 #include "../libs/menu/Menu.h"
 #include "../libs/palette/palette.h"
 #include "../logger/Logger.h"
 #include "../xml/parser/XMLParser.h"
 #include "../xml/conf/ClientConf.h"
+#include <thread>
+#include <iostream>
+#define DEBUG 1
+#include "../libs/debug/dg_msg.h"
 
 using namespace std;
-
-#define DEBUG 1
-#define DEBUG_PRINT(X) if(DEBUG) cout << endl << X << endl
-#define DEBUG_WARN(X) if(DEBUG) cout << endl << warning(X) << endl
-#define DEBUG_NOTICE(X) if(DEBUG) cout << endl << notice(X) << endl
-
-#define CONNECTION_LOST "Se perdio la conexion con el servidor."
-#define CONNECTION_CLOSE "Se cerro la conexion con el servidor."
-#define CONNECTION_ACTIVE "Ya hay una conexion activa."
-#define CONNECTION_RETRY "Error de conexion. Reintentando conexion..."
-#define CONNECTION_NOT_ACTIVE "No hay una conexion activa."
-#define CLIENT_CLOSE "Cerrando el cliente..."
-#define SENT_DATA(X) "Se envio " + notice(X) + " al servidor"
-#define CONNECTION_ERROR(X) warning("No se pudo establecer una conexion con el servidor: ") \
-			    + X + "\nIntente nuevamente mas tarde." 
-#define CONNECTION_SUCCESS(X) notice("Se establecio una conexion con: ") + X
-#define RECV_FAIL "No se pudo recibir el mensaje."
-#define SEND_FAIL "No se pudo enviar el mensaje."
-#define SEND_CERROR "Debe estar conectado para poder enviar un mensaje."
-#define SOCKET_ERROR "No se pudo crear el socket."
-#define SERVER_MSG(X) "Se recibio del servidor el mensaje: " + notice(X)
 
 int gfd = 0;
 bool connected = false;
@@ -79,7 +51,7 @@ void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
 void srvConnect() {
   if (connected) {
     logger->warn(CONNECTION_ACTIVE);
-    DEBUG_PRINT(CONNECTION_ACTIVE);
+    DEBUG_WARN(CONNECTION_ACTIVE);
     return;
   }
 
@@ -127,6 +99,8 @@ void srvConnect() {
       connected = true;
     }
   }
+
+  // Get server welcome message
   if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
     logger->error(RECV_FAIL);
     exit(-1);
@@ -145,7 +119,8 @@ void srvConnect() {
     close(sfd);
   }
 
-  thread tReceiving(receiving, sfd, buf, MAX_DATA_SIZE, cc->getServerIP().c_str());
+  // Create thread for receiving data from server
+  thread tReceiving(receiving, sfd, buf, MAX_DATA_SIZE, serverIP.c_str());
   tReceiving.detach();
 }
 
@@ -163,7 +138,7 @@ void exitPgm() {
     closeConnection();
   logger->warn(CLIENT_CLOSE);
   DEBUG_WARN(CLIENT_CLOSE);
-  exit(1);
+  exit(0);
 }
 
 bool sendData(string data, int dataLength) {
