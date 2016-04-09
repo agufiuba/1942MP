@@ -5,6 +5,8 @@
 #include <fstream>
 #include <cstring>
 #include <time.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 using namespace std;
 

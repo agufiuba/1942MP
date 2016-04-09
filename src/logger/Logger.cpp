@@ -2,10 +2,11 @@
 
 using namespace std;
 
+__pid_t pid = getpid();
 const int MAX_LENGHT_FILE_LOG = 10000;
 Logger* loggerInstance = NULL;
 string directory = "./logs/";
-string fileLogName = "logger.log";
+string fileLogName = "logger-"+to_string(pid)+".log";
 string fileLogPath = directory+fileLogName;
 ofstream fileLog;
 
