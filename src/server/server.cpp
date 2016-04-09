@@ -10,6 +10,8 @@
 #include <iostream>
 #define DEBUG 1
 #include "../libs/debug/dg_msg.h"
+//#include "../models/msg/Mensaje.h"
+#include "../models/serialize/Serialize.h"
 
 using namespace std;
 
@@ -76,10 +78,14 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
     bool receiving = true;
     while (receiving) {
       if ((numBytesRead = recv(cfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-	logger->error("Falla al recibir msj del cliente");
+      	logger->error("Falla al recibir msj del cliente");
       }
       if (numBytesRead) {
 	buf[numBytesRead] = '\0';
+	Mensaje mensaje = Serialize::desSerialize(buf);
+	cout << "Mensaje con id: " << mensaje.id << endl;
+	cout << "Mensaje con tipo: " << mensaje.tipo << endl;
+	cout << "Mensaje con valor: " << mensaje.valor << endl;
 	theMutex.lock();
 
 	clientFD = new map<int,char*>();
@@ -238,7 +244,7 @@ void threadProcesador() {
       msgQueue->pop();
 
       map<int,char*>::iterator it = data->begin();
-      cout << "IP cliente: " << it->first << " --  Mensaje: " << it->second << endl;
+      cout << "IP cliente: " << it->first << " --  Mensaje: " << it->second << endl << endl;
 
       logger->info("Msj de cliente: " + string(it->second));
 

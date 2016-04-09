@@ -8,6 +8,7 @@ PALETTE = ./src/libs/palette/palette.cpp
 XML = ./src/libs/tinyxml2.cpp
 XMLPARSER = ./src/xml/parser/XMLParser.cpp
 LOGGER = ./src/logger/Logger.cpp
+SERIALIZE = ./src/models/serialize/Serialize.cpp
 DEFAULTS = ./src/utils/Defaults.cpp
 CCONF = ./src/xml/conf/ClientConf.cpp
 SCONF = ./src/xml/conf/ServerConf.cpp
@@ -19,7 +20,7 @@ ifeq ($(p), server)
 	PROGRAM = src/server/server
 endif
 
-OBJS = $(MENU) $(PALETTE) $(CCONF) $(SCONF) $(XML) $(XMLPARSER) $(LOGGER) $(DEFAULTS) ./$(PROGRAM).cpp
+OBJS = $(MENU) $(PALETTE) $(CCONF) $(SCONF) $(XML) $(XMLPARSER) $(LOGGER) $(SERIALIZE) $(DEFAULTS) ./$(PROGRAM).cpp
 
 CC = g++
 

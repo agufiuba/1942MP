@@ -9,6 +9,8 @@
 #include <iostream>
 #define DEBUG 1
 #include "../libs/debug/dg_msg.h"
+//#include "../models/msg/Mensaje.h"
+#include "../models/serialize/Serialize.h"
 
 using namespace std;
 
@@ -18,8 +20,10 @@ ClientConf* cc;
 Logger* logger = Logger::instance();
 mutex theMutex;
 Menu clientMenu("Menu de opciones del Cliente");
-const int MSG_QUANTITY = 4;
+const int MENS_QUANTITY = 2;
+const int MSG_QUANTITY = 4	;
 string msgQueue[MSG_QUANTITY] = { "hola", "mundo", "chau", "gente" };
+Mensaje mensajeQueue[MENS_QUANTITY];
 
 void closeConnection() {
   close(gfd);
@@ -169,8 +173,11 @@ void exitPgm() {
   exit(0);
 }
 
-bool sendData(string data, int dataLength) {
-  if(send(gfd, data.c_str(), dataLength, 0) == -1) {
+bool sendData(Mensaje data, int dataLength) {
+
+	string dataSerialize = Serialize::serialize(data);
+	cout << "Voy a mandar: " << dataSerialize << endl;
+  if(send(gfd, dataSerialize.c_str(), dataLength, 0) == -1) {
     logger->error(SEND_FAIL);
     theMutex.lock();
     DEBUG_WARN(SEND_FAIL);
@@ -189,18 +196,33 @@ bool sendMsg(int id) {
     return false;
   }
 
-  string data = msgQueue[id];
-  int dataLength = msgQueue[id].length();
-  logger->info(SENT_DATA(data));
+  Mensaje data = mensajeQueue[id];
+  int dataLength = sizeof(mensajeQueue[id]);
+  logger->info(SENT_DATA(mensajeQueue[id].id));
   theMutex.lock();
-  DEBUG_PRINT(SENT_DATA(data));
+  DEBUG_PRINT(SENT_DATA(mensajeQueue[id].id));
   theMutex.unlock();
   return sendData(data, dataLength);
 }
 
 void addMsgOptions() {
-  for (int i = 0; i < MSG_QUANTITY; i++) {
-    string optionName = "Enviar mensaje " + to_string(i);
+
+	Mensaje msg1;
+	msg1.id = "01";
+	msg1.tipo = "int";
+	msg1.valor = "El valor del presente mensaje es el 01, independiente mente del id que conciden y el tipo de dicho mensaje";
+
+	Mensaje msg2;
+	msg2.id = "02";
+	msg2.tipo = "string";
+	msg2.valor = "Nada";
+
+	mensajeQueue[0] = msg1;
+	mensajeQueue[1] = msg2;
+
+
+  for (int i = 0; i < MENS_QUANTITY; i++) {
+    string optionName = "Enviar mensaje " + mensajeQueue[i].id;
     clientMenu.addOption(optionName, sendMsg, i);
   }
 }
