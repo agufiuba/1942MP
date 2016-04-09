@@ -17,13 +17,13 @@ using namespace std;
 Logger* logger = Logger::instance();
 const int MAX_CHAR_LENGTH = 20;
 Menu serverMenu("Menu de opciones del Servidor");
-queue<map<int,char*>*>* msgQueue = new queue<map<int,char*>*>;
+queue<map<int, Mensaje*>*>* msgQueue = new queue<map<int, Mensaje*>*>;
 
 mutex theMutex;
 ServerConf* sc;
 
 int clientCount = 0;
-map<int,char*>* clientFD;
+map<int,Mensaje*>* clientFD;
 
 int gfd = 0;
 bool listening = false;
@@ -58,10 +58,7 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
     bool allowConnections) {
   int numBytesRead;
   char clientIP[INET_ADDRSTRLEN]; // connected client IP
-  const int MAX_DATA_SIZE = 10000;
-  char buf[MAX_DATA_SIZE]; // data buffer
   Mensaje* msgToRecv = new Mensaje;
-  memset(msgToRecv, 0, sizeof(Mensaje));
 
   // get connected host IP in presentation format
   inet_ntop(client_addr.ss_family,
@@ -80,19 +77,18 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
     }
     bool receiving = true;
     while (receiving) {
-      if ((numBytesRead = recv(cfd, (Mensaje*)msgToRecv, sizeof(Mensaje), 0)) == -1) {
+      if ((numBytesRead = recv(cfd, msgToRecv, sizeof(Mensaje), 0)) == -1) {
 	logger->error("Falla al recibir msj del cliente");
       }
       if (numBytesRead) {
-	cout << "ID del mensaje recibido: " << msgToRecv->id << endl;
-	cout << "Tipo del mensaje recibido: " << msgToRecv->tipo << endl;
-	cout << "Valor del mensaje recibido: " << msgToRecv->valor << endl;
+	cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
+	cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
+	cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
 
-	//buf[numBytesRead] = '\0';
 	theMutex.lock();
 
-	clientFD = new map<int,char*>();
-	clientFD->insert(pair<int,char*>(cfd,buf));
+	clientFD = new map<int,Mensaje*>();
+	clientFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
 
 	msgQueue->push(clientFD);
 
@@ -226,11 +222,11 @@ void exitPgm() {
   exit(0);
 }
 
-void sendingData(int cfd, string data, int dataLength){
+void sendingData(int cfd, Mensaje* data, int dataLength){
   bool notSent = true;
   //TODO: falta agregar de que no loopee si llega a estar desconectado el cliente
   while (notSent){
-    if (send(cfd, data.c_str(), dataLength, 0) == -1) {
+    if (send(cfd, data, dataLength, 0) == -1) {
       logger->warn(SEND_FAIL);
       DEBUG_WARN(SEND_FAIL);
     }else{
@@ -244,15 +240,15 @@ void threadProcesador() {
     if (!msgQueue->empty()) {
       theMutex.lock();
       cout << "Saco Msj de la cola" << endl;
-      map<int,char*>* data = msgQueue->front();
+      map<int,Mensaje*>* data = msgQueue->front();
       msgQueue->pop();
 
-      map<int,char*>::iterator it = data->begin();
-      cout << "IP cliente: " << it->first << " --  Mensaje: " << it->second << endl;
+      map<int,Mensaje*>::iterator it = data->begin();
+      cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->valor << endl;
 
-      logger->info("Msj de cliente: " + string(it->second));
+      logger->info("Msj de cliente: " + string(((it->second)->valor)));
 
-      thread tSending(sendingData, it->first, it->second , MAX_CHAR_LENGTH);
+      thread tSending(sendingData, it->first, it->second , sizeof(Mensaje));
       tSending.detach();
 
       delete clientFD;
