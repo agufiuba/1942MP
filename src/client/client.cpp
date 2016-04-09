@@ -98,32 +98,48 @@ void srvConnect() {
   /* Connect to server */
   short triesLeft = 3;
 
-  while (!connected && triesLeft) {
-    if (connect(sfd, (struct sockaddr*) &server, sizeof(struct sockaddr))
-	== -1) {
-      triesLeft--;
-      /* 5s delay for retry */
-      if(triesLeft) {
-	logger->error(CONNECTION_RETRY);
-	theMutex.lock();
-	DEBUG_WARN(CONNECTION_RETRY);
-	theMutex.unlock();
-	usleep(5000000);
-      } else {
-	logger->warn(CONNECTION_ERROR(serverIP));
-	theMutex.lock();
-	DEBUG_PRINT(CONNECTION_ERROR(serverIP));
-	theMutex.unlock();
-	return;
-      }
-    } else {
-      connected = true;
-    }
-  }
+	while (!connected && triesLeft) {
+		if (connect(sfd, (struct sockaddr*) &server, sizeof(struct sockaddr))
+				== -1) {
+			triesLeft--;
+			/* 5s delay for retry */
+			if (triesLeft) {
+				logger->error(CONNECTION_RETRY);
+				theMutex.lock();
+				DEBUG_WARN(CONNECTION_RETRY);
+				theMutex.unlock();
+				usleep(5000000);
+			} else {
+				logger->warn(CONNECTION_ERROR(serverIP));
+				theMutex.lock();
+				DEBUG_PRINT(CONNECTION_ERROR(serverIP));
+				theMutex.unlock();
+				return;
+			}
+		} else {
+			connected = true;
+		}
+	}
+
+	timeval timeout;
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 5000;
+
+	// seteo el timeout de recepcion de mensajes
+	if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,
+			sizeof(timeout)) < 0) {
+		cout << "Error sockopt" << endl;
+		exit(1);
+	}
 
   // Get server welcome message
   if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-    logger->error(RECV_FAIL);
+    logger->warn(CONNECTION_REJECTED);
+    theMutex.lock();
+    DEBUG_WARN(CONNECTION_REJECTED);
+    theMutex.unlock();
+    connected = false;
+    close(sfd);
   }
   if (numBytesRead>0) {
     logger->info(CONNECTION_SUCCESS(serverIP));
@@ -134,7 +150,8 @@ void srvConnect() {
     logger->info(SERVER_MSG(recvMsg));
     DEBUG_PRINT(SERVER_MSG(recvMsg));
     theMutex.unlock();
-  } else {
+  }
+  if (numBytesRead == 0){
     logger->warn(CONNECTION_LOST);
     theMutex.lock();
     DEBUG_WARN(CONNECTION_LOST);
@@ -144,8 +161,10 @@ void srvConnect() {
   }
 
   // Create thread for receiving data from server
-  thread tReceiving(receiving, sfd, buf, MAX_DATA_SIZE, serverIP.c_str());
-  tReceiving.detach();
+  if (connected){
+  	thread tReceiving(receiving, sfd, buf, MAX_DATA_SIZE, serverIP.c_str());
+  	tReceiving.detach();
+  }
 }
 
 void srvDisconnect() {

@@ -102,6 +102,7 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
     cout << endl << warning("El cliente ") << clientIP << warning(" se rechazo")
       << endl;
     logger->warn("El cliente " + string(clientIP) + " se rechazo");
+  	usleep(1000000);
     closeClient(cfd);
   }
 }
