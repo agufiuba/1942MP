@@ -235,6 +235,54 @@ void sendingData(int cfd, Mensaje* data, int dataLength){
   }
 }
 
+string serverProcess (string tipo, string valor){
+	const int MAX_INT = 2147483647;
+	bool respuesta = false;
+	string mensaje;
+	regex r;
+	const char* expr;
+
+	if(tipo == "INT"){
+		//expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
+		expr = "^-?[0-9]+$";
+		r = regex(expr);
+		if ((regex_match(valor, r)) && (atoi(valor.c_str()) >= -MAX_INT) && (atoi(valor.c_str()) <= MAX_INT)) //ese casteo de char* a int no se si se puede
+			respuesta = true;
+
+	} else {
+
+		if (tipo == "DOUBLE"){
+			expr = "^-?([0-2]e-?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
+			r = regex(expr);
+			if (regex_match(valor, r)) respuesta = true;
+
+		} else {
+
+			if (tipo == "STRING"){
+			  expr = "^.+$";
+			  r = regex(expr);
+			  if (regex_match(valor, r)) respuesta = true;
+
+			} else {
+
+				if (tipo == "CHAR"){
+					 expr = "^.$";
+					 r = regex(expr);
+					 if (regex_match(valor, r)) respuesta = true;
+				}
+			}
+		}
+	}
+
+	if (respuesta) {
+		mensaje = "Mensaje Correcto";
+	} else {
+		mensaje = "Mensaje Incorrecto";
+	}
+
+	return mensaje;
+}
+
 void threadProcesador() {
   while (true) {
     if (!msgQueue->empty()) {
