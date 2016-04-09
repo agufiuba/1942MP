@@ -65,11 +65,13 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
       get_in_addr((struct sockaddr*) (&client_addr)), clientIP,
       sizeof clientIP);
 
-  cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
-    << endl;
-  logger->info("Se inicio una conexion con el host: " + string(clientIP));
-
   if (allowConnections) {
+
+    cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
+      << endl;
+    logger->info("Se inicio una conexion con el host: " + string(clientIP));
+
+
     if (send(cfd, "Aceptado", 12, 0) == -1) {
       logger->error("Error al enviar que se acepto la conexion");
     }
