@@ -4,6 +4,7 @@
 #include "../logger/Logger.h"
 #include "../xml/parser/XMLParser.h"
 #include "../xml/conf/ClientConf.h"
+#include "../libs/mensaje/mensaje.h"
 #include <thread>
 #include <mutex>
 #include <iostream>
@@ -18,8 +19,11 @@ ClientConf* cc;
 Logger* logger = Logger::instance();
 mutex theMutex;
 Menu clientMenu("Menu de opciones del Cliente");
-const int MSG_QUANTITY = 4;
-string msgQueue[MSG_QUANTITY] = { "hola", "mundo", "chau", "gente" };
+
+const int MSG_QUANTITY = 2;
+Mensaje* msg1 = new Mensaje;
+Mensaje* msg2 = new Mensaje;
+Mensaje* mensajes[MSG_QUANTITY];
 
 void closeConnection() {
   close(gfd);
@@ -30,23 +34,23 @@ void closeConnection() {
 
 void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
   int numBytesRead = 1;
-	timeval timeout;
-	timeout.tv_sec = 1;
-	timeout.tv_usec = 0;
+  timeval timeout;
+  timeout.tv_sec = 1;
+  timeout.tv_usec = 0;
 
   while (connected) {
 
-		// seteo el timeout de recepcion de mensajes
-		if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
-			cout << "Error sockopt" << endl;
-			exit(1);
-		}
+    // seteo el timeout de recepcion de mensajes
+    if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
+      cout << "Error sockopt" << endl;
+      exit(1);
+    }
 
     if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-			if (!connected) {
-				connected = false;
-				close(sfd);
-			}
+      if (!connected) {
+	connected = false;
+	close(sfd);
+      }
     }
     if (numBytesRead>0) {
       buf[numBytesRead] = '\0';
@@ -55,10 +59,10 @@ void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
       DEBUG_PRINT(SERVER_MSG(recvMsg));
     }
     if (numBytesRead == 0){
-			logger->warn(CONNECTION_LOST);
-			DEBUG_WARN(CONNECTION_LOST);
-			connected = false;
-			close(sfd);
+      logger->warn(CONNECTION_LOST);
+      DEBUG_WARN(CONNECTION_LOST);
+      connected = false;
+      close(sfd);
     }
   }
 }
@@ -98,39 +102,39 @@ void srvConnect() {
   /* Connect to server */
   short triesLeft = 3;
 
-	while (!connected && triesLeft) {
-		if (connect(sfd, (struct sockaddr*) &server, sizeof(struct sockaddr))
-				== -1) {
-			triesLeft--;
-			/* 5s delay for retry */
-			if (triesLeft) {
-				logger->error(CONNECTION_RETRY);
-				theMutex.lock();
-				DEBUG_WARN(CONNECTION_RETRY);
-				theMutex.unlock();
-				usleep(5000000);
-			} else {
-				logger->warn(CONNECTION_ERROR(serverIP));
-				theMutex.lock();
-				DEBUG_PRINT(CONNECTION_ERROR(serverIP));
-				theMutex.unlock();
-				return;
-			}
-		} else {
-			connected = true;
-		}
-	}
+  while (!connected && triesLeft) {
+    if (connect(sfd, (struct sockaddr*) &server, sizeof(struct sockaddr))
+	== -1) {
+      triesLeft--;
+      /* 5s delay for retry */
+      if (triesLeft) {
+	logger->error(CONNECTION_RETRY);
+	theMutex.lock();
+	DEBUG_WARN(CONNECTION_RETRY);
+	theMutex.unlock();
+	usleep(5000000);
+      } else {
+	logger->warn(CONNECTION_ERROR(serverIP));
+	theMutex.lock();
+	DEBUG_PRINT(CONNECTION_ERROR(serverIP));
+	theMutex.unlock();
+	return;
+      }
+    } else {
+      connected = true;
+    }
+  }
 
-	timeval timeout;
-	timeout.tv_sec = 0;
-	timeout.tv_usec = 5000;
+  timeval timeout;
+  timeout.tv_sec = 0;
+  timeout.tv_usec = 5000;
 
-	// seteo el timeout de recepcion de mensajes
-	if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,
-			sizeof(timeout)) < 0) {
-		cout << "Error sockopt" << endl;
-		exit(1);
-	}
+  // seteo el timeout de recepcion de mensajes
+  if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,
+	sizeof(timeout)) < 0) {
+    cout << "Error sockopt" << endl;
+    exit(1);
+  }
 
   // Get server welcome message
   if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
@@ -162,8 +166,8 @@ void srvConnect() {
 
   // Create thread for receiving data from server
   if (connected){
-  	thread tReceiving(receiving, sfd, buf, MAX_DATA_SIZE, serverIP.c_str());
-  	tReceiving.detach();
+    thread tReceiving(receiving, sfd, buf, MAX_DATA_SIZE, serverIP.c_str());
+    tReceiving.detach();
   }
 }
 
@@ -188,8 +192,8 @@ void exitPgm() {
   exit(0);
 }
 
-bool sendData(string data, int dataLength) {
-  if(send(gfd, data.c_str(), dataLength, 0) == -1) {
+bool sendData(Mensaje* data, int dataLength) {
+  if(send(gfd, data, dataLength, 0) == -1) {
     logger->error(SEND_FAIL);
     theMutex.lock();
     DEBUG_WARN(SEND_FAIL);
@@ -199,7 +203,7 @@ bool sendData(string data, int dataLength) {
   return true;
 }
 
-bool sendMsg(int id) {
+bool sendMsg(string id) {
   if(!connected) {
     logger->warn(SEND_CERROR);
     theMutex.lock();
@@ -208,19 +212,29 @@ bool sendMsg(int id) {
     return false;
   }
 
-  string data = msgQueue[id];
-  int dataLength = msgQueue[id].length();
-  logger->info(SENT_DATA(data));
+  Mensaje* msgToSend;
+
+  for(int i = 0; i < MSG_QUANTITY; i++) {
+    string msgID = mensajes[i]->id;
+    if(msgID == id) {
+      msgToSend = mensajes[i];    
+      break;
+    }
+  }
+
+  int dataLength = sizeof(Mensaje);
+  logger->info(SENT_DATA(msgToSend->valor));
   theMutex.lock();
-  DEBUG_PRINT(SENT_DATA(data));
+  DEBUG_PRINT(SENT_DATA(msgToSend->valor));
   theMutex.unlock();
-  return sendData(data, dataLength);
+  return sendData(msgToSend, dataLength);
 }
 
 void addMsgOptions() {
   for (int i = 0; i < MSG_QUANTITY; i++) {
-    string optionName = "Enviar mensaje " + to_string(i);
-    clientMenu.addOption(optionName, sendMsg, i);
+    string msgID = mensajes[i]->id;
+    string optionName = "Enviar mensaje " + msgID;
+    clientMenu.addOption(optionName, sendMsg, msgID);
   }
 }
 
@@ -230,7 +244,7 @@ void cycle() {
   cin >> timeout;
   logger->info("Se corre ciclar en " + to_string(timeout) + " milisegundos.");
   for (int i = 0; i < MSG_QUANTITY; i++) {
-    if(!sendMsg(i)) return;
+    if(!sendMsg(mensajes[i]->id)) return;
     if (i != MSG_QUANTITY - 1) {
       usleep(timeout * 1000);
     }
@@ -242,6 +256,17 @@ void cycle() {
 int main(int argc, char* argv[]) {
   const char* fileName = argv[1] ? argv[1] : "default-cc.xml";
   cc = XMLParser::parseClientConf(fileName);
+
+  strcpy(msg1->id, "AH78");
+  strcpy(msg1->tipo, "INT");
+  strcpy(msg1->valor, "12509");
+
+  strcpy(msg2->id, "BG20");
+  strcpy(msg2->tipo, "STRING");
+  strcpy(msg2->valor, "Hola, como te va?");
+
+  mensajes[0] = msg1;
+  mensajes[1] = msg2;
 
   clientMenu.addOption("Conectar", srvConnect);
   clientMenu.addOption("Desconectar", srvDisconnect);

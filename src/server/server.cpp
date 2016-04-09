@@ -4,6 +4,7 @@
 #include "../logger/Logger.h"
 #include "../xml/parser/XMLParser.h"
 #include "../xml/conf/ServerConf.h"
+#include "../libs/mensaje/mensaje.h"
 #include <thread>
 #include <mutex>
 #include <queue>
@@ -59,6 +60,8 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
   char clientIP[INET_ADDRSTRLEN]; // connected client IP
   const int MAX_DATA_SIZE = 10000;
   char buf[MAX_DATA_SIZE]; // data buffer
+  Mensaje* msgToRecv = new Mensaje;
+  memset(msgToRecv, 0, sizeof(Mensaje));
 
   // get connected host IP in presentation format
   inet_ntop(client_addr.ss_family,
@@ -77,11 +80,15 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
     }
     bool receiving = true;
     while (receiving) {
-      if ((numBytesRead = recv(cfd, buf, MAX_DATA_SIZE, 0)) == -1) {
+      if ((numBytesRead = recv(cfd, (Mensaje*)msgToRecv, sizeof(Mensaje), 0)) == -1) {
 	logger->error("Falla al recibir msj del cliente");
       }
       if (numBytesRead) {
-	buf[numBytesRead] = '\0';
+	cout << "ID del mensaje recibido: " << msgToRecv->id << endl;
+	cout << "Tipo del mensaje recibido: " << msgToRecv->tipo << endl;
+	cout << "Valor del mensaje recibido: " << msgToRecv->valor << endl;
+
+	//buf[numBytesRead] = '\0';
 	theMutex.lock();
 
 	clientFD = new map<int,char*>();
@@ -104,7 +111,7 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
     cout << endl << warning("El cliente ") << clientIP << warning(" se rechazo")
       << endl;
     logger->warn("El cliente " + string(clientIP) + " se rechazo");
-  	usleep(1000000);
+    usleep(1000000);
     closeClient(cfd);
   }
 }
