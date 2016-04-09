@@ -4,6 +4,7 @@
 
 // client
 #define CONNECTION_LOST "Se perdio la conexion con el servidor."
+#define CONNECTION_REJECTED "Has sido rechazado por Max cantidad de clientes."
 #define CONNECTION_CLOSE "Se cerro la conexion con el servidor."
 #define CONNECTION_ACTIVE "Ya hay una conexion activa." // server - client
 #define CONNECTION_RETRY "Error de conexion. Reintentando conexion..."
