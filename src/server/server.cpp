@@ -20,6 +20,8 @@ const int MAX_CHAR_LENGTH = 20;
 Menu serverMenu("Menu de opciones del Servidor");
 queue<map<int, Mensaje*>*>* msgQueue = new queue<map<int, Mensaje*>*>;
 
+map<int, queue<bool>>* clientQueues = new map<int, queue<bool>>*;
+
 mutex theMutex;
 ServerConf* sc;
 
