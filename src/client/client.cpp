@@ -46,8 +46,6 @@ void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
 			if (!connected) {
 				connected = false;
 				close(sfd);
-			} else {
-				logger->error(RECV_FAIL);
 			}
     }
     if (numBytesRead>0) {
