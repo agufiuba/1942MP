@@ -9,6 +9,7 @@
 #include <mutex>
 #include <queue>
 #include <iostream>
+#include <regex>
 #define DEBUG 1
 #include "../libs/debug/dg_msg.h"
 
@@ -235,10 +236,10 @@ void sendingData(int cfd, Mensaje* data, int dataLength){
   }
 }
 
-string serverProcess (string tipo, string valor){
+bool serverProcess (string tipo, string valor){
 	const int MAX_INT = 2147483647;
 	bool respuesta = false;
-	string mensaje;
+
 	regex r;
 	const char* expr;
 
@@ -273,17 +274,13 @@ string serverProcess (string tipo, string valor){
 			}
 		}
 	}
-
-	if (respuesta) {
-		mensaje = "Mensaje Correcto";
-	} else {
-		mensaje = "Mensaje Incorrecto";
-	}
-
-	return mensaje;
+	return respuesta;
 }
 
 void threadProcesador() {
+	bool esCorrecto;
+	Mensaje* respuesta = new Mensaje;
+
   while (true) {
     if (!msgQueue->empty()) {
       theMutex.lock();
@@ -296,7 +293,13 @@ void threadProcesador() {
 
       logger->info("Msj de cliente: " + string(((it->second)->valor)));
 
-      thread tSending(sendingData, it->first, it->second , sizeof(Mensaje));
+      esCorrecto = serverProcess( string(((it->second)->tipo)), string(((it->second)->valor)) );//hasta aca
+    	if (esCorrecto) {
+    		strcpy(respuesta->valor, "Mensaje Correcto");
+    	} else {
+    		strcpy(respuesta->valor, "Mensaje Incorrecto");
+    	}
+      thread tSending(sendingData, it->first, respuesta , sizeof(Mensaje));
       tSending.detach();
 
       delete clientFD;
@@ -304,6 +307,7 @@ void threadProcesador() {
       theMutex.unlock();
     }
   }
+  delete respuesta;
 }
 
 int main(int argc, char* argv[]) {

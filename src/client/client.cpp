@@ -20,9 +20,11 @@ Logger* logger = Logger::instance();
 mutex theMutex;
 Menu clientMenu("Menu de opciones del Cliente");
 
-const int MSG_QUANTITY = 2;
+const int MSG_QUANTITY = 4;
 Mensaje* msg1 = new Mensaje;
 Mensaje* msg2 = new Mensaje;
+Mensaje* msg3 = new Mensaje;
+Mensaje* msg4 = new Mensaje;
 Mensaje* mensajes[MSG_QUANTITY];
 
 void closeConnection() {
@@ -32,11 +34,12 @@ void closeConnection() {
   DEBUG_WARN(CONNECTION_CLOSE);
 }
 
-void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
+void receiving(int sfd, const int MAX_DATA_SIZE, const char *IP){
   int numBytesRead = 1;
   timeval timeout;
   timeout.tv_sec = 1;
   timeout.tv_usec = 0;
+  Mensaje* buf = new Mensaje;
 
   while (connected) {
 
@@ -53,8 +56,8 @@ void receiving(int sfd, char buf[], const int MAX_DATA_SIZE, const char *IP){
       }
     }
     if (numBytesRead>0) {
-      buf[numBytesRead] = '\0';
-      string recvMsg = string(buf);
+      //buf[numBytesRead] = '\0';
+      string recvMsg = string(buf->valor);
       logger->info(SERVER_MSG(recvMsg));
       DEBUG_PRINT(SERVER_MSG(recvMsg));
     }
@@ -166,7 +169,7 @@ void srvConnect() {
 
   // Create thread for receiving data from server
   if (connected){
-    thread tReceiving(receiving, sfd, buf, MAX_DATA_SIZE, serverIP.c_str());
+    thread tReceiving(receiving, sfd, MAX_DATA_SIZE, serverIP.c_str());
     tReceiving.detach();
   }
 }
@@ -249,7 +252,7 @@ void cycle() {
       usleep(timeout * 1000);
     }
   }
-  usleep(5000);/* agregado solo para que reciba el ultimo mensaje del servidor, 
+  usleep(10000);/* agregado solo para que reciba el ultimo mensaje del servidor,
 		  antes de hacer display del menu*/
 }
 
@@ -265,8 +268,19 @@ int main(int argc, char* argv[]) {
   strcpy(msg2->tipo, "STRING");
   strcpy(msg2->valor, "Hola, como te va?");
 
+  strcpy(msg3->id, "KE27");
+  strcpy(msg3->tipo, "CHAR");
+  strcpy(msg3->valor, "b2");
+
+  strcpy(msg4->id, "NA90");
+  strcpy(msg4->tipo, "DOUBLE");
+  strcpy(msg4->valor, "-2.2e-299");
+
   mensajes[0] = msg1;
   mensajes[1] = msg2;
+  mensajes[2] = msg3;
+  mensajes[3] = msg4;
+
 
   clientMenu.addOption("Conectar", srvConnect);
   clientMenu.addOption("Desconectar", srvDisconnect);
