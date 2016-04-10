@@ -18,13 +18,13 @@ class Logger
         void error(string);
         void warn(string);
         void info(string);
+        virtual ~Logger();
     protected:
         Logger();
         Logger(const Logger & );
         Logger &operator= (const Logger & );
     private:
         static Logger* loggerInst;
-        virtual ~Logger();
         string timeCurrent();
         void truncateFileLog();
         int lengthFileLog();

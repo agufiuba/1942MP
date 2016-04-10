@@ -166,6 +166,7 @@ void exitPgm() {
   theMutex.lock();
   DEBUG_WARN(CLIENT_CLOSE);
   theMutex.unlock();
+  delete logger;
   exit(0);
 }
 

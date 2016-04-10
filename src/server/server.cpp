@@ -212,7 +212,8 @@ void exitPgm() {
     closeConnection();
   logger->warn(SERVER_CLOSE);
   //DEBUG_WARN(SERVER_CLOSE);
-
+  delete logger;
+  delete msgQueue;
   exit(0);
 }
 
