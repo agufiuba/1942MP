@@ -14,7 +14,7 @@
 #include "../libs/debug/dg_msg.h"
 
 using namespace std;
-
+bool serverProcessing;
 Logger* logger = Logger::instance();
 const int MAX_CHAR_LENGTH = 20;
 Menu serverMenu("Menu de opciones del Servidor");
@@ -24,7 +24,6 @@ mutex theMutex;
 ServerConf* sc;
 
 int clientCount = 0;
-map<int,Mensaje*>* clientFD;
 
 int gfd = 0;
 bool listening = false;
@@ -35,6 +34,7 @@ void closeConnection() {
   close(gfd);
   listening = false;
   serverConnected = false;
+  serverProcessing = false;
   logger->warn(SERVER_DISCONNECT);
   DEBUG_WARN(SERVER_DISCONNECT);
 }
@@ -82,17 +82,14 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 	logger->error("Falla al recibir msj del cliente");
       }
       if (numBytesRead) {
+      	theMutex.lock();
 	cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
 	cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
 	cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
 
-	theMutex.lock();
-
-	clientFD = new map<int,Mensaje*>();
-	clientFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
-
-	msgQueue->push(clientFD);
-
+	map<int,Mensaje*>* clientMsgFD = new map<int,Mensaje*>();
+	clientMsgFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
+	msgQueue->push(clientMsgFD);
 	theMutex.unlock();
 
       } else {
@@ -140,7 +137,7 @@ void serverInit() {
     socklen_t sinSize;
     const int BACKLOG = 5;
     struct addrinfo hints, *servinfo, *p; // configuration structs
-    int rv; 
+    int rv;
 
     // init hints struct with 0
     memset(&hints, 0, sizeof(hints));
@@ -209,7 +206,7 @@ void srvDisconnect() {
   if(serverConnected) {
     closeConnection();
   } else {
-    logger->warn(CONNECTION_NOT_ACTIVE); 
+    logger->warn(CONNECTION_NOT_ACTIVE);
     DEBUG_WARN(CONNECTION_NOT_ACTIVE);
   }
 }
@@ -224,15 +221,15 @@ void exitPgm() {
 }
 
 void sendingData(int cfd, Mensaje* data, int dataLength){
-  bool notSent = true;
+  //bool notSent = true;
   //TODO: falta agregar de que no loopee si llega a estar desconectado el cliente
-  while (notSent){
+  //while (notSent){
     if (send(cfd, data, dataLength, 0) == -1) {
       logger->warn(SEND_FAIL);
       DEBUG_WARN(SEND_FAIL);
-    }else{
-      notSent = false;
-    }
+    //}else{
+      //notSent = false;
+    //}
   }
 }
 
@@ -281,7 +278,7 @@ void threadProcesador() {
 	bool esCorrecto;
 	Mensaje* respuesta = new Mensaje;
 
-  while (true) {
+  while (serverProcessing) {
     if (!msgQueue->empty()) {
       theMutex.lock();
       cout << "Saco Msj de la cola" << endl;
@@ -302,24 +299,25 @@ void threadProcesador() {
       thread tSending(sendingData, it->first, respuesta , sizeof(Mensaje));
       tSending.detach();
 
-      delete clientFD;
+      delete data;
 
       theMutex.unlock();
     }
   }
+  cout<<"Corto processor"<<endl;
   delete respuesta;
 }
 
 int main(int argc, char* argv[]) {
-  thread t1(threadProcesador);
+  serverProcessing = true;
+  thread processor(threadProcesador);
   const char* fileName = argv[1] ? argv[1] : "default-sc.xml";
   sc = XMLParser::parseServerConf(fileName);
-
   serverMenu.addOption("Iniciar servidor", serverInit);
   // TODO: add disconnect option using srvDisconnect
   serverMenu.addOption("Salir", exitPgm);
 
   serverMenu.display();
-  t1.join();
+  processor.join();
   return 0;
 }
