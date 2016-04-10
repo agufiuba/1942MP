@@ -189,6 +189,17 @@ void srvDisconnect() {
   }
 }
 
+void limpiarMemoria() {
+
+	for (int i = 0; i < MSG_QUANTITY; i++) {
+		delete mensajes[i];
+	}
+
+	//TODO: Pierde memoria por el logger y el Parser. No pueden ser borrados. Chequearlo
+//	delete logger;
+//	delete cc;
+}
+
 void exitPgm() {
   if(connected)
     closeConnection();
@@ -196,6 +207,7 @@ void exitPgm() {
   theMutex.lock();
   DEBUG_WARN(CLIENT_CLOSE);
   theMutex.unlock();
+  limpiarMemoria();
   exit(0);
 }
 
@@ -285,6 +297,9 @@ void cycle() {
 int main(int argc, char* argv[]) {
   const char* fileName = argv[1] ? argv[1] : "default-cc.xml";
   cc = XMLParser::parseClientConf(fileName);
+
+  //TODO: Cuando se use el file name hay que utilizar el delete, para que pierda menos memoria
+//  delete fileName;
 
   strcpy(msg1->id, "AH78");
   strcpy(msg1->tipo, "INT");
