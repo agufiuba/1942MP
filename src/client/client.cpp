@@ -264,7 +264,7 @@ void cycle() {
   int i = 0;
   recibi = true;
   clock_t start = clock();
-  while (diferencia <= timeout) {
+  while (diferencia <= timeout && connected) {
   	if (recibi){
     	if (i >= MSG_QUANTITY)
     		i = 0;

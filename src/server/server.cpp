@@ -221,15 +221,15 @@ void exitPgm() {
 }
 
 void sendingData(int cfd, Mensaje* data, int dataLength){
-  bool notSent = true;
+  //bool notSent = true;
   //TODO: falta agregar de que no loopee si llega a estar desconectado el cliente
-  while (notSent){
+  //while (notSent){
     if (send(cfd, data, dataLength, 0) == -1) {
       logger->warn(SEND_FAIL);
       DEBUG_WARN(SEND_FAIL);
-    }else{
-      notSent = false;
-    }
+    //}else{
+      //notSent = false;
+    //}
   }
 }
 
