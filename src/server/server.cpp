@@ -18,15 +18,17 @@ using namespace std;
 Logger* logger = Logger::instance();
 const int MAX_CHAR_LENGTH = 20;
 Menu serverMenu("Menu de opciones del Servidor");
-queue<map<int, Mensaje*>*>* msgQueue = new queue<map<int, Mensaje*>*>;
 
-map<int, queue<bool>>* clientQueues = new map<int, queue<bool>>*;
+queue<map<int, Mensaje*>*>* msgQueue = new queue<map<int, Mensaje*>*>;
+map<int,Mensaje*>* clientFD;
+
+map<int, queue<bool>*>* clientQueues = new map<int, queue<bool>*>;
+queue<bool>* oneClientQueue;
 
 mutex theMutex;
 ServerConf* sc;
 
 int clientCount = 0;
-map<int,Mensaje*>* clientFD;
 
 int gfd = 0;
 bool listening = false;
@@ -57,62 +59,107 @@ void* get_in_addr(struct sockaddr* sa) {
   }
 }
 
-void recieveClientData(int cfd, struct sockaddr_storage client_addr,
-    bool allowConnections) {
-  int numBytesRead;
-  char clientIP[INET_ADDRSTRLEN]; // connected client IP
-  Mensaje* msgToRecv = new Mensaje;
+void sendingData(int cfd){
+	queue<bool>* clientQueue;
+	Mensaje* respuesta = new Mensaje();
 
-  // get connected host IP in presentation format
-  inet_ntop(client_addr.ss_family,
-      get_in_addr((struct sockaddr*) (&client_addr)), clientIP,
-      sizeof clientIP);
+  map<int,queue<bool>*>::iterator itClients = clientQueues->find(cfd);
+  clientQueue = (itClients->second);
 
-  if (allowConnections) {
+  while (true){
+    if (!clientQueue->empty()){
+    	if (clientQueue->front()) {
+    		strcpy(respuesta->valor, "Mensaje Correcto");
+    	} else {
+    		strcpy(respuesta->valor, "Mensaje Incorrecto");
+    	}
 
-    cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
-      << endl;
-    logger->info("Se inicio una conexion con el host: " + string(clientIP));
+    	clientQueue->pop();
 
-
-    if (send(cfd, "Aceptado", 12, 0) == -1) {
-      logger->error("Error al enviar que se acepto la conexion");
-    }
-    bool receiving = true;
-    while (receiving) {
-      if ((numBytesRead = recv(cfd, msgToRecv, sizeof(Mensaje), 0)) == -1) {
-	logger->error("Falla al recibir msj del cliente");
-      }
-      if (numBytesRead) {
-	cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
-	cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
-	cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
-
-	theMutex.lock();
-
-	clientFD = new map<int,Mensaje*>();
-	clientFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
-
-	msgQueue->push(clientFD);
-
-	theMutex.unlock();
-
-      } else {
-	receiving = false;
-	cout << endl << warning("El cliente ") << clientIP
-	  << warning(" se desconecto") << endl;
-	logger->warn("El Cliente " + string(clientIP) + " se desconecto");
-
-	closeClient(cfd);
+      if (send(cfd, respuesta, sizeof(Mensaje), 0) == -1) {
+        logger->warn(SEND_FAIL);
+        DEBUG_WARN(SEND_FAIL);
       }
     }
-  } else {
-    cout << endl << warning("El cliente ") << clientIP << warning(" se rechazo")
-      << endl;
-    logger->warn("El cliente " + string(clientIP) + " se rechazo");
-    usleep(1000000);
-    closeClient(cfd);
   }
+  cout << "salio" << endl;
+}
+
+void receivingData(int numBytesRead, int cfd, char clientIP[INET_ADDRSTRLEN],
+		Mensaje* msgToRecv) {
+
+	thread tSending (sendingData,cfd);
+	tSending.detach();
+
+	bool receiving = true;
+	while (receiving) {
+		if ((numBytesRead = recv(cfd, msgToRecv, sizeof(Mensaje), 0)) == -1) {
+			logger->error("Falla al recibir msj del cliente");
+		}
+		if (numBytesRead) {
+			cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id)
+					<< endl;
+			cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
+			cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor)
+					<< endl;
+			theMutex.lock();
+			clientFD = new map<int, Mensaje*>();
+			clientFD->insert(pair<int, Mensaje*>(cfd, msgToRecv));
+			msgQueue->push(clientFD);
+			theMutex.unlock();
+		} else {
+			receiving = false;
+			cout << endl << warning("El cliente ") << clientIP
+					<< warning(" se desconecto") << endl;
+			logger->warn("El Cliente " + string(clientIP) + " se desconecto");
+			closeClient(cfd);
+		}
+	}
+}
+
+void acceptingClient(int cfd, struct sockaddr_storage client_addr,
+		bool allowConnections) {
+
+	int numBytesRead;
+	char clientIP[INET_ADDRSTRLEN]; // connected client IP
+	Mensaje* msgToRecv = new Mensaje;
+
+	// get connected host IP in presentation format
+	inet_ntop(client_addr.ss_family,
+			get_in_addr((struct sockaddr*) (&client_addr)), clientIP,
+			sizeof clientIP);
+
+	if (allowConnections) {
+
+		cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
+				<< endl;
+		logger->info("Se inicio una conexion con el host: " + string(clientIP));
+
+		if (send(cfd, "Aceptado", 12, 0) == -1) {
+			logger->error("Error al enviar que se acepto la conexion");
+		}
+		cout << "antes del new" << endl;
+		oneClientQueue = new queue<bool>();
+		cout << "despues del new" << endl;
+		clientQueues->insert(pair<int, queue<bool>*>(cfd, oneClientQueue));
+		cout << "aca no llegas" << endl;
+
+		thread treceive (receivingData, numBytesRead, cfd, clientIP, msgToRecv);
+		treceive.join();
+
+		map<int, queue<bool>*>::iterator itClients = clientQueues->find(cfd);
+		delete (itClients->second);
+		clientQueues->erase(itClients);
+
+	} else {
+		cout << endl << warning("El cliente ") << clientIP << warning(" se rechazo")
+				<< endl;
+		logger->warn("El cliente " + string(clientIP) + " se rechazo");
+		usleep(1000000);
+		closeClient(cfd);
+	}
+
+	cout << "pasa por aca" << endl;
 }
 
 void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, socklen_t sinSize) {
@@ -126,7 +173,7 @@ void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, sock
     }
     clientCount++;
     bool allowConnections = (clientCount <= sc->getMaxClients());
-    thread process(recieveClientData, cfd, client_addr, allowConnections);
+    thread process(acceptingClient, cfd, client_addr, allowConnections);
     process.detach();
   }
 }
@@ -221,21 +268,8 @@ void exitPgm() {
     closeConnection();
   logger->warn(SERVER_CLOSE);
   //DEBUG_WARN(SERVER_CLOSE);
-
+  delete clientQueues;
   exit(0);
-}
-
-void sendingData(int cfd, Mensaje* data, int dataLength){
-  bool notSent = true;
-  //TODO: falta agregar de que no loopee si llega a estar desconectado el cliente
-  while (notSent){
-    if (send(cfd, data, dataLength, 0) == -1) {
-      logger->warn(SEND_FAIL);
-      DEBUG_WARN(SEND_FAIL);
-    }else{
-      notSent = false;
-    }
-  }
 }
 
 bool serverProcess (string tipo, string valor){
@@ -280,8 +314,8 @@ bool serverProcess (string tipo, string valor){
 }
 
 void threadProcesador() {
-	bool esCorrecto;
 	Mensaje* respuesta = new Mensaje;
+	bool resultado;
 
   while (true) {
     if (!msgQueue->empty()) {
@@ -295,16 +329,10 @@ void threadProcesador() {
 
       logger->info("Msj de cliente: " + string(((it->second)->valor)));
 
-      esCorrecto = serverProcess( string(((it->second)->tipo)), string(((it->second)->valor)) );//hasta aca
-    	if (esCorrecto) {
-    		strcpy(respuesta->valor, "Mensaje Correcto");
-    	} else {
-    		strcpy(respuesta->valor, "Mensaje Incorrecto");
-    	}
-      thread tSending(sendingData, it->first, respuesta , sizeof(Mensaje));
-      tSending.detach();
+      resultado = serverProcess( string(((it->second)->tipo)), string(((it->second)->valor)) );
 
-      delete clientFD;
+      map<int,queue<bool>*>::iterator itClients = clientQueues->find(it->first);
+      (itClients->second)->push(resultado);
 
       theMutex.unlock();
     }
