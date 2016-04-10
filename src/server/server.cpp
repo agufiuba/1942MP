@@ -86,11 +86,10 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 	cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
 	cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
 	cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
+
 	map<int,Mensaje*>* clientMsgFD = new map<int,Mensaje*>();
 	clientMsgFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
-
 	msgQueue->push(clientMsgFD);
-
 	theMutex.unlock();
 
       } else {
