@@ -8,6 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <iostream>
+#include <ctime>
 #define DEBUG 1
 #include "../libs/debug/dg_msg.h"
 
@@ -245,13 +246,40 @@ void cycle() {
   int timeout = 0;
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
-  logger->info("Se corre ciclar en " + to_string(timeout) + " milisegundos.");
-  for (int i = 0; i < MSG_QUANTITY; i++) {
-    if(!sendMsg(mensajes[i]->id)) return;
-    if (i != MSG_QUANTITY - 1) {
-      usleep(timeout * 1000);
+
+  while (timeout <= 0) {
+    	cout << endl << "Error - Debe ingresar un numero mayor a cero" << endl;
+    	cout << "Ingrese nuevamente durancion (en milisegundos): ";
+    	cin >> timeout;
     }
+
+  logger->info("Se corre ciclar en " + to_string(timeout) + " milisegundos.");
+
+  clock_t start = clock();
+  int diferencia = 0;
+  int i = 0;
+  int usleepTime = 7000;
+
+  while (diferencia <= timeout) {
+
+  	if (i >= MSG_QUANTITY)
+  		i = 0;
+  	cout << endl << "En el i: " << i;
+  	usleep(usleepTime);
+  	if(!sendMsg(mensajes[i]->id))
+  		return;
+
+  	i++;
+  	diferencia = clock() - start;
+  	cout << "Pasaron: " << diferencia << " milisegundos"<<endl;
   }
+
+//  for (int i = 0; i < MSG_QUANTITY; i++) {
+//    if(!sendMsg(mensajes[i]->id)) return;
+//    if (i != MSG_QUANTITY - 1) {
+//      usleep(timeout * 1000);
+//    }
+//  }
   usleep(10000);/* agregado solo para que reciba el ultimo mensaje del servidor,
 		  antes de hacer display del menu*/
 }

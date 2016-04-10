@@ -34,3 +34,6 @@ all : $(OBJS)
 
 run:
 	./$(PROGRAM).exe
+	
+valgrind:
+	valgrind --leak-check=full ./$(PROGRAM).exe
