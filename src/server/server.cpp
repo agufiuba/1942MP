@@ -82,12 +82,10 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 	logger->error("Falla al recibir msj del cliente");
       }
       if (numBytesRead) {
+      	theMutex.lock();
 	cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
 	cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
 	cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
-
-	theMutex.lock();
-
 	clientFD = new map<int,Mensaje*>();
 	clientFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
 
