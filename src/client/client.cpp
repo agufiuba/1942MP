@@ -8,7 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <iostream>
-#include <ctime>
+#include <time.h>
 #define DEBUG 1
 #include "../libs/debug/dg_msg.h"
 
@@ -20,6 +20,8 @@ ClientConf* cc;
 Logger* logger = Logger::instance();
 mutex theMutex;
 Menu clientMenu("Menu de opciones del Cliente");
+
+bool recibi;
 
 const int MSG_QUANTITY = 4;
 Mensaje* msg1 = new Mensaje;
@@ -61,6 +63,7 @@ void receiving(int sfd, const int MAX_DATA_SIZE, const char *IP){
       string recvMsg = string(buf->valor);
       logger->info(SERVER_MSG(recvMsg));
       DEBUG_PRINT(SERVER_MSG(recvMsg));
+      recibi = true;
     }
     if (numBytesRead == 0){
       logger->warn(CONNECTION_LOST);
@@ -197,22 +200,24 @@ void exitPgm() {
 }
 
 bool sendData(Mensaje* data, int dataLength) {
+	recibi = false;
   if(send(gfd, data, dataLength, 0) == -1) {
     logger->error(SEND_FAIL);
-    theMutex.lock();
+//    theMutex.lock();
     DEBUG_WARN(SEND_FAIL);
-    theMutex.unlock();
+//    theMutex.unlock();
     return false;
   }
+
   return true;
 }
 
 bool sendMsg(string id) {
   if(!connected) {
     logger->warn(SEND_CERROR);
-    theMutex.lock();
+  //  theMutex.lock();
     DEBUG_WARN(SEND_CERROR);
-    theMutex.unlock();
+   // theMutex.unlock();
     return false;
   }
 
@@ -228,9 +233,9 @@ bool sendMsg(string id) {
 
   int dataLength = sizeof(Mensaje);
   logger->info(SENT_DATA(msgToSend->valor));
-  theMutex.lock();
+ // theMutex.lock();
   DEBUG_PRINT(SENT_DATA(msgToSend->valor));
-  theMutex.unlock();
+ // theMutex.unlock();
   return sendData(msgToSend, dataLength);
 }
 
@@ -243,7 +248,7 @@ void addMsgOptions() {
 }
 
 void cycle() {
-  int timeout = 0;
+  double timeout = 0;
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
 
@@ -252,36 +257,29 @@ void cycle() {
     	cout << "Ingrese nuevamente durancion (en milisegundos): ";
     	cin >> timeout;
     }
+  timeout = timeout * 1000;
 
   logger->info("Se corre ciclar en " + to_string(timeout) + " milisegundos.");
-
-  clock_t start = clock();
-  int diferencia = 0;
+  double diferencia = 0;
   int i = 0;
-  int usleepTime = 7000;
-
+  recibi = true;
+  clock_t start = clock();
   while (diferencia <= timeout) {
+  	if (recibi){
+    	if (i >= MSG_QUANTITY)
+    		i = 0;
+    	cout << endl << "En el i: " << i;
 
-  	if (i >= MSG_QUANTITY)
-  		i = 0;
-  	cout << endl << "En el i: " << i;
-  	usleep(usleepTime);
-  	if(!sendMsg(mensajes[i]->id))
-  		return;
+    	//if(!sendMsg(mensajes[i]->id))
+    	//	return;    TODO: Consultar con maxi para que sirve esto, porque anda sin eso
 
-  	i++;
+    	sendMsg(mensajes[i]->id);
+
+    	i++;
+  	}
   	diferencia = clock() - start;
-  	cout << "Pasaron: " << diferencia << " milisegundos"<<endl;
   }
-
-//  for (int i = 0; i < MSG_QUANTITY; i++) {
-//    if(!sendMsg(mensajes[i]->id)) return;
-//    if (i != MSG_QUANTITY - 1) {
-//      usleep(timeout * 1000);
-//    }
-//  }
-  usleep(10000);/* agregado solo para que reciba el ultimo mensaje del servidor,
-		  antes de hacer display del menu*/
+  usleep(10000); // solo para que el ultimo se muestre antes de hacer display del menu
 }
 
 int main(int argc, char* argv[]) {
