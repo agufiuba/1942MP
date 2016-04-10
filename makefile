@@ -1,7 +1,16 @@
-#Compile client: make p=client
-#Compile server: make p=server
-#Run client: make p=client run
-#Run server: make p=server run
+####################   MODO  DE  USO   ####################
+
+#modo: client o server
+
+#Compile         : make p=modo
+
+#Run default     : make p=modo run
+#Run con archivo : make p=modo arch=nameArch run
+
+#Valgrind default: make p=modo valgrind
+#Valgrind archivo: make p=modo arch=nameArch valgrind
+
+############################################################
 
 MENU = ./src/libs/menu/Menu.cpp
 PALETTE = ./src/libs/palette/palette.cpp
@@ -11,12 +20,17 @@ LOGGER = ./src/logger/Logger.cpp
 DEFAULTS = ./src/utils/Defaults.cpp
 CCONF = ./src/xml/conf/ClientConf.cpp
 SCONF = ./src/xml/conf/ServerConf.cpp
+PARAM = ./src/config/$(arch)
 
 ifeq ($(p), client)
 	PROGRAM = src/client/client
 endif
 ifeq ($(p), server)
 	PROGRAM = src/server/server
+endif
+
+ifeq ($(arch), )
+	PARAM = 
 endif
 
 OBJS = $(MENU) $(PALETTE) $(CCONF) $(SCONF) $(XML) $(XMLPARSER) $(LOGGER) $(DEFAULTS) ./$(PROGRAM).cpp
@@ -33,7 +47,7 @@ all : $(OBJS)
 	$(CC) $(COMPILER) $(LINKER) $(WARN) $(OBJS) -o $(PROGRAM).exe
 
 run:
-	./$(PROGRAM).exe
+	./$(PROGRAM).exe $(PARAM)
 	
 valgrind:
-	valgrind --leak-check=full ./$(PROGRAM).exe
+	valgrind --leak-check=full ./$(PROGRAM).exe $(PARAM)
