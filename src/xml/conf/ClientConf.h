@@ -4,18 +4,19 @@
 #include <vector>
 
 #include "../../models/msg/Msg.h"
+#include "../../libs/mensaje/mensaje.h"
 
 class ClientConf {
 public:
-	ClientConf(string, int, vector<Msg*>);
+	ClientConf(string, int, vector<Mensaje*>);
 	string getServerIP();
 	int getServerPort();
-	vector<Msg*> getMessages();
+	vector<Mensaje*> getMessages();
 	virtual ~ClientConf();
 private:
 	string serverIP;
 	int serverPort;
-	vector<Msg*> messages;
+	vector<Mensaje*> messages;
 };
 
 #endif

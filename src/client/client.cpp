@@ -12,6 +12,8 @@
 #define DEBUG 1
 #include "../libs/debug/dg_msg.h"
 
+#include "../utils/K.h"
+
 using namespace std;
 
 int gfd = 0;
@@ -22,13 +24,6 @@ mutex theMutex;
 Menu clientMenu("Menu de opciones del Cliente");
 
 bool recibi;
-
-const int MSG_QUANTITY = 4;
-Mensaje* msg1 = new Mensaje;
-Mensaje* msg2 = new Mensaje;
-Mensaje* msg3 = new Mensaje;
-Mensaje* msg4 = new Mensaje;
-Mensaje* mensajes[MSG_QUANTITY];
 
 void closeConnection() {
   close(gfd);
@@ -190,14 +185,9 @@ void srvDisconnect() {
 }
 
 void limpiarMemoria() {
-
-	for (int i = 0; i < MSG_QUANTITY; i++) {
-		delete mensajes[i];
-	}
-
 	//TODO: Pierde memoria por el logger y el Parser. No pueden ser borrados. Chequearlo
-//	delete logger;
-//	delete cc;
+	//	delete logger;
+	//	delete cc;
 }
 
 void exitPgm() {
@@ -235,10 +225,10 @@ bool sendMsg(string id) {
 
   Mensaje* msgToSend;
 
-  for(int i = 0; i < MSG_QUANTITY; i++) {
-    string msgID = mensajes[i]->id;
+  for(int i = 0; i < cc->getMessages().size(); i++) {
+    string msgID = cc->getMessages()[i]->id;
     if(msgID == id) {
-      msgToSend = mensajes[i];    
+      msgToSend = cc->getMessages()[i];
       break;
     }
   }
@@ -252,8 +242,8 @@ bool sendMsg(string id) {
 }
 
 void addMsgOptions() {
-  for (int i = 0; i < MSG_QUANTITY; i++) {
-    string msgID = mensajes[i]->id;
+  for (int i = 0; i < cc->getMessages().size(); i++) {
+    string msgID = string(cc->getMessages()[i]->id);
     string optionName = "Enviar mensaje " + msgID;
     clientMenu.addOption(optionName, sendMsg, msgID);
   }
@@ -278,14 +268,14 @@ void cycle() {
   clock_t start = clock();
   while (diferencia <= timeout && connected) {
   	if (recibi){
-    	if (i >= MSG_QUANTITY)
+    	if (i >= cc->getMessages().size())
     		i = 0;
     	cout << endl << "En el i: " << i;
 
     	//if(!sendMsg(mensajes[i]->id))
     	//	return;    TODO: Consultar con maxi para que sirve esto, porque anda sin eso
 
-    	sendMsg(mensajes[i]->id);
+    	sendMsg(cc->getMessages()[i]->id);
 
     	i++;
   	}
@@ -301,27 +291,7 @@ int main(int argc, char* argv[]) {
   //TODO: Cuando se use el file name hay que utilizar el delete, para que pierda menos memoria
 //  delete fileName;
 
-  strcpy(msg1->id, "AH78");
-  strcpy(msg1->tipo, "INT");
-  strcpy(msg1->valor, "12509");
-
-  strcpy(msg2->id, "BG20");
-  strcpy(msg2->tipo, "STRING");
-  strcpy(msg2->valor, "Hola, como te va?");
-
-  strcpy(msg3->id, "KE27");
-  strcpy(msg3->tipo, "CHAR");
-  strcpy(msg3->valor, "b2");
-
-  strcpy(msg4->id, "NA90");
-  strcpy(msg4->tipo, "DOUBLE");
-  strcpy(msg4->valor, "-2.2e-299");
-
-  mensajes[0] = msg1;
-  mensajes[1] = msg2;
-  mensajes[2] = msg3;
-  mensajes[3] = msg4;
-
+//  cout << cc->getMessages()[0];
 
   clientMenu.addOption("Conectar", srvConnect);
   clientMenu.addOption("Desconectar", srvDisconnect);

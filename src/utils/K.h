@@ -3,9 +3,10 @@
 
 class K {
 public:
-	static const unsigned short int typeInt = 1;
-	static const unsigned short int typeString = 2;
-	static const unsigned short int typeDouble = 3;
-	static const unsigned short int typeChar = 4;
+	static const char typeInt[7];
+	static const char typeString[7];
+	static const char typeDouble[7];
+	static const char typeChar[7];
 };
+
 #endif
