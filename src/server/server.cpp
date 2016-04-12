@@ -12,6 +12,7 @@
 #include <regex>
 #define DEBUG 1
 #include "../libs/debug/dg_msg.h"
+#include "../utils/K.h"
 
 using namespace std;
 bool serverProcessing;
@@ -240,7 +241,7 @@ bool serverProcess (string tipo, string valor){
 	regex r;
 	const char* expr;
 
-	if(tipo == "INT"){
+	if(tipo == K::typeInt){
 		//expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
 		expr = "^-?[0-9]+$";
 		r = regex(expr);
@@ -249,21 +250,21 @@ bool serverProcess (string tipo, string valor){
 
 	} else {
 
-		if (tipo == "DOUBLE"){
+		if (tipo == K::typeDouble){
 			expr = "^-?([0-2]e-?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
 			r = regex(expr);
 			if (regex_match(valor, r)) respuesta = true;
 
 		} else {
 
-			if (tipo == "STRING"){
+			if (tipo == K::typeString){
 			  expr = "^.+$";
 			  r = regex(expr);
 			  if (regex_match(valor, r)) respuesta = true;
 
 			} else {
 
-				if (tipo == "CHAR"){
+				if (tipo == K::typeChar){
 					 expr = "^.$";
 					 r = regex(expr);
 					 if (regex_match(valor, r)) respuesta = true;
@@ -290,7 +291,7 @@ void threadProcesador() {
 
       logger->info("Msj de cliente: " + string(((it->second)->valor)));
 
-      esCorrecto = serverProcess( string(((it->second)->tipo)), string(((it->second)->valor)) );//hasta aca
+      esCorrecto = serverProcess(string((it->second)->tipo), string(((it->second)->valor)));
     	if (esCorrecto) {
     		strcpy(respuesta->valor, "Mensaje Correcto");
     	} else {

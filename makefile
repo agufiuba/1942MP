@@ -21,6 +21,7 @@ DEFAULTS = ./src/utils/Defaults.cpp
 CCONF = ./src/xml/conf/ClientConf.cpp
 SCONF = ./src/xml/conf/ServerConf.cpp
 PARAM = ./src/config/$(arch)
+CONST = ./src/utils/K.cpp
 
 ifeq ($(p), client)
 	PROGRAM = src/client/client
@@ -33,7 +34,7 @@ ifeq ($(arch), )
 	PARAM = 
 endif
 
-OBJS = $(MENU) $(PALETTE) $(CCONF) $(SCONF) $(XML) $(XMLPARSER) $(LOGGER) $(DEFAULTS) ./$(PROGRAM).cpp
+OBJS = $(MENU) $(PALETTE) $(CCONF) $(SCONF) $(XML) $(XMLPARSER) $(LOGGER) $(DEFAULTS) $(CONST) ./$(PROGRAM).cpp
 
 CC = g++
 

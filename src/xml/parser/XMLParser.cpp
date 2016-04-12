@@ -5,6 +5,7 @@
 
 #include "../../logger/Logger.h"
 #include "../../utils/Defaults.h"
+#include "../../utils/K.h"
 
 using namespace tinyxml2;
 using namespace std;
@@ -16,7 +17,7 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 	int port = Defaults::serverPort;
 	bool createFile = false;
 	if (!doc.LoadFile(fn.c_str())) {
-		l->info("Loading server configuration from file " + fn);
+		l->info("Cargando configuracion desde el archivo " + fn);
 		XMLElement* serverElement;
 		if (getElement(&doc, "server", serverElement)) {
 			XMLElement* maxClientsElement;
@@ -27,7 +28,7 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 			if (parsed)
 				maxClientsElement->QueryIntText(&maxClients);
 			else
-				l->warn("Loading default server maxClients");
+				l->warn("Cargando server#maxClients por defecto");
 			XMLElement* portElement;
 			parsed = getElement(serverElement, "port", portElement);
 			if (parsed)
@@ -35,21 +36,21 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 			if (parsed)
 				portElement->QueryIntText(&port);
 			else
-				l->warn("Loading default server port");
+				l->warn("Cargando server#port por defecto");
 		} else {
-			l->warn("Loading default server configuration");
+			l->warn("Cargando configuracion de server por defecto");
 		}
 	} else {
 		createFile = true;
-		l->error("Loading file");
-		l->warn("Loading default server configuration");
+		l->error("Cargando archivo");
+		l->warn("Cargando configuracion de server por defecto");
 	}
 	l->info(
-			"Loaded configuration { maxClients: " + to_string(maxClients)
+			"Configuracion cargada { maxClients: " + to_string(maxClients)
 					+ ", port: " + to_string(port) + " }");
 	ServerConf* sc = new ServerConf(maxClients, port);
 	if (createFile) {
-		l->info("Saving default server configuration XML file");
+		l->info("Creando archivo con configuracion por defecto del server");
 		createXML(sc);
 	}
 	return sc;
@@ -60,9 +61,9 @@ ClientConf* XMLParser::parseClientConf(string fn) {
 	XMLDocument doc;
 	int serverPort = Defaults::serverPort;
 	string serverIP = Defaults::serverIP;
-	vector<Msg*> messages = vector<Msg*>();
+	vector<Mensaje*> messages = vector<Mensaje*>();
 	if (!doc.LoadFile(fn.c_str())) {
-		l->info("Loading client configuration from file " + fn);
+		l->info("Cargando configuracion desde el archivo " + fn);
 		XMLElement* clientElement;
 		if (getElement(&doc, "client", clientElement)) {
 			XMLElement* serverIPElement;
@@ -73,7 +74,7 @@ ClientConf* XMLParser::parseClientConf(string fn) {
 			if (parsed)
 				serverIP = serverIPElement->GetText();
 			else
-				l->warn("Loading default client server IP");
+				l->warn("Cargando client#serverIP por defecto");
 			XMLElement* serverPortElement;
 			parsed = getElement(clientElement, "serverPort", serverPortElement);
 			if (parsed)
@@ -81,52 +82,88 @@ ClientConf* XMLParser::parseClientConf(string fn) {
 			if (parsed)
 				serverPortElement->QueryIntText(&serverPort);
 			else
-				l->warn("Loading default client server port");
+				l->warn("Cargando client#serverPort por defecto");
 			messages = parseMsgs(clientElement);
 		} else {
-			l->warn("Loading default client configuration");
+			l->warn("Cargando configuracion de client por defecto");
 		}
 	} else {
-		l->error("Loading file");
-		l->warn("Loading default client configuration");
+		l->error("Cargando archivo");
+		Mensaje* msg = new Mensaje();
+		strcpy(msg->id, Defaults::generateMsgID().c_str());
+		strcpy(msg->tipo, Defaults::type);
+		strcpy(msg->valor, Defaults::msgValue.c_str());
+		messages.push_back(msg);
+		l->warn("Cargando configuracion de client por defecto");
 	}
 	l->info(
-			"Loaded configuration { serverIP: " + serverIP + ", serverPort: "
+			"Configuracion cargada { serverIP: " + serverIP + ", serverPort: "
 					+ to_string(serverPort) + " }");
 	return new ClientConf(serverIP, serverPort, messages);
 }
 
-Msg* XMLParser::parseMsg(XMLElement* msg) {
+Mensaje* XMLParser::parseMsg(XMLElement* msg) {
 	Logger* l = Logger::instance();
-	l->info("Reading message");
-
-	// Validar id
-	string id = msg->FirstChildElement("id")->GetText();
-
-	int type = Defaults::defaultType;
-	XMLElement* typeElement = msg->FirstChildElement("type");
-	if (validInt(typeElement, ("message " + id + "#type").c_str()))
-		typeElement->QueryIntText(&type);
-	else
-		l->warn("Loading default message type: String");
-
-	// Validar valor segun el tipo
-	string value = msg->FirstChildElement("value")->GetText();
-
+	l->info("Leyendo message");
+	XMLElement* idElement;
+	Mensaje* rmsg;
+	bool parsed = getElement(msg, "id", idElement);
+	if (parsed) {
+		char type[7];
+		XMLElement* typeElement;
+		parsed = getElement(msg, "type", typeElement);
+		if (parsed) {
+			strcpy(type, typeElement->GetText());
+			if (strcmp(type, K::typeString) == 0
+					|| strcmp(type, K::typeInt) == 0
+					|| strcmp(type, K::typeDouble) == 0
+					|| strcmp(type, K::typeChar) == 0) {
+				XMLElement* valueElement;
+				parsed = getElement(msg, "value", valueElement);
+				if (parsed) {
+					rmsg = new Mensaje();
+					strcpy(rmsg->id, idElement->GetText());
+					strcpy(rmsg->tipo, type);
+					strcpy(rmsg->valor, valueElement->GetText());
+				}
+			} else
+				parsed = false;
+		}
+	}
+	if (!parsed) {
+		rmsg = new Mensaje();
+		strcpy(rmsg->id, Defaults::generateMsgID().c_str());
+		strcpy(rmsg->tipo, Defaults::type);
+		strcpy(rmsg->valor, Defaults::msgValue.c_str());
+		l->warn("Cargando message por defecto");
+	}
 	l->info(
-			"Read message { id: " + id + ", type: " + to_string(type)
-					+ ", value: " + value + " }");
-	return new Msg(id, type, value);
+			"Message leido { id: " + string(rmsg->id) + ", type: "
+					+ string(rmsg->tipo) + ", value: " + string(rmsg->valor)
+					+ " }");
+	return rmsg;
 }
 
-vector<Msg*> XMLParser::parseMsgs(XMLElement* e) {
+vector<Mensaje*> XMLParser::parseMsgs(XMLElement* e) {
 	Logger* l = Logger::instance();
-	l->info("Reading list of messages");
-	vector<Msg*> msgs;
-	for (XMLElement* msgElement = e->FirstChildElement("message");
-			msgElement != NULL;
-			msgElement = msgElement->NextSiblingElement("message")) {
-		msgs.push_back(parseMsg(msgElement));
+	l->info("Leyendo lista de messages");
+	vector<Mensaje*> msgs;
+	XMLElement* msgsElement;
+	bool parsed = getElement(e, "messages", msgsElement);
+	if (parsed) {
+		for (XMLElement* msgElement = msgsElement->FirstChildElement("message");
+				msgElement != NULL;
+				msgElement = msgElement->NextSiblingElement("message")) {
+			msgs.push_back(parseMsg(msgElement));
+		}
+	} else {
+		l->warn("No se encontraron messages");
+		l->warn("Agregando message por defecto");
+		Mensaje* rmsg = new Mensaje();
+		strcpy(rmsg->id, Defaults::generateMsgID().c_str());
+		strcpy(rmsg->tipo, Defaults::type);
+		strcpy(rmsg->valor, Defaults::msgValue.c_str());
+		msgs.push_back(rmsg);
 	}
 	return msgs;
 }
@@ -137,7 +174,7 @@ bool XMLParser::getElement(XMLElement* root, string en, XMLElement*& e) {
 	if (e)
 		return true;
 	else {
-		l->error("Element '" + en + "' not found");
+		l->error("Elemento '" + en + "' no encontrado");
 		return false;
 	}
 }
@@ -148,7 +185,7 @@ bool XMLParser::getElement(XMLDocument* root, string en, XMLElement*& e) {
 	if (e)
 		return true;
 	else {
-		l->error("Element '" + en + "' not found");
+		l->error("Elemento '" + en + "' no encontrado");
 		return false;
 	}
 }
@@ -159,7 +196,7 @@ bool XMLParser::validInt(XMLElement* e) {
 	regex r = regex(rstr);
 	bool match = regex_match(e->GetText(), r);
 	if (!match)
-		l->error(strcat("Parsing `int` from ", e->Name()));
+		l->error(strcat("Parseando a `int` desde ", e->Name()));
 	return match;
 }
 
@@ -169,7 +206,7 @@ bool XMLParser::validInt(XMLElement* e, string end) {
 	regex r = regex(rstr);
 	bool match = regex_match(e->GetText(), r);
 	if (!match)
-		l->error("Parsing `int` from " + end);
+		l->error("Parseando a `int` desde " + end);
 	return match;
 }
 
@@ -180,7 +217,7 @@ bool XMLParser::validIP(const char* ip) {
 	regex r = regex(rstr);
 	bool match = regex_match(ip, r);
 	if (!match)
-		l->error("Parsing `IP` from serverIP");
+		l->error("Parseando `IP` desde client#serverIP");
 	return match;
 }
 

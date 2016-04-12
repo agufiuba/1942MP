@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../../libs/tinyxml2.h"
-#include "../../models/msg/Msg.h"
+#include "../../libs/mensaje/mensaje.h"
 #include "../conf/ServerConf.h"
 #include "../conf/ClientConf.h"
 
@@ -22,8 +22,8 @@ private:
 	static bool validInt(XMLElement*);
 	static bool validInt(XMLElement*, string);
     static bool validIP(const char*);
-	static Msg* parseMsg(XMLElement*);
-	static vector<Msg*> parseMsgs(XMLElement*);
+	static Mensaje* parseMsg(XMLElement*);
+	static vector<Mensaje*> parseMsgs(XMLElement*);
 	static void createXML(ServerConf*);
 };
 

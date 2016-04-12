@@ -1,6 +1,6 @@
 #include "ClientConf.h"
 
-ClientConf::ClientConf(string serverIP, int serverPort, vector<Msg*> msgs) {
+ClientConf::ClientConf(string serverIP, int serverPort, vector<Mensaje*> msgs) {
 	this->serverIP = serverIP;
 	this->serverPort = serverPort;
 	this->messages = msgs;
@@ -14,10 +14,9 @@ int ClientConf::getServerPort() {
 	return this->serverPort;
 }
 
-vector<Msg*> ClientConf::getMessages() {
+vector<Mensaje*> ClientConf::getMessages() {
 	return this->messages;
 }
 
 ClientConf::~ClientConf() {
 }
-
