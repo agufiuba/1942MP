@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<client>
+  <serverIP>127.0.0.1</serverIP>
+  <serverPort>10000</serverPort>
+  <messages>
+    <message>
+      <id>Mensaje1</id>
+      <type>INT</type>
+      <value>1454565</value>
+    </message>
+    <message>
+      <id>Mensaje2</id>
+      <type>STRING</type>
+      <value> hola mundo </value>
+    </message>
+    <message>
+      <id>Mensaje3</id>
+      <type>DOUBLE</type>
+      <value>2e-299</value>
+    </message>
+    <message>
+      <id>id4</id>
+      <type>CHAR</type>
+      <value>a</value>
+    </message>
+    <message>
+      <id>id5</id>
+      <type>INT</type>
+      <value>1,444444</value>
+    </message>
+    <message>
+      <id>Mensaje6</id>
+      <type>STRING</type>
+      <value> %&/()!"#$hola mundo </value>
+    </message>
+    <message>
+      <id>Mensaje7</id>
+      <type>DOUBLE</type>
+      <value>2ex299</value>
+    </message>
+    <message>
+      <id>id8</id>
+      <type>CHAR</type>
+      <value>2e</value>
+    </message>
+  </messages>
+</client>
