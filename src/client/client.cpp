@@ -23,42 +23,17 @@ Logger* logger = Logger::instance();
 mutex theMutex;
 Menu clientMenu("Menu de opciones del Cliente");
 
+const int MAX_UNREACHABLE_TIME = 5;
 bool recibi;
-
-void checkAliveRecv (int sfd){
-  timeval timeout;
-  timeout.tv_sec = 5;
-  timeout.tv_usec = 0;
-  char buf[1];
-  int numBytesRead;
-  const int MAX_DATA_SIZE = 1;
-
-    // seteo el timeout de recepcion de mensajes
-    if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
-      cout << "Error sockopt" << endl;
-      exit(1);
-    }
-
-    if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, MSG_PEEK)) == -1) {
-    	if (numBytesRead == 0){
-        logger->warn(CONNECTION_LOST);
-        DEBUG_WARN(CONNECTION_LOST);
-        close(sfd);
-        connected = false;
-    	}
-    }
-}
 
 void checkAliveSend(int sfd) {
   char buf[1] = { '1' };
 
   while(true) {
+    if(!connected) return;
     // 4s timed send
     usleep(4000000);
-    if(send(sfd, &buf, 1, 0) == -1) {
-      logger->error(SEND_FAIL);
-      DEBUG_WARN(SEND_FAIL);
-    }
+    send(sfd, &buf, 1, 0);
   }
 }
 
@@ -70,14 +45,13 @@ void closeConnection() {
 }
 
 void receiving(int sfd, const int MAX_DATA_SIZE, const char *IP){
-  int numBytesRead = 1;
+  int numBytesRead;
   timeval timeout;
-  timeout.tv_sec = 1;
+  timeout.tv_sec = MAX_UNREACHABLE_TIME;
   timeout.tv_usec = 0;
   Mensaje* buf = new Mensaje;
 
   while (connected) {
-
     // seteo el timeout de recepcion de mensajes
     if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
       cout << "Error sockopt" << endl;
@@ -85,17 +59,21 @@ void receiving(int sfd, const int MAX_DATA_SIZE, const char *IP){
     }
 
     if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-      if (!connected) {
-	connected = false;
-	close(sfd);
-      }
+      close(gfd);
+      connected = false;
+      logger->warn(CONNECTION_LOST);
+      DEBUG_WARN(CONNECTION_LOST);
+      return;
     }
-    if (numBytesRead>0) {
-      //buf[numBytesRead] = '\0';
-      string recvMsg = string(buf->valor);
-      logger->info(SERVER_MSG(recvMsg));
-      DEBUG_PRINT(SERVER_MSG(recvMsg));
-      recibi = true;
+
+    if (numBytesRead > 0) {
+      if(numBytesRead == 1) {	
+      } else {
+	string recvMsg = string(buf->valor);
+	logger->info(SERVER_MSG(recvMsg));
+	DEBUG_PRINT(SERVER_MSG(recvMsg));
+	recibi = true;
+      }
     }
     if (numBytesRead == 0){
       logger->warn(CONNECTION_LOST);
@@ -205,11 +183,8 @@ void srvConnect() {
 
   // Create thread for receiving data from server
   if (connected){
-  	thread tCheckAliveRecv(checkAliveRecv, sfd);
-  	tCheckAliveRecv.detach();
-
-  	thread tCheckAliveSend(checkAliveSend, sfd);
-  	tCheckAliveSend.detach();
+    thread tCheckAliveSend(checkAliveSend, sfd);
+    tCheckAliveSend.detach();
 
     thread tReceiving(receiving, sfd, MAX_DATA_SIZE, serverIP.c_str());
     tReceiving.detach();
@@ -253,7 +228,7 @@ bool sendData(Mensaje* data, int dataLength) {
     //    theMutex.unlock();
     return false;
   }
-
+  
   return true;
 }
 
@@ -293,11 +268,11 @@ void addMsgOptions() {
 }
 
 void cycle() {
-	if (!connected){
+  if (!connected){
     logger->warn(CONNECTION_NOT_ACTIVE);
     DEBUG_WARN(CONNECTION_NOT_ACTIVE);
     return;
-	}
+  }
 
   double timeout = 0;
   cout << "Ingrese duracion (en milisegundos): ";
@@ -322,7 +297,7 @@ void cycle() {
       cout << endl << "En el i: " << i;
 
       if(!sendMsg(cc->getMessages()[i]->id))
-      	return;
+	return;
 
       i++;
     }
