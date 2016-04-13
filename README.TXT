@@ -20,11 +20,17 @@ C++ 4.9
 - regex
 - vector
 
-Compilacion y Ejecución del proyeco:
+Compilacion y Ejecución del proyecto:
+
 -Ir mediante la terminal de Linux hasta la ruta del proyecto
--Una vez alli, se puede compilar el cliente y/o el servidor:
+
+-Una vez alli, se puede compilar el cliente y/o el servidor usando el makefile:
 	.cliente: make p=client
 	.server: make p=server
--Si no hubo errores, paso siguiente se ejecuta el proyecto de la siguiente manera:
-	.cliente: make p=client arch=nombreArchivoConfiguracionCliente run
+Aclaracion: para la compilacion se necesita tener el compilador gcc 4.9 y se compila manualmente con: 
+	gcc -std=c++11 -pthread -Wno-write-strings
+
+-Si no hubo errores, se puede ejecutar el proyecto de la siguiente manera:
+	.cliente: make p=client arch=nombreXMLConfiguracionCliente run
 	.server: make p=server arch=nombreArchivoConfiguracionServer run
+
