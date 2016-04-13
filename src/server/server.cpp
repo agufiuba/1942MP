@@ -313,12 +313,12 @@ void threadProcesador() {
   while (serverProcessing) {
     if (!msgQueue->empty()) {
       theMutex.lock();
-      cout << "Saco Msj de la cola" << endl;
+      //cout << "Saco Msj de la cola" << endl;
       map<int,Mensaje*>* data = msgQueue->front();
       msgQueue->pop();
 
       map<int,Mensaje*>::iterator it = data->begin();
-      cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->valor << endl;
+      //cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->valor << endl;
 
       logger->info("Msj de cliente: " + string(((it->second)->valor)));
 
@@ -336,7 +336,7 @@ void threadProcesador() {
       theMutex.unlock();
     }
   }
-  cout<<"Corto processor"<<endl;
+  //cout<<"Corto processor"<<endl;
   delete respuesta;
 }
 
