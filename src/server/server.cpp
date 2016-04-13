@@ -120,7 +120,8 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
       if (numBytesRead > 0) {
 	if(numBytesRead != 1) {
 	  theMutex.lock();
-	  cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
+	  cout << endl << "FD cliente: " << notice(to_string(cfd)) << endl;
+	  cout << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
 	  cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
 	  cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
 

@@ -293,7 +293,7 @@ void cycle() {
     if (recibi){
       if (i >= cc->getMessages().size())
 	i = 0;
-      cout << endl << "En el i: " << i;
+      //cout << endl << "En el i: " << i;
 
       if(!sendMsg(cc->getMessages()[i]->id))
 	return;
