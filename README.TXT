@@ -2,7 +2,7 @@ Taller de Programación I - 2016 - 1er Cuatrimestre - TP 1
 
 Integrantes:
 - CENTURIÓN, Ramón				94092
-- NAKASONE, Key					93632
+- NAKASONE, Nicolas Cristian			93632
 - VALLERINO, Gonzalo Adrián			91366
 - SCOCCIMARRO, Maximiliano			93784
 - GAILLARD, Agustín				94849
