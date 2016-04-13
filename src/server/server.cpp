@@ -30,6 +30,43 @@ int gfd = 0;
 bool listening = false;
 bool serverConnected = false;
 
+void checkAliveRecv (int sfd){
+  timeval timeout;
+  timeout.tv_sec = 5;
+  timeout.tv_usec = 0;
+  char *buf;
+  int numBytesRead;
+  const int MAX_DATA_SIZE = 1;
+
+    // seteo el timeout de recepcion de mensajes
+    if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
+      cout << "Error sockopt" << endl;
+      exit(1);
+    }
+
+    if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, MSG_PEEK)) == -1) {
+    	if (numBytesRead == 0){
+        logger->warn(CONNECTION_LOST);
+        DEBUG_WARN(CONNECTION_LOST);
+        close(sfd);
+        connected = false;
+    	}
+    }
+}
+
+void checkAliveSend(int sfd) {
+  char buf[1] = '1';
+
+  while(true) {
+    // 4s timed send
+    usleep(4000000);
+    if(send(sfd, &buf, 1, 0) == -1) {
+      logger->error(SEND_FAIL);
+      DEBUG_WARN(SEND_FAIL);
+    }
+  }
+}
+
 void closeConnection() {
   delete msgQueue;
   close(gfd);
@@ -122,6 +159,13 @@ void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, sock
     }
     clientCount++;
     bool allowConnections = (clientCount <= sc->getMaxClients());
+
+  	thread tCheckAliveRecv(checkAliveRecv, cfd);
+  	tCheckAliveRecv.detach();
+
+  	thread tCheckAliveSend(checkAliveSend, cfd);
+  	tCheckAliveSend.detach();
+
     thread process(recieveClientData, cfd, client_addr, allowConnections);
     process.detach();
   }

@@ -49,6 +49,19 @@ void checkAliveRecv (int sfd){
     }
 }
 
+void checkAliveSend(int sfd) {
+  char buf[1] = '1';
+
+  while(true) {
+    // 4s timed send
+    usleep(4000000);
+    if(send(sfd, &buf, 1, 0) == -1) {
+      logger->error(SEND_FAIL);
+      DEBUG_WARN(SEND_FAIL);
+    }
+  }
+}
+
 void closeConnection() {
   close(gfd);
   connected = false;
@@ -192,6 +205,12 @@ void srvConnect() {
 
   // Create thread for receiving data from server
   if (connected){
+  	thread tCheckAliveRecv(checkAliveRecv, sfd);
+  	tCheckAliveRecv.detach();
+
+  	thread tCheckAliveSend(checkAliveSend, sfd);
+  	tCheckAliveSend.detach();
+
     thread tReceiving(receiving, sfd, MAX_DATA_SIZE, serverIP.c_str());
     tReceiving.detach();
   }
@@ -238,19 +257,6 @@ bool sendData(Mensaje* data, int dataLength) {
   return true;
 }
 
-void checkAliveSend(int sfd) {
-  char buf[1] = '1';
-
-  while(true) {
-    // 4s timed send
-    usleep(4000000);
-    if(send(sfd, &buf, 1, 0) == -1) {
-      logger->error(SEND_FAIL);
-      DEBUG_WARN(SEND_FAIL);
-    }
-  }
-}
-
 bool sendMsg(string id) {
   if(!connected) {
     logger->warn(SEND_CERROR);
@@ -287,6 +293,12 @@ void addMsgOptions() {
 }
 
 void cycle() {
+	if (!connected){
+    logger->warn(CONNECTION_NOT_ACTIVE);
+    DEBUG_WARN(CONNECTION_NOT_ACTIVE);
+    return;
+	}
+
   double timeout = 0;
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
@@ -309,10 +321,8 @@ void cycle() {
 	i = 0;
       cout << endl << "En el i: " << i;
 
-      //if(!sendMsg(mensajes[i]->id))
-      //	return;    TODO: Consultar con maxi para que sirve esto, porque anda sin eso
-
-      sendMsg(cc->getMessages()[i]->id);
+      if(!sendMsg(cc->getMessages()[i]->id))
+      	return;
 
       i++;
     }
