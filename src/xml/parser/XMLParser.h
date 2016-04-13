@@ -25,6 +25,7 @@ private:
 	static Mensaje* parseMsg(XMLElement*);
 	static vector<Mensaje*> parseMsgs(XMLElement*);
 	static void createXML(ServerConf*);
+	static void createXML(ClientConf*);
 };
 
 #endif
