@@ -23,7 +23,19 @@ Logger* logger = Logger::instance();
 mutex theMutex;
 Menu clientMenu("Menu de opciones del Cliente");
 
+const int MAX_UNREACHABLE_TIME = 5;
 bool recibi;
+
+void checkAliveSend(int sfd) {
+  char buf[1] = { '1' };
+
+  while(true) {
+    if(!connected) return;
+    // 4s timed send
+    usleep(4000000);
+    send(sfd, &buf, 1, 0);
+  }
+}
 
 void closeConnection() {
   close(gfd);
@@ -33,14 +45,13 @@ void closeConnection() {
 }
 
 void receiving(int sfd, const int MAX_DATA_SIZE, const char *IP){
-  int numBytesRead = 1;
+  int numBytesRead;
   timeval timeout;
-  timeout.tv_sec = 1;
+  timeout.tv_sec = MAX_UNREACHABLE_TIME;
   timeout.tv_usec = 0;
   Mensaje* buf = new Mensaje;
 
   while (connected) {
-
     // seteo el timeout de recepcion de mensajes
     if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
       cout << "Error sockopt" << endl;
@@ -48,17 +59,20 @@ void receiving(int sfd, const int MAX_DATA_SIZE, const char *IP){
     }
 
     if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
-      if (!connected) {
-	connected = false;
-	close(sfd);
-      }
+      close(gfd);
+      connected = false;
+      logger->warn(CONNECTION_TIMEOUT);
+      DEBUG_WARN(CONNECTION_TIMEOUT);
+      return;
     }
-    if (numBytesRead>0) {
-      //buf[numBytesRead] = '\0';
-      string recvMsg = string(buf->valor);
-      logger->info(SERVER_MSG(recvMsg));
-      DEBUG_PRINT(SERVER_MSG(recvMsg));
-      recibi = true;
+
+    if (numBytesRead > 0) {
+      if(numBytesRead != 1) {	
+	string recvMsg = string(buf->valor);
+	logger->info(SERVER_MSG(recvMsg));
+	DEBUG_PRINT(SERVER_MSG(recvMsg));
+	recibi = true;
+      }
     }
     if (numBytesRead == 0){
       logger->warn(CONNECTION_LOST);
@@ -168,6 +182,9 @@ void srvConnect() {
 
   // Create thread for receiving data from server
   if (connected){
+    thread tCheckAliveSend(checkAliveSend, sfd);
+    tCheckAliveSend.detach();
+
     thread tReceiving(receiving, sfd, MAX_DATA_SIZE, serverIP.c_str());
     tReceiving.detach();
   }
@@ -185,9 +202,9 @@ void srvDisconnect() {
 }
 
 void limpiarMemoria() {
-	//TODO: Pierde memoria por el logger y el Parser. No pueden ser borrados. Chequearlo
-	//	delete logger;
-	//	delete cc;
+  //TODO: Pierde memoria por el logger y el Parser. No pueden ser borrados. Chequearlo
+  //	delete logger;
+  //	delete cc;
 }
 
 void exitPgm() {
@@ -202,24 +219,24 @@ void exitPgm() {
 }
 
 bool sendData(Mensaje* data, int dataLength) {
-	recibi = false;
+  recibi = false;
   if(send(gfd, data, dataLength, 0) == -1) {
     logger->error(SEND_FAIL);
-//    theMutex.lock();
+    //    theMutex.lock();
     DEBUG_WARN(SEND_FAIL);
-//    theMutex.unlock();
+    //    theMutex.unlock();
     return false;
   }
-
+  
   return true;
 }
 
 bool sendMsg(string id) {
   if(!connected) {
     logger->warn(SEND_CERROR);
-  //  theMutex.lock();
+    //  theMutex.lock();
     DEBUG_WARN(SEND_CERROR);
-   // theMutex.unlock();
+    // theMutex.unlock();
     return false;
   }
 
@@ -235,9 +252,9 @@ bool sendMsg(string id) {
 
   int dataLength = sizeof(Mensaje);
   logger->info(SENT_DATA(msgToSend->valor));
- // theMutex.lock();
+  // theMutex.lock();
   DEBUG_PRINT(SENT_DATA(msgToSend->valor));
- // theMutex.unlock();
+  // theMutex.unlock();
   return sendData(msgToSend, dataLength);
 }
 
@@ -250,15 +267,21 @@ void addMsgOptions() {
 }
 
 void cycle() {
+  if (!connected){
+    logger->warn(CONNECTION_NOT_ACTIVE);
+    DEBUG_WARN(CONNECTION_NOT_ACTIVE);
+    return;
+  }
+
   double timeout = 0;
   cout << "Ingrese duracion (en milisegundos): ";
   cin >> timeout;
 
   while (timeout <= 0) {
-    	cout << endl << "Error - Debe ingresar un numero mayor a cero" << endl;
-    	cout << "Ingrese nuevamente durancion (en milisegundos): ";
-    	cin >> timeout;
-    }
+    cout << endl << "Error - Debe ingresar un numero mayor a cero" << endl;
+    cout << "Ingrese nuevamente durancion (en milisegundos): ";
+    cin >> timeout;
+  }
   timeout = timeout * 1000;
 
   logger->info("Se corre ciclar en " + to_string(timeout) + " milisegundos.");
@@ -267,19 +290,17 @@ void cycle() {
   recibi = true;
   clock_t start = clock();
   while (diferencia <= timeout && connected) {
-  	if (recibi){
-    	if (i >= cc->getMessages().size())
-    		i = 0;
-    	cout << endl << "En el i: " << i;
+    if (recibi){
+      if (i >= cc->getMessages().size())
+	i = 0;
+      cout << endl << "En el i: " << i;
 
-    	//if(!sendMsg(mensajes[i]->id))
-    	//	return;    TODO: Consultar con maxi para que sirve esto, porque anda sin eso
+      if(!sendMsg(cc->getMessages()[i]->id))
+	return;
 
-    	sendMsg(cc->getMessages()[i]->id);
-
-    	i++;
-  	}
-  	diferencia = clock() - start;
+      i++;
+    }
+    diferencia = clock() - start;
   }
   usleep(10000); // solo para que el ultimo se muestre antes de hacer display del menu
 }
@@ -289,9 +310,9 @@ int main(int argc, char* argv[]) {
   cc = XMLParser::parseClientConf(fileName);
 
   //TODO: Cuando se use el file name hay que utilizar el delete, para que pierda menos memoria
-//  delete fileName;
+  //  delete fileName;
 
-//  cout << cc->getMessages()[0];
+  //  cout << cc->getMessages()[0];
 
   clientMenu.addOption("Conectar", srvConnect);
   clientMenu.addOption("Desconectar", srvDisconnect);

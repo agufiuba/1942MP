@@ -29,6 +29,7 @@ int clientCount = 0;
 int gfd = 0;
 bool listening = false;
 bool serverConnected = false;
+const int MAX_UNREACHABLE_TIME = 5;
 
 void closeConnection() {
   delete msgQueue;
@@ -38,6 +39,26 @@ void closeConnection() {
   serverProcessing = false;
   logger->warn(SERVER_DISCONNECT);
   DEBUG_WARN(SERVER_DISCONNECT);
+}
+
+void exitPgm() {
+  if(serverConnected)
+    closeConnection();
+  logger->warn(SERVER_CLOSE);
+  //DEBUG_WARN(SERVER_CLOSE);
+
+  exit(0);
+}
+
+void checkAliveSend(int sfd) {
+  char buf[1] = { '1' };
+
+  while(true) {
+    if(!serverConnected) return;
+    // 4s timed send
+    usleep(4000000);
+    send(sfd, &buf, 1, 0);
+  }
 }
 
 void closeClient(int cfd) {
@@ -77,22 +98,37 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
     if (send(cfd, "Aceptado", 12, 0) == -1) {
       logger->error("Error al enviar que se acepto la conexion");
     }
+   
+    timeval timeout;
+    timeout.tv_sec = MAX_UNREACHABLE_TIME;
+    timeout.tv_usec = 0;
     bool receiving = true;
     while (receiving) {
-      if ((numBytesRead = recv(cfd, msgToRecv, sizeof(Mensaje), 0)) == -1) {
-	logger->error("Falla al recibir msj del cliente");
+      // seteo el timeout de recepcion de mensajes
+      if(setsockopt(cfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
+	cout << "Error sockopt" << endl;
+	exit(1);
       }
-      if (numBytesRead) {
-      	theMutex.lock();
-	cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
-	cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
-	cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
 
-	map<int,Mensaje*>* clientMsgFD = new map<int,Mensaje*>();
-	clientMsgFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
-	msgQueue->push(clientMsgFD);
-	theMutex.unlock();
+      if ((numBytesRead = recv(cfd, msgToRecv, sizeof(Mensaje), 0)) == -1) {
+	close(cfd);
+	logger->warn(CONNECTION_TIMEOUT);
+	DEBUG_WARN(CONNECTION_TIMEOUT);
+	exitPgm();
+      }
+      
+      if (numBytesRead > 0) {
+	if(numBytesRead != 1) {
+	  theMutex.lock();
+	  cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
+	  cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
+	  cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
 
+	  map<int,Mensaje*>* clientMsgFD = new map<int,Mensaje*>();
+	  clientMsgFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
+	  msgQueue->push(clientMsgFD);
+	  theMutex.unlock();
+	}
       } else {
 	receiving = false;
 	cout << endl << warning("El cliente ") << clientIP
@@ -122,6 +158,10 @@ void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, sock
     }
     clientCount++;
     bool allowConnections = (clientCount <= sc->getMaxClients());
+
+    thread tCheckAliveSend(checkAliveSend, cfd);
+    tCheckAliveSend.detach();
+
     thread process(recieveClientData, cfd, client_addr, allowConnections);
     process.detach();
   }
@@ -212,91 +252,82 @@ void srvDisconnect() {
   }
 }
 
-void exitPgm() {
-  if(serverConnected)
-    closeConnection();
-  logger->warn(SERVER_CLOSE);
-  //DEBUG_WARN(SERVER_CLOSE);
-
-  exit(0);
-}
-
 void sendingData(int cfd, Mensaje* data, int dataLength){
   //bool notSent = true;
   //TODO: falta agregar de que no loopee si llega a estar desconectado el cliente
   //while (notSent){
-    if (send(cfd, data, dataLength, 0) == -1) {
-      logger->warn(SEND_FAIL);
-      DEBUG_WARN(SEND_FAIL);
+  if (send(cfd, data, dataLength, 0) == -1) {
+    logger->warn(SEND_FAIL);
+    DEBUG_WARN(SEND_FAIL);
     //}else{
-      //notSent = false;
+    //notSent = false;
     //}
-  }
+}
 }
 
 bool serverProcess (string tipo, string valor){
-	const int MAX_INT = 2147483647;
-	bool respuesta = false;
+  const int MAX_INT = 2147483647;
+  bool respuesta = false;
 
-	regex r;
-	const char* expr;
+  regex r;
+  const char* expr;
 
-	if(tipo == K::typeInt){
-		//expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
-		expr = "^-?[0-9]+$";
-		r = regex(expr);
-		if ((regex_match(valor, r)) && (atoi(valor.c_str()) >= -MAX_INT) && (atoi(valor.c_str()) <= MAX_INT)) //ese casteo de char* a int no se si se puede
-			respuesta = true;
+  if(tipo == K::typeInt){
+    //expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
+    expr = "^-?[0-9]+$";
+    r = regex(expr);
+    if ((regex_match(valor, r)) && (atoi(valor.c_str()) >= -MAX_INT) && (atoi(valor.c_str()) <= MAX_INT)) //ese casteo de char* a int no se si se puede
+      respuesta = true;
 
-	} else {
+  } else {
 
-		if (tipo == K::typeDouble){
-			expr = "^-?([0-2]e-?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
-			r = regex(expr);
-			if (regex_match(valor, r)) respuesta = true;
+    if (tipo == K::typeDouble){
+      expr = "^-?([0-2]e-?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
+      r = regex(expr);
+      if (regex_match(valor, r)) respuesta = true;
 
-		} else {
+    } else {
 
-			if (tipo == K::typeString){
-			  expr = "^.+$";
-			  r = regex(expr);
-			  if (regex_match(valor, r)) respuesta = true;
+      if (tipo == K::typeString){
+	expr = "^.+$";
+	r = regex(expr);
+	if (regex_match(valor, r)) respuesta = true;
 
-			} else {
+      } else {
 
-				if (tipo == K::typeChar){
-					 expr = "^.$";
-					 r = regex(expr);
-					 if (regex_match(valor, r)) respuesta = true;
-				}
-			}
-		}
+	if (tipo == K::typeChar){
+	  expr = "^.$";
+	  r = regex(expr);
+	  if (regex_match(valor, r)) respuesta = true;
 	}
-	return respuesta;
+      }
+    }
+  }
+  return respuesta;
 }
 
 void threadProcesador() {
-	bool esCorrecto;
-	Mensaje* respuesta = new Mensaje;
+  bool esCorrecto;
+  Mensaje* respuesta = new Mensaje;
 
   while (serverProcessing) {
     if (!msgQueue->empty()) {
       theMutex.lock();
-      cout << "Saco Msj de la cola" << endl;
+      //cout << "Saco Msj de la cola" << endl;
       map<int,Mensaje*>* data = msgQueue->front();
       msgQueue->pop();
 
       map<int,Mensaje*>::iterator it = data->begin();
-      cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->valor << endl;
+      //cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->valor << endl;
 
       logger->info("Msj de cliente: " + string(((it->second)->valor)));
 
       esCorrecto = serverProcess(string((it->second)->tipo), string(((it->second)->valor)));
-    	if (esCorrecto) {
-    		strcpy(respuesta->valor, "Mensaje Correcto");
-    	} else {
-    		strcpy(respuesta->valor, "Mensaje Incorrecto");
-    	}
+      if (esCorrecto) {
+	strcpy(respuesta->valor, "Mensaje Correcto");
+      } else {
+	strcpy(respuesta->valor, "Mensaje Incorrecto");
+      }
       thread tSending(sendingData, it->first, respuesta , sizeof(Mensaje));
       tSending.detach();
 
@@ -305,7 +336,7 @@ void threadProcesador() {
       theMutex.unlock();
     }
   }
-  cout<<"Corto processor"<<endl;
+  //cout<<"Corto processor"<<endl;
   delete respuesta;
 }
 
