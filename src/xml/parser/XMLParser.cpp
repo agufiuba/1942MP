@@ -58,6 +58,7 @@ ServerConf* XMLParser::parseServerConf(string fn) {
 
 ClientConf* XMLParser::parseClientConf(string fn) {
 	Logger* l = Logger::instance();
+	bool createFile = false;
 	XMLDocument doc;
 	int serverPort = Defaults::serverPort;
 	string serverIP = Defaults::serverIP;
@@ -89,6 +90,7 @@ ClientConf* XMLParser::parseClientConf(string fn) {
 		}
 	} else {
 		l->error("Cargando archivo");
+		createFile = true;
 		Mensaje* msg = new Mensaje();
 		strcpy(msg->id, Defaults::generateMsgID().c_str());
 		strcpy(msg->tipo, Defaults::type);
@@ -99,7 +101,12 @@ ClientConf* XMLParser::parseClientConf(string fn) {
 	l->info(
 			"Configuracion cargada { serverIP: " + serverIP + ", serverPort: "
 					+ to_string(serverPort) + " }");
-	return new ClientConf(serverIP, serverPort, messages);
+	ClientConf* cc = new ClientConf(serverIP, serverPort, messages);
+	if (createFile) {
+		l->info("Creando archivo con configuracion por defecto del client");
+		createXML(cc);
+	}
+	return cc;
 }
 
 Mensaje* XMLParser::parseMsg(XMLElement* msg) {
@@ -234,4 +241,35 @@ void XMLParser::createXML(ServerConf* sc) {
 	se->LinkEndChild(pe);
 	doc.LinkEndChild(se);
 	doc.SaveFile("default-server-conf.xml");
+}
+
+void XMLParser::createXML(ClientConf* cc) {
+	XMLDocument doc;
+	XMLElement* ce = doc.NewElement("client");
+	XMLElement* sipe = doc.NewElement("serverIP");
+	XMLElement* spe = doc.NewElement("serverPort");
+	XMLElement* messagese = doc.NewElement("messages");
+	XMLElement* messagee = doc.NewElement("message");
+	XMLElement* messageide = doc.NewElement("id");
+	XMLElement* messagetypee = doc.NewElement("type");
+	XMLElement* messagevaluee = doc.NewElement("value");
+	XMLText* sip = doc.NewText(cc->getServerIP());
+	XMLText* sp = doc.NewText(to_string(cc->getServerPort()).c_str());
+	XMLText* messageid = doc.NewText(cc->getMessages()[0]->id);
+	XMLText* messagetype = doc.NewText(cc->getMessages()[0]->tipo);
+	XMLText* messagevalue = doc.NewElement(cc->getMessages()[0]->valor);
+	sipe->LinkEndChild(sip);
+	spe->LinkEndChild(sp);
+	messageide->LinkEndChild(messageid);
+	messagetypee->LinkEndChild(messagetype);
+	messagevaluee->LinkEndChild(messagevalue);
+	messagee->LinkEndChild(messageide);
+	messagee->LinkEndChild(messagetypee);
+	messagee->LinkEndChild(messagevaluee);
+	messagese->LinkEndChild(messagee);
+	ce->LinkEndChild(sipe);
+	ce->LinkEndChild(spe);
+	ce->LinkEndChild(messagese);
+	doc.LinkEndChild(ce);
+	doc.SaveFile("default-client-conf.xml");
 }
