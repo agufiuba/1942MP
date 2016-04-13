@@ -29,6 +29,7 @@ int clientCount = 0;
 int gfd = 0;
 bool listening = false;
 bool serverConnected = false;
+const int MAX_UNREACHABLE_TIME = 5;
 
 void closeConnection() {
   delete msgQueue;
@@ -49,39 +50,14 @@ void exitPgm() {
   exit(0);
 }
 
-void checkAliveRecv (int sfd){
-  timeval timeout;
-  timeout.tv_sec = 5;
-  timeout.tv_usec = 0;
-  char buf[1];
-  int numBytesRead;
-  const int MAX_DATA_SIZE = 1;
-
-  // seteo el timeout de recepcion de mensajes
-  if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
-    cout << "Error sockopt" << endl;
-    exit(1);
-  }
-
-  if ((numBytesRead = recv(sfd, &buf, MAX_DATA_SIZE, MSG_PEEK)) == -1) {
-    if (numBytesRead == 0){
-      logger->warn(CONNECTION_LOST);
-      DEBUG_WARN(CONNECTION_LOST);
-      exitPgm();
-    }
-  }
-}
-
 void checkAliveSend(int sfd) {
   char buf[1] = { '1' };
 
   while(true) {
+    if(!serverConnected) return;
     // 4s timed send
     usleep(4000000);
-    if(send(sfd, &buf, 1, 0) == -1) {
-      logger->error(SEND_FAIL);
-      DEBUG_WARN(SEND_FAIL);
-    }
+    send(sfd, &buf, 1, 0);
   }
 }
 
@@ -122,22 +98,37 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
     if (send(cfd, "Aceptado", 12, 0) == -1) {
       logger->error("Error al enviar que se acepto la conexion");
     }
+   
+    timeval timeout;
+    timeout.tv_sec = MAX_UNREACHABLE_TIME;
+    timeout.tv_usec = 0;
     bool receiving = true;
     while (receiving) {
-      if ((numBytesRead = recv(cfd, msgToRecv, sizeof(Mensaje), 0)) == -1) {
-	logger->error("Falla al recibir msj del cliente");
+      // seteo el timeout de recepcion de mensajes
+      if(setsockopt(cfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
+	cout << "Error sockopt" << endl;
+	exit(1);
       }
-      if (numBytesRead) {
-	theMutex.lock();
-	cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
-	cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
-	cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
 
-	map<int,Mensaje*>* clientMsgFD = new map<int,Mensaje*>();
-	clientMsgFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
-	msgQueue->push(clientMsgFD);
-	theMutex.unlock();
+      if ((numBytesRead = recv(cfd, msgToRecv, sizeof(Mensaje), 0)) == -1) {
+	close(cfd);
+	logger->warn(CONNECTION_TIMEOUT);
+	DEBUG_WARN(CONNECTION_TIMEOUT);
+	exitPgm();
+      }
+      
+      if (numBytesRead > 0) {
+	if(numBytesRead != 1) {
+	  theMutex.lock();
+	  cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
+	  cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
+	  cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
 
+	  map<int,Mensaje*>* clientMsgFD = new map<int,Mensaje*>();
+	  clientMsgFD->insert(pair<int,Mensaje*>(cfd, msgToRecv));
+	  msgQueue->push(clientMsgFD);
+	  theMutex.unlock();
+	}
       } else {
 	receiving = false;
 	cout << endl << warning("El cliente ") << clientIP
@@ -167,9 +158,6 @@ void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, sock
     }
     clientCount++;
     bool allowConnections = (clientCount <= sc->getMaxClients());
-
-    thread tCheckAliveRecv(checkAliveRecv, cfd);
-    tCheckAliveRecv.detach();
 
     thread tCheckAliveSend(checkAliveSend, cfd);
     tCheckAliveSend.detach();

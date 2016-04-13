@@ -9,6 +9,7 @@
 #define CONNECTION_ACTIVE "Ya hay una conexion activa." // server - client
 #define CONNECTION_RETRY "Error de conexion. Reintentando conexion..."
 #define CONNECTION_NOT_ACTIVE "No hay una conexion activa." // server - client
+#define CONNECTION_TIMEOUT "Error: TIMEOUT - Se perdio la conexion." // server - client
 #define CLIENT_CLOSE "Cerrando el cliente..."
 #define SENT_DATA(X) "Se envio " + notice(X) + " al servidor"
 #define CONNECTION_ERROR(X) warning("No se pudo establecer una conexion con el servidor: ") \

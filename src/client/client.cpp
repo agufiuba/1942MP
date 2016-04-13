@@ -61,14 +61,13 @@ void receiving(int sfd, const int MAX_DATA_SIZE, const char *IP){
     if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, 0)) == -1) {
       close(gfd);
       connected = false;
-      logger->warn(CONNECTION_LOST);
-      DEBUG_WARN(CONNECTION_LOST);
+      logger->warn(CONNECTION_TIMEOUT);
+      DEBUG_WARN(CONNECTION_TIMEOUT);
       return;
     }
 
     if (numBytesRead > 0) {
-      if(numBytesRead == 1) {	
-      } else {
+      if(numBytesRead != 1) {	
 	string recvMsg = string(buf->valor);
 	logger->info(SERVER_MSG(recvMsg));
 	DEBUG_PRINT(SERVER_MSG(recvMsg));
