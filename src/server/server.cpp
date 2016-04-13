@@ -30,32 +30,50 @@ int gfd = 0;
 bool listening = false;
 bool serverConnected = false;
 
+void closeConnection() {
+  delete msgQueue;
+  close(gfd);
+  listening = false;
+  serverConnected = false;
+  serverProcessing = false;
+  logger->warn(SERVER_DISCONNECT);
+  DEBUG_WARN(SERVER_DISCONNECT);
+}
+
+void exitPgm() {
+  if(serverConnected)
+    closeConnection();
+  logger->warn(SERVER_CLOSE);
+  //DEBUG_WARN(SERVER_CLOSE);
+
+  exit(0);
+}
+
 void checkAliveRecv (int sfd){
   timeval timeout;
   timeout.tv_sec = 5;
   timeout.tv_usec = 0;
-  char *buf;
+  char buf[1];
   int numBytesRead;
   const int MAX_DATA_SIZE = 1;
 
-    // seteo el timeout de recepcion de mensajes
-    if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
-      cout << "Error sockopt" << endl;
-      exit(1);
-    }
+  // seteo el timeout de recepcion de mensajes
+  if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout)) < 0) {
+    cout << "Error sockopt" << endl;
+    exit(1);
+  }
 
-    if ((numBytesRead = recv(sfd, buf, MAX_DATA_SIZE, MSG_PEEK)) == -1) {
-    	if (numBytesRead == 0){
-        logger->warn(CONNECTION_LOST);
-        DEBUG_WARN(CONNECTION_LOST);
-        close(sfd);
-        connected = false;
-    	}
+  if ((numBytesRead = recv(sfd, &buf, MAX_DATA_SIZE, MSG_PEEK)) == -1) {
+    if (numBytesRead == 0){
+      logger->warn(CONNECTION_LOST);
+      DEBUG_WARN(CONNECTION_LOST);
+      exitPgm();
     }
+  }
 }
 
 void checkAliveSend(int sfd) {
-  char buf[1] = '1';
+  char buf[1] = { '1' };
 
   while(true) {
     // 4s timed send
@@ -65,16 +83,6 @@ void checkAliveSend(int sfd) {
       DEBUG_WARN(SEND_FAIL);
     }
   }
-}
-
-void closeConnection() {
-  delete msgQueue;
-  close(gfd);
-  listening = false;
-  serverConnected = false;
-  serverProcessing = false;
-  logger->warn(SERVER_DISCONNECT);
-  DEBUG_WARN(SERVER_DISCONNECT);
 }
 
 void closeClient(int cfd) {
@@ -120,7 +128,7 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 	logger->error("Falla al recibir msj del cliente");
       }
       if (numBytesRead) {
-      	theMutex.lock();
+	theMutex.lock();
 	cout << endl << "ID del mensaje recibido: " << notice(msgToRecv->id) << endl;
 	cout << "Tipo del mensaje recibido: " << notice(msgToRecv->tipo) << endl;
 	cout << "Valor del mensaje recibido: " << notice(msgToRecv->valor) << endl;
@@ -160,11 +168,11 @@ void serverListening(int sfd, int cfd, struct sockaddr_storage client_addr, sock
     clientCount++;
     bool allowConnections = (clientCount <= sc->getMaxClients());
 
-  	thread tCheckAliveRecv(checkAliveRecv, cfd);
-  	tCheckAliveRecv.detach();
+    thread tCheckAliveRecv(checkAliveRecv, cfd);
+    tCheckAliveRecv.detach();
 
-  	thread tCheckAliveSend(checkAliveSend, cfd);
-  	tCheckAliveSend.detach();
+    thread tCheckAliveSend(checkAliveSend, cfd);
+    tCheckAliveSend.detach();
 
     thread process(recieveClientData, cfd, client_addr, allowConnections);
     process.detach();
@@ -256,72 +264,63 @@ void srvDisconnect() {
   }
 }
 
-void exitPgm() {
-  if(serverConnected)
-    closeConnection();
-  logger->warn(SERVER_CLOSE);
-  //DEBUG_WARN(SERVER_CLOSE);
-
-  exit(0);
-}
-
 void sendingData(int cfd, Mensaje* data, int dataLength){
   //bool notSent = true;
   //TODO: falta agregar de que no loopee si llega a estar desconectado el cliente
   //while (notSent){
-    if (send(cfd, data, dataLength, 0) == -1) {
-      logger->warn(SEND_FAIL);
-      DEBUG_WARN(SEND_FAIL);
+  if (send(cfd, data, dataLength, 0) == -1) {
+    logger->warn(SEND_FAIL);
+    DEBUG_WARN(SEND_FAIL);
     //}else{
-      //notSent = false;
+    //notSent = false;
     //}
-  }
+}
 }
 
 bool serverProcess (string tipo, string valor){
-	const int MAX_INT = 2147483647;
-	bool respuesta = false;
+  const int MAX_INT = 2147483647;
+  bool respuesta = false;
 
-	regex r;
-	const char* expr;
+  regex r;
+  const char* expr;
 
-	if(tipo == K::typeInt){
-		//expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
-		expr = "^-?[0-9]+$";
-		r = regex(expr);
-		if ((regex_match(valor, r)) && (atoi(valor.c_str()) >= -MAX_INT) && (atoi(valor.c_str()) <= MAX_INT)) //ese casteo de char* a int no se si se puede
-			respuesta = true;
+  if(tipo == K::typeInt){
+    //expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
+    expr = "^-?[0-9]+$";
+    r = regex(expr);
+    if ((regex_match(valor, r)) && (atoi(valor.c_str()) >= -MAX_INT) && (atoi(valor.c_str()) <= MAX_INT)) //ese casteo de char* a int no se si se puede
+      respuesta = true;
 
-	} else {
+  } else {
 
-		if (tipo == K::typeDouble){
-			expr = "^-?([0-2]e-?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
-			r = regex(expr);
-			if (regex_match(valor, r)) respuesta = true;
+    if (tipo == K::typeDouble){
+      expr = "^-?([0-2]e-?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
+      r = regex(expr);
+      if (regex_match(valor, r)) respuesta = true;
 
-		} else {
+    } else {
 
-			if (tipo == K::typeString){
-			  expr = "^.+$";
-			  r = regex(expr);
-			  if (regex_match(valor, r)) respuesta = true;
+      if (tipo == K::typeString){
+	expr = "^.+$";
+	r = regex(expr);
+	if (regex_match(valor, r)) respuesta = true;
 
-			} else {
+      } else {
 
-				if (tipo == K::typeChar){
-					 expr = "^.$";
-					 r = regex(expr);
-					 if (regex_match(valor, r)) respuesta = true;
-				}
-			}
-		}
+	if (tipo == K::typeChar){
+	  expr = "^.$";
+	  r = regex(expr);
+	  if (regex_match(valor, r)) respuesta = true;
 	}
-	return respuesta;
+      }
+    }
+  }
+  return respuesta;
 }
 
 void threadProcesador() {
-	bool esCorrecto;
-	Mensaje* respuesta = new Mensaje;
+  bool esCorrecto;
+  Mensaje* respuesta = new Mensaje;
 
   while (serverProcessing) {
     if (!msgQueue->empty()) {
@@ -336,11 +335,11 @@ void threadProcesador() {
       logger->info("Msj de cliente: " + string(((it->second)->valor)));
 
       esCorrecto = serverProcess(string((it->second)->tipo), string(((it->second)->valor)));
-    	if (esCorrecto) {
-    		strcpy(respuesta->valor, "Mensaje Correcto");
-    	} else {
-    		strcpy(respuesta->valor, "Mensaje Incorrecto");
-    	}
+      if (esCorrecto) {
+	strcpy(respuesta->valor, "Mensaje Correcto");
+      } else {
+	strcpy(respuesta->valor, "Mensaje Incorrecto");
+      }
       thread tSending(sendingData, it->first, respuesta , sizeof(Mensaje));
       tSending.detach();
 

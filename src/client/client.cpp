@@ -29,7 +29,7 @@ void checkAliveRecv (int sfd){
   timeval timeout;
   timeout.tv_sec = 5;
   timeout.tv_usec = 0;
-  char *buf;
+  char buf[1];
   int numBytesRead;
   const int MAX_DATA_SIZE = 1;
 
@@ -50,7 +50,7 @@ void checkAliveRecv (int sfd){
 }
 
 void checkAliveSend(int sfd) {
-  char buf[1] = '1';
+  char buf[1] = { '1' };
 
   while(true) {
     // 4s timed send
