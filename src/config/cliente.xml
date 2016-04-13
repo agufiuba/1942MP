@@ -31,7 +31,7 @@
     <message>
       <id>Mensaje6</id>
       <type>STRING</type>
-      <value> %&/()!"#$hola mundo </value>
+      <value> %()!"#$hola mundo </value>
     </message>
     <message>
       <id>Mensaje7</id>

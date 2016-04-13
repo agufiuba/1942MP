@@ -3,7 +3,7 @@
 using namespace std;
 
 __pid_t pid = getpid();
-const int MAX_LENGHT_FILE_LOG = 10000;
+const int MAX_LENGHT_FILE_LOG = 100000;
 Logger* loggerInstance = NULL;
 string directory = "./logs/";
 string fileLogName = "logger-"+to_string(pid)+".log";
