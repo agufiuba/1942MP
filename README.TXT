@@ -1,20 +1,28 @@
-Taller de Programación I - 1er Cuatrimestre - 2016 - TP 1
+Taller de Programación I - 2016 - 1er Cuatrimestre - TP 1
 
 Integrantes:
--CENTURIÓN, Ramón			94092
--NAKASONE, Key				93632
--VALLERINO, Gonzalo Adrián	91366
--SCOCCIMARRO, Maximiliano	
+- CENTURIÓN, Ramón			94092
+- NAKASONE, Key				93632
+- VALLERINO, Gonzalo Adrián		91366
+- SCOCCIMARRO, Maximiliano		93784
 - ,Agustín	
  
 Sistema Operativo: 
--Linux
+- Linux
  
 Bibliotecas utlilizadas:
--
--
--
--
+- TinyXML-2	version 2		
+- 
+
+- time.h
+
+C++ 4.9
+- queue
+- mutex
+- thread
+- regex
+- vector
+
 
 Compilacion y Ejecución del proyeco:
 -Ir mediante la terminal de Linux hasta la ruta del proyecto
