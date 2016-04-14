@@ -1,47 +1,107 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <client>
   <serverIP>127.0.0.1</serverIP>
-  <serverPort>10000</serverPort>
+  <serverPort>8080</serverPort>
   <messages>
     <message>
-      <id>Mensaje1</id>
+      <id>1</id>
       <type>INT</type>
-      <value>1454565</value>
+      <value>31</value>
     </message>
     <message>
-      <id>Mensaje2</id>
-      <type>STRING</type>
-      <value> hola mundo </value>
+      <id>2</id>
+      <type>INT</type>
+      <value>10</value>
     </message>
     <message>
-      <id>Mensaje3</id>
-      <type>DOUBLE</type>
-      <value>2e-299</value>
+      <id>3</id>
+      <type>int</type>
+      <value>-1973</value>
     </message>
     <message>
-      <id>id4</id>
+      <id>4</id>
+      <type>double</type>
+      <value>3.14</value>
+    </message>
+    <message>
+      <id>5</id>
+      <type>Double</type>
+      <value>-3.14</value>
+    </message>
+    <message>
+      <id>6</id>
       <type>CHAR</type>
+      <value>E</value>
+    </message>
+    <message>
+      <id>7</id>
+      <type>strING</type>
+      <value>HOLA MUNDO</value>
+    </message>
+    <message>
+      <id>8</id>
+      <type>double</type>
+      <value>127.02</value>
+    </message>
+    <message>
+      <id>9</id>
+      <type>Double</type>
+      <value>129.921</value>
+    </message>
+    <message>
+      <id>10</id>
+      <type>STRING</type>
+      <value>FALSE</value>
+    </message>
+    <message>
+      <id>11</id>
+      <type>INT</type>
+      <value>-32768</value>
+    </message>
+    <message>
+      <id>12</id>
+      <type>INT</type>
+      <value>32767</value>
+    </message>
+    <message>
+      <id>13</id>
+      <type>INT</type>
+      <value>50000</value>
+    </message>
+    <message>
+      <id>14</id>
+      <type>string</type>
+      <value>True</value>
+    </message>
+    <message>
+      <id>15</id>
+      <type>char</type>
+      <value>@</value>
+    </message>
+    <message>
+      <id>16</id>
+      <type>char</type>
+      <value>D</value>
+    </message>
+    <message>
+      <id>17</id>
+      <type>Double</type>
+      <value>1.329</value>
+    </message>
+    <message>
+      <id>18</id>
+      <type>double</type>
+      <value>11e+23</value>
+    </message>
+    <message>
+      <id>19</id>
+      <type>InT</type>
+      <value>2147483647</value>
+    </message>
+    <message>
+      <id>20</id>
+      <type>CHAr</type>
       <value>a</value>
-    </message>
-    <message>
-      <id>id5</id>
-      <type>INT</type>
-      <value>1,444444</value>
-    </message>
-    <message>
-      <id>Mensaje6</id>
-      <type>STRING</type>
-      <value> %()!"#$hola mundo </value>
-    </message>
-    <message>
-      <id>Mensaje7</id>
-      <type>DOUBLE</type>
-      <value>2ex299</value>
-    </message>
-    <message>
-      <id>id8</id>
-      <type>CHAR</type>
-      <value>2e</value>
     </message>
   </messages>
 </client>

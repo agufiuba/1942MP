@@ -114,7 +114,7 @@ void recieveClientData(int cfd, struct sockaddr_storage client_addr,
 	close(cfd);
 	logger->warn(CONNECTION_TIMEOUT);
 	DEBUG_WARN(CONNECTION_TIMEOUT);
-	exitPgm();
+	
       }
       
       if (numBytesRead > 0) {
@@ -283,7 +283,7 @@ bool serverProcess (string tipo, string valor){
   } else {
 
     if (tipo == K::typeDouble){
-      expr = "^-?([0-2]e-?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
+      expr = "^-?([0-9]+e-?[//+]?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[//+]?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
       r = regex(expr);
       if (regex_match(valor, r)) respuesta = true;
 
@@ -326,8 +326,10 @@ void threadProcesador() {
       esCorrecto = serverProcess(string((it->second)->tipo), string(((it->second)->valor)));
       if (esCorrecto) {
 	strcpy(respuesta->valor, "Mensaje Correcto");
+	logger->info(respuesta->valor);
       } else {
 	strcpy(respuesta->valor, "Mensaje Incorrecto");
+	logger->warn(respuesta->valor);
       }
       thread tSending(sendingData, it->first, respuesta , sizeof(Mensaje));
       tSending.detach();
