@@ -47,11 +47,22 @@ void fillWindowSurface( SDL_Window* &window, uint8_t r, uint8_t g, uint8_t b ) {
   SDL_UpdateWindowSurface( window );
 }
 
-bool loadMedia() {
+bool loadMedia(SDL_Surface* &image) {
+  bool success = true;
+  
+  // Load splash image
+  image = SDL_LoadBMP( "../images/panda.bmp" );
+  if( image == NULL ) {
+    cout << "Unable to load image.\nSDL error: " << SDL_GetError() << endl;
+    success = false;
+  }
 
+  return success;
 }
 
-void closeSDL(SDL_Window* &window) {
+void closeSDL(SDL_Window* &window, SDL_Surface* &image) {
+  // Deallocate surface
+  SDL_FreeSurface( image );
   // Destroy window
   SDL_DestroyWindow( window ); 
   // Quit SDL subsystems
@@ -62,15 +73,39 @@ int main() {
   // The window on which to render
   SDL_Window* window = NULL;
 
+  // The image to load and show on screen
+  SDL_Surface* image = NULL;
+
+  // Event handler
+  SDL_Event e;
+
+  bool quit = false;
+
   if( !initSDL( window ) ) {
     cout << "Failed to initialize." << endl;
   } else {
-    fillWindowSurface( window, 15, 36, 97 );    
-    // Wait two seconds
-    SDL_Delay( 2000 );
+    // Set BG color
+    fillWindowSurface( window, 15, 36, 97 );
+    if(!loadMedia( image )) {
+     cout << "Failed to load media." << endl; 
+    } else {
+      // Apply the image
+      SDL_BlitSurface( image, NULL, SDL_GetWindowSurface( window ), NULL );
+      SDL_UpdateWindowSurface( window );
+    }
   }
 
-  closeSDL( window );
+  while( !quit ) {
+    // Handle events on queue
+    while( SDL_PollEvent(&e) != 0 ) {
+      // User requests quit
+      if( e.type == SDL_QUIT ) {
+	quit = true;
+      }
+    }
+  }
+
+  closeSDL( window, image );
 
   return 0;
 }
