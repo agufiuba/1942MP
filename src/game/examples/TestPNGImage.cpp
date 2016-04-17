@@ -21,6 +21,7 @@ void closeSDL(SDL_Window* &window, SDL_Surface* &image) {
   SDL_DestroyWindow( window );
   // Quit SDL subsystems
   SDL_Quit();
+  IMG_Quit();
 }
 
 int main() {
