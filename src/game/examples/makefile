@@ -1,13 +1,13 @@
 # files to compile
-OBJS = window_pop.cpp libs/sdl_op.cpp
+OBJS = TestMove.cpp libs/sdl2_rc.cpp
 # compiler
 CC = g++
 # compilation options
 #COMPILER_FLAGS = 
 # libraries to link
-LINKER_FLAGS = -lSDL2
+LINKER_FLAGS = -lSDL2 -lSDL2_image
 # executable name
-OBJ_NAME = window_pop.exe
+OBJ_NAME = TestMove.exe
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)

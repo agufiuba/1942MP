@@ -3,8 +3,8 @@
 using namespace std;
 
 const int BPP = 24;
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 500;
+const int SCREEN_WIDTH = 400;//x
+const int SCREEN_HEIGHT = 600;//y
 
 
 // The window on which to render
@@ -27,8 +27,8 @@ struct nave{
 void applyMedia(SDL_Window* &window, SDL_Surface* &image, nave* minave) {
 	dest.x = minave->x;
 	dest.y = minave->y;
-	dest.w = image -> w;
-	dest.h = image -> h;
+	dest.w = SCREEN_WIDTH;
+	dest.h = SCREEN_HEIGHT;
 
   // Apply the image
   SDL_BlitSurface( image, NULL, SDL_GetWindowSurface( window ), &dest );
@@ -60,11 +60,11 @@ int main() {
   } else {
     // Set BG color
     fillWindowSurface( window, screenSurface, 0, 0, 0);
-    if(!loadMediaPNG( screenSurface, image, "../images/nave.png")) {
+    if(!loadMediaPNG( screenSurface, image, "../images/nave_espacial.png")) {
      cout << "Failed to load media." << endl;
     } else {
-      minave->x = 10;
-      minave->y = 10;
+      minave->x = 125;
+      minave->y = 450;
 
       applyMedia( window, image, minave );
     }
@@ -84,13 +84,13 @@ int main() {
     	  if(e.key.keysym.sym == SDLK_UP && minave->y > 0) {
     		  minave->y = minave->y - (15);
     	  }
-    	  if(e.key.keysym.sym == SDLK_DOWN && minave->y < SCREEN_HEIGHT) {
+    	  if(e.key.keysym.sym == SDLK_DOWN && minave->y < SCREEN_HEIGHT/1.4) {
     		  minave->y = minave->y + (15);
     	  }
     	  if(e.key.keysym.sym == SDLK_LEFT && minave->x > 0) {
     		  minave->x = minave->x - (15);
     	  }
-    	  if(e.key.keysym.sym == SDLK_RIGHT && minave->x < SCREEN_WIDTH) {
+    	  if(e.key.keysym.sym == SDLK_RIGHT && minave->x < SCREEN_WIDTH/1.7) {
     		  minave->x = minave->x + (15);
     	  }
       }

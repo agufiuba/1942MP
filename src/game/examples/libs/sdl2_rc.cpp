@@ -13,7 +13,7 @@ using namespace std;
  */
 bool initSDL( SDL_Window*& window, SDL_Surface* &screen, const int SCREEN_WIDTH, const int SCREEN_HEIGHT ) {
   bool success = true;
-  const char* WINDOW_TITLE = "Super Mario Bros";
+  const char* WINDOW_TITLE = "1942 Stars Wars";
   window = NULL;
 
   // Init SDL
@@ -110,7 +110,7 @@ SDL_Surface* loadSurface(SDL_Surface* &screen , string path )
 	else
 	{
 		//Convert surface to screen format
-		optimizedSurface = SDL_ConvertSurface( loadedSurface, screen->format, NULL );
+		optimizedSurface = SDL_ConvertSurface( loadedSurface, screen->format, 0 );
 		if( optimizedSurface == NULL )
 		{
 			printf( "Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );

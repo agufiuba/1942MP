@@ -44,7 +44,7 @@ int main() {
   } else {
     // Set BG color
     fillWindowSurface( window, screenSurface, 0, 0, 0);
-    if(!loadMediaPNG( screenSurface, image, "../images/nave.png" )) {
+    if(!loadMediaPNG( screenSurface, image, "../images/nave_espacial.png" )) {
      cout << "Failed to load media." << endl;
     } else {
       applyMedia( window, image );
