@@ -1,9 +1,7 @@
 #ifndef SDL_OP_H
 #define SDL_OP_H
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <stdio.h>
-#include <string>
+
+#include "Texture.h"
 
 using namespace std;
 /**
@@ -14,7 +12,7 @@ using namespace std;
  * @param: SCREEN_HEIGHT -> created window height
  * @return: window creation success
  */
-bool initSDL( SDL_Window*& window, SDL_Surface*& screenSurface, const int SCREEN_WIDTH, const int SCREEN_HEIGHT );
+bool initSDL( SDL_Window*& window, SDL_Renderer*& gRenderer, const int SCREEN_WIDTH, const int SCREEN_HEIGHT );
 
 /**
  * Fills window surface with r, g, b and updates it
@@ -25,7 +23,7 @@ bool initSDL( SDL_Window*& window, SDL_Surface*& screenSurface, const int SCREEN
  * @param: b	  -> decimal color value (0..255)
  * @return: void
  */
-void fillWindowSurface( SDL_Window*& window, SDL_Surface*& screenSurface, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0 );
+void fillWindowSurface( SDL_Window*& window, uint8_t r = 0, uint8_t g = 0, uint8_t b = 0 );
 
 /**
  * Load BMP file
@@ -36,10 +34,7 @@ void fillWindowSurface( SDL_Window*& window, SDL_Surface*& screenSurface, uint8_
  */
 bool loadMedia( SDL_Surface* &image, const char* IMAGE_URL );
 
-
-bool loadMediaPNG( SDL_Surface* &gScreenSurface, SDL_Surface* &image, string IMAGE_URL );
-
-//Loads individual image
-SDL_Surface* loadSurface(SDL_Surface* &gScreenSurface, std::string path );
+bool loadMediaTexture( Texture* &gFooTexture , const char* IMAGE_URL,
+		Texture* &gBackgroundTexture, const char* background_URL,  SDL_Renderer* &renderer);
 
 #endif
