@@ -1,5 +1,6 @@
-#include "libs/sdl2_rc.h"
 #include <iostream>
+
+#include "../../game/examples/libs/sdl2_rc.h"
 
 using namespace std;
 
@@ -20,8 +21,8 @@ SDL_Rect dest;
 SDL_Renderer* gRenderer = NULL;
 
 //Scene textures
-Texture* gFooTexture = NULL;
-Texture* gBackgroundTexture = NULL;
+Texture* naveTexture = NULL;
+Texture* backgroundTexture = NULL;
 
 
 const Uint8 *keys;
@@ -53,8 +54,8 @@ void closeSDL(SDL_Window* &window, SDL_Surface* &image) {
 
 void close(){
 	//Free loaded images
-	gFooTexture->free();
-	gBackgroundTexture->free();
+	naveTexture->free();
+	backgroundTexture->free();
 
 	//Destroy window
 	SDL_DestroyRenderer( gRenderer );
@@ -73,8 +74,8 @@ int main() {
   //Event handler
   SDL_Event e;
 
-  gFooTexture = new Texture();
-  gBackgroundTexture = new Texture();
+  naveTexture = new Texture();
+  backgroundTexture = new Texture();
 
   nave* minave = new nave();
 
@@ -85,31 +86,36 @@ int main() {
     //fillWindowSurface( window, 80, 100, 0);
     //if(!loadMedia( image, "../images/nave_espacial.bmp")) {
 
-    if(!loadMediaTexture( gFooTexture, "../images/naveEspacial.bmp", gBackgroundTexture, "../images/space_background.bmp", gRenderer)) {
+    if(!loadMediaTexture( naveTexture, "../images/naveEspacial.bmp",gRenderer)) {
     	cout << "Failed to load media." << endl;
     } else {
 
-    	widthImage = gFooTexture->getWidth();
-    	heigthImage = gFooTexture->getHeight();
-    	//widthImage = image->w;
-    	//heigthImage = image->h;
-    	minave->x = 125;
-      minave->y = 450;
+    	if (!loadMediaTexture(backgroundTexture, "../images/space_background.bmp", gRenderer)){
+    		cout << "Failed to load media." << endl;
+    	} else {
 
-			//Clear screen
-			SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
+				widthImage = naveTexture->getWidth();
+				heigthImage = naveTexture->getHeight();
+				//widthImage = image->w;
+				//heigthImage = image->h;
+				minave->x = 125;
+				minave->y = 450;
 
-			SDL_RenderClear( gRenderer );
+				//Clear screen
+				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-			//Render background texture to screen
-			gBackgroundTexture->render( 0, 0 ,gRenderer);
+				SDL_RenderClear( gRenderer );
 
-			//Render Foo' to the screen
-			gFooTexture->render( minave->x, minave->y, gRenderer);
+				//Render background texture to screen
+				backgroundTexture->render( 0, 0 ,gRenderer);
 
-			//Update screen
-			SDL_RenderPresent( gRenderer );
-      //applyMedia( window, image, minave );
+				//Render Foo' to the screen
+				naveTexture->render( minave->x, minave->y, gRenderer);
+
+				//Update screen
+				SDL_RenderPresent( gRenderer );
+				//applyMedia( window, image, minave );
+    	}
     }
   }
 
@@ -125,16 +131,16 @@ int main() {
 	  {
     	  ///keys = SDL_GetKeyboardState(NULL);
     	  if(e.key.keysym.sym == SDLK_UP && minave->y > 0) {
-    		  minave->y = minave->y - (15);
+    		  minave->y = minave->y - (1);
     	  }
     	  if(e.key.keysym.sym == SDLK_DOWN && minave->y < (SCREEN_HEIGHT-heigthImage)) {
-    		  minave->y = minave->y + (15);
+    		  minave->y = minave->y + (1);
     	  }
     	  if(e.key.keysym.sym == SDLK_LEFT && minave->x > 0) {
-    		  minave->x = minave->x - (15);
+    		  minave->x = minave->x - (1);
     	  }
     	  if(e.key.keysym.sym == SDLK_RIGHT && minave->x < (SCREEN_WIDTH-widthImage)) {
-    		  minave->x = minave->x + (15);
+    		  minave->x = minave->x + (1);
     	  }
       }
     }
@@ -144,10 +150,10 @@ int main() {
 		SDL_RenderClear( gRenderer );
 
 		//Render background texture to screen
-		gBackgroundTexture->render( 0, 0 ,gRenderer);
+		backgroundTexture->render( 0, 0 ,gRenderer);
 
 		//Render Foo' to the screen
-		gFooTexture->render( minave->x, minave->y ,gRenderer);
+		naveTexture->render( minave->x, minave->y ,gRenderer);
 
 		//Update screen
 		SDL_RenderPresent( gRenderer );

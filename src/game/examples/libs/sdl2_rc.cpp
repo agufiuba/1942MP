@@ -1,4 +1,5 @@
-#include "sdl2_rc.h"
+#include "../../../game/examples/libs/sdl2_rc.h"
+
 #include <iostream>
 
 using namespace std;
@@ -84,30 +85,12 @@ bool loadMedia(SDL_Surface* &image, const char* IMAGE_URL) {
 	return success;
 }
 
-bool loadMediaTexture(Texture* &gFooTexture, const char* IMAGE_URL,
-    Texture* &gBackgroundTexture, const char* background_URL,
-    SDL_Renderer* &renderer) {
+bool loadMediaTexture(Texture* &imageTexture, const char* IMAGE_URL, SDL_Renderer* &renderer) {
 	bool success = true;
-//	image = NULL;
 
-//	// Load splash image
-//	image = SDL_LoadBMP( IMAGE_URL );
-//	if( image == NULL ) {
-//		cout << "Unable to load image.\nSDL error: " << SDL_GetError() << endl;
-//		success = false;
-//	}
-//	//Loading success flag
-//	bool success = true;
-
-//Load Foo' texture
-	if (!gFooTexture->loadFromFile(IMAGE_URL, renderer)) {
+//Load texture
+	if (!imageTexture->loadFromFile(IMAGE_URL, renderer)) {
 		printf("Failed to load Foo' texture image!\n");
-		success = false;
-	}
-
-	//Load background texture
-	if (!gBackgroundTexture->loadFromFile(background_URL, renderer)) {
-		printf("Failed to load background texture image!\n");
 		success = false;
 	}
 

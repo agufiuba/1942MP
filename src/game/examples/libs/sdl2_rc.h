@@ -1,7 +1,7 @@
 #ifndef SDL_OP_H
 #define SDL_OP_H
 
-#include "Texture.h"
+#include "../../../game/examples/libs/Texture.h"
 
 using namespace std;
 /**
@@ -34,7 +34,6 @@ void fillWindowSurface( SDL_Window*& window, uint8_t r = 0, uint8_t g = 0, uint8
  */
 bool loadMedia( SDL_Surface* &image, const char* IMAGE_URL );
 
-bool loadMediaTexture( Texture* &gFooTexture , const char* IMAGE_URL,
-		Texture* &gBackgroundTexture, const char* background_URL,  SDL_Renderer* &renderer);
+bool loadMediaTexture( Texture* &imageTexture , const char* IMAGE_URL, SDL_Renderer* &renderer);
 
 #endif
