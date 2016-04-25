@@ -5,14 +5,18 @@
 
 class Client {
   private:
+    int socketFD;
     bool connected;
-    Logger* log;
+    bool received;
+    Logger* logger;
     static const int MAX_UNREACHABLE_TIME = 5;
     ClientConf* config;
+    void checkAliveSend();
+    void receiving( const int MAX_DATA_SIZE, const char* IP );
 
   public:
     Client( const char* configFileName );
-    void connect();
+    void connectToServer();
     ~Client();
 };
 #endif
