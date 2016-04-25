@@ -175,6 +175,89 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
   }
 }
 
+bool Client::sendData( Mensaje* data, int dataLength ) {
+  this->received = false;
+  if( send( this->socketFD, data, dataLength, 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    //    theMutex.lock();
+    DEBUG_WARN( SEND_FAIL );
+    //    theMutex.unlock();
+    return false;
+  }
+  
+  return true;
+}
+
+bool Client::sendMsg( string id ) {
+  if( !( this->connected ) ) {
+    this->logger->warn( SEND_CERROR );
+    //  theMutex.lock();
+    DEBUG_WARN( SEND_CERROR );
+    // theMutex.unlock();
+    return false;
+  }
+
+  Mensaje* msgToSend;
+
+  for( int i = 0; i < this->config->getMessages().size(); i++ ) {
+    string msgID = this->config->getMessages()[i]->id;
+    if( msgID == id ) {
+      msgToSend = this->config->getMessages()[i];
+      break;
+    }
+  }
+
+  int dataLength = sizeof( Mensaje );
+  this->logger->info( SENT_DATA( msgToSend->valor ) );
+  // theMutex.lock();
+  DEBUG_PRINT( SENT_DATA( msgToSend->valor ) );
+  // theMutex.unlock();
+  return sendData( msgToSend, dataLength );
+}
+
+void Client::sendCycle() {
+  if( !( this->connected ) ) {
+    this->logger->warn( CONNECTION_NOT_ACTIVE );
+    DEBUG_WARN( CONNECTION_NOT_ACTIVE );
+    return;
+  }
+
+  double timeout = 0;
+  cout << "Ingrese duracion (en milisegundos): ";
+  cin >> timeout;
+
+  while( timeout <= 0 ) {
+    cout << endl << "Error - Debe ingresar un numero mayor a cero" << endl;
+    cout << "Ingrese nuevamente durancion (en milisegundos): ";
+    cin >> timeout;
+  }
+  timeout = timeout * 1000;
+
+  this->logger->info( "Se corre ciclar en " + to_string(timeout) + " milisegundos." );
+  double diferencia = 0;
+  int i = 0;
+  this->received = true;
+  clock_t start = clock();
+  while( diferencia <= timeout && this->connected ) {
+    if( this->received ){
+      if( i >= this->config->getMessages().size() )
+	i = 0;
+      //cout << endl << "En el i: " << i;
+
+      if( !( this->sendMsg( this->config->getMessages()[i]->id ) ) )
+	return;
+
+      i++;
+    }
+    diferencia = clock() - start;
+  }
+  usleep( 10000 ); // solo para que el ultimo se muestre antes de hacer display del menu
+}
+
+vector<Mensaje*> Client::getMessages() {
+  return this->config->getMessages();
+}
+
 void Client::disconnectFromServer() {
   mutex theMutex;
   if( this->connected ) {

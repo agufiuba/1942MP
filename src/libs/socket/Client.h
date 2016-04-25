@@ -20,6 +20,10 @@ class Client {
     void connectToServer();
     void disconnectFromServer();
     void shutdownConnection();
+    bool sendData( Mensaje* data, int dataLength );
+    bool sendMsg( string id );
+    vector<Mensaje*> getMessages();
+    void sendCycle();
     ~Client();
 };
 #endif
