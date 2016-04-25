@@ -8,9 +8,32 @@
 #include "FondoDePantalla.h"
 using namespace std;
 
-FondoDePantalla::FondoDePantalla() {
+FondoDePantalla::FondoDePantalla(){
+	inicializar();
+}
+
+FondoDePantalla::FondoDePantalla(int fps){
+	this->FRAMES_PER_SECOND = fps;
+	inicializar();
+}
+
+FondoDePantalla::FondoDePantalla(int width, int height) {
+	this->SCREEN_WIDTH = width;
+	this->SCREEN_HEIGHT = height;
+	inicializar();
+}
+
+FondoDePantalla::FondoDePantalla(int fps, int width, int height){
+	this->FRAMES_PER_SECOND = fps;
+	this->SCREEN_WIDTH = width;
+	this->SCREEN_HEIGHT = height;
+	inicializar();
+}
+
+void FondoDePantalla::inicializar() {
 	window = NULL;
 	fondoDePantalla = new Texture();
+	inicioCorrectamente = true;
 
 	// Inicializar SDL
 	if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -98,6 +121,7 @@ void FondoDePantalla::run() {
 	cout << "SCREEN_HEIGHT: " << SCREEN_HEIGHT << endl;
 	cout << "actual: " << posicion.y << endl;
 	Uint32 start;
+	bool quit = false;
 
 	while (!quit) {
 		start = SDL_GetTicks();
