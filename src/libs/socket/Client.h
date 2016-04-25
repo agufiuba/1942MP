@@ -13,10 +13,13 @@ class Client {
     ClientConf* config;
     void checkAliveSend();
     void receiving( const int MAX_DATA_SIZE, const char* IP );
-
+    void closeConnection();
+  
   public:
     Client( const char* configFileName );
     void connectToServer();
+    void disconnectFromServer();
+    void shutdownConnection();
     ~Client();
 };
 #endif

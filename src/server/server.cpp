@@ -1,7 +1,7 @@
 #include "../libs/socket/sock_dep.h" /* socket dependencies */
 #include "../libs/menu/Menu.h"
 #include "../libs/palette/palette.h"
-#include "../logger/Logger.h"
+#include "../libs/logger/Logger.h"
 #include "../xml/parser/XMLParser.h"
 #include "../xml/conf/ServerConf.h"
 #include "../libs/mensaje/mensaje.h"

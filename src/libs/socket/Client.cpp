@@ -174,3 +174,35 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
     }
   }
 }
+
+void Client::disconnectFromServer() {
+  mutex theMutex;
+  if( this->connected ) {
+    this->closeConnection();
+  } else {
+    this->logger->warn( CONNECTION_NOT_ACTIVE );
+    theMutex.lock();
+    DEBUG_WARN( CONNECTION_NOT_ACTIVE );
+    theMutex.unlock();
+  }
+}
+
+void Client::shutdownConnection() {
+  mutex theMutex;
+  this->disconnectFromServer();
+  this->logger->warn( CLIENT_CLOSE );
+  theMutex.lock();
+  DEBUG_WARN( CLIENT_CLOSE );
+  theMutex.unlock();
+  exit( 0 );
+}
+
+void Client::closeConnection() {
+  mutex theMutex;
+  close( this->socketFD );
+  this->connected = false;
+  this->logger->warn( CONNECTION_CLOSE );
+  theMutex.lock();
+  DEBUG_WARN( CONNECTION_CLOSE );
+  theMutex.unlock();
+}

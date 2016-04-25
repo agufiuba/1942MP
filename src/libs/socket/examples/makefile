@@ -6,8 +6,9 @@ XML = ../../../libs/tinyxml2.cpp
 K = ../../../utils/K.cpp
 DEFAULTS = ../../../utils/Defaults.cpp
 PALETTE = ../../palette/palette.cpp
+MENU = ../../menu/Menu.cpp
 CLIENT = ../Client.cpp
-OBJS = client.cpp $(CLIENT) $(LOGGER) $(CLIENT_CONF) $(XML_PARSER) $(XML) $(SERVER_CONF) $(K) $(DEFAULTS) $(PALETTE)
+OBJS = client.cpp $(CLIENT) $(LOGGER) $(CLIENT_CONF) $(XML_PARSER) $(XML) $(SERVER_CONF) $(K) $(DEFAULTS) $(PALETTE) $(MENU)
 CC = g++
 COMPILER_FLAGS = -std=c++11 -Wno-write-strings
 LINKER_FLAGS = -pthread
