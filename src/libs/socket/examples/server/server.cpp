@@ -8,10 +8,12 @@ int main(int argc, char* argv[]) {
 
   Server* server = new Server( configFileName );
   function<void(void)> initialize = bind( &Server::initialize, server );
+  function<void(void)> shutdown = bind( &Server::shutdown, server );
   
   Menu serverMenu( "Menu de opciones del Servidor" );
 
   serverMenu.addOption( "Iniciar servidor", initialize );
+  serverMenu.addOption( "Salir", shutdown );
 
   serverMenu.display();
 

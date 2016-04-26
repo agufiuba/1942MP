@@ -2,9 +2,10 @@
 #include "../socket/sock_dep.h" /* socket dependencies */
 #include "../../xml/parser/XMLParser.h"
 #include "../palette/palette.h"
+#include "../../utils/K.h"
 #define DEBUG 1
 #include "../debug/dg_msg.h"
-#include <string>
+#include <regex>
 #include <thread>
 #include <mutex>
 #include <iostream>
@@ -15,6 +16,7 @@ Server::Server( const char* configFileName ) {
   this->clientCount = 0;
   this->listening = false;
   this->connected = false;
+  this->processing = false;
   this->allowConnections = false;
   this->msgQueue = new queue<map<int, Mensaje*>*>;
   this->logger = Logger::instance();
@@ -22,7 +24,7 @@ Server::Server( const char* configFileName ) {
 }
 
 Server::~Server() {
-
+  delete this->msgQueue;
 }
 
 void Server::initialize() {
@@ -90,6 +92,9 @@ void Server::initialize() {
 
   this->listening = true;
   this->connected = true;
+  this->processing = true;
+  thread processor( &Server::processQueue, this );
+  processor.detach();
   this->logger->info( SERVER_START );
   DEBUG_NOTICE( SERVER_START );
 
@@ -201,6 +206,90 @@ void Server::checkAliveSend( int cfd ) {
   }
 }
 
+void Server::processQueue() {
+  bool msgIsValid;
+  Mensaje* respuesta = new Mensaje;
+  mutex theMutex;
+
+  while( this->processing ) {
+    if( !( this->msgQueue->empty() ) ) {
+      theMutex.lock();
+      //cout << "Saco Msj de la cola" << endl;
+      map<int,Mensaje*>* data = this->msgQueue->front();
+      this->msgQueue->pop();
+
+      map<int,Mensaje*>::iterator it = data->begin();
+      //cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->valor << endl;
+
+      this->logger->info( "Msj de cliente: " + string( ( (it->second)->valor ) ) );
+
+      msgIsValid = this->processMsg( string((it->second)->tipo), string(((it->second)->valor)) );
+      if( msgIsValid ) {
+	strcpy( respuesta->valor, "Mensaje Correcto" );
+	this->logger->info( respuesta->valor );
+      } else {
+	strcpy( respuesta->valor, "Mensaje Incorrecto" );
+	this->logger->warn( respuesta->valor );
+      }
+      thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Mensaje) );
+      tSending.detach();
+
+      delete data;
+
+      theMutex.unlock();
+    }
+  }
+  //cout<<"Corto processor"<<endl;
+  delete respuesta;
+}
+
+bool Server::processMsg( string tipo, string valor ){
+  const int MAX_INT = 2147483647;
+  bool respuesta = false;
+  regex r;
+  const char* expr;
+
+  if( tipo == K::typeInt ){
+    //expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
+    expr = "^-?[0-9]+$";
+    r = regex(expr);
+    if((regex_match(valor, r)) && (atoi(valor.c_str()) >= -MAX_INT) && (atoi(valor.c_str()) <= MAX_INT)) //ese casteo de char* a int no se si se puede
+      respuesta = true;
+
+  } else {
+
+    if( tipo == K::typeDouble ){
+      expr = "^-?([0-9]+e-?[//+]?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[//+]?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
+      r = regex(expr);
+      if (regex_match(valor, r)) respuesta = true;
+
+    } else {
+
+      if( tipo == K::typeString ){
+	expr = "^.+$";
+	r = regex(expr);
+	if( regex_match( valor, r ) ) respuesta = true;
+
+      } else {
+
+	if( tipo == K::typeChar ){
+	  expr = "^.$";
+	  r = regex(expr);
+	  if( regex_match( valor, r ) ) respuesta = true;
+	}
+      }
+    }
+  }
+  return respuesta;
+}
+
+void Server::sendData( int cfd, Mensaje* data, int dataLength ){
+  if( send( cfd, data, dataLength, 0 ) == -1 ) {
+    this->logger->warn( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+  }
+}
+
 void Server::closeClient( int cfd ) {
   mutex theMutex;
   close( cfd );
@@ -209,4 +298,22 @@ void Server::closeClient( int cfd ) {
   cout << " cantidad " << this->clientCount << endl;
   this->logger->info( "Cantidad de Clientes Conectados: " + to_string( this->clientCount ) );
   theMutex.unlock();
+}
+
+void Server::shutdown() {
+  if( this->connected ) 
+    this->closeConnection();
+  
+  logger->warn( SERVER_CLOSE );
+  DEBUG_WARN( SERVER_CLOSE );
+  exit( 0 );
+}
+
+void Server::closeConnection() {
+  close( this->socketFD );
+  this->listening = false;
+  this->connected = false;
+  this->processing = false;
+  this->logger->warn( SERVER_DISCONNECT );
+  DEBUG_WARN( SERVER_DISCONNECT );
 }
