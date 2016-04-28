@@ -2,6 +2,7 @@
 #define SRC_GAME_EXAMPLES_LIBS_TEXTURE_H_
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_thread.h>
 #include <stdio.h>
 #include <string>
 

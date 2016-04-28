@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <mutex>
 #include <unistd.h>
 #include "../../game/examples/libs/sdl2_rc.h"
 
@@ -32,44 +33,37 @@ const Uint8 *keys;
 
 struct nave {
 		int x, y;
-} minave;
+};
 
 struct misil {
 		int x, y;
-} mimisil;
+};
 
-void shotMissile(nave* minave) {
+nave* minave = NULL;
+misil* mimisil = NULL;
 
-	misilTexture = new Texture();
-	misil* mimisil = new misil();
+mutex themutex;
 
-	if (!loadMediaTexture(misilTexture, "../images/ball.bmp", gRenderer)) {
-		cout << "Failed to load media." << endl;
-	} else {
 
-		mimisil->x = minave->x + (naveTexture->getWidth()/2) - (misilTexture->getWidth()/2);
-		mimisil->y = minave->y;
 
-		cout<<"misil en pos "<<to_string(mimisil->y)<<endl;
+class Renderer{
+private:
+	bool active;
 
-		//Clear screen
-		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+public:
+	Renderer();
+	void renderizer();
+	bool isActive();
+	void setActive();
+};
 
-		SDL_RenderClear(gRenderer);
+Renderer::Renderer(){
+	active = false;
+	printf("Inicia Renderer...");
+}
 
-		backgroundTexture->render(0, 0, gRenderer);
-
-		naveTexture->render(minave->x, minave->y, gRenderer);
-
-		misilTexture->render(mimisil->x, mimisil->y, gRenderer);
-
-		SDL_RenderPresent(gRenderer);
-
-		while ( mimisil->y > 0 ) {
-
-			mimisil->y = mimisil->y - 20;
-			usleep(400000);
-			cout<<"misil en pos "<<to_string(mimisil->y)<<endl;
+void Renderer::renderizer(){
+	//Clear screen
 			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
 			SDL_RenderClear(gRenderer);
@@ -78,12 +72,49 @@ void shotMissile(nave* minave) {
 
 			naveTexture->render(minave->x, minave->y, gRenderer);
 
-			misilTexture->render(mimisil->x, mimisil->y, gRenderer);
+			if(misilTexture != NULL){
 
+				misilTexture->render(mimisil->x, mimisil->y, gRenderer);
+
+			}
 			SDL_RenderPresent(gRenderer);
+
+}
+
+bool Renderer::isActive(){
+	return active;
+}
+void Renderer::setActive(){
+	active = !active;
+}
+Renderer* renderer = new Renderer();
+
+
+int shotMissile(void* data ) {
+
+	misilTexture = new Texture();
+	mimisil = new misil();
+
+	if (!loadMediaTexture(misilTexture, "../images/naveEspacial.bmp", gRenderer)) {
+		cout << "Failed to load media." << endl;
+	} else {
+
+		mimisil->x = minave->x + (naveTexture->getWidth()/2) - (misilTexture->getWidth()/2);
+		mimisil->y = minave->y-200;
+
+		cout<<"misil en pos "<<to_string(mimisil->y)<<endl;
+
+		while ( mimisil->y > 0 ) {
+
+			mimisil->y = mimisil->y - 20;
+			usleep(400000);
+			cout<<"misil en pos "<<to_string(mimisil->y)<<endl;
+//			renderer->renderizer();
 		}
 		misilTexture->free();
 	}
+
+	return 0;
 }
 
 void close() {
@@ -111,7 +142,7 @@ int main() {
 	naveTexture = new Texture();
 	backgroundTexture = new Texture();
 
-	nave* minave = new nave();
+	minave = new nave();
 
 	if (!initSDL(window, gRenderer, SCREEN_WIDTH, SCREEN_HEIGHT)) {
 		cout << "Failed to initialize." << endl;
@@ -130,19 +161,8 @@ int main() {
 				minave->x = posInicialNaveX;
 				minave->y = posInicialNaveY;
 
-				//Clear screen
-				SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+				renderer->renderizer();
 
-				SDL_RenderClear(gRenderer);
-
-				//Render background texture to screen
-				backgroundTexture->render(0, 0, gRenderer);
-
-				//Render Foo' to the screen
-				naveTexture->render(minave->x, minave->y, gRenderer);
-
-				//Update screen
-				SDL_RenderPresent(gRenderer);
 			}
 		}
 	}
@@ -173,9 +193,11 @@ int main() {
 					minave->x = minave->x + (1);
 				}
 				if (e.key.keysym.sym == SDLK_SPACE) {
-					shotMissile(minave);
-					//thread shot(shotMissile, minave);
-					//shot.detach();
+//					shotMissile(\);
+					int data = 1;
+					 SDL_Thread* threadID = SDL_CreateThread( shotMissile, "LazyThread", (void*)data );
+					 SDL_DetachThread(threadID);
+//					 SDL_WaitThread( threadID, NULL );
 				}
 				if (e.key.keysym.sym == SDLK_r) {
 					minave->x = posInicialNaveX;
@@ -184,18 +206,7 @@ int main() {
 			}
 		}
 
-		//Clear screen
-		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-		SDL_RenderClear(gRenderer);
-
-		//Render background texture to screen
-		backgroundTexture->render(0, 0, gRenderer);
-
-		//Render Foo' to the screen
-		naveTexture->render(minave->x, minave->y, gRenderer);
-
-		//Update screen
-		SDL_RenderPresent(gRenderer);
+		renderer->renderizer();
 	}
 
 	close();

@@ -52,9 +52,12 @@ void closeSDL(SDL_Window* &window, SDL_Surface* &image) {
   SDL_Quit();
 }
 
+
+
 void close(){
 	//Free loaded images
 	naveTexture->free();
+
 	backgroundTexture->free();
 
 	//Destroy window
@@ -113,6 +116,7 @@ int main() {
 				naveTexture->render( minave->x, minave->y, gRenderer);
 
 				//Update screen
+
 				SDL_RenderPresent( gRenderer );
 				//applyMedia( window, image, minave );
     	}
@@ -131,16 +135,16 @@ int main() {
 	  {
     	  ///keys = SDL_GetKeyboardState(NULL);
     	  if(e.key.keysym.sym == SDLK_UP && minave->y > 0) {
-    		  minave->y = minave->y - (1);
+    		  minave->y = minave->y - (40);
     	  }
     	  if(e.key.keysym.sym == SDLK_DOWN && minave->y < (SCREEN_HEIGHT-heigthImage)) {
-    		  minave->y = minave->y + (1);
+    		  minave->y = minave->y + (40);
     	  }
     	  if(e.key.keysym.sym == SDLK_LEFT && minave->x > 0) {
-    		  minave->x = minave->x - (1);
+    		  minave->x = minave->x - (40);
     	  }
     	  if(e.key.keysym.sym == SDLK_RIGHT && minave->x < (SCREEN_WIDTH-widthImage)) {
-    		  minave->x = minave->x + (1);
+    		  minave->x = minave->x + (40);
     	  }
       }
     }
