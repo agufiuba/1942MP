@@ -2,53 +2,39 @@
 
 #modo: client o server
 
-#Compile         : make p=modo
+#Compile  : make
 
-#Run default     : make p=modo run
-#Run con archivo : make p=modo arch=nameArch run
+#Run      : make run p=modo
 
-#Valgrind default: make p=modo valgrind
-#Valgrind archivo: make p=modo arch=nameArch valgrind
+#Valgrind : make valgrind p=modo
 
 ############################################################
 
-MENU = ./src/libs/menu/Menu.cpp
-PALETTE = ./src/libs/palette/palette.cpp
-XML = ./src/libs/tinyxml2.cpp
-XMLPARSER = ./src/xml/parser/XMLParser.cpp
-LOGGER = ./src/logger/Logger.cpp
-DEFAULTS = ./src/utils/Defaults.cpp
-CCONF = ./src/xml/conf/ClientConf.cpp
-SCONF = ./src/xml/conf/ServerConf.cpp
-PARAM = ./src/config/$(arch)
-CONST = ./src/utils/K.cpp
-
-ifeq ($(p), client)
-	PROGRAM = src/client/client
-endif
-ifeq ($(p), server)
-	PROGRAM = src/server/server
-endif
-
-ifeq ($(arch), )
-	PARAM = 
-endif
-
-OBJS = $(MENU) $(PALETTE) $(CCONF) $(SCONF) $(XML) $(XMLPARSER) $(LOGGER) $(DEFAULTS) $(CONST) ./$(PROGRAM).cpp
-
 CC = g++
+GAME_DIR = ./src/game
+MODEL_DIR = $(GAME_DIR)/model
 
+# compiler
 COMPILER = -std=c++11
 
-LINKER = -pthread
+# libraries to link
+LINKER = -lSDL2
 
-WARN = -Wno-write-strings
+#game
+GAME = $(GAME_DIR)/1942Multiplayer.cpp
+TEXTURE = $(GAME_DIR)/examples/libs/Texture.cpp
+BACKGROUND = $(MODEL_DIR)/FondoDePantalla.cpp
 
-all : $(OBJS) 
-	$(CC) $(COMPILER) $(LINKER) $(WARN) $(OBJS) -o $(PROGRAM).exe
+# executable name
+EXE = 1942Multiplayer.exe
 
+OBJS = $(TEXTURE) $(BACKGROUND) ./$(GAME)
+
+all: $(OBJS)
+	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)
+	
 run:
-	./$(PROGRAM).exe $(PARAM)
+	./$(EXE) $(p)
 	
 valgrind:
-	valgrind --leak-check=full ./$(PROGRAM).exe $(PARAM)
+	valgrind --leak-check=full ./$(EXE) $(p)

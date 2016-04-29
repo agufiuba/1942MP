@@ -1,31 +1,42 @@
 #include <iostream>
-#include "controler/keyboardController.h"
+#include "controller/keyboardController.h"
+#include "model/FondoDePantalla.h"
+
+string CLIENT = "client";
+string SERVER = "server";
 
 using namespace std;
 
-void startupClient(){
+
+void startupClient() {
 
 	//Iniciar Pantalla
+	FondoDePantalla* fondo = new FondoDePantalla();
+	fondo->run();
+	fondo->~FondoDePantalla();
 
 	//Inicia controlador de Teclado
-	keyboardController controller = new keyboardController();
+	//keyboardController controller = new keyboardController();
 
 	//Cargar jugador
 
-}
 
-void startupServer(){
-
-}
-
-void stopClient(){
+	// limpiar memoria
+	fondo->~FondoDePantalla();
 
 }
 
-void stopServer(){
+void startupServer() {
 
 }
 
+void stopClient() {
+
+}
+
+void stopServer() {
+
+}
 
 /**
  * Inicio de juego 1942MP
@@ -34,24 +45,20 @@ void stopServer(){
  */
 int main(int argc, char* argv[]) {
 
-  const char* mode = argv[1];
+	string mode = argv[1];
 
-  //Modo Cliente
-  if ( mode == "client" ){
+	if (mode == CLIENT) {
+		cout << "Sos cliente" << endl;
+		const char* fileName = argv[2] ? argv[2] : "default-cc.xml";
+		startupClient();
 
-    const char* fileName = argv[2] ? argv[2] : "default-cc.xml";
+	} else if (mode == SERVER) {
+		cout << "Sos server" << endl;
+		startupServer();
 
-    startupClient();
+	} else {
+		cout << "Debe seleccionar modo de inicio con parametro: client/server" << endl;
+	}
 
-  }
-
-  if ( mode == "server" ){
-
-  	startupServer();
-
-  }
-
-  cout << "Seleccione modo de inicio: client/server" << endl;
-
-  return 0;
+	return 0;
 }
