@@ -48,12 +48,10 @@ int main(int argc, char* argv[]) {
 	string mode = argv[1];
 
 	if (mode == CLIENT) {
-		cout << "Sos cliente" << endl;
 		const char* fileName = argv[2] ? argv[2] : "default-cc.xml";
 		startupClient();
 
 	} else if (mode == SERVER) {
-		cout << "Sos server" << endl;
 		startupServer();
 
 	} else {

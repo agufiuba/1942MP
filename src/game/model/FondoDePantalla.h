@@ -11,7 +11,8 @@
 #include <string>
 
 #include "../examples/libs/Texture.h"
-#include "../model/Resolucion.h"
+#include "Resolucion.h"
+#include "Posicion.h"
 
 class FondoDePantalla {
 
@@ -36,8 +37,7 @@ private:
 	void inicializar();
 	void setResolucion();
 	void printErrorSDL(string error);
-	void actualizarFondoDePantalla(int x, int y);
-	int moverFondoDePantalla(int y);
+	void actualizarFondoDePantalla(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
 
 public:

@@ -6,6 +6,7 @@
  */
 
 #include "FondoDePantalla.h"
+
 using namespace std;
 
 FondoDePantalla::FondoDePantalla(){
@@ -93,20 +94,10 @@ void FondoDePantalla::printErrorSDL(string error) {
 	cout << "SDL Error: " << SDL_GetError() << endl;
 }
 
-void FondoDePantalla::actualizarFondoDePantalla(int x, int y) {
+void FondoDePantalla::actualizarFondoDePantalla(Posicion* pos) {
 	SDL_RenderClear(gRenderer);
-	posicion.x = x;
-	posicion.y = y;
-	fondoDePantalla->render(x, y, gRenderer);
+	fondoDePantalla->render(pos->getX(), pos->getY(), gRenderer);
 	SDL_RenderPresent(gRenderer);
-}
-
-int FondoDePantalla::moverFondoDePantalla(int y) {
-	if (y > -1100) {
-		cout << "baja y: " << y << endl;
-		y-=3;
-	}
-	return y;
 }
 
 void FondoDePantalla::aplicarFPS(Uint32 start) {
@@ -122,13 +113,12 @@ void FondoDePantalla::run() {
 		return ;
 	}
 
-	int x = 0;
-	int y = 0;
-	actualizarFondoDePantalla(x, y);
+	Posicion* posicion = new Posicion(0, SCREEN_HEIGHT);
+	actualizarFondoDePantalla(posicion);
 
 	cout << "SCREEN_WIDTH: " << SCREEN_WIDTH << endl;
 	cout << "SCREEN_HEIGHT: " << SCREEN_HEIGHT << endl;
-	cout << "actual: " << posicion.y << endl;
+	cout << "actual: " << posicion->getX() << ", " << posicion->getY() << endl;
 	Uint32 start;
 	bool quit = false;
 
@@ -142,10 +132,17 @@ void FondoDePantalla::run() {
 
 		}
 
-		y = moverFondoDePantalla(y);
-		actualizarFondoDePantalla(x, y);
+		if (posicion->getY() > -1070) {
+			cout << "baja y: " << posicion->getY() << endl;
+			posicion->moverVertical(-3);
+		} else {
+			//posicion->setPosicion(0, SCREEN_HEIGHT);
+		}
+
+		actualizarFondoDePantalla(posicion);
 		aplicarFPS(start);
 
 	}
+	posicion->~Posicion();
 }
 

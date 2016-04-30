@@ -6,7 +6,6 @@
  */
 
 #include "Posicion.h"
-#include "Resolucion.h"
 
 Posicion::Posicion(int x, int y) {
 	initResolucion();
@@ -34,6 +33,14 @@ int Posicion::getX() {
 
 int Posicion::getY() {
 	return y;
+}
+
+void Posicion::moverHorizontal(int x) {
+	this->x += x;
+}
+
+void Posicion::moverVertical(int y) {
+	this->y += y;
 }
 
 

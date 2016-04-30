@@ -8,6 +8,8 @@
 #ifndef POSICION_H_
 #define POSICION_H_
 
+#include "Resolucion.h"
+
 class Posicion {
 
 private:
@@ -24,6 +26,8 @@ public:
 	void setPosicion(int x, int y);
 	int getX();
 	int getY();
+	void moverHorizontal(int x);
+	void moverVertical(int y);
 };
 
 #endif /* POSICION_H_ */
