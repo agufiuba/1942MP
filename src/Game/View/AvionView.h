@@ -18,6 +18,7 @@ private:
 	SDL_Renderer *rendererAvion;
 	SDL_Rect clipsDerecha[ 2 ];
 	SDL_Rect clipsIzquierda[ 2 ];
+	SDL_Rect clipsVueltereta[ 6 ];
 
 	int anchoVista;
 	int largoVista;
@@ -28,7 +29,8 @@ public:
 	~AvionView();
 	int getAnchoVista();
 	int getLargoVista();
-	void mostrar(int x, int y);
+	void mostrar(int x, int y, int velX);
+	void mostrarVueltereta(int x, int y, int frame);
 	void cargarClips();
 };
 
