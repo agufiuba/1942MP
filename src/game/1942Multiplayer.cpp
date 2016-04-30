@@ -11,9 +11,9 @@ using namespace std;
 void startupClient() {
 
 	//Iniciar Pantalla
+
 	FondoDePantalla* fondo = new FondoDePantalla();
 	fondo->run();
-	fondo->~FondoDePantalla();
 
 	//Inicia controlador de Teclado
 	//keyboardController controller = new keyboardController();

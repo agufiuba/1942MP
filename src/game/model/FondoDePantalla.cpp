@@ -9,11 +9,13 @@
 using namespace std;
 
 FondoDePantalla::FondoDePantalla(){
+	setResolucion();
 	inicializar();
 }
 
 FondoDePantalla::FondoDePantalla(int fps){
 	this->FRAMES_PER_SECOND = fps;
+	setResolucion();
 	inicializar();
 }
 
@@ -71,12 +73,19 @@ void FondoDePantalla::inicializar() {
 }
 
 FondoDePantalla::~FondoDePantalla() {
+	resolucion->~Resolucion();
 	fondoDePantalla->free();
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(window);
 	gRenderer = NULL;
 	window = NULL;
 	SDL_Quit();
+}
+
+void FondoDePantalla::setResolucion() {
+	resolucion = new Resolucion();
+	SCREEN_HEIGHT = resolucion->getHeightScreen();
+	SCREEN_WIDTH = resolucion->getWidthScreen();
 }
 
 void FondoDePantalla::printErrorSDL(string error) {
