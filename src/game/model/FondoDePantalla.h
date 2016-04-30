@@ -31,7 +31,7 @@ private:
 	int SCREEN_HEIGHT;
 	int FRAMES_PER_SECOND = 60;
 
-	const char* DIR_FONDO_PANTALLA = "src/game/images/fondoPantalla-1800.bmp";
+	const char* DIR_FONDO_PANTALLA = "src/game/images/fondoPantallaMarcado.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
 
 	void inicializar();

@@ -116,9 +116,10 @@ void FondoDePantalla::run() {
 	Posicion* posicion = new Posicion(0, SCREEN_HEIGHT);
 	actualizarFondoDePantalla(posicion);
 
-	cout << "SCREEN_WIDTH: " << SCREEN_WIDTH << endl;
-	cout << "SCREEN_HEIGHT: " << SCREEN_HEIGHT << endl;
-	cout << "actual: " << posicion->getX() << ", " << posicion->getY() << endl;
+//	cout << "SCREEN_WIDTH: " << SCREEN_WIDTH << endl;
+//	cout << "SCREEN_HEIGHT: " << SCREEN_HEIGHT << endl;
+	cout << "actual: "; posicion->print();
+
 	Uint32 start;
 	bool quit = false;
 
@@ -132,11 +133,14 @@ void FondoDePantalla::run() {
 
 		}
 
-		if (posicion->getY() > -1070) {
-			cout << "baja y: " << posicion->getY() << endl;
-			posicion->moverVertical(-3);
+		if (posicion->getY() < (2*SCREEN_HEIGHT)) {
+			//cout << "baja y: " << posicion->getY() << endl;
+			posicion->moverVertical(3);
+			posicion->print();
 		} else {
-			//posicion->setPosicion(0, SCREEN_HEIGHT);
+//			cout << "SCREEN_WIDTH: " << SCREEN_WIDTH << endl;
+//			cout << "SCREEN_HEIGHT: " << SCREEN_HEIGHT << endl;
+//			posicion->setPosicion(0, SCREEN_HEIGHT);
 		}
 
 		actualizarFondoDePantalla(posicion);

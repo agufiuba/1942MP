@@ -6,10 +6,12 @@
  */
 
 #include "Posicion.h"
+#include <iostream>
+
 
 Posicion::Posicion(int x, int y) {
 	initResolucion();
-	setPosicion(x, (limiteY - y));
+	setPosicion(x, y);
 }
 
 Posicion::~Posicion() {
@@ -24,7 +26,7 @@ void Posicion::initResolucion() {
 
 void Posicion::setPosicion(int x, int y) {
 	this->x = x;
-	this->y = y;
+	this->y = (limiteY - y);
 }
 
 int Posicion::getX() {
@@ -32,7 +34,7 @@ int Posicion::getX() {
 }
 
 int Posicion::getY() {
-	return y;
+	return (limiteY - y);
 }
 
 void Posicion::moverHorizontal(int x) {
@@ -41,6 +43,10 @@ void Posicion::moverHorizontal(int x) {
 
 void Posicion::moverVertical(int y) {
 	this->y += y;
+}
+
+void Posicion::print() {
+	std::cout << "(" << getX() << "," << getY() << ")" << std::endl;
 }
 
 

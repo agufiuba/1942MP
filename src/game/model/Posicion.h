@@ -28,6 +28,7 @@ public:
 	int getY();
 	void moverHorizontal(int x);
 	void moverVertical(int y);
+	void print();
 };
 
 #endif /* POSICION_H_ */
