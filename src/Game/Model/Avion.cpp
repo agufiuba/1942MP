@@ -11,17 +11,21 @@ Avion::Avion(SDL_Renderer * &renderer) {
 	anchoFondo = 600; //TODO: hay que cambiarlo para que pueda conseguirlo desde el escenario
 	largoFondo = 600;
 
+	t = new Timer();
+
 	inicializoVueltereta();
 }
 
 void Avion::inicializoVueltereta() {
-	realizandoVueltereta = true;
 	velocidadEnVueltereta = -(getLargo() / 5);
+	realizandoVueltereta = true;
 	subio = bajo = false;
+	t->correr();
 }
 
 Avion::~Avion(){
 	delete vistaAvion;
+	delete t;
 }
 
 int Avion::getAnchoFondo() {
@@ -65,11 +69,17 @@ void Avion::mostrar(){
 	vistaAvion->mostrar(x,y);
 }
 
+void Avion::realizoVueltereta(){
+	if (t->tiempoActual() < 1300){
+		mover(0, velocidadEnVueltereta);
+	}
+}
+
 void Avion::vivir(int velX, int velY){
 	if (!realizandoVueltereta){
 		mover(velX, velY);
 	} else {
-		mover(0, velocidadEnVueltereta);
+		realizoVueltereta();
 	}
 	mostrar();
 }

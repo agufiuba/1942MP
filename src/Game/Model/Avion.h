@@ -3,6 +3,7 @@
 
 #include "../View/AvionView.h"
 #include "Vivible.h"
+#include "../Control/Timer.h"
 
 class Avion: public Vivible {
 private:
@@ -11,11 +12,13 @@ private:
 	AvionView* vistaAvion;
 	int x, y;
 
+	// Variables que involucran la vueltereta
 	bool realizandoVueltereta;
 	int velocidadEnVueltereta;
 	bool subio, bajo;
+	Timer* t;
 
-	void inicializoVueltereta();
+	void realizoVueltereta();
 
 	void mostrar();
 	void mover(int velX, int velY);
@@ -30,6 +33,8 @@ public:
 	int getLargoFondo();
 	int getAncho();
 	int getLargo();
+
+	void inicializoVueltereta();
 
 	void vivir(int velX, int velY);
 };
