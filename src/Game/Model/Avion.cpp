@@ -19,7 +19,6 @@ Avion::Avion(SDL_Renderer * &renderer) {
 void Avion::inicializoVueltereta() {
 	velocidadEnVueltereta = -(getLargo() / 8);
 	realizandoVueltereta = true;
-	subio = bajo = false;
 	t->correr();
 }
 
@@ -70,14 +69,19 @@ void Avion::mostrar(){
 }
 
 void Avion::realizoVueltereta(){
-	if (t->tiempoActual() < 2000){
+	int tiempoDeDesplazamiento = 2000;
+
+	if (t->tiempoActual() < tiempoDeDesplazamiento){
 		mover(0, velocidadEnVueltereta);
 	} else {
-		if (t->tiempoActual() < 4000){
+		if (t->tiempoActual() < tiempoDeDesplazamiento*2){
 			mover(0, -velocidadEnVueltereta);
 		} else {
-			if (t->tiempoActual() < 4500){
+			if (t->tiempoActual() < ((tiempoDeDesplazamiento*2) + 500)){
 				mover(0, velocidadEnVueltereta);
+			} else {
+				realizandoVueltereta = false;
+				t->parar();
 			}
 		}
 	}

@@ -15,7 +15,6 @@ private:
 	// Variables que involucran la vueltereta
 	bool realizandoVueltereta;
 	int velocidadEnVueltereta;
-	bool subio, bajo;
 	Timer* t;
 
 	void realizoVueltereta();
