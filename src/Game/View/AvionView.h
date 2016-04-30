@@ -18,6 +18,7 @@ private:
 	SDL_Renderer *rendererAvion;
 	SDL_Rect clipsDerecha[ 2 ];
 	SDL_Rect clipsIzquierda[ 2 ];
+	SDL_Rect clipsVueltereta[ 6 ];
 
 	int anchoVista;
 	int largoVista;

@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
 
 
     	//Clear screen
-    	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+    	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0x00);
 
       //Clear screem
 			SDL_RenderClear(renderer);
