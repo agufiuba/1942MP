@@ -17,7 +17,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Avion(SDL_Surface *screen);
+	Avion(SDL_Renderer * &renderer);
 	~Avion();
 
 	int getAnchoFondo();

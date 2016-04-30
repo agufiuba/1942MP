@@ -2,6 +2,8 @@
 
 using namespace std;
 
+
+//TODO revisar
 void AvionView::cargarClips(){
 		clipsDerecha[ 0 ].x = 0;
 		clipsDerecha[ 0 ].y = 0;
@@ -14,38 +16,48 @@ void AvionView::cargarClips(){
 		clipsIzquierda[ 0 ].h = largoVista;
 }
 
-SDL_Surface *AvionView::cargarImagenDelAvion( string filename ){
-    SDL_Surface* imagenCargada = NULL;
-    SDL_Surface* imagenOptimizada = NULL;
-    imagenCargada = IMG_Load( filename.c_str() );
+bool AvionView::cargarImagenDelAvion( string filename ){
+//    SDL_Surface* imagenCargada = NULL;
+//    SDL_Surface* imagenOptimizada = NULL;
+//    imagenCargada = IMG_Load( filename.c_str() );
+//
+//    if( imagenCargada != NULL ){
+//        imagenOptimizada = SDL_ConvertSurfaceFormat( imagenCargada , SDL_PIXELFORMAT_RGB24, 0);
+//
+//        SDL_FreeSurface( imagenCargada );
+//
+//        if( imagenOptimizada != NULL ){
+//            SDL_SetColorKey( imagenOptimizada, SDL_SRCCOLORKEY, SDL_MapRGB( imagenOptimizada->format, 0, 0xFF, 0xFF ) );
+//        }
+//    }
 
-    if( imagenCargada != NULL ){
-        imagenOptimizada = SDL_DisplayFormat( imagenCargada );
+	vistaAvionTexture = new Texture();
 
-        SDL_FreeSurface( imagenCargada );
+	if (rendererAvion == NULL){
+		printf("nulo");
+	}
 
-        if( imagenOptimizada != NULL ){
-            SDL_SetColorKey( imagenOptimizada, SDL_SRCCOLORKEY, SDL_MapRGB( imagenOptimizada->format, 0, 0xFF, 0xFF ) );
-        }
-    }
-    return imagenOptimizada;
+	if (!vistaAvionTexture->loadFromFile(filename, rendererAvion)) {
+		printf("Failed to load aviontexture image!\n");
+		return false;
+	}
+
+    return true;
 }
 
-AvionView::AvionView(SDL_Surface * unEscenario){
-
-	anchoVista = 100;
-	largoVista = 100;
+AvionView::AvionView(SDL_Renderer * unRenderer){
 
 	cargarClips();
 
-	screen = unEscenario;
+	rendererAvion = unRenderer;
 
-	vistaAvion = cargarImagenDelAvion("images/Arcade_-_1942_-_General_Sprites.bmp");
-
-	if (vistaAvion == NULL) {
+	if (!cargarImagenDelAvion("images/naveEspacial.bmp")) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
 		//TODO: faltaria que tire una excepcion
 	}
+	//TODO pasarlo a sprites
+		anchoVista = vistaAvionTexture->getWidth();
+		largoVista = vistaAvionTexture->getHeight();
 }
 
 int AvionView::getAnchoVista(){
@@ -57,10 +69,10 @@ int AvionView::getLargoVista(){
 }
 
 AvionView::~AvionView(){
-		SDL_FreeSurface( vistaAvion );
+	vistaAvionTexture->free();
 }
 
-void AvionView::cargarmeEnEscenario( int x, int y, SDL_Surface* obj, SDL_Surface* escenario, SDL_Rect* clip){
+void AvionView::mostrar( int x, int y){
     //Holds offsets
     SDL_Rect posicion;
 
@@ -68,14 +80,8 @@ void AvionView::cargarmeEnEscenario( int x, int y, SDL_Surface* obj, SDL_Surface
     posicion.x = x;
     posicion.y = y;
 
-    //Blit
-    SDL_BlitSurface( obj, clip, escenario, &posicion );
+    SDL_Rect* currentClip = &clipsDerecha[ 0 ];
+    vistaAvionTexture->render( ( SCREEN_WIDTH - currentClip->w ) / 2, ( SCREEN_HEIGHT - currentClip->h ) / 2, rendererAvion, currentClip );
 }
-
-void AvionView::mostrar(int x, int y){
-
-		cargarmeEnEscenario( x, y, vistaAvion, screen, &clipsDerecha[0] );
-}
-
 
 

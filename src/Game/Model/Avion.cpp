@@ -2,9 +2,9 @@
 
 using namespace std;
 
-Avion::Avion(SDL_Surface * screen) {
+Avion::Avion(SDL_Renderer * &renderer) {
 
-	vistaAvion = new AvionView(screen);
+	vistaAvion = new AvionView(renderer);
 	x = 100;
 	y = 100;
 	anchoFondo = 600;

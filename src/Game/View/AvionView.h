@@ -1,9 +1,10 @@
 #ifndef SRC_VIEW_AVIONVIEW_H_
 #define SRC_VIEW_AVIONVIEW_H_
 
-#include "SDL/SDL.h"
-#include "SDL/SDL_image.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 
+#include "Texture.h"
 #include <string>
 #include <iostream>
 
@@ -13,9 +14,10 @@ class AvionView {
 
 private:
 	//The surfaces
-	SDL_Surface *vistaAvion = NULL;
-	SDL_Surface *screen;
-
+	Texture *vistaAvionTexture = NULL;
+	SDL_Renderer *rendererAvion;
+	int SCREEN_WIDTH = 600;
+	int SCREEN_HEIGHT = 600;
 	SDL_Rect clipsDerecha[ 2 ];
 	SDL_Rect clipsIzquierda[ 2 ];
 
@@ -23,14 +25,13 @@ private:
 	int largoVista;
 
 public:
-	SDL_Surface* cargarImagenDelAvion( string filename );
-	AvionView(SDL_Surface* unEscenario);
+	bool cargarImagenDelAvion( string filename );
+	AvionView(SDL_Renderer* renderer);
 	~AvionView();
 	int getAnchoVista();
 	int getLargoVista();
 	void mostrar(int x, int y);
 	void cargarClips();
-	void cargarmeEnEscenario( int x, int y, SDL_Surface* obj, SDL_Surface* escenario, SDL_Rect* clip = NULL );
 };
 
 #endif /* SRC_VIEW_AVIONVIEW_H_ */

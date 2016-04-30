@@ -1,5 +1,3 @@
-#include "SDL/SDL.h"
-#include "SDL/SDL_image.h"
 #include "Model/Avion.h"
 #include "Control/Controller.h"
 
@@ -9,10 +7,14 @@ const int SCREEN_WIDTH = 600;
 const int SCREEN_HEIGHT = 600;
 const int SCREEN_BPP = 32;
 
-SDL_Surface *screen;
+
+SDL_Renderer* renderer;
+SDL_Window * screen;
 SDL_Event event;
 
 const int FRAMES_PER_SECOND = 10;
+
+
 
 using namespace std;
 
@@ -151,17 +153,31 @@ bool init(){
     }
 
     //Set up the screen
-    screen = SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE );
+//    screen = SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_SWSURFACE );
+//    SDL_Window *screen = SDL_CreateWindow("1942MP Arcade", 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
+//                                  SDL_WINDOW_OPENGL);
 
+  	// Create window
+    SDL_Window * screen = SDL_CreateWindow("1942MP Arcade", SDL_WINDOWPOS_UNDEFINED,
+  	SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     //If there was an error in setting up the screen
-    if( screen == NULL )
-    {
-        return false;
+    if( screen == NULL ) {
+  		printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+  		return false;
     }
 
-    //Set the window caption
-    SDL_WM_SetCaption( "1942MP Arcade", NULL );
+  	//Create renderer for window
+  	renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED);
+  	if (renderer == NULL) {
+  		printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
+  		return false;
+  	}
 
+  	//Initialize renderer color
+  	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+    //Set the window caption
+//    SDL_WM_SetCaption( "1942MP Arcade", NULL );
     //If everything initialized fine
     return true;
 }
@@ -179,8 +195,9 @@ int main(int argc, char **argv) {
 
   Timer fps;
 
-  Vivible* unAvion = new Avion(screen);
+  Vivible* unAvion = new Avion(renderer);
   Controller* control = new Controller(unAvion);
+
 
   while(!quit){
   		fps.start();
@@ -191,13 +208,18 @@ int main(int argc, char **argv) {
           if( event.type == SDL_QUIT ){ quit = true; }
       }
 
-      //rellena de blanco la pantalla
-      SDL_FillRect( screen, &screen->clip_rect, SDL_MapRGB( screen->format, 0xFF, 0xFF, 0xFF ) );
+
+    	//Clear screen
+    	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+
+      //Clear screem
+			SDL_RenderClear(renderer);
+
 
       control->hacerVivir();
 
-      //actualiza la pantalla
-      if( SDL_Flip( screen ) == -1 ){ return 1; }
+			//Update screen
+			SDL_RenderPresent(renderer);
 
       //cap
       if( fps.get_ticks() < 1000 / FRAMES_PER_SECOND ){

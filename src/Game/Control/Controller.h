@@ -8,8 +8,8 @@
 #ifndef SRC_CONTROL_CONTROLLER_H_
 #define SRC_CONTROL_CONTROLLER_H_
 
-#include "SDL/SDL.h"
-#include "SDL/SDL_image.h"
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_image.h"
 #include "../Model/Avion.h"
 
 #include <iostream>
