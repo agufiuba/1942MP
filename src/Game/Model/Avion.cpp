@@ -64,8 +64,8 @@ void Avion::mover(int velX, int velY) {
 	moverEjeY(velY);
 }
 
-void Avion::mostrar(){
-	vistaAvion->mostrar(x,y);
+void Avion::mostrar(int velX){
+	vistaAvion->mostrar(x,y,velX);
 }
 
 void Avion::realizoVueltereta() {
@@ -106,6 +106,6 @@ void Avion::vivir(int velX, int velY){
 	} else {
 		realizoVueltereta();
 	}
-	mostrar();
+	mostrar(velX);
 }
 

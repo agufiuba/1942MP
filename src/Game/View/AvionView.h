@@ -29,7 +29,7 @@ public:
 	~AvionView();
 	int getAnchoVista();
 	int getLargoVista();
-	void mostrar(int x, int y);
+	void mostrar(int x, int y, int velX);
 	void cargarClips();
 };
 
