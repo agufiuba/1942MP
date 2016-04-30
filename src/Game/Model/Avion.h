@@ -11,6 +11,8 @@ private:
 	AvionView* vistaAvion;
 	int x, y;
 
+	bool realizandoVueltereta;
+
 	void mostrar();
 	void mover(int velX, int velY);
 	void moverEjeX(int velX);

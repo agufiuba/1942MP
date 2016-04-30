@@ -3,12 +3,12 @@
 using namespace std;
 
 Avion::Avion(SDL_Renderer * &renderer) {
-
 	vistaAvion = new AvionView(renderer);
 	x = 0;
 	y = 0;
 	anchoFondo = 600;
 	largoFondo = 600;
+	realizandoVueltereta = true;
 }
 
 Avion::~Avion(){
@@ -57,7 +57,11 @@ void Avion::mostrar(){
 }
 
 void Avion::vivir(int velX, int velY){
-	mover(velX, velY);
+	if (!realizandoVueltereta){
+		mover(velX, velY);
+	} else {
+		cout << "haciendo vueltereta" << endl;
+	}
 	mostrar();
 }
 

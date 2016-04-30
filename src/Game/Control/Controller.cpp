@@ -31,7 +31,6 @@ void Controller::press(SDL_Event *event){
             case SDLK_UP: velY += obj->getLargo() / distanciaDeDesplazamiento; break;
             case SDLK_DOWN: velY -= obj->getLargo() / distanciaDeDesplazamiento; break;
         }
-
     }
 }
 
