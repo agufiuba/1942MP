@@ -16,8 +16,6 @@ private:
 	//The surfaces
 	Texture *vistaAvionTexture = NULL;
 	SDL_Renderer *rendererAvion;
-	int SCREEN_WIDTH = 600;
-	int SCREEN_HEIGHT = 600;
 	SDL_Rect clipsDerecha[ 2 ];
 	SDL_Rect clipsIzquierda[ 2 ];
 

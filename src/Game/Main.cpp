@@ -203,6 +203,7 @@ int main(int argc, char **argv) {
   		fps.start();
 
       while( SDL_PollEvent( &event ) ){
+
           control->press( &event);
 
           if( event.type == SDL_QUIT ){ quit = true; }
@@ -215,13 +216,11 @@ int main(int argc, char **argv) {
       //Clear screem
 			SDL_RenderClear(renderer);
 
-
       control->hacerVivir();
 
 			//Update screen
 			SDL_RenderPresent(renderer);
 
-      //cap
       if( fps.get_ticks() < 1000 / FRAMES_PER_SECOND ){
           SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.get_ticks() );
       }

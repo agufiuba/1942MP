@@ -5,8 +5,8 @@ using namespace std;
 Avion::Avion(SDL_Renderer * &renderer) {
 
 	vistaAvion = new AvionView(renderer);
-	x = 100;
-	y = 100;
+	x = 0;
+	y = 0;
 	anchoFondo = 600;
 	largoFondo = 600;
 }

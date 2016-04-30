@@ -14,22 +14,22 @@ Controller::~Controller(){
 
 void Controller::press(SDL_Event *event){
 
-    if( event->type == SDL_KEYDOWN ){
+    if( event->type == SDL_KEYDOWN && event->key.repeat == 0){
         switch( event->key.keysym.sym ){
-            case SDLK_RIGHT: velX += obj->getAncho() / distanciaRecorrida; break;
-            case SDLK_LEFT: velX -= obj->getAncho() / distanciaRecorrida; break;
+            case SDLK_RIGHT: velX += obj->getAncho() / distanciaDeDesplazamiento; break;
+            case SDLK_LEFT: velX -= obj->getAncho() / distanciaDeDesplazamiento; break;
 
-            case SDLK_UP: velY -= obj->getLargo() / distanciaRecorrida; break;
-            case SDLK_DOWN: velY += obj->getLargo() / distanciaRecorrida; break;
+            case SDLK_UP: velY -= obj->getLargo() / distanciaDeDesplazamiento; break;
+            case SDLK_DOWN: velY += obj->getLargo() / distanciaDeDesplazamiento; break;
         }
     }
-    else if( event->type == SDL_KEYUP ){
+    else if( event->type == SDL_KEYUP && event->key.repeat == 0){
         switch( event->key.keysym.sym ){
-            case SDLK_RIGHT: velX -= obj->getAncho() / distanciaRecorrida; break;
-            case SDLK_LEFT: velX += obj->getAncho() / distanciaRecorrida; break;
+            case SDLK_RIGHT: velX -= obj->getAncho() / distanciaDeDesplazamiento; break;
+            case SDLK_LEFT: velX += obj->getAncho() / distanciaDeDesplazamiento; break;
 
-            case SDLK_UP: velY += obj->getLargo() / distanciaRecorrida; break;
-            case SDLK_DOWN: velY -= obj->getLargo() / distanciaRecorrida; break;
+            case SDLK_UP: velY += obj->getLargo() / distanciaDeDesplazamiento; break;
+            case SDLK_DOWN: velY -= obj->getLargo() / distanciaDeDesplazamiento; break;
         }
 
     }

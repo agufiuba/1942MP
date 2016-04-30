@@ -20,7 +20,7 @@ class Controller {
 private:
 	Vivible* obj;
 	int velX,velY;
-	const int distanciaRecorrida = 4;
+	const int distanciaDeDesplazamiento = 5;
 
 public:
 	Controller(Vivible* unObj);
@@ -28,7 +28,5 @@ public:
 	void press(SDL_Event *event);
 	void hacerVivir();
 };
-
-
 
 #endif /* SRC_CONTROL_CONTROLLER_H_ */

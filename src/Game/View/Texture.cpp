@@ -50,7 +50,6 @@ bool Texture::loadFromFile( std::string path , SDL_Renderer* &gRenderer)
 			//Get image dimensions
 			mWidth = image->w;
 			mHeight = image->h;
-			cout<<"medidaW y H= "<< mWidth << " " << mHeight <<endl;
 		}
 	}
 
