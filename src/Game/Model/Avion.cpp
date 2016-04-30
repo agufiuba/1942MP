@@ -3,16 +3,28 @@
 using namespace std;
 
 Avion::Avion(SDL_Renderer * &renderer) {
-
 	vistaAvion = new AvionView(renderer);
-	x = 0;
-	y = 0;
-	anchoFondo = 600;
+
+	x = 220;
+	y = 480;
+
+	anchoFondo = 600; //TODO: hay que cambiarlo para que pueda conseguirlo desde el escenario
 	largoFondo = 600;
+
+	t = new Timer();
+
+	inicializoVueltereta();
+}
+
+void Avion::inicializoVueltereta() {
+	velocidadEnVueltereta = -(getLargo() / 8);
+	realizandoVueltereta = true;
+	t->correr();
 }
 
 Avion::~Avion(){
 	delete vistaAvion;
+	delete t;
 }
 
 int Avion::getAnchoFondo() {
@@ -56,8 +68,44 @@ void Avion::mostrar(){
 	vistaAvion->mostrar(x,y);
 }
 
+void Avion::realizoVueltereta() {
+	int tiempoIda = 2000;
+	int tiempoVuelta = tiempoIda;
+	int tiempoMuerto = 500;
+
+	if (t->tiempoActual() < tiempoIda) {
+		mover(0, velocidadEnVueltereta);
+
+	} else {
+		if (t->tiempoActual() < tiempoIda + tiempoMuerto) {
+
+		} else {
+			if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta) {
+				mover(0, -velocidadEnVueltereta);
+
+			} else {
+				if (t->tiempoActual() < tiempoIda + tiempoMuerto*2 + tiempoVuelta) {
+
+				} else {
+					if (t->tiempoActual() < tiempoIda + tiempoMuerto*2 + tiempoVuelta + tiempoIda/4) {
+						mover(0, velocidadEnVueltereta);
+
+					} else {
+						realizandoVueltereta = false;
+						t->parar();
+					}
+				}
+			}
+		}
+	}
+}
+
 void Avion::vivir(int velX, int velY){
-	mover(velX, velY);
+	if (!realizandoVueltereta){
+		mover(velX, velY);
+	} else {
+		realizoVueltereta();
+	}
 	mostrar();
 }
 

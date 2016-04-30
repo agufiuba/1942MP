@@ -20,7 +20,7 @@ class Controller {
 private:
 	Vivible* obj;
 	int velX,velY;
-	const int distanciaDeDesplazamiento = 5;
+	const int distanciaDeDesplazamiento = 8;
 
 public:
 	Controller(Vivible* unObj);
