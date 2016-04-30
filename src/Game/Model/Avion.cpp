@@ -98,14 +98,15 @@ void Avion::realizoVueltereta() {
 			}
 		}
 	}
+	mostrar(0); //Para que el usuario no pueda doblar en este periodo
 }
 
 void Avion::vivir(int velX, int velY){
 	if (!realizandoVueltereta){
 		mover(velX, velY);
+		mostrar(velX);
 	} else {
 		realizoVueltereta();
 	}
-	mostrar(velX);
 }
 
