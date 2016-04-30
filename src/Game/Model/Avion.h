@@ -12,6 +12,7 @@ private:
 	int x, y;
 
 	bool realizandoVueltereta;
+	int velocidadEnVueltereta;
 
 	void mostrar();
 	void mover(int velX, int velY);

@@ -4,11 +4,15 @@ using namespace std;
 
 Avion::Avion(SDL_Renderer * &renderer) {
 	vistaAvion = new AvionView(renderer);
-	x = 0;
-	y = 0;
-	anchoFondo = 600;
+
+	x = 220;
+	y = 480;
+
+	anchoFondo = 600; //TODO: hay que cambiarlo para que pueda conseguirlo desde el escenario
 	largoFondo = 600;
+
 	realizandoVueltereta = true;
+	velocidadEnVueltereta = -(getLargo() / 5);
 }
 
 Avion::~Avion(){
@@ -60,7 +64,7 @@ void Avion::vivir(int velX, int velY){
 	if (!realizandoVueltereta){
 		mover(velX, velY);
 	} else {
-		cout << "haciendo vueltereta" << endl;
+		mover(0, velocidadEnVueltereta);
 	}
 	mostrar();
 }
