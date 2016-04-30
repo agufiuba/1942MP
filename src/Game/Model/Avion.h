@@ -13,6 +13,9 @@ private:
 
 	bool realizandoVueltereta;
 	int velocidadEnVueltereta;
+	bool subio, bajo;
+
+	void inicializoVueltereta();
 
 	void mostrar();
 	void mover(int velX, int velY);

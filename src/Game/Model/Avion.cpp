@@ -11,8 +11,13 @@ Avion::Avion(SDL_Renderer * &renderer) {
 	anchoFondo = 600; //TODO: hay que cambiarlo para que pueda conseguirlo desde el escenario
 	largoFondo = 600;
 
+	inicializoVueltereta();
+}
+
+void Avion::inicializoVueltereta() {
 	realizandoVueltereta = true;
 	velocidadEnVueltereta = -(getLargo() / 5);
+	subio = bajo = false;
 }
 
 Avion::~Avion(){
