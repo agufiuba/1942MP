@@ -18,6 +18,7 @@ private:
 	Timer* t;
 
 	void realizoVueltereta();
+	void mostrarVueltereta(int frame);
 
 	void mostrar(int velX);
 	void mover(int velX, int velY);

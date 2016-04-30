@@ -32,27 +32,27 @@ void AvionView::cargarClips(){
 
 		clipsVueltereta[ 1 ].x = 0;
 		clipsVueltereta[ 1 ].y = 0;
-		clipsVueltereta[ 1 ].w = anchoVista;
+		clipsVueltereta[ 1 ].w = anchoVista-10;
 		clipsVueltereta[ 1 ].h = largoVista;
 
 		clipsVueltereta[ 2 ].x = 0;
 		clipsVueltereta[ 2 ].y = 0;
-		clipsVueltereta[ 2 ].w = anchoVista;
+		clipsVueltereta[ 2 ].w = anchoVista-20;
 		clipsVueltereta[ 2 ].h = largoVista;
 
 		clipsVueltereta[ 3 ].x = 0;
 		clipsVueltereta[ 3 ].y = 0;
-		clipsVueltereta[ 3 ].w = anchoVista;
+		clipsVueltereta[ 3 ].w = anchoVista-70;
 		clipsVueltereta[ 3 ].h = largoVista;
 
 		clipsVueltereta[ 4 ].x = 0;
 		clipsVueltereta[ 4 ].y = 0;
-		clipsVueltereta[ 4 ].w = anchoVista;
+		clipsVueltereta[ 4 ].w = anchoVista-80;
 		clipsVueltereta[ 4 ].h = largoVista;
 
 		clipsVueltereta[ 5 ].x = 0;
 		clipsVueltereta[ 5 ].y = 0;
-		clipsVueltereta[ 5 ].w = anchoVista;
+		clipsVueltereta[ 5 ].w = anchoVista-90;
 		clipsVueltereta[ 5 ].h = largoVista;
 
 }
@@ -101,32 +101,17 @@ AvionView::~AvionView(){
 
 void AvionView::mostrar( int x, int y, int velX){
 		//cout << "x " << x << "       y "<< y <<endl;
-
 	bool izquierda = true;
 	int frame = 0;
-
-/*
-  if( velX < 0 ){
-      frame++;
-  }
-  else if( velX > 0 ){
-      izquierda = false;
-      frame++;
-
-  }else{
-      frame = 0;
-  }*/
 
   if (velX > 0){
   	izquierda = false;
   }
-
   if (velX != 0){
     frame ++;
   }
 
   SDL_Rect* currentClip;
-
   if(izquierda){
   	currentClip = &clipsIzquierda[ frame ];
   }else{
@@ -136,4 +121,9 @@ void AvionView::mostrar( int x, int y, int velX){
   vistaAvionTexture->render( x, y, rendererAvion, currentClip );
 }
 
+void AvionView::mostrarVueltereta(int x, int y, int frame){
+  SDL_Rect* currentClip;
+  currentClip = &clipsVueltereta[ frame ];
 
+  vistaAvionTexture->render( x, y, rendererAvion, currentClip );
+}

@@ -68,38 +68,59 @@ void Avion::mostrar(int velX){
 	vistaAvion->mostrar(x,y,velX);
 }
 
+void Avion::mostrarVueltereta(int frame){
+	vistaAvion->mostrarVueltereta(x,y,frame);
+}
+
 void Avion::realizoVueltereta() {
 	int tiempoIda = 2000;
 	int tiempoVuelta = tiempoIda;
 	int tiempoMuerto = 500;
+	int frame;
 
 	if (t->tiempoActual() < tiempoIda) {
+		frame = 0;
 		mover(0, velocidadEnVueltereta);
 
 	} else {
-		if (t->tiempoActual() < tiempoIda + tiempoMuerto) {
+		if (t->tiempoActual() < tiempoIda + tiempoMuerto / 2) {
+			frame = 1;
 
 		} else {
-			if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta) {
-				mover(0, -velocidadEnVueltereta);
+			if (t->tiempoActual() < tiempoIda + tiempoMuerto) {
+				frame = 2;
 
 			} else {
-				if (t->tiempoActual() < tiempoIda + tiempoMuerto*2 + tiempoVuelta) {
+				if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta) {
+					frame = 3;
+					mover(0, -velocidadEnVueltereta);
 
 				} else {
-					if (t->tiempoActual() < tiempoIda + tiempoMuerto*2 + tiempoVuelta + tiempoIda/4) {
-						mover(0, velocidadEnVueltereta);
+					if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta + tiempoMuerto / 2) {
+						frame = 4;
 
 					} else {
-						realizandoVueltereta = false;
-						t->parar();
+						if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta + tiempoMuerto) {
+							frame = 5;
+
+						} else {
+							if (t->tiempoActual() < tiempoIda + tiempoMuerto * 2 + tiempoVuelta + tiempoIda / 4) {
+								frame = 0;
+								mover(0, velocidadEnVueltereta);
+
+							} else {
+								realizandoVueltereta = false;
+								t->parar();
+							}
+						}
 					}
 				}
 			}
 		}
 	}
-	mostrar(0); //Para que el usuario no pueda doblar en este periodo
+	mostrarVueltereta(frame);
 }
+
 
 void Avion::vivir(int velX, int velY){
 	if (!realizandoVueltereta){

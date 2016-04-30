@@ -30,6 +30,7 @@ public:
 	int getAnchoVista();
 	int getLargoVista();
 	void mostrar(int x, int y, int velX);
+	void mostrarVueltereta(int x, int y, int frame);
 	void cargarClips();
 };
 
