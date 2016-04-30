@@ -68,20 +68,33 @@ void Avion::mostrar(){
 	vistaAvion->mostrar(x,y);
 }
 
-void Avion::realizoVueltereta(){
-	int tiempoDeDesplazamiento = 2000;
+void Avion::realizoVueltereta() {
+	int tiempoIda = 2000;
+	int tiempoVuelta = tiempoIda;
+	int tiempoMuerto = 500;
 
-	if (t->tiempoActual() < tiempoDeDesplazamiento){
+	if (t->tiempoActual() < tiempoIda) {
 		mover(0, velocidadEnVueltereta);
+
 	} else {
-		if (t->tiempoActual() < tiempoDeDesplazamiento*2){
-			mover(0, -velocidadEnVueltereta);
+		if (t->tiempoActual() < tiempoIda + tiempoMuerto) {
+
 		} else {
-			if (t->tiempoActual() < ((tiempoDeDesplazamiento*2) + 500)){
-				mover(0, velocidadEnVueltereta);
+			if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta) {
+				mover(0, -velocidadEnVueltereta);
+
 			} else {
-				realizandoVueltereta = false;
-				t->parar();
+				if (t->tiempoActual() < tiempoIda + tiempoMuerto*2 + tiempoVuelta) {
+
+				} else {
+					if (t->tiempoActual() < tiempoIda + tiempoMuerto*2 + tiempoVuelta + tiempoIda/4) {
+						mover(0, velocidadEnVueltereta);
+
+					} else {
+						realizandoVueltereta = false;
+						t->parar();
+					}
+				}
 			}
 		}
 	}
