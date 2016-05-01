@@ -8,38 +8,38 @@ void AvionView::cargarClips(){
 	int posYInicial = 50;
 
 		clipsDerecha[ 0 ].x = 40;
-		clipsDerecha[ 0 ].y = posYInicial;
-		clipsDerecha[ 0 ].w = anchoVista;
+		clipsDerecha[ 0 ].y = posYInicial+5;
+		clipsDerecha[ 0 ].w = anchoVista-10;
 		clipsDerecha[ 0 ].h = largoVista;
 
-		clipsDerecha[ 1 ].x = 1000;
-		clipsDerecha[ 1 ].y = posYInicial;
-		clipsDerecha[ 1 ].w = anchoVista;
+		clipsDerecha[ 1 ].x = 1010;
+		clipsDerecha[ 1 ].y = posYInicial+5;
+		clipsDerecha[ 1 ].w = anchoVista-10;
 		clipsDerecha[ 1 ].h = largoVista;
 
 		clipsIzquierda[ 0 ].x = 40;
-		clipsIzquierda[ 0 ].y = posYInicial;
-		clipsIzquierda[ 0 ].w = anchoVista;
+		clipsIzquierda[ 0 ].y = posYInicial+5;
+		clipsIzquierda[ 0 ].w = anchoVista-10;
 		clipsIzquierda[ 0 ].h = largoVista;
 
 		clipsIzquierda[ 1 ].x = 865;
-		clipsIzquierda[ 1 ].y = posYInicial;
-		clipsIzquierda[ 1 ].w = anchoVista;
+		clipsIzquierda[ 1 ].y = posYInicial+5;
+		clipsIzquierda[ 1 ].w = anchoVista-10;
 		clipsIzquierda[ 1 ].h = largoVista;
 
 		clipsVueltereta[ 0 ].x = 40;
-		clipsVueltereta[ 0 ].y = posYInicial;
-		clipsVueltereta[ 0 ].w = anchoVista;
+		clipsVueltereta[ 0 ].y = posYInicial+5;
+		clipsVueltereta[ 0 ].w = anchoVista-10;
 		clipsVueltereta[ 0 ].h = largoVista;
 
-		clipsVueltereta[ 1 ].x = 165;
+		clipsVueltereta[ 1 ].x = 175;
 		clipsVueltereta[ 1 ].y = posYInicial-20;
-		clipsVueltereta[ 1 ].w = anchoVista+10;
+		clipsVueltereta[ 1 ].w = anchoVista-10;
 		clipsVueltereta[ 1 ].h = largoVista+25;
 
-		clipsVueltereta[ 2 ].x = 270;
+		clipsVueltereta[ 2 ].x = 310;
 		clipsVueltereta[ 2 ].y = posYInicial-20;
-		clipsVueltereta[ 2 ].w = anchoVista+70;
+		clipsVueltereta[ 2 ].w = anchoVista;
 		clipsVueltereta[ 2 ].h = largoVista+50;
 
 		clipsVueltereta[ 3 ].x = 410;
@@ -49,12 +49,12 @@ void AvionView::cargarClips(){
 
 		clipsVueltereta[ 4 ].x = 560;
 		clipsVueltereta[ 4 ].y = posYInicial;
-		clipsVueltereta[ 4 ].w = anchoVista+70;
+		clipsVueltereta[ 4 ].w = anchoVista+50;
 		clipsVueltereta[ 4 ].h = largoVista+50;
 
 		clipsVueltereta[ 5 ].x = 720;
-		clipsVueltereta[ 5 ].y = posYInicial-15;
-		clipsVueltereta[ 5 ].w = anchoVista+25;
+		clipsVueltereta[ 5 ].y = posYInicial+15;
+		clipsVueltereta[ 5 ].w = anchoVista+10;
 		clipsVueltereta[ 5 ].h = largoVista+45;
 
 }

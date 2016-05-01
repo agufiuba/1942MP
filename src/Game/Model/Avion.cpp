@@ -73,9 +73,9 @@ void Avion::mostrarVueltereta(int frame){
 }
 
 void Avion::realizoVueltereta() {
-	int tiempoIda = 1800;
+	int tiempoIda = 1600; //recomendado >> 1600
 	int tiempoVuelta = tiempoIda;
-	int tiempoMuerto = 300;
+	int tiempoMuerto = 400; //recomendado >> 400
 	int frame;
 
 	if (t->tiempoActual() < tiempoIda) {
