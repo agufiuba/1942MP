@@ -68,6 +68,7 @@ int main(int argc, char **argv) {
 
   Vivible* unAvion = new Avion(renderer);
   Controller* control = new Controller(unAvion);
+  ControllerMissiles* controlDeMisiles = new ControllerMissiles(unAvion,renderer);
 
   while(!quit){
   		fps.correr();
@@ -75,6 +76,7 @@ int main(int argc, char **argv) {
       while( SDL_PollEvent( &event ) ){
 
           control->press( &event);
+          controlDeMisiles->press(&event);
 
           if( event.type == SDL_QUIT ){ quit = true; }
       }
@@ -87,6 +89,7 @@ int main(int argc, char **argv) {
 			SDL_RenderClear(renderer);
 
       control->hacerVivir();
+      controlDeMisiles->hacerVivir();
 
 			//Update screen
 			SDL_RenderPresent(renderer);
