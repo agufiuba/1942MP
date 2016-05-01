@@ -1,39 +1,39 @@
 /*
- * FondoDePantalla.cpp
+ * Escenario.cpp
  *
  *  Created on: 24/04/2016
  *      Author: gonzalo
  */
 
-#include "FondoDePantalla.h"
+#include "Escenario.h"
 
 using namespace std;
 
-FondoDePantalla::FondoDePantalla(){
+Escenario::Escenario(){
 	setResolucion();
 	inicializar();
 }
 
-FondoDePantalla::FondoDePantalla(int fps){
+Escenario::Escenario(int fps){
 	this->FRAMES_PER_SECOND = fps;
 	setResolucion();
 	inicializar();
 }
 
-FondoDePantalla::FondoDePantalla(int width, int height) {
+Escenario::Escenario(int width, int height) {
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
 	inicializar();
 }
 
-FondoDePantalla::FondoDePantalla(int fps, int width, int height){
+Escenario::Escenario(int fps, int width, int height){
 	this->FRAMES_PER_SECOND = fps;
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
 	inicializar();
 }
 
-void FondoDePantalla::inicializar() {
+void Escenario::inicializar() {
 	window = NULL;
 	fondoDePantalla = new Texture();
 	inicioCorrectamente = true;
@@ -73,7 +73,7 @@ void FondoDePantalla::inicializar() {
 
 }
 
-FondoDePantalla::~FondoDePantalla() {
+Escenario::~Escenario() {
 	resolucion->~Resolucion();
 	fondoDePantalla->free();
 	SDL_DestroyRenderer(gRenderer);
@@ -83,24 +83,24 @@ FondoDePantalla::~FondoDePantalla() {
 	SDL_Quit();
 }
 
-void FondoDePantalla::setResolucion() {
+void Escenario::setResolucion() {
 	resolucion = new Resolucion();
 	SCREEN_HEIGHT = resolucion->getHeightScreen();
 	SCREEN_WIDTH = resolucion->getWidthScreen();
 }
 
-void FondoDePantalla::printErrorSDL(string error) {
+void Escenario::printErrorSDL(string error) {
 	cout << "No se puede iniciarlizar "<< error << endl;
 	cout << "SDL Error: " << SDL_GetError() << endl;
 }
 
-void FondoDePantalla::actualizarFondoDePantalla(Posicion* pos) {
+void Escenario::actualizarEscenario(Posicion* pos) {
 	SDL_RenderClear(gRenderer);
-	fondoDePantalla->render(pos->getX(), pos->getY(), gRenderer);
+	fondoDePantalla->render(pos->getX(), pos->getYsdl(), gRenderer);
 	SDL_RenderPresent(gRenderer);
 }
 
-void FondoDePantalla::aplicarFPS(Uint32 start) {
+void Escenario::aplicarFPS(Uint32 start) {
 	Uint32 dif = (SDL_GetTicks() - start);
 	int time = 1000 / FRAMES_PER_SECOND;
 	if(time > dif) {
@@ -108,20 +108,22 @@ void FondoDePantalla::aplicarFPS(Uint32 start) {
 	}
 }
 
-void FondoDePantalla::run() {
+void Escenario::run() {
 	if (!inicioCorrectamente) {
 		return ;
 	}
 
-	Posicion* posicion = new Posicion(0, SCREEN_HEIGHT);
-	actualizarFondoDePantalla(posicion);
+	Posicion* posicionEscenario = new Posicion(0, SCREEN_HEIGHT);
+	actualizarEscenario(posicionEscenario);
 
 //	cout << "SCREEN_WIDTH: " << SCREEN_WIDTH << endl;
 //	cout << "SCREEN_HEIGHT: " << SCREEN_HEIGHT << endl;
-	cout << "actual: "; posicion->print();
+	cout << "actual: "; posicionEscenario->print();
 
 	Uint32 start;
 	bool quit = false;
+	int pixelesArecorrer = SCREEN_REPLAY * SCREEN_HEIGHT;
+	int cantidadReplays = 0;
 
 	while (!quit) {
 		start = SDL_GetTicks();
@@ -132,21 +134,21 @@ void FondoDePantalla::run() {
 			}
 
 		}
+		bool isFinNivel = cantidadReplays >= SCREEN_REPLAY_TOTAL;
 
-		if (posicion->getY() < (2*SCREEN_HEIGHT)) {
-			//cout << "baja y: " << posicion->getY() << endl;
-			posicion->moverVertical(3);
-			posicion->print();
+		if (!isFinNivel && posicionEscenario->getY() < pixelesArecorrer) {
+
+			posicionEscenario->mover(0,3);
+			posicionEscenario->print();
 		} else {
-//			cout << "SCREEN_WIDTH: " << SCREEN_WIDTH << endl;
-//			cout << "SCREEN_HEIGHT: " << SCREEN_HEIGHT << endl;
-//			posicion->setPosicion(0, SCREEN_HEIGHT);
+			cantidadReplays += SCREEN_REPLAY;
+			posicionEscenario->setPosicion(0, SCREEN_HEIGHT);
 		}
 
-		actualizarFondoDePantalla(posicion);
+		actualizarEscenario(posicionEscenario);
 		aplicarFPS(start);
 
 	}
-	posicion->~Posicion();
+	posicionEscenario->~Posicion();
 }
 

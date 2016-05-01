@@ -1,6 +1,6 @@
 #include <iostream>
 #include "controller/keyboardController.h"
-#include "model/FondoDePantalla.h"
+#include "view/Escenario.h"
 
 string CLIENT = "client";
 string SERVER = "server";
@@ -12,8 +12,8 @@ void startupClient() {
 
 	//Iniciar Pantalla
 
-	FondoDePantalla* fondo = new FondoDePantalla();
-	fondo->run();
+	Escenario* escenario = new Escenario();
+	escenario->run();
 
 	//Inicia controlador de Teclado
 	//keyboardController controller = new keyboardController();
@@ -22,7 +22,7 @@ void startupClient() {
 
 
 	// limpiar memoria
-	fondo->~FondoDePantalla();
+	escenario->~Escenario();
 
 }
 

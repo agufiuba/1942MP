@@ -20,7 +20,6 @@ Posicion::~Posicion() {
 
 void Posicion::initResolucion() {
 	resolucion = new Resolucion();
-	limiteX = 0;
 	limiteY = resolucion->getHeightScreen();
 }
 
@@ -37,12 +36,13 @@ int Posicion::getY() {
 	return (limiteY - y);
 }
 
-void Posicion::moverHorizontal(int x) {
-	this->x += x;
+int Posicion::getYsdl() {
+	return y;
 }
 
-void Posicion::moverVertical(int y) {
-	this->y += y;
+void Posicion::mover(int x, int y) {
+	this->x += x;
+	this->y -= y;
 }
 
 void Posicion::print() {

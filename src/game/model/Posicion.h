@@ -14,8 +14,7 @@ class Posicion {
 
 private:
 	int x;
-	int y;
-	int limiteX;
+	int y; //Posicion SDL
 	int limiteY;
 	Resolucion* resolucion;
 	void initResolucion();
@@ -26,8 +25,8 @@ public:
 	void setPosicion(int x, int y);
 	int getX();
 	int getY();
-	void moverHorizontal(int x);
-	void moverVertical(int y);
+	int getYsdl();
+	void mover(int x, int y);
 	void print();
 };
 
