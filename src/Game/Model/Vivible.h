@@ -16,6 +16,7 @@ class Vivible{
 	   virtual void vivir(int x, int y){};
 	   virtual int getAncho(){return 0;};
 	   virtual int getLargo(){return 0;};
+	   virtual void mostrar(){};
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */

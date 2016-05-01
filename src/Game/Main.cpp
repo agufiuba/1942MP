@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
 
     Vivible* unAvion = new Avion( renderer );
     Controller* control = new Controller( unAvion );
+    ControllerMissiles* controlDeMisiles = new ControllerMissiles(unAvion,renderer);
 
     while( !quit ) {
       fps.correr();
@@ -30,12 +31,14 @@ int main(int argc, char **argv) {
       // Get events
       while( sdlHandler->nextEvent( &event ) ) {
 	control->press( &event );
+        controlDeMisiles->press(&event);
 	if( event.type == SDL_QUIT ) quit = true;
       }
 
       // Set window background
       sdlHandler->setWindowBG( 0, 127, 255 );
       control->hacerVivir();
+      controlDeMisiles->hacerVivir();
       sdlHandler->updateWindow();
 
       if( fps.tiempoActual() < 1000 / FRAMES_PER_SECOND ){
