@@ -5,8 +5,8 @@ using namespace std;
 Avion::Avion(SDL_Renderer * &renderer) {
 	vistaAvion = new AvionView(renderer);
 
-	x = 220;
-	y = 480;
+	x = 250;
+	y = 450;
 
 	anchoFondo = 600; //TODO: hay que cambiarlo para que pueda conseguirlo desde el escenario
 	largoFondo = 600;
@@ -17,7 +17,7 @@ Avion::Avion(SDL_Renderer * &renderer) {
 }
 
 void Avion::inicializoVueltereta() {
-	velocidadEnVueltereta = -(getLargo() / 8);
+	velocidadEnVueltereta = -(getLargo() / 4);
 	realizandoVueltereta = true;
 	t->correr();
 }
@@ -73,9 +73,9 @@ void Avion::mostrarVueltereta(int frame){
 }
 
 void Avion::realizoVueltereta() {
-	int tiempoIda = 2000;
+	int tiempoIda = 1800;
 	int tiempoVuelta = tiempoIda;
-	int tiempoMuerto = 500;
+	int tiempoMuerto = 300;
 	int frame;
 
 	if (t->tiempoActual() < tiempoIda) {
