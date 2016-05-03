@@ -11,6 +11,7 @@
 #include "../Model/CompositeVivibles.h"
 #include "SDL2/SDL.h"
 #include "../Model/Avion.h"
+#include "../Model/Misil.h"
 
 #include <iostream>
 
@@ -18,15 +19,15 @@ using namespace std;
 
 class ControllerMissiles{
 	public:
-		ControllerMissiles(Avion* &avion,SDL_Renderer* &renderer);
+		ControllerMissiles(SDL_Renderer* &renderer);
 		virtual ~ControllerMissiles();
 		void press(SDL_Event *event);
 		void hacerVivir();
+		void crearNuevoMisilEnPosicion(int x, int y);
 	private:
 		CompositeVivibles* vivibles;
-		Avion* avion = NULL;
-		SDL_Renderer* rendererMisil = NULL;
-		int distanciaDeDesplazamiento = distanciaDeDesplazamiento*1.5;//Todo sacarlo del hardcodeo
+		SDL_Renderer* rendererMisil;
+		int distanciaDeDesplazamiento = 5;//Todo sacarlo del hardcodeo
 
 };
 

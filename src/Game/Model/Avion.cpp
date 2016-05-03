@@ -5,6 +5,8 @@ using namespace std;
 Avion::Avion(SDL_Renderer * &renderer) {
 	vistaAvion = new AvionView(renderer);
 
+	viviendo = true;
+
 	x = 250;
 	y = 450;
 
@@ -76,7 +78,7 @@ void Avion::realizoVueltereta() {
 	int tiempoIda = 1600; //recomendado >> 1600
 	int tiempoVuelta = tiempoIda;
 	int tiempoMuerto = 400; //recomendado >> 400
-	int frame;
+	int frame=0;
 
 	if (t->tiempoActual() < tiempoIda) {
 		frame = 0;
@@ -131,3 +133,16 @@ void Avion::vivir(int velX, int velY){
 	}
 }
 
+
+int Avion::getX(){
+	return x;
+}
+
+
+int Avion::getY(){
+	return y;
+}
+
+bool Avion::aunVive(){
+	return viviendo;
+}

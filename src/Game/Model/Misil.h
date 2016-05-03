@@ -21,6 +21,8 @@ private:
 	MisilView* vistaMisil;
 	int x, y;
 
+	bool viviendo;
+
 	Timer* t;
 
 	void mostrar();
@@ -29,13 +31,15 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Misil(SDL_Renderer * &renderer, int x, int y);
+	Misil(SDL_Renderer * renderer, int x, int y);
 	virtual ~Misil();
 
+	void vivir(int x,int y);
 	int getAnchoFondo();
 	int getLargoFondo();
-	int getAncho();
-	int getLargo();
+
+
+  bool aunVive();
 };
 
 #endif /* SRC_GAME_MODEL_MISIL_H_ */
