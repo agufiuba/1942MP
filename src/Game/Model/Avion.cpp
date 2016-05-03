@@ -5,6 +5,8 @@ using namespace std;
 Avion::Avion(SDL_Renderer * &renderer) {
 	vistaAvion = new AvionView(renderer);
 
+	viviendo = true;
+
 	x = 250;
 	y = 450;
 
@@ -131,3 +133,16 @@ void Avion::vivir(int velX, int velY){
 	}
 }
 
+
+int Avion::getX(){
+	return x;
+}
+
+
+int Avion::getY(){
+	return y;
+}
+
+bool Avion::aunVive(){
+	return viviendo;
+}

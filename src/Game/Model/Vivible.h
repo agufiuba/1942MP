@@ -16,6 +16,10 @@ class Vivible{
 	   virtual void vivir(int x, int y){};
 	   virtual int getAncho(){return 0;};
 	   virtual int getLargo(){return 0;};
+	   virtual void mostrar(){};
+	   virtual int getX(){return 0;};
+	   virtual int getY(){return 0;};
+	   virtual bool aunVive(){return true;};
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */

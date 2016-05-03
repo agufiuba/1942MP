@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     Timer fps;
 
     Vivible* unAvion = new Avion( renderer );
-    Controller* control = new Controller( unAvion );
+    Controller* control = new Controller( unAvion, renderer );
 
     while( !quit ) {
       fps.correr();

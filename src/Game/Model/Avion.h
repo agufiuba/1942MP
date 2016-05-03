@@ -12,6 +12,7 @@ private:
 	AvionView* vistaAvion;
 	int x, y;
 
+	bool viviendo;
 	// Variables que involucran la vueltereta
 	bool realizandoVueltereta;
 	int velocidadEnVueltereta;
@@ -33,10 +34,13 @@ public:
 	int getLargoFondo();
 	int getAncho();
 	int getLargo();
+	int getX();
+	int getY();
 
 	void inicializoVueltereta();
 
 	void vivir(int velX, int velY);
+	bool aunVive();
 };
 
 #endif /* SRC_MODEL_AVION_H_ */
