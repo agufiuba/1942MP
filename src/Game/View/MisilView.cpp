@@ -32,10 +32,6 @@ MisilView::~MisilView() {
 bool MisilView::cargarImagenDelMisil( string filename ){
 	vistaMisilTexture = new Texture();
 
-	if (rendererMisil == NULL){
-		printf("nulo");
-	}
-
 	if (!vistaMisilTexture->loadFromFile(filename, rendererMisil)) {
 		printf("Failed to load Misil texture image!\n");
 		return false;
@@ -54,7 +50,5 @@ bool MisilView::cargarImagenDelMisil( string filename ){
 
 
 void MisilView::mostrar( int x, int y){
-		//cout << "x " << x << "       y "<< y <<endl;
-
     vistaMisilTexture->render( x, y, rendererMisil, NULL );
 }

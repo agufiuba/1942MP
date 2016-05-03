@@ -22,9 +22,9 @@ class CompositeVivibles:public Vivible{
 		virtual ~CompositeVivibles();
 		void agregarObjetoVivible(Vivible* &unObj);
 		void vivir(int x, int y);
-		void mostrar();
+/*		void mostrar(int velY);*/
 	private:
-		vector<Vivible*> vectorObjetos = NULL;
+		vector<Vivible*> vectorObjetos;
 };
 
 
