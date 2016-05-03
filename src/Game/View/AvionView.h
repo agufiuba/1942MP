@@ -2,7 +2,6 @@
 #define SRC_VIEW_AVIONVIEW_H_
 
 #include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
 
 #include "Texture.h"
 #include <string>

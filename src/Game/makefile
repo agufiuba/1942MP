@@ -11,7 +11,7 @@ CC = g++
 
 COMPILER = -std=c++11
 
-LINKER = -pthread -lSDL2  -lSDL2_image
+LINKER = -pthread -lSDL2 
 
 WARN = -Wno-write-strings
 
