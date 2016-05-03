@@ -8,10 +8,10 @@
 #ifndef SRC_GAME_CONTROL_CONTROLLERMISSILES_H_
 #define SRC_GAME_CONTROL_CONTROLLERMISSILES_H_
 
-#include "../Model/CompositeVivibles.h"
+#include "../model/CompositeVivibles.h"
 #include "SDL2/SDL.h"
-#include "../Model/Avion.h"
-#include "../Model/Misil.h"
+#include "../model/Avion.h"
+#include "../model/Misil.h"
 
 #include <iostream>
 

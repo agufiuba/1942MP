@@ -1,5 +1,4 @@
 #include "SDL2/SDL.h"
-#include "SDL2/SDL_image.h"
 
 #ifndef SRC_GAME_CONTROL_TIMER_H_
 #define SRC_GAME_CONTROL_TIMER_H_
