@@ -1,9 +1,9 @@
 #ifndef SRC_MODEL_AVION_H_
 #define SRC_MODEL_AVION_H_
 
-#include "../View/AvionView.h"
+#include "../view/AvionView.h"
 #include "Vivible.h"
-#include "../Control/Timer.h"
+#include "../controller/Timer.h"
 
 class Avion: public Vivible {
 private:

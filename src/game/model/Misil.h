@@ -9,8 +9,8 @@
 #define SRC_GAME_MODEL_MISIL_H_
 
 #include "Vivible.h"
-#include "../Control/Timer.h"
-#include "../View/MisilView.h"
+#include "../controller/Timer.h"
+#include "../view/MisilView.h"
 
 using namespace std;
 

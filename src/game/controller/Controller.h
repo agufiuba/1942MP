@@ -9,7 +9,7 @@
 #define SRC_CONTROL_CONTROLLER_H_
 
 #include "SDL2/SDL.h"
-#include "../Model/Avion.h"
+#include "../model/Avion.h"
 #include "ControllerMissiles.h"
 
 #include <iostream>

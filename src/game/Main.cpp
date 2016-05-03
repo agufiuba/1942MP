@@ -1,6 +1,6 @@
-#include "Control/Timer.h"
-#include "Model/Avion.h"
-#include "Control/Controller.h"
+#include "controller/Timer.h"
+#include "controller/Controller.h"
+#include "model/Avion.h"
 #include "../libs/xm_sdl/XM_SDL.h"
 #include <iostream>
 using namespace std;
