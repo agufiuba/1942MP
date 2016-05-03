@@ -30,8 +30,9 @@ private:
 	int SCREEN_WIDTH;
 	int SCREEN_HEIGHT;
 	int FRAMES_PER_SECOND = 60;
-	int SCREEN_REPLAY = 2;
-	int SCREEN_REPLAY_TOTAL = 6;
+	int CANTIDAD_SCREEN = 3;
+	int CANTIDAD_SCREEN_TOTAL = 6;
+	int VELOCIDAD_SCREEN = -3;
 
 	const char* DIR_FONDO_PANTALLA = "src/game/images/fondoPantallaMarcado.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
@@ -49,8 +50,6 @@ public:
 	Escenario(int fps, int width, int height);
 	~Escenario();
 	void run();
-	//void agregar(const char*, Posicion* posicion);
-
 };
 
 #endif /* ESCENARIO_H_ */

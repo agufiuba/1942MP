@@ -53,7 +53,6 @@ void Escenario::inicializar() {
 
 	// Inicializar window FullScreen
 	if (isFullScreen && SDL_SetWindowFullscreen(window, SDL_TRUE) < 0) {
-		// TODO: En el futuro sacar el isFullScreen
 		printErrorSDL("Full Screen");
 		inicioCorrectamente = false;
 	}
@@ -113,17 +112,16 @@ void Escenario::run() {
 		return ;
 	}
 
-	Posicion* posicionEscenario = new Posicion(0, SCREEN_HEIGHT);
+	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
+	int screensRecorridos = 0;
+
+	Posicion* posicionEscenario = new Posicion(0, pixelesArecorrer);
 	actualizarEscenario(posicionEscenario);
 
-//	cout << "SCREEN_WIDTH: " << SCREEN_WIDTH << endl;
-//	cout << "SCREEN_HEIGHT: " << SCREEN_HEIGHT << endl;
 	cout << "actual: "; posicionEscenario->print();
 
 	Uint32 start;
 	bool quit = false;
-	int pixelesArecorrer = SCREEN_REPLAY * SCREEN_HEIGHT;
-	int cantidadReplays = 0;
 
 	while (!quit) {
 		start = SDL_GetTicks();
@@ -134,15 +132,16 @@ void Escenario::run() {
 			}
 
 		}
-		bool isFinNivel = cantidadReplays >= SCREEN_REPLAY_TOTAL;
 
-		if (!isFinNivel && posicionEscenario->getY() < pixelesArecorrer) {
+		bool isFinNivel = screensRecorridos >= CANTIDAD_SCREEN_TOTAL;
 
-			posicionEscenario->mover(0,3);
+		if (!isFinNivel && posicionEscenario->getY() > SCREEN_HEIGHT) {
+			posicionEscenario->mover(0,VELOCIDAD_SCREEN);
 			posicionEscenario->print();
+
 		} else {
-			cantidadReplays += SCREEN_REPLAY;
-			posicionEscenario->setPosicion(0, SCREEN_HEIGHT);
+			screensRecorridos += CANTIDAD_SCREEN;
+			posicionEscenario->setPosicion(0, pixelesArecorrer);
 		}
 
 		actualizarEscenario(posicionEscenario);

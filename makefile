@@ -25,14 +25,17 @@ LINKER = -lSDL2 -lX11
 #game
 GAME = $(GAME_DIR)/1942Multiplayer.cpp
 TEXTURE = $(GAME_DIR)/examples/libs/Texture.cpp
+
 BACKGROUND = $(VIEW_DIR)/Escenario.cpp
+ISLA = $(VIEW_DIR)/Isla.cpp
+
 RESOLUCION = $(MODEL_DIR)/Resolucion.cpp
 POSICION = $(MODEL_DIR)/Posicion.cpp
 
 # executable name
 EXE = 1942Multiplayer.exe
 
-OBJS = $(BACKGROUND) $(TEXTURE) $(RESOLUCION) $(POSICION) ./$(GAME)
+OBJS = $(BACKGROUND) $(TEXTURE) $(RESOLUCION) $(POSICION) $(ISLA) ./$(GAME)
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)

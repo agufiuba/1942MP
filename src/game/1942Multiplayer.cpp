@@ -1,6 +1,7 @@
 #include <iostream>
 #include "controller/keyboardController.h"
 #include "view/Escenario.h"
+#include "view/Isla.h"
 
 string CLIENT = "client";
 string SERVER = "server";
@@ -14,6 +15,10 @@ void startupClient() {
 
 	Escenario* escenario = new Escenario();
 	escenario->run();
+
+	// Agrego obstaculo isla
+	//Vivible* isla = new Isla();
+	//escenario->agregar(isla);
 
 	//Inicia controlador de Teclado
 	//keyboardController controller = new keyboardController();
