@@ -9,8 +9,6 @@ class XM_SDL {
     SDL_Renderer* renderer;
     SDL_Surface* windowBG;
     std::vector<SDL_Texture*> loadedTextures;
-    SDL_Surface* getWindowSurface();
-    void updateWindow();
     SDL_Texture* loadImage( const char* IMAGE_PATH );
     SDL_Texture* createTexture( SDL_Surface*& surface );
 
@@ -20,6 +18,8 @@ class XM_SDL {
     bool createWindow( const char* TITLE, const int WIDTH = 800, const int HEIGHT = 600 );
     void setWindowBG( const uint8_t RED, const uint8_t GREEN, const uint8_t BLUE );
     void setWindowBG( const char* IMAGE_PATH );
-    SDL_Event nextEvent();
+    SDL_Renderer* getRenderer();
+    bool nextEvent( SDL_Event* e );
+    void updateWindow();
 };
 #endif

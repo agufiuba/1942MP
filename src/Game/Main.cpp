@@ -1,104 +1,52 @@
 #include "Control/Timer.h"
 #include "Model/Avion.h"
 #include "Control/Controller.h"
-
+#include "../libs/xm_sdl/XM_SDL.h"
 #include <iostream>
-
-const int SCREEN_WIDTH = 600; //TODO: aca hay que cambiar a lo del escenario
-const int SCREEN_HEIGHT = 600;
-
-SDL_Renderer* renderer;
-SDL_Window * screen;
-SDL_Event event;
-
-const int FRAMES_PER_SECOND = 10;
-
 using namespace std;
-
-bool init(){
-
-    //Inicializa SDL
-    if( SDL_Init( SDL_INIT_EVERYTHING ) == -1 )
-    {
-        return false;
-    }
-
-  	//Crea la Pantalla
-    SDL_Window * screen = SDL_CreateWindow("1942MP Arcade", SDL_WINDOWPOS_UNDEFINED,
-  	SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-
-    if( screen == NULL ) {
-  		printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-  		return false;
-    }
-
-  	//Crear Renderer
-  	renderer = SDL_CreateRenderer(screen, -1, SDL_RENDERER_ACCELERATED);
-  	if (renderer == NULL) {
-  		printf("Renderer could not be created! SDL Error: %s\n", SDL_GetError());
-  		return false;
-  	}
-
-  	//Initialize renderer color
-  	SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-    return true;
-}
-
-void close(){
-	SDL_DestroyRenderer( renderer );
-	SDL_DestroyWindow( screen );
-	screen = NULL;
-	renderer = NULL;
-
-	SDL_Quit();
-}
-
 
 int main(int argc, char **argv) {
 
-  if( init() == false ){
-  		cout << "No cargo bien el screen"<< endl;
-      return 1;
-  }
+  const int WINDOW_WIDTH = 600; //TODO: aca hay que cambiar a lo del escenario
+  const int WINDOW_HEIGHT = 600;
+  const char* WINDOW_TITLE = "1942MP Arcade";
+  const int FRAMES_PER_SECOND = 10;
+  bool quit = false;
 
-	bool quit = false;
+  XM_SDL* sdlHandler = new XM_SDL( SDL_INIT_EVERYTHING );
+  
+  // Create window
+  if( sdlHandler->createWindow( WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT ) ) {
+    SDL_Event event;
+    SDL_Renderer* renderer = sdlHandler->getRenderer();
+    Timer fps;
 
-  Timer fps;
+    Vivible* unAvion = new Avion( renderer );
+    Controller* control = new Controller( unAvion );
 
-  Vivible* unAvion = new Avion(renderer);
-  Controller* control = new Controller(unAvion);
-
-  while(!quit){
-  		fps.correr();
-
-      while( SDL_PollEvent( &event ) ){
-
-          control->press( &event);
-
-          if( event.type == SDL_QUIT ){ quit = true; }
+    while( !quit ) {
+      fps.correr();
+      
+      // Get events
+      while( sdlHandler->nextEvent( &event ) ) {
+	control->press( &event );
+	if( event.type == SDL_QUIT ) quit = true;
       }
 
-
-    	//Clear screen
-    	SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
-
-      //Clear screem
-			SDL_RenderClear(renderer);
-
+      // Set window background
+      sdlHandler->setWindowBG( 0, 127, 255 );
       control->hacerVivir();
-
-			//Update screen
-			SDL_RenderPresent(renderer);
+      sdlHandler->updateWindow();
 
       if( fps.tiempoActual() < 1000 / FRAMES_PER_SECOND ){
-          SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.tiempoActual() );
+	SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.tiempoActual() );
       }
-  }
+      
+    } 
 
-  close(); //TODO: aca adentro esta haciendo delete del escenario tmb. Posiblemente a cambiar luego.
+    delete sdlHandler;
+    delete control;
+  } 
 
-	delete control;
-
-	return 0;
+  return 0;  
 }

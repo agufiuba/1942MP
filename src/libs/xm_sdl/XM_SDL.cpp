@@ -72,9 +72,8 @@ bool XM_SDL::createWindow( const char* TITLE, const int WIDTH, const int HEIGHT 
   return true;
 }
 
-SDL_Surface* XM_SDL::getWindowSurface() {
-  // Get window surface
-  return SDL_GetWindowSurface( this->window );
+SDL_Renderer* XM_SDL::getRenderer() {
+  return this->renderer;
 }
 
 void XM_SDL::setWindowBG( const uint8_t RED, const uint8_t GREEN, const uint8_t BLUE ) {
@@ -130,10 +129,8 @@ void XM_SDL::setWindowBG( const char* IMAGE_PATH ) {
   }
 }
 
-SDL_Event XM_SDL::nextEvent() {
-  SDL_Event e;
+bool XM_SDL::nextEvent( SDL_Event* e ) {
   // Get next event in queue
-  SDL_PollEvent( &e );
-
-  return e;
+  return SDL_PollEvent( e );
 }
+
