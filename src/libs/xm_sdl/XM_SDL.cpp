@@ -25,20 +25,25 @@ XM_SDL::XM_SDL( uint32_t flags ) {
   }
 
   this->window = NULL;
+  this->renderer = NULL;
   this->windowBG = NULL;
 }
 
 XM_SDL::~XM_SDL() {
   // Deallocate surfaces
-  for(vector<SDL_Surface*>::iterator it = this->loadedMedia.begin(); 
-      it != this->loadedMedia.end();
+  for(vector<SDL_Texture*>::iterator it = this->loadedTextures.begin(); 
+      it != this->loadedTextures.end();
       ++it) {
-    SDL_FreeSurface( *it );
+    SDL_DestroyTexture( *it );
   }
 
   // Destroy window
   if( this->window != NULL )
     SDL_DestroyWindow( this->window );
+
+  // Destroy renderer
+  if( this->renderer != NULL )
+    SDL_DestroyRenderer( this->renderer );
 
   // Quit SDL subsystems
   SDL_Quit();
@@ -53,6 +58,17 @@ bool XM_SDL::createWindow( const char* TITLE, const int WIDTH, const int HEIGHT 
     return false;
   }
 
+  // Create renderer for window
+  this->renderer = SDL_CreateRenderer( this->window, -1, SDL_RENDERER_ACCELERATED );
+  
+  if( this->renderer == NULL ) {
+    cout << endl << "Renderer could not be created: " << SDL_GetError() << endl;
+    return false;
+  }
+
+  // Initialize renderer color
+  SDL_SetRenderDrawColor( this->renderer, 0, 0, 0, SDL_ALPHA_OPAQUE );
+
   return true;
 }
 
@@ -61,58 +77,56 @@ SDL_Surface* XM_SDL::getWindowSurface() {
   return SDL_GetWindowSurface( this->window );
 }
 
-void XM_SDL::updateWindowSurface() {
-  // Update the surface
-  SDL_UpdateWindowSurface( this->window );
-}
-
 void XM_SDL::setWindowBG( const uint8_t RED, const uint8_t GREEN, const uint8_t BLUE ) {
-  this->windowBG = this->getWindowSurface();
-  
-  // Fill BG surface with RGB
-  SDL_FillRect( this->windowBG, NULL, SDL_MapRGB( this->windowBG->format, RED, GREEN, BLUE ) );
+  SDL_SetRenderDrawColor( this->renderer, RED, GREEN, BLUE, SDL_ALPHA_OPAQUE );
+  // Clear the screen with the render color
+  SDL_RenderClear( this->renderer );
 
-  this->updateWindowSurface();
+  this->updateWindow();
 }
 
-bool XM_SDL::optimizeSurface( SDL_Surface*& surface ) {
-  SDL_Surface* oldSurface = surface;
-  surface = NULL;
+void XM_SDL::updateWindow() {
+  // Update window with previous rendering
+  SDL_RenderPresent( this->renderer ); 
+}
 
-  surface = SDL_ConvertSurface( oldSurface, this->getWindowSurface()->format, 0 );
-  if( surface == NULL ) {
-    surface = oldSurface;   
-    return false;
-  }
-  
+SDL_Texture* XM_SDL::createTexture( SDL_Surface*& surface ) {
+  SDL_Texture* texture = NULL;
+
+  texture = SDL_CreateTextureFromSurface( this->renderer, surface );
   // Get rid of old loaded surface
-  SDL_FreeSurface( oldSurface );
+  SDL_FreeSurface( surface );
 
-  return true;
+  return texture;
 }
 
-SDL_Surface* XM_SDL::loadImage( const char* IMAGE_PATH ) {
+SDL_Texture* XM_SDL::loadImage( const char* IMAGE_PATH ) {
   SDL_Surface* image = NULL;
   image = SDL_LoadBMP( IMAGE_PATH );
-
+  SDL_Texture* texture = NULL;
+  
   if( image == NULL ) {
     cout << "Unable to load image: " << SDL_GetError() << endl;
   } else {
-    // Try to optimize image
-    if( !( this->optimizeSurface( image ) ) )
-      cout << "Couldn't optimize image: " << IMAGE_PATH << endl;
-    this->loadedMedia.push_back( image );
+    // Try create texture from surface
+    texture = this->createTexture( image );
+    if( texture == NULL ) {
+      cout << "Unable to create texture for image ( " << IMAGE_PATH << " ) : "
+	   << SDL_GetError() << endl;
+    } else {
+      this->loadedTextures.push_back( texture );
+    }
   }
 
-  return image;
+  return texture;
 }
 
 void XM_SDL::setWindowBG( const char* IMAGE_PATH ) {
-  SDL_Surface* image = this->loadImage( IMAGE_PATH );
+  SDL_Texture* image = this->loadImage( IMAGE_PATH );
   
   if( image != NULL ) {
-    SDL_BlitSurface( image, NULL, this->getWindowSurface(), NULL ); 
-    this->updateWindowSurface();
+    SDL_RenderCopy( this->renderer, image, NULL, NULL );
+    this->updateWindow();
   }
 }
 
