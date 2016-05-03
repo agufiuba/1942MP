@@ -1,5 +1,5 @@
 #include "../libs/xm_sdl/XM_SDL.h"
-#include "../Game/View/Texture.h"
+#include "../game/view/Texture.h"
 
 #include <iostream>
 using namespace std;
@@ -19,8 +19,12 @@ int main(int argc, char **argv) {
 		SDL_Event event;
 		SDL_Renderer* renderer = sdlHandler->getRenderer();
 
-		//Texture * logoPrincipal = new Texture();
-		//logoPrincipal->loadFromFile("images/",renderer);
+		Texture * logoPrincipal = new Texture();
+
+		if (!logoPrincipal->loadFromFile("windowImages/Arcade_-_1942_-_General_Sprites.bmp", renderer)) {
+			printf("Failed to load logoPrincipal texture image!\n");
+			return false;
+		}
 
 		while (!quit) {
 
