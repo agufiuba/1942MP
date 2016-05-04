@@ -123,7 +123,7 @@ Mensaje* XMLParser::parseMsg(XMLElement* msg) {
     if (parsed) {
       strcpy(type, typeElement->GetText());
     for(int i = 0; i < 7; i++) {
-      type[i] = toupper(type[i], loc); 
+      type[i] = toupper(type[i], loc);
     }
       if (strcmp(type, K::typeString) == 0
 	  || strcmp(type, K::typeInt) == 0

@@ -16,6 +16,12 @@ MODEL_DIR = $(GAME_DIR)/model
 VIEW_DIR = $(GAME_DIR)/view
 CONTROLLER_DIR = $(GAME_DIR)/controller
 
+# xml
+XML = ./src/libs/tinyxml2.cpp
+
+# conf
+CONF = ./src/xml/conf/* ./src/xml/parser/GameParser.cpp
+
 # compiler
 COMPILER = -std=c++11
 
@@ -54,7 +60,7 @@ CONTROLLER = $(CONTROLLER_CONTROLLER) $(PLAYERS_CONTROLLERS) $(MISILES_CONTROLLE
 # executable name
 EXE = 1942MultiPlayer.exe
 
-OBJS = $(MODEL) $(VIEW) $(CONTROLLER) ./$(GAME)
+OBJS = $(MODEL) $(VIEW) $(CONTROLLER) $(CONF) $(XML) ./$(GAME)
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)

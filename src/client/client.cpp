@@ -1,8 +1,9 @@
 #include "../libs/socket/sock_dep.h" /* socket dependencies */
 #include "../libs/menu/Menu.h"
 #include "../libs/palette/palette.h"
-#include "../logger/Logger.h"
 #include "../xml/parser/XMLParser.h"
+#include "../xml/conf/GameConf.h"
+#include "../xml/parser/GameParser.h"
 #include "../xml/conf/ClientConf.h"
 #include "../libs/mensaje/mensaje.h"
 #include <thread>
@@ -307,7 +308,7 @@ void cycle() {
 
 int main(int argc, char* argv[]) {
   const char* fileName = argv[1] ? argv[1] : "default-cc.xml";
-  cc = XMLParser::parseClientConf(fileName);
+  GameConf* gc = GameParser::parse(fileName);
 
   //TODO: Cuando se use el file name hay que utilizar el delete, para que pierda menos memoria
   //  delete fileName;
