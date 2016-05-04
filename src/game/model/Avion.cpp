@@ -2,16 +2,16 @@
 
 using namespace std;
 
-Avion::Avion(SDL_Renderer * &renderer) {
+Avion::Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial) {
 	vistaAvion = new AvionView(renderer);
 
 	viviendo = true;
 
-	x = 250;
-	y = 450;
+	x = posicionInicial->getX();
+	y = posicionInicial->getY();
 
-	anchoFondo = 600; //TODO: hay que cambiarlo para que pueda conseguirlo desde el escenario
-	largoFondo = 600;
+	anchoFondo = resolucion->getWidthScreen();
+	largoFondo = resolucion->getHeightScreen();
 
 	t = new Timer();
 

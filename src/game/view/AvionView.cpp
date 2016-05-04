@@ -83,7 +83,7 @@ AvionView::AvionView(SDL_Renderer * unRenderer){
 
 	rendererAvion = unRenderer;
 
-	if (!cargarImagenDelAvion("images/AvionSprites.bmp")) {
+	if (!cargarImagenDelAvion("src/game/images/AvionSprites.bmp")) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
 		//TODO: faltaria que tire una excepcion
 	}

@@ -2,53 +2,65 @@
 
 #modo: client o server
 
-#Compile         : make p=modo
+#Compile  : make
 
-#Run default     : make p=modo run
-#Run con archivo : make p=modo arch=nameArch run
+#Run      : make run p=modo
 
-#Valgrind default: make p=modo valgrind
-#Valgrind archivo: make p=modo arch=nameArch valgrind
+#Valgrind : make valgrind p=modo
 
 ############################################################
 
-MENU = ./src/libs/menu/Menu.cpp
-PALETTE = ./src/libs/palette/palette.cpp
-XML = ./src/libs/tinyxml2.cpp
-XMLPARSER = ./src/xml/parser/XMLParser.cpp
-LOGGER = ./src/libs/logger/Logger.cpp
-DEFAULTS = ./src/utils/Defaults.cpp
-CCONF = ./src/xml/conf/ClientConf.cpp
-SCONF = ./src/xml/conf/ServerConf.cpp
-PARAM = ./src/config/$(arch)
-CONST = ./src/utils/K.cpp
-
-ifeq ($(p), client)
-	PROGRAM = src/client/client
-endif
-ifeq ($(p), server)
-	PROGRAM = src/server/server
-endif
-
-ifeq ($(arch), )
-	PARAM = 
-endif
-
-OBJS = $(MENU) $(PALETTE) $(CCONF) $(SCONF) $(XML) $(XMLPARSER) $(LOGGER) $(DEFAULTS) $(CONST) ./$(PROGRAM).cpp
-
 CC = g++
+GAME_DIR = ./src/game
+MODEL_DIR = $(GAME_DIR)/model
+VIEW_DIR = $(GAME_DIR)/view
+CONTROLLER_DIR = $(GAME_DIR)/controller
 
+# compiler
 COMPILER = -std=c++11
 
-LINKER = -pthread
+# libraries to link
+LINKER = -lSDL2 -lX11
 
-WARN = -Wno-write-strings
+# game
+GAME = $(GAME_DIR)/1942MultiPlayer.cpp
 
-all : $(OBJS) 
-	$(CC) $(COMPILER) $(LINKER) $(WARN) $(OBJS) -o $(PROGRAM).exe
+# model
+RESOLUCION = $(MODEL_DIR)/Resolucion.cpp
+POSICION = $(MODEL_DIR)/Posicion.cpp
+VIVIBLE = $(MODEL_DIR)/Vivible.h
+COMPOSITE = $(MODEL_DIR)/CompositeVivibles.cpp
+AVION = $(MODEL_DIR)/Avion.cpp
+MISIL = $(MODEL_DIR)/Misil.cpp
 
+# view
+AVION_VIEW = $(VIEW_DIR)/AvionView.cpp
+TEXTURE = $(VIEW_DIR)/Texture.cpp
+BACKGROUND = $(VIEW_DIR)/Escenario.cpp
+ISLA = $(VIEW_DIR)/Isla.cpp
+MISIL_VIEW = $(VIEW_DIR)/MisilView.cpp
+
+# controller
+CONTROLLER_CONTROLLER = $(CONTROLLER_DIR)/Controller.cpp
+PLAYERS_CONTROLLERS = $(CONTROLLER_DIR)/PlayersController.cpp 
+MISILES_CONTROLLERS = $(CONTROLLER_DIR)/ControllerMissiles.cpp
+TIMER_CONTROLLER = $(CONTROLLER_DIR)/Timer.cpp 
+
+# M V C
+MODEL = $(RESOLUCION) $(POSICION) $(VIVIBLE) $(COMPOSITE) $(AVION) $(MISIL)
+VIEW = $(AVION_VIEW) $(TEXTURE) $(BACKGROUND) $(ISLA) $(MISIL_VIEW)
+CONTROLLER = $(CONTROLLER_CONTROLLER) $(PLAYERS_CONTROLLERS) $(MISILES_CONTROLLERS) $(TIMER_CONTROLLER)
+
+# executable name
+EXE = 1942MultiPlayer.exe
+
+OBJS = $(MODEL) $(VIEW) $(CONTROLLER) ./$(GAME)
+
+all: $(OBJS)
+	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)
+	
 run:
-	./$(PROGRAM).exe $(PARAM)
+	./$(EXE) $(p)
 	
 valgrind:
-	valgrind --leak-check=full ./$(PROGRAM).exe $(PARAM)
+	valgrind --leak-check=full ./$(EXE) $(p)
