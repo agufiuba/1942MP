@@ -96,6 +96,15 @@ void Escenario::printErrorSDL(string error) {
 void Escenario::actualizarEscenario(Posicion* pos) {
 	SDL_RenderClear(gRenderer);
 	fondoDePantalla->render(pos->getX(), pos->getYsdl(), gRenderer, NULL);
+
+	/*
+	for (int i = 0; i < fondosVivibles.size(); i++) {
+		fondosVivibles[i]->vivir(0,0);
+	}*/
+
+	for (int i = 0; i < controllersList.size(); i++) {
+		controllersList[i]->hacerVivir();
+	}
 	SDL_RenderPresent(gRenderer);
 }
 
@@ -115,17 +124,32 @@ void Escenario::run() {
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
+	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(400, 0));
+	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(600, 0));
+
+	//Vivible* isla = new Isla(new Posicion(800, 500), gRenderer);
+	//fondosVivibles.push_back(isla);
+
+	IController* control = new Controller(unAvion, gRenderer);
+	IController* otroControl = new PlayersController(otroAvion, gRenderer);
+
+	controllersList.push_back(control);
+	controllersList.push_back(otroControl);
+
 	Posicion* posicionEscenario = new Posicion(0, pixelesArecorrer);
 	actualizarEscenario(posicionEscenario);
-
-	cout << "actual: "; posicionEscenario->print();
 
 	Uint32 start;
 	bool quit = false;
 
+	Timer fps;
+
 	while (!quit) {
+		//fps.correr();
 		start = SDL_GetTicks();
 		while( SDL_PollEvent(&evento) != 0 ) {
+			control->press(&evento);
+			otroControl->press(&evento);
 			if(evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q) {
 				quit = true;
 				break;
@@ -148,6 +172,7 @@ void Escenario::run() {
 		aplicarFPS(start);
 
 	}
+	delete control;
 	posicionEscenario->~Posicion();
 }
 

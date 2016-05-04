@@ -9,13 +9,14 @@
 #define SRC_CONTROL_CONTROLLER_H_
 
 #include "SDL2/SDL.h"
-#include "../model/Avion.h"
+#include "IController.h"
 #include "ControllerMissiles.h"
+#include "../model/Avion.h"
 
 #include <iostream>
 #include <string>
 
-class Controller {
+class Controller : public IController {
 
 private:
 	Vivible* obj;

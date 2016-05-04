@@ -4,6 +4,8 @@
 #include "../view/AvionView.h"
 #include "Vivible.h"
 #include "../controller/Timer.h"
+#include "Resolucion.h"
+#include "../model/Posicion.h"
 
 class Avion: public Vivible {
 private:
@@ -27,7 +29,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Avion(SDL_Renderer * &renderer);
+	Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial);
 	~Avion();
 
 	int getAnchoFondo();

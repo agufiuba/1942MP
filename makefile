@@ -22,19 +22,39 @@ COMPILER = -std=c++11
 # libraries to link
 LINKER = -lSDL2 -lX11
 
-#game
-GAME = $(GAME_DIR)/escenarioTest.cpp
-TEXTURE = $(VIEW_DIR)/Texture.cpp
+# game
+GAME = $(GAME_DIR)/1942MultiPlayer.cpp
 
-BACKGROUND = $(VIEW_DIR)/Escenario.cpp
-
+# model
 RESOLUCION = $(MODEL_DIR)/Resolucion.cpp
 POSICION = $(MODEL_DIR)/Posicion.cpp
+VIVIBLE = $(MODEL_DIR)/Vivible.h
+COMPOSITE = $(MODEL_DIR)/CompositeVivibles.cpp
+AVION = $(MODEL_DIR)/Avion.cpp
+MISIL = $(MODEL_DIR)/Misil.cpp
+
+# view
+AVION_VIEW = $(VIEW_DIR)/AvionView.cpp
+TEXTURE = $(VIEW_DIR)/Texture.cpp
+BACKGROUND = $(VIEW_DIR)/Escenario.cpp
+ISLA = $(VIEW_DIR)/Isla.cpp
+MISIL_VIEW = $(VIEW_DIR)/MisilView.cpp
+
+# controller
+CONTROLLER_CONTROLLER = $(CONTROLLER_DIR)/Controller.cpp
+PLAYERS_CONTROLLERS = $(CONTROLLER_DIR)/PlayersController.cpp 
+MISILES_CONTROLLERS = $(CONTROLLER_DIR)/ControllerMissiles.cpp
+TIMER_CONTROLLER = $(CONTROLLER_DIR)/Timer.cpp 
+
+# M V C
+MODEL = $(RESOLUCION) $(POSICION) $(VIVIBLE) $(COMPOSITE) $(AVION) $(MISIL)
+VIEW = $(AVION_VIEW) $(TEXTURE) $(BACKGROUND) $(ISLA) $(MISIL_VIEW)
+CONTROLLER = $(CONTROLLER_CONTROLLER) $(PLAYERS_CONTROLLERS) $(MISILES_CONTROLLERS) $(TIMER_CONTROLLER)
 
 # executable name
-EXE = escenarioTest.exe
+EXE = 1942MultiPlayer.exe
 
-OBJS = $(BACKGROUND) $(TEXTURE) $(RESOLUCION) $(POSICION) ./$(GAME)
+OBJS = $(MODEL) $(VIEW) $(CONTROLLER) ./$(GAME)
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)
