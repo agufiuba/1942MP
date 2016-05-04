@@ -24,6 +24,12 @@ XM_SDL::XM_SDL( uint32_t flags ) {
     exit(1);
   }
 
+  //Initialize SDL_ttf
+  if( TTF_Init() == -1 ) {
+    cout << endl << "SDL_ttf could not initialize!: " << TTF_GetError() << endl;
+    exit(1);
+  }
+
   this->window = NULL;
   this->renderer = NULL;
   this->windowBG = NULL;
@@ -44,6 +50,9 @@ XM_SDL::~XM_SDL() {
   // Destroy renderer
   if( this->renderer != NULL )
     SDL_DestroyRenderer( this->renderer );
+
+  // Quit TTF
+  TTF_Quit();
 
   // Quit SDL subsystems
   SDL_Quit();
@@ -118,6 +127,17 @@ SDL_Texture* XM_SDL::loadImage( const char* IMAGE_PATH ) {
   }
 
   return texture;
+}
+
+TTF_Font* XM_SDL::loadFont( const char* FONT_PATH ) {
+  TTF_Font* font = NULL;
+  font = TTF_OpenFont( FONT_PATH, 28 );
+
+  if( font == NULL ) {
+    cout << endl << "Failed to load font ( " << FONT_PATH << " ): " << TTF_GetError() << endl;
+  }
+
+  return font;
 }
 
 void XM_SDL::setWindowBG( const char* IMAGE_PATH ) {

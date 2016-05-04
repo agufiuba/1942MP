@@ -1,6 +1,7 @@
 #ifndef XM_SDL_H
 #define XM_SDL_H
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <vector>
 
 class XM_SDL {
@@ -18,6 +19,7 @@ class XM_SDL {
     bool createWindow( const char* TITLE, const int WIDTH = 800, const int HEIGHT = 600 );
     void setWindowBG( const uint8_t RED, const uint8_t GREEN, const uint8_t BLUE );
     void setWindowBG( const char* IMAGE_PATH );
+    TTF_Font* loadFont( const char* FONT_PATH );
     SDL_Renderer* getRenderer();
     bool nextEvent( SDL_Event* e );
     void updateWindow();
