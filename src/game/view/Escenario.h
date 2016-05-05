@@ -19,6 +19,7 @@
 #include "../controller/PlayersController.h"
 #include "../controller/Timer.h"
 #include "../model/Vivible.h"
+#include "Isla.h"
 #include <vector>
 
 class Escenario {
@@ -52,6 +53,7 @@ private:
 	void printErrorSDL(string error);
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
+	void setFondosVivibles();
 
 public:
 	Escenario();

@@ -23,6 +23,7 @@ Escenario::Escenario(int fps){
 Escenario::Escenario(int width, int height) {
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
+	resolucion = new Resolucion(width, height);
 	inicializar();
 }
 
@@ -30,6 +31,7 @@ Escenario::Escenario(int fps, int width, int height){
 	this->FRAMES_PER_SECOND = fps;
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
+	resolucion = new Resolucion(width, height);
 	inicializar();
 }
 
@@ -97,10 +99,9 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	SDL_RenderClear(gRenderer);
 	fondoDePantalla->render(pos->getX(), pos->getYsdl(), gRenderer, NULL);
 
-	/*
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir(0,0);
-	}*/
+	}
 
 	for (int i = 0; i < controllersList.size(); i++) {
 		controllersList[i]->hacerVivir();
@@ -116,6 +117,26 @@ void Escenario::aplicarFPS(Uint32 start) {
 	}
 }
 
+void Escenario::setFondosVivibles() {
+
+	Vivible* isla = new Isla(gRenderer, new Posicion(1150, 700), 1);
+	Vivible* isla2 = new Isla(gRenderer, new Posicion(300, 2200), 2);
+	Vivible* isla3 = new Isla(gRenderer, new Posicion(560, 3400), 3);
+	Vivible* isla4 = new Isla(gRenderer, new Posicion(0, 4500), 1);
+	Vivible* isla5 = new Isla(gRenderer, new Posicion(600, 5700), 2);
+	Vivible* isla6 = new Isla(gRenderer, new Posicion(750, 6400), 3);
+	Vivible* portaAvion = new Isla(gRenderer, new Posicion(500, 500), 4);
+
+	fondosVivibles.push_back(isla);
+	fondosVivibles.push_back(isla2);
+	fondosVivibles.push_back(isla3);
+	fondosVivibles.push_back(isla4);
+	fondosVivibles.push_back(isla5);
+	fondosVivibles.push_back(isla6);
+	fondosVivibles.push_back(portaAvion);
+
+}
+
 void Escenario::run() {
 	if (!inicioCorrectamente) {
 		return ;
@@ -127,8 +148,7 @@ void Escenario::run() {
 	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(400, 0));
 	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(600, 0));
 
-	//Vivible* isla = new Isla(new Posicion(800, 500), gRenderer);
-	//fondosVivibles.push_back(isla);
+	setFondosVivibles();
 
 	IController* control = new Controller(unAvion, gRenderer);
 	IController* otroControl = new PlayersController(otroAvion, gRenderer);
@@ -161,11 +181,11 @@ void Escenario::run() {
 
 		if (!isFinNivel && posicionEscenario->getY() > SCREEN_HEIGHT) {
 			posicionEscenario->mover(0,VELOCIDAD_SCREEN);
-			//posicionEscenario->print();
 
 		} else {
 			screensRecorridos += CANTIDAD_SCREEN;
 			posicionEscenario->setPosicion(0, pixelesArecorrer);
+			//setFondosVivibles();
 		}
 
 		actualizarEscenario(posicionEscenario);
@@ -175,4 +195,5 @@ void Escenario::run() {
 	delete control;
 	posicionEscenario->~Posicion();
 }
+
 
