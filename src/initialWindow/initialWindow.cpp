@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-  const int WINDOW_WIDTH = 600; //TODO: aca hay que cambiar a lo del escenario
+  const int WINDOW_WIDTH = 800; //TODO: aca hay que cambiar a lo del escenario
   const int WINDOW_HEIGHT = 600;
   const char* WINDOW_TITLE = "1942MP Arcade";
   const int FRAMES_PER_SECOND = 10;
@@ -22,20 +22,14 @@ int main(int argc, char **argv) {
     SDL_Event e;
     SDL_Renderer* renderer = sdlHandler->getRenderer();
     Timer fps;
-
-    Texture * logoPrincipal = new Texture();
-    SDL_Rect* exactImage = new SDL_Rect();
-    exactImage->x = 0;
-    exactImage->y = 0;
-    exactImage->w = 250;
-    exactImage->h = 100;
+    Texture* logoPrincipal = new Texture();
 
     // Create text inputs
     string serverIP = "127.0.0.1";
     string serverPort = "8080";
     TTF_Font* fontFamily = sdlHandler->loadFont( FONT_PATH );
     // White text color
-    SDL_Color textColor = { 255, 255, 255, 255 };
+    SDL_Color textColor = { 0, 0, 0, 255 };
     Texture* serverIPInput = new Texture();
     Texture* serverPortInput = new Texture();
     // Create textures from text 
@@ -44,10 +38,19 @@ int main(int argc, char **argv) {
     // Enable text input
     SDL_StartTextInput();
 
+
     if (!logoPrincipal->loadFromFile("windowImages/1942logoPrincipal.bmp", renderer)) {
       printf("Failed to load logoPrincipal texture image!\n");
       return false;
     }
+
+    int logoCenter = ( WINDOW_WIDTH - logoPrincipal->getWidth() ) / 2;
+    int promptCenter = logoCenter - 20;
+    int textCenter = promptCenter + 20;
+
+    // Create prompt
+    SDL_Rect prompt1 = { promptCenter, 300, 260, 50 };
+    SDL_Rect prompt2 = { promptCenter, 375, 260, 50 };
 
     while (!quit) {
       fps.correr();
@@ -111,11 +114,14 @@ int main(int argc, char **argv) {
 
       // Set window background
       sdlHandler->setWindowBG(0, 0, 0);
+  
+      logoPrincipal->render( logoCenter, 90, renderer, NULL );
 
-      logoPrincipal->render(175,75,renderer,exactImage);
-
+      SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+      SDL_RenderFillRect( renderer, &prompt1 );
+      SDL_RenderFillRect( renderer, &prompt2 );
       //Render text textures
-      serverIPInput->render( 175, 300, renderer );
+      serverIPInput->render( textCenter, 305, renderer );
 
       //Update screen
       sdlHandler->updateWindow();
