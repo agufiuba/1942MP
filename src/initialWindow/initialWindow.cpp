@@ -52,7 +52,10 @@ int main(int argc, char **argv) {
     // Create prompt
     SDL_Rect prompt1 = { promptCenter, 300, 260, 50 };
     SDL_Rect prompt2 = { promptCenter, 375, 260, 50 };
-
+    SDL_Rect outline = { promptCenter, 0, 260, 50 };
+    SDL_Rect outline2 = { promptCenter + 1, 0, 258, 48 };
+    SDL_Rect outline3 = { promptCenter + 2, 0, 256, 46 };
+    
     while (!quit) {
       fps.correr();
       bool renderText = false;
@@ -151,6 +154,21 @@ int main(int argc, char **argv) {
 	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 	SDL_RenderFillRect( renderer, &prompt1 );
 	SDL_RenderFillRect( renderer, &prompt2 );
+	// Set outline color
+	SDL_SetRenderDrawColor( renderer, 19, 144, 27, 255 );
+	if( firstPromptSelected ) {
+	  outline.y = 300;
+	  outline2.y = 301;
+	  outline3.y = 302;
+	} else {
+	  outline.y = 375;
+	  outline2.y = 376;
+	  outline3.y = 377;
+	}
+	SDL_RenderDrawRect( renderer, &outline );
+	SDL_RenderDrawRect( renderer, &outline2 );
+	SDL_RenderDrawRect( renderer, &outline3 );
+
 	//Render text textures
 	serverIPInput->render( textCenter, 305, renderer );
 	serverPortInput->render( textCenter, 380, renderer );
