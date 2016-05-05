@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   XM_SDL* sdlHandler = new XM_SDL( SDL_INIT_EVERYTHING );
 
   // Create window
-  if (sdlHandler->createWindow(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT)) {
+  if( sdlHandler->createWindow( WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT ) ) {
     SDL_Event e;
     SDL_Renderer* renderer = sdlHandler->getRenderer();
     Timer fps;
@@ -27,14 +27,18 @@ int main(int argc, char **argv) {
     // Create text inputs
     string serverIP = "127.0.0.1";
     string serverPort = "8080";
+    string acceptButtonText = "ACEPTAR";
     TTF_Font* fontFamily = sdlHandler->loadFont( FONT_PATH );
     // White text color
     SDL_Color textColor = { 0, 0, 0, 255 };
+    SDL_Color buttonTextColor = { 0, 0, 0, 255 };
     Texture* serverIPInput = new Texture();
     Texture* serverPortInput = new Texture();
+    Texture* acceptButton = new Texture();
     // Create textures from text 
     serverIPInput->loadFromRenderedText( serverIP.c_str(), fontFamily, textColor, renderer );
     serverPortInput->loadFromRenderedText( serverPort.c_str(), fontFamily, textColor, renderer );
+    acceptButton->loadFromRenderedText( acceptButtonText.c_str(), fontFamily, buttonTextColor, renderer );
     // Enable text input
     SDL_StartTextInput();
 
@@ -46,12 +50,18 @@ int main(int argc, char **argv) {
 
     int logoCenter = ( WINDOW_WIDTH - logoPrincipal->getWidth() ) / 2;
     int promptCenter = logoCenter - 20;
+    int buttonCenter = promptCenter + 15;
     int textCenter = promptCenter + 20;
+    int buttonTextCenter = buttonCenter + ( ( 230 - acceptButton->getWidth() ) / 2 );
     bool firstPromptSelected = true;
+    int mouseX, mouseY;
+    bool clicked = false;
+    bool accept = false;
 
     // Create prompt
     SDL_Rect prompt1 = { promptCenter, 300, 260, 50 };
     SDL_Rect prompt2 = { promptCenter, 375, 260, 50 };
+    SDL_Rect button = { promptCenter + 15, 475, 230, 50 };
     SDL_Rect outline = { promptCenter, 0, 260, 50 };
     SDL_Rect outline2 = { promptCenter + 1, 0, 258, 48 };
     SDL_Rect outline3 = { promptCenter + 2, 0, 256, 46 };
@@ -110,6 +120,15 @@ int main(int argc, char **argv) {
 	      renderText = true;
 	    }
 	  }
+	  // Handle button events
+	  else if( e.button.type == SDL_MOUSEBUTTONDOWN ) {
+	    if( e.button.button == SDL_BUTTON_LEFT ) {
+	      clicked = true;
+	      // Get the mouse offsets
+	      mouseX = e.button.x;
+	      mouseY = e.button.y;
+	    }
+	  }
 	}
 
 	//Rerender text if needed
@@ -154,6 +173,19 @@ int main(int argc, char **argv) {
 	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
 	SDL_RenderFillRect( renderer, &prompt1 );
 	SDL_RenderFillRect( renderer, &prompt2 );
+	
+	SDL_SetRenderDrawColor( renderer, 160, 160, 160, 255 );
+	if( clicked ) {
+	  clicked = false;
+	  if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) 
+	      && ( mouseY > 475 ) && ( mouseY < ( 475 + 50 ) ) ) {
+	    SDL_SetRenderDrawColor( renderer, 86, 86, 86, 255 );
+	    accept = true;
+	    cout << "Aceptar" << endl;
+	  }
+	}
+	SDL_RenderFillRect( renderer, &button );
+
 	// Set outline color
 	SDL_SetRenderDrawColor( renderer, 19, 144, 27, 255 );
 	if( firstPromptSelected ) {
@@ -172,9 +204,14 @@ int main(int argc, char **argv) {
 	//Render text textures
 	serverIPInput->render( textCenter, 305, renderer );
 	serverPortInput->render( textCenter, 380, renderer );
+	acceptButton->render( buttonTextCenter, 480, renderer );
 
 	//Update screen
 	sdlHandler->updateWindow();
+
+	// Accept button clicked
+	if( accept ) {
+	}
 
 	if( fps.tiempoActual() < 1000 / FRAMES_PER_SECOND ){
 	  SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.tiempoActual() );
