@@ -2,12 +2,13 @@
 #include <iostream>
 using namespace std;
 
-Texture::Texture()
+Texture::Texture( SDL_Renderer* renderer )
 {
   //Initialize
   mTexture = NULL;
   mWidth = 0;
   mHeight = 0;
+  this->renderer = renderer;
 }
 
 Texture::~Texture()
@@ -16,7 +17,7 @@ Texture::~Texture()
   free();
 }
 
-bool Texture::loadFromFile( std::string path , SDL_Renderer* &gRenderer)
+bool Texture::loadFromFile( std::string path)
 {
   //Get rid of preexisting texture
   free();
@@ -36,7 +37,7 @@ bool Texture::loadFromFile( std::string path , SDL_Renderer* &gRenderer)
     SDL_SetColorKey( image, SDL_TRUE, SDL_MapRGB( image->format, 0xFF, 0xFF, 0xFF ) );
 
     //Create texture from surface pixels
-    newTexture = SDL_CreateTextureFromSurface( gRenderer, image );
+    newTexture = SDL_CreateTextureFromSurface( renderer, image );
     if( newTexture == NULL )
     {
       printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
@@ -56,7 +57,7 @@ bool Texture::loadFromFile( std::string path , SDL_Renderer* &gRenderer)
   return mTexture != NULL;
 }
 
-bool Texture::loadFromRenderedText( string textureText, TTF_Font* fontFamily, SDL_Color textColor, SDL_Renderer*& renderer ) {
+bool Texture::loadFromRenderedText( string textureText, TTF_Font* fontFamily, SDL_Color textColor ) {
   // Get rid of preexisting texture
   free();
 
@@ -94,7 +95,7 @@ void Texture::free() {
   }
 }
 
-void Texture::render( int x, int y, SDL_Renderer* &gRenderer, SDL_Rect* clip ) {
+void Texture::render( int x, int y, SDL_Rect* clip ) {
   //Set rendering space and render to screen
   SDL_Rect renderQuad = { x, y, mWidth, mHeight };
 
@@ -105,7 +106,7 @@ void Texture::render( int x, int y, SDL_Renderer* &gRenderer, SDL_Rect* clip ) {
   }
 
   //Render to screen
-  SDL_RenderCopy( gRenderer, mTexture, clip, &renderQuad );
+  SDL_RenderCopy( renderer, mTexture, clip, &renderQuad );
 }
 
 int Texture::getWidth() {

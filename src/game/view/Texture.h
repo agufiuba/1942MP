@@ -10,22 +10,22 @@ using namespace std;
 class Texture{
   public:
     //Initializes variables
-    Texture();
+    Texture( SDL_Renderer* renderer );
 
     //Deallocates memory
     ~Texture();
 
     //Loads image at specified path
-    bool loadFromFile( string path, SDL_Renderer* &renderer );
+    bool loadFromFile( string path ); 
 
     // Creates image from font string
-    bool loadFromRenderedText( string textureText, TTF_Font* fontFamily, SDL_Color textColor, SDL_Renderer*& renderer ); 
+    bool loadFromRenderedText( string textureText, TTF_Font* fontFamily, SDL_Color textColor ); 
 
     //Deallocates texture
     void free();
 
     //Renders texture at given point
-    void render( int x, int y , SDL_Renderer* &renderer, SDL_Rect* clip = NULL );
+    void render( int x, int y, SDL_Rect* clip = NULL );
 
     //Gets image dimensions
     int getWidth();
@@ -34,7 +34,7 @@ class Texture{
   private:
     //The actual hardware texture
     SDL_Texture* mTexture;
-
+    SDL_Renderer* renderer;
     //Image dimensions
     int mWidth;
     int mHeight;
