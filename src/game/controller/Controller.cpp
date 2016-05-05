@@ -16,24 +16,26 @@ Controller::~Controller(){
 
 void Controller::press(SDL_Event *event){
 
+	int velocidadStandard = 7;
+
     if( event->type == SDL_KEYDOWN && event->key.repeat == 0){
         switch( event->key.keysym.sym ){
-            case SDLK_RIGHT: velX += obj->getAncho() / distanciaDeDesplazamiento; break;
-            case SDLK_LEFT: velX -= obj->getAncho() / distanciaDeDesplazamiento; break;
+            case SDLK_RIGHT: velX += velocidadStandard; break;
+            case SDLK_LEFT: velX -= velocidadStandard; break;
 
-            case SDLK_UP: velY -= obj->getLargo() / distanciaDeDesplazamiento; break;
-            case SDLK_DOWN: velY += obj->getLargo() / distanciaDeDesplazamiento; break;
+            case SDLK_UP: velY -= velocidadStandard; break;
+            case SDLK_DOWN: velY += velocidadStandard; break;
 
             case SDLK_SPACE: controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX(),obj->getY()); break;
         }
     }
     else if( event->type == SDL_KEYUP && event->key.repeat == 0){
         switch( event->key.keysym.sym ){
-            case SDLK_RIGHT: velX -= obj->getAncho() / distanciaDeDesplazamiento; break;
-            case SDLK_LEFT: velX += obj->getAncho() / distanciaDeDesplazamiento; break;
+            case SDLK_RIGHT: velX -= velocidadStandard; break;
+            case SDLK_LEFT: velX += velocidadStandard; break;
 
-            case SDLK_UP: velY += obj->getLargo() / distanciaDeDesplazamiento; break;
-            case SDLK_DOWN: velY -= obj->getLargo() / distanciaDeDesplazamiento; break;
+            case SDLK_UP: velY += velocidadStandard; break;
+            case SDLK_DOWN: velY -= velocidadStandard; break;
 
             /*case SDLK_SPACE: controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX(),obj->getY()); break;*/
         }
