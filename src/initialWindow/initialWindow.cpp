@@ -47,6 +47,7 @@ int main(int argc, char **argv) {
     int logoCenter = ( WINDOW_WIDTH - logoPrincipal->getWidth() ) / 2;
     int promptCenter = logoCenter - 20;
     int textCenter = promptCenter + 20;
+    bool firstPromptSelected = true;
 
     // Create prompt
     SDL_Rect prompt1 = { promptCenter, 300, 260, 50 };
@@ -62,81 +63,112 @@ int main(int argc, char **argv) {
 	  quit = true;
 	} //Special key input
 	else if( e.type == SDL_KEYDOWN ) {
+	  // Handle Tab
+	  if( e.key.keysym.sym == SDLK_TAB ) {
+	    firstPromptSelected = !firstPromptSelected; 
+	  }
 	  //Handle backspace
-	  if( e.key.keysym.sym == SDLK_BACKSPACE && serverIP.length() > 0 )
-	  {
-	    //lop off character
-	    serverIP.pop_back();
-	    renderText = true;
+	  else if( firstPromptSelected ) {
+	      if( e.key.keysym.sym == SDLK_BACKSPACE && serverIP.length() > 0 ) {
+		//lop off character
+		serverIP.pop_back();
+		renderText = true;
+	      }
+	    } else if( e.key.keysym.sym == SDLK_BACKSPACE && serverPort.length() > 0 ) {
+		//lop off character
+		serverPort.pop_back();
+		renderText = true;
+	      }
+	    //Handle copy
+	    else if( e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL )
+	    {
+	      SDL_SetClipboardText( serverIP.c_str() );
+	    }
+	    //Handle paste
+	    else if( e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL )
+	    {
+	      serverIP = SDL_GetClipboardText();
+	      renderText = true;
+	    }
 	  }
-	  //Handle copy
-	  else if( e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL )
+	  //Special text input event
+	  else if( e.type == SDL_TEXTINPUT )
 	  {
-	    SDL_SetClipboardText( serverIP.c_str() );
-	  }
-	  //Handle paste
-	  else if( e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL )
-	  {
-	    serverIP = SDL_GetClipboardText();
-	    renderText = true;
+	    //Not copy or pasting
+	    if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' ) 
+		  && SDL_GetModState() & KMOD_CTRL ) )
+	    {
+	      //Append character
+	      if( firstPromptSelected ) {
+		serverIP += e.text.text;
+	      } else {
+		serverPort += e.text.text;
+	      }
+	      renderText = true;
+	    }
 	  }
 	}
-	//Special text input event
-	else if( e.type == SDL_TEXTINPUT )
+
+	//Rerender text if needed
+	if( renderText )
 	{
-	  //Not copy or pasting
-	  if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' ) 
-		&& SDL_GetModState() & KMOD_CTRL ) )
-	  {
-	    //Append character
-	    serverIP += e.text.text;
-	    renderText = true;
+	  if( firstPromptSelected ) {
+	    //Text is not empty
+	    if( serverIP != "" )
+	    {
+	      //Render new text
+	      serverIPInput->loadFromRenderedText( serverIP.c_str(), fontFamily, textColor, renderer );
+	    }
+	    //Text is empty
+	    else
+	    {
+	      //Render space texture
+	      serverIPInput->loadFromRenderedText( " ", fontFamily, textColor, renderer );
+	    }
+	  } else {
+
+	    //Text is not empty
+	    if( serverPort != "" )
+	    {
+	      //Render new text
+	      serverPortInput->loadFromRenderedText( serverPort.c_str(), fontFamily, textColor, renderer );
+	    }
+	    //Text is empty
+	    else
+	    {
+	      //Render space texture
+	      serverPortInput->loadFromRenderedText( " ", fontFamily, textColor, renderer );
+	    }
 	  }
+	}
+
+
+	// Set window background
+	sdlHandler->setWindowBG(0, 0, 0);
+
+	logoPrincipal->render( logoCenter, 90, renderer, NULL );
+
+	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
+	SDL_RenderFillRect( renderer, &prompt1 );
+	SDL_RenderFillRect( renderer, &prompt2 );
+	//Render text textures
+	serverIPInput->render( textCenter, 305, renderer );
+	serverPortInput->render( textCenter, 380, renderer );
+
+	//Update screen
+	sdlHandler->updateWindow();
+
+	if( fps.tiempoActual() < 1000 / FRAMES_PER_SECOND ){
+	  SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.tiempoActual() );
 	}
       }
-
-      //Rerender text if needed
-      if( renderText )
-      {
-	//Text is not empty
-	if( serverIP != "" )
-	{
-	  //Render new text
-	  serverIPInput->loadFromRenderedText( serverIP.c_str(), fontFamily, textColor, renderer );
-	}
-	//Text is empty
-	else
-	{
-	  //Render space texture
-	  serverIPInput->loadFromRenderedText( " ", fontFamily, textColor, renderer );
-	}
-      }
-
-      // Set window background
-      sdlHandler->setWindowBG(0, 0, 0);
-  
-      logoPrincipal->render( logoCenter, 90, renderer, NULL );
-
-      SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
-      SDL_RenderFillRect( renderer, &prompt1 );
-      SDL_RenderFillRect( renderer, &prompt2 );
-      //Render text textures
-      serverIPInput->render( textCenter, 305, renderer );
-
-      //Update screen
-      sdlHandler->updateWindow();
-
-      if( fps.tiempoActual() < 1000 / FRAMES_PER_SECOND ){
-	SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.tiempoActual() );
-      }
+      //Disable text input
+      SDL_StopTextInput();
     }
-    //Disable text input
-    SDL_StopTextInput();
+
+    delete sdlHandler;
+
+    return 0;
   }
-
-  delete sdlHandler;
-
-  return 0;
-}
 
 
