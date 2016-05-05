@@ -21,8 +21,13 @@ int main( int argc, char* argv[] ) {
     SDL_Event e;
     SDL_Renderer* renderer = sdlHandler->getRenderer();
     Timer fps;
-    Screen* initialScreen = new Screen( renderer );
+
+    Screen* initialScreen = new Screen( sdlHandler );
     initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
+    initialScreen->loadText( "serverIP", "127.0.0.1");
+    initialScreen->loadText( "serverPort", "8080");
+    initialScreen->loadText( "accept", "ACEPTAR");
+
     Texture* logoPrincipal = new Texture( renderer );
     if(!logoPrincipal->loadFromFile("windowImages/1942logoPrincipal.bmp") ) {
       cout << endl << "Failed to load logoPrincipal texture image!" << endl;
