@@ -14,7 +14,7 @@ Client::Client( const char* configFileName ) {
   this->socketFD = 0;
   this->connected = false;
   this->logger = Logger::instance();
-  this->config = XMLParser::parseClientConf( configFileName ); 
+//  this->config = XMLParser::parseClientConf( configFileName );
 }
 
 Client::~Client() {}
@@ -34,7 +34,9 @@ void Client::connectToServer() {
   int numBytesRead; /* socketFD, bytes read count */
   char buf[ MAX_DATA_SIZE ]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
-  string serverIP = this->config->getServerIP();
+
+  // HARDCODEADO
+  string serverIP = "127.0.0.1";
 
   /* Create socket */
   if ( ( this->socketFD = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {
@@ -43,7 +45,9 @@ void Client::connectToServer() {
   }
 
   server.sin_family = AF_INET;
-  server.sin_port = htons(this->config->getServerPort());
+
+  // HARDCODEADO
+  server.sin_port = htons(8000);
   if ((inet_aton(serverIP.c_str(), &server.sin_addr)) == 0) {
     this->logger->error( "IP invalido" );
     exit( -1 );
@@ -159,7 +163,7 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
     }
 
     if( numBytesRead > 0 ) {
-      if( numBytesRead != 1 ) {	
+      if( numBytesRead != 1 ) {
 	string recvMsg = string( buf->valor );
 	this->logger->info( SERVER_MSG( recvMsg ) );
 	DEBUG_PRINT( SERVER_MSG( recvMsg ) );
@@ -175,88 +179,84 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
   }
 }
 
-bool Client::sendData( Mensaje* data, int dataLength ) {
+bool Client::sendData( Evento* e ) {
   this->received = false;
-  if( send( this->socketFD, data, dataLength, 0 ) == -1 ) {
+  if( send( this->socketFD, e, sizeof(Evento), 0 ) == -1 ) {
     this->logger->error( SEND_FAIL );
     //    theMutex.lock();
     DEBUG_WARN( SEND_FAIL );
     //    theMutex.unlock();
     return false;
   }
-  
+
   return true;
 }
 
-bool Client::sendMsg( string id ) {
-  if( !( this->connected ) ) {
-    this->logger->warn( SEND_CERROR );
-    //  theMutex.lock();
-    DEBUG_WARN( SEND_CERROR );
-    // theMutex.unlock();
-    return false;
-  }
+//bool Client::sendMsg( string id ) {
+//  if( !( this->connected ) ) {
+//    this->logger->warn( SEND_CERROR );
+//    //  theMutex.lock();
+//    DEBUG_WARN( SEND_CERROR );
+//    // theMutex.unlock();
+//    return false;
+//  }
+//
+//  Mensaje* msgToSend;
+//
+//  for( int i = 0; i < this->config->getMessages().size(); i++ ) {
+//    string msgID = this->config->getMessages()[i]->id;
+//    if( msgID == id ) {
+//      msgToSend = this->config->getMessages()[i];
+//      break;
+//    }
+//  }
+//
+//  int dataLength = sizeof( Mensaje );
+//  this->logger->info( SENT_DATA( msgToSend->valor ) );
+//  // theMutex.lock();
+//  DEBUG_PRINT( SENT_DATA( msgToSend->valor ) );
+//  // theMutex.unlock();
+//  return sendData( msgToSend, dataLength );
+//}
 
-  Mensaje* msgToSend;
-
-  for( int i = 0; i < this->config->getMessages().size(); i++ ) {
-    string msgID = this->config->getMessages()[i]->id;
-    if( msgID == id ) {
-      msgToSend = this->config->getMessages()[i];
-      break;
-    }
-  }
-
-  int dataLength = sizeof( Mensaje );
-  this->logger->info( SENT_DATA( msgToSend->valor ) );
-  // theMutex.lock();
-  DEBUG_PRINT( SENT_DATA( msgToSend->valor ) );
-  // theMutex.unlock();
-  return sendData( msgToSend, dataLength );
-}
-
-void Client::sendCycle() {
-  if( !( this->connected ) ) {
-    this->logger->warn( CONNECTION_NOT_ACTIVE );
-    DEBUG_WARN( CONNECTION_NOT_ACTIVE );
-    return;
-  }
-
-  double timeout = 0;
-  cout << "Ingrese duracion (en milisegundos): ";
-  cin >> timeout;
-
-  while( timeout <= 0 ) {
-    cout << endl << "Error - Debe ingresar un numero mayor a cero" << endl;
-    cout << "Ingrese nuevamente durancion (en milisegundos): ";
-    cin >> timeout;
-  }
-  timeout = timeout * 1000;
-
-  this->logger->info( "Se corre ciclar en " + to_string(timeout) + " milisegundos." );
-  double diferencia = 0;
-  int i = 0;
-  this->received = true;
-  clock_t start = clock();
-  while( diferencia <= timeout && this->connected ) {
-    if( this->received ){
-      if( i >= this->config->getMessages().size() )
-	i = 0;
-      //cout << endl << "En el i: " << i;
-
-      if( !( this->sendMsg( this->config->getMessages()[i]->id ) ) )
-	return;
-
-      i++;
-    }
-    diferencia = clock() - start;
-  }
-  usleep( 10000 ); // solo para que el ultimo se muestre antes de hacer display del menu
-}
-
-vector<Mensaje*> Client::getMessages() {
-  return this->config->getMessages();
-}
+//void Client::sendCycle() {
+//  if( !( this->connected ) ) {
+//    this->logger->warn( CONNECTION_NOT_ACTIVE );
+//    DEBUG_WARN( CONNECTION_NOT_ACTIVE );
+//    return;
+//  }
+//
+//  double timeout = 0;
+//  cout << "Ingrese duracion (en milisegundos): ";
+//  cin >> timeout;
+//
+//  while( timeout <= 0 ) {
+//    cout << endl << "Error - Debe ingresar un numero mayor a cero" << endl;
+//    cout << "Ingrese nuevamente durancion (en milisegundos): ";
+//    cin >> timeout;
+//  }
+//  timeout = timeout * 1000;
+//
+//  this->logger->info( "Se corre ciclar en " + to_string(timeout) + " milisegundos." );
+//  double diferencia = 0;
+//  int i = 0;
+//  this->received = true;
+//  clock_t start = clock();
+//  while( diferencia <= timeout && this->connected ) {
+//    if( this->received ){
+//      if( i >= this->config->getMessages().size() )
+//	i = 0;
+//      //cout << endl << "En el i: " << i;
+//
+//      if( !( sendData(getEventos()[i]) ) )
+//	return;
+//
+//      i++;
+//    }
+//    diferencia = clock() - start;
+//  }
+//  usleep( 10000 ); // solo para que el ultimo se muestre antes de hacer display del menu
+//}
 
 void Client::disconnectFromServer() {
   mutex theMutex;

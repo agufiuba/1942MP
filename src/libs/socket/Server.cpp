@@ -18,13 +18,13 @@ Server::Server( const char* configFileName ) {
   this->connected = false;
   this->processing = false;
   this->allowConnections = false;
-  this->msgQueue = new queue<map<int, Mensaje*>*>;
+  this->eventQueue = new queue<map<int, Evento*>*>;
   this->logger = Logger::instance();
-  this->config = XMLParser::parseServerConf( configFileName );
+//  this->config = XMLParser::parseServerConf( configFileName );
 }
 
 Server::~Server() {
-  delete this->msgQueue;
+  delete this->eventQueue;
 }
 
 void Server::initialize() {
@@ -48,7 +48,8 @@ void Server::initialize() {
   hints.ai_flags = AI_PASSIVE; // use host IP
 
   // fill configuration structs
-  if( ( rv = getaddrinfo( NULL, to_string( this->config->getPort() ).c_str(), &hints, &servinfo ) ) != 0 ) {
+  // HARDCODEADO
+  if( ( rv = getaddrinfo( NULL, to_string( 8000 ).c_str(), &hints, &servinfo ) ) != 0 ) {
     this->logger->error( "Error al obtener la direccion, " + string( gai_strerror( rv ) ) );
     exit( -1 );
   }
@@ -112,7 +113,9 @@ void Server::listenForConnections( int cfd, struct sockaddr_storage client_addr 
       exit( -1 );
     }
     this->clientCount++;
-    this->allowConnections = ( this->clientCount <= this->config->getMaxClients() );
+
+    //HARDCODEADO
+    this->allowConnections = ( this->clientCount <= 4 );
 
     thread tCheckAliveSend( &Server::checkAliveSend, this, cfd);
     tCheckAliveSend.detach();
@@ -132,7 +135,7 @@ void* Server::getInAddr( struct sockaddr* sa ) {
 void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   int numBytesRead;
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
-  Mensaje* msgToRecv = new Mensaje;
+  Evento* msgToRecv = new Evento;
 
   // get connected host IP in presentation format
   inet_ntop( client_addr.ss_family,
@@ -170,13 +173,12 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	if( numBytesRead != 1 ) {
 	  theMutex.lock();
 	  cout << endl << "FD cliente: " << notice( to_string( cfd ) ) << endl;
-	  cout << "ID del mensaje recibido: " << notice( msgToRecv->id ) << endl;
-	  cout << "Tipo del mensaje recibido: " << notice( msgToRecv->tipo ) << endl;
-	  cout << "Valor del mensaje recibido: " << notice( msgToRecv->valor ) << endl;
+	  cout << "Evento recibido: " << notice( to_string(msgToRecv->value) ) << endl;
+	  cout << "Jugador que envio el evento: " << notice( to_string(msgToRecv->playerID) ) << endl;
 
-	  map<int,Mensaje*>* clientMsgFD = new map<int,Mensaje*>();
-	  clientMsgFD->insert( pair<int,Mensaje*>( cfd, msgToRecv ) );
-	  this->msgQueue->push( clientMsgFD );
+	  map<int,Evento*>* clientMsgFD = new map<int,Evento*>();
+	  clientMsgFD->insert( pair<int,Evento*>( cfd, msgToRecv ) );
+	  this->eventQueue->push( clientMsgFD );
 	  theMutex.unlock();
 	}
       } else {
@@ -208,30 +210,30 @@ void Server::checkAliveSend( int cfd ) {
 
 void Server::processQueue() {
   bool msgIsValid;
-  Mensaje* respuesta = new Mensaje;
+  Evento* respuesta = new Evento;
   mutex theMutex;
 
   while( this->processing ) {
-    if( !( this->msgQueue->empty() ) ) {
+    if( !( this->eventQueue->empty() ) ) {
       theMutex.lock();
       //cout << "Saco Msj de la cola" << endl;
-      map<int,Mensaje*>* data = this->msgQueue->front();
-      this->msgQueue->pop();
+      map<int,Evento*>* data = this->eventQueue->front();
+      this->eventQueue->pop();
 
-      map<int,Mensaje*>::iterator it = data->begin();
+      map<int,Evento*>::iterator it = data->begin();
       //cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->valor << endl;
 
-      this->logger->info( "Msj de cliente: " + string( ( (it->second)->valor ) ) );
+      this->logger->info( "Msj de cliente: " + to_string(it->second->value ) );
 
-      msgIsValid = this->processMsg( string((it->second)->tipo), string(((it->second)->valor)) );
-      if( msgIsValid ) {
-	strcpy( respuesta->valor, "Mensaje Correcto" );
-	this->logger->info( respuesta->valor );
-      } else {
-	strcpy( respuesta->valor, "Mensaje Incorrecto" );
-	this->logger->warn( respuesta->valor );
-      }
-      thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Mensaje) );
+//      msgIsValid = this->processMsg( string((it->second)->tipo), string(((it->second)->valor)) );
+//      if( msgIsValid ) {
+	respuesta->value = MENSAJE_CORRECTO;
+	this->logger->info( to_string(respuesta->value) );
+//      } else {
+//	respuesta->value = MENSAJE_INCORRECTO;
+//	this->logger->warn( respuesta->value );
+//      }
+      thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
       tSending.detach();
 
       delete data;
@@ -243,47 +245,47 @@ void Server::processQueue() {
   delete respuesta;
 }
 
-bool Server::processMsg( string tipo, string valor ){
-  const int MAX_INT = 2147483647;
-  bool respuesta = false;
-  regex r;
-  const char* expr;
+//bool Server::processMsg( string tipo, string valor ){
+//  const int MAX_INT = 2147483647;
+//  bool respuesta = false;
+//  regex r;
+//  const char* expr;
+//
+//  if( tipo == K::typeInt ){
+//    //expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
+//    expr = "^-?[0-9]+$";
+//    r = regex(expr);
+//    if((regex_match(valor, r)) && (atoi(valor.c_str()) >= -MAX_INT) && (atoi(valor.c_str()) <= MAX_INT)) //ese casteo de char* a int no se si se puede
+//      respuesta = true;
+//
+//  } else {
+//
+//    if( tipo == K::typeDouble ){
+//      expr = "^-?([0-9]+e-?[//+]?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[//+]?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
+//      r = regex(expr);
+//      if (regex_match(valor, r)) respuesta = true;
+//
+//    } else {
+//
+//      if( tipo == K::typeString ){
+//	expr = "^.+$";
+//	r = regex(expr);
+//	if( regex_match( valor, r ) ) respuesta = true;
+//
+//      } else {
+//
+//	if( tipo == K::typeChar ){
+//	  expr = "^.$";
+//	  r = regex(expr);
+//	  if( regex_match( valor, r ) ) respuesta = true;
+//	}
+//      }
+//    }
+//  }
+//  return respuesta;
+//}
 
-  if( tipo == K::typeInt ){
-    //expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
-    expr = "^-?[0-9]+$";
-    r = regex(expr);
-    if((regex_match(valor, r)) && (atoi(valor.c_str()) >= -MAX_INT) && (atoi(valor.c_str()) <= MAX_INT)) //ese casteo de char* a int no se si se puede
-      respuesta = true;
-
-  } else {
-
-    if( tipo == K::typeDouble ){
-      expr = "^-?([0-9]+e-?[//+]?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[//+]?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
-      r = regex(expr);
-      if (regex_match(valor, r)) respuesta = true;
-
-    } else {
-
-      if( tipo == K::typeString ){
-	expr = "^.+$";
-	r = regex(expr);
-	if( regex_match( valor, r ) ) respuesta = true;
-
-      } else {
-
-	if( tipo == K::typeChar ){
-	  expr = "^.$";
-	  r = regex(expr);
-	  if( regex_match( valor, r ) ) respuesta = true;
-	}
-      }
-    }
-  }
-  return respuesta;
-}
-
-void Server::sendData( int cfd, Mensaje* data, int dataLength ){
+void Server::sendData( int cfd, Evento* data, int dataLength ){
   if( send( cfd, data, dataLength, 0 ) == -1 ) {
     this->logger->warn( SEND_FAIL );
     DEBUG_WARN( SEND_FAIL );
