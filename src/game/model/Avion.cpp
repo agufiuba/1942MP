@@ -8,6 +8,7 @@ Avion::Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posici
 	viviendo = true;
 
 	this->posicion = posicionInicial;
+	this->posicion->mover(0,getLargo());
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
@@ -60,7 +61,7 @@ void Avion::moverEjeY(int velY) {
 
 	posicion->mover(0,velY);
 
-	if ((posicion->getY() < 0) || (posicion->getY() + getLargo() > getLargoFondo())) {
+	if ((posicion->getY() - getLargo() < 0) || (posicion->getY() > getLargoFondo())) {
 		posicion->mover(0,-velY);
 	}
 }
