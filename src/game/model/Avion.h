@@ -6,19 +6,19 @@
 #include "../controller/Timer.h"
 #include "Resolucion.h"
 #include "../model/Posicion.h"
+#include <string>
 
 class Avion: public Vivible {
 private:
-	int anchoFondo, largoFondo; //TODO: esto estaria bueno poder sacarlo del screen
+	int anchoFondo, largoFondo;
+	int velocidadStandard;
+	bool viviendo;
+
+	bool realizandoVueltereta;
+	Timer* t;
 
 	AvionView* vistaAvion;
-	int x, y;
-
-	bool viviendo;
-	// Variables que involucran la vueltereta
-	bool realizandoVueltereta;
-	int velocidadEnVueltereta;
-	Timer* t;
+	Posicion* posicion;
 
 	void realizoVueltereta();
 	void mostrarVueltereta(int frame);
@@ -29,7 +29,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial);
+	Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color);
 	~Avion();
 
 	int getAnchoFondo();
@@ -39,10 +39,14 @@ public:
 	int getX();
 	int getY();
 
+	void setVelocidadStandard(int vel);
+	bool haciendoVueltereta();
 	void inicializoVueltereta();
 
 	void vivir(int velX, int velY);
 	bool aunVive();
+
+	void desconectar();
 };
 
 #endif /* SRC_MODEL_AVION_H_ */

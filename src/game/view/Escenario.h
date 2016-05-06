@@ -19,6 +19,7 @@
 #include "../controller/PlayersController.h"
 #include "../controller/Timer.h"
 #include "../model/Vivible.h"
+#include "Isla.h"
 #include <vector>
 
 class Escenario {
@@ -36,10 +37,25 @@ private:
 
 	int SCREEN_WIDTH;
 	int SCREEN_HEIGHT;
-	int FRAMES_PER_SECOND = 60;
+	int FRAMES_PER_SECOND = 30;
 	int CANTIDAD_SCREEN = 5;
 	int CANTIDAD_SCREEN_TOTAL = 30;
 	int VELOCIDAD_SCREEN = -3;
+
+	/*
+	enum Color { rojo = "rojo",
+							azul = "azul",
+							verde = "verde",
+							amarillo = "amarillo",
+							desconocido = "desconocido"
+	};*/
+
+	string rojo = "rojo";
+	string azul = "azul";
+	string verde = "verde";
+	string amarillo = "amarillo";
+	string desconocido = "desconocido";
+
 
 	const char* DIR_FONDO_PANTALLA = "src/game/images/fondoPantalla4000x4000Marcado.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
@@ -52,6 +68,7 @@ private:
 	void printErrorSDL(string error);
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
+	void setFondosVivibles();
 
 public:
 	Escenario();

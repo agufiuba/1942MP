@@ -15,6 +15,11 @@ Resolucion::Resolucion() {
 	SCREEN_WIDTH  = screen->width;
 }
 
+Resolucion::Resolucion(int x, int y) {
+	SCREEN_HEIGHT = x;
+	SCREEN_WIDTH  = y;
+}
+
 int Resolucion::getWidthScreen() {
 	return SCREEN_WIDTH;
 }

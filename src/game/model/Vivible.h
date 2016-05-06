@@ -20,6 +20,11 @@ class Vivible{
 	   virtual int getX(){return 0;};
 	   virtual int getY(){return 0;};
 	   virtual bool aunVive(){return true;};
+	   virtual void desconectar(){};
+
+	   virtual void setVelocidadStandard(int vel){};
+	   virtual void inicializoVueltereta(){};
+	   virtual bool haciendoVueltereta(){return true;};
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */

@@ -16,6 +16,7 @@ private:
 
 public:
 	Resolucion();
+	Resolucion(int x, int y);
 	~Resolucion();
 	int getWidthScreen();
 	int getHeightScreen();

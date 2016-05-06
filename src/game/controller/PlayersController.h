@@ -22,6 +22,7 @@ private:
 	Vivible* obj;
 	int velX,velY;
 	const int distanciaDeDesplazamiento = 4;
+	int velocidadStandard;
 	//ControllerMissiles* controlDeMisiles;
 
 public:

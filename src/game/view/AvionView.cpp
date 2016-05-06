@@ -3,7 +3,14 @@
 using namespace std;
 
 
-//TODO revisar
+void AvionView::desconectar(){
+	string filename = "src/game/images/AvionSprites_gris.bmp";
+
+	if (!cargarImagenDelAvion(filename)) {
+		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
+	}
+}
+
 void AvionView::cargarClips(){
 	int posYInicial = 50;
 
@@ -74,19 +81,20 @@ bool AvionView::cargarImagenDelAvion( string filename ){
     return true;
 }
 
-AvionView::AvionView(SDL_Renderer * unRenderer){
-	//TODO pasarlo a sprites
-		anchoVista = 70;
-		largoVista = 60;
+AvionView::AvionView(SDL_Renderer * unRenderer, string color){
+	anchoVista = 70;
+	largoVista = 60;
 
 	cargarClips();
 
 	rendererAvion = unRenderer;
 
-	if (!cargarImagenDelAvion("src/game/images/AvionSprites.bmp")) {
+	string filename = "src/game/images/AvionSprites_";
+
+	if (!cargarImagenDelAvion(filename + color + ".bmp")) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
-		//TODO: faltaria que tire una excepcion
 	}
+
 }
 
 int AvionView::getAnchoVista(){
@@ -102,7 +110,6 @@ AvionView::~AvionView(){
 }
 
 void AvionView::mostrar( int x, int y, int velX){
-		//cout << "x " << x << "       y "<< y <<endl;
 	bool izquierda = true;
 	int frame = 0;
 

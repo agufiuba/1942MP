@@ -1,4 +1,7 @@
 #include <iostream>
+#include <string>
+
+// #include "../xml/parser/GameParser.h"
 #include "view/Escenario.h"
 
 string CLIENT = "client";
@@ -9,8 +12,11 @@ using namespace std;
 
 void startupClient() {
 
-	//Iniciar Pantalla
+	// Agustin
+	//GameConf* gc = GameParser::parse("gc.xml");
+	//Escenario* escenario = new Escenario(gc->escenario->ancho, gc->escenario->alto);
 
+	//Iniciar Pantalla
 	Escenario* escenario = new Escenario();
 	escenario->run();
 
@@ -20,7 +26,6 @@ void startupClient() {
 }
 
 void startupServer() {
-
 }
 
 void stopClient() {

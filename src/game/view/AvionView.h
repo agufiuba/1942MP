@@ -12,7 +12,6 @@ using namespace std;
 class AvionView {
 
 private:
-	//The surfaces
 	Texture *vistaAvionTexture = NULL;
 	SDL_Renderer *rendererAvion;
 	SDL_Rect clipsDerecha[ 2 ];
@@ -24,13 +23,14 @@ private:
 
 public:
 	bool cargarImagenDelAvion( string filename );
-	AvionView(SDL_Renderer* renderer);
+	AvionView(SDL_Renderer* renderer, string color);
 	~AvionView();
 	int getAnchoVista();
 	int getLargoVista();
 	void mostrar(int x, int y, int velX);
 	void mostrarVueltereta(int x, int y, int frame);
 	void cargarClips();
+	void desconectar();
 };
 
 #endif /* SRC_VIEW_AVIONVIEW_H_ */

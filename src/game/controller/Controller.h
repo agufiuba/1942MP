@@ -21,8 +21,9 @@ class Controller : public IController {
 private:
 	Vivible* obj;
 	int velX,velY;
-	const int distanciaDeDesplazamiento = 4;
+
 	ControllerMissiles* controlDeMisiles;
+	int velocidadStandard;
 
 public:
 	Controller(Vivible* unObj, SDL_Renderer* &renderer);
