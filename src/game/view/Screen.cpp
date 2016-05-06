@@ -1,26 +1,25 @@
 #include "Screen.h"
+#include <iostream>
 
 Screen::Screen( XM_SDL* sdlHandler ) {
   this->sdlHandler = sdlHandler;
   this->renderer = this->sdlHandler->getRenderer();
-  this->textures = NULL;
-  this->figures = NULL;
   this->loadFont( "fonts/open_sans/OpenSans-Regular.ttf" );
   this->fontColor = { 0, 0, 0, 255 };
 }
 
 Screen::~Screen() {
   // Delete textures
-  if( this->textures != NULL ) {
-    for( map<string, Texture*>::iterator it = this->textures->begin();
-	 it != this->textures->end();
+  if( !( this->textures.empty() ) ) {
+    for( map<string, Texture*>::iterator it = this->textures.begin();
+	 it != this->textures.end();
 	 ++it ) {
       delete it->second;
     }
   }
 
   // Delete figures
-  if( this->figures != NULL ) {
+  if( !( this->figures.empty() ) ) {
 
   }
 }
@@ -33,16 +32,9 @@ void Screen::loadFont( const char* FONT_PATH ) {
   }
 }
 
-void Screen::initTextures() {
-  // Create hash if it doesn't exist
-  if( this->textures == NULL )
-    this->textures = new map<string, Texture*>();
-}
-
 void Screen::addTexture( string id, Texture* t ) {
-  this->initTextures();
   // Add texture to hash
-  this->textures->insert( pair<string, Texture*>(id, t) );
+  this->textures[ id ] = t;
 }
 
 void Screen::loadTexture( string id, string path ) {
@@ -57,4 +49,23 @@ void Screen::loadText( string id, string value ) {
   if( t->loadFromRenderedText( value, this->fontFamily, this->fontColor ) ) {
     this->addTexture( id, t );
   }
+}
+
+void Screen::renderTexture( string id, int x, int y ) {
+  map<string, Texture*>::iterator it = this->textures.find( id );
+  if( it == this->textures.end() ) {
+    cout << endl << id << " texture not found!" << endl;
+    return;
+  }
+  
+  it->second->render( x, y );
+}
+
+int Screen::getTextureWidth( string id ) {
+  map<string, Texture*>::iterator it = this->textures.find( id );
+  if( it == this->textures.end() ) {
+    cout << endl << id << " texture not found!" << endl;
+    return -1;
+  }
+  return it->second->getWidth();
 }

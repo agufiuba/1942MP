@@ -12,8 +12,8 @@ class Screen {
   private:
     XM_SDL* sdlHandler;
     SDL_Renderer* renderer;
-    map<string, Texture*>* textures;
-    map<string, SDL_Rect>* figures;
+    map<string, Texture*> textures;
+    map<string, SDL_Rect> figures;
     TTF_Font* fontFamily;
     SDL_Color fontColor;
     void initTextures();
@@ -25,5 +25,7 @@ class Screen {
     void loadTexture( string id, string path );
     void loadText( string id, string value );
     void loadFont( const char* FONT_PATH );
+    void renderTexture( string id, int x, int y );
+    int getTextureWidth( string id );
 };
 #endif

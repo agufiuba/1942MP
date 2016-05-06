@@ -21,43 +21,25 @@ int main( int argc, char* argv[] ) {
     SDL_Event e;
     SDL_Renderer* renderer = sdlHandler->getRenderer();
     Timer fps;
-
-    Screen* initialScreen = new Screen( sdlHandler );
-    initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
-    initialScreen->loadText( "serverIP", "127.0.0.1");
-    initialScreen->loadText( "serverPort", "8080");
-    initialScreen->loadText( "accept", "ACEPTAR");
-
-    Texture* logoPrincipal = new Texture( renderer );
-    if(!logoPrincipal->loadFromFile("windowImages/1942logoPrincipal.bmp") ) {
-      cout << endl << "Failed to load logoPrincipal texture image!" << endl;
-    }
-
-    // Create text inputs
+    
     string serverIP = "127.0.0.1";
     string serverPort = "8080";
     string acceptButtonText = "ACEPTAR";
-    TTF_Font* fontFamily = sdlHandler->loadFont( FONT_PATH );
-    // White text color
-    SDL_Color textColor = { 0, 0, 0, 255 };
-    SDL_Color buttonTextColor = { 0, 0, 0, 255 };
-    Texture* serverIPInput = new Texture( renderer );
-    Texture* serverPortInput = new Texture( renderer );
-    Texture* acceptButton = new Texture( renderer );
-    // Create textures from text 
-    serverIPInput->loadFromRenderedText( serverIP.c_str(), fontFamily, textColor );
-    serverPortInput->loadFromRenderedText( serverPort.c_str(), fontFamily, textColor );
-    acceptButton->loadFromRenderedText( acceptButtonText.c_str(), fontFamily, buttonTextColor );
+
+    Screen* initialScreen = new Screen( sdlHandler );
+    initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
+    initialScreen->loadText( "serverIP", serverIP );
+    initialScreen->loadText( "serverPort", serverPort );
+    initialScreen->loadText( "accept", "ACEPTAR" );
+
     // Enable text input
     SDL_StartTextInput();
 
-
-
-    int logoCenter = ( WINDOW_WIDTH - logoPrincipal->getWidth() ) / 2;
+    int logoCenter = ( WINDOW_WIDTH - initialScreen->getTextureWidth( "logo" ) ) / 2;
     int promptCenter = logoCenter - 20;
     int buttonCenter = promptCenter + 15;
     int textCenter = promptCenter + 20;
-    int buttonTextCenter = buttonCenter + ( ( 230 - acceptButton->getWidth() ) / 2 );
+    int buttonTextCenter = buttonCenter + ( ( 230 - initialScreen->getTextureWidth( "accept" ) ) / 2 );
     bool firstPromptSelected = true;
     int mouseX, mouseY;
     bool clicked = false;
@@ -144,13 +126,15 @@ int main( int argc, char* argv[] ) {
 	    if( serverIP != "" )
 	    {
 	      //Render new text
-	      serverIPInput->loadFromRenderedText( serverIP.c_str(), fontFamily, textColor );
+	      initialScreen->loadText( "serverIP", serverIP );
+	      //serverIPInput->loadFromRenderedText( serverIP.c_str(), fontFamily, textColor );
 	    }
 	    //Text is empty
 	    else
 	    {
 	      //Render space texture
-	      serverIPInput->loadFromRenderedText( " ", fontFamily, textColor );
+	      initialScreen->loadText( "serverIP", " " );
+	      //serverIPInput->loadFromRenderedText( " ", fontFamily, textColor );
 	    }
 	  } else {
 
@@ -158,13 +142,15 @@ int main( int argc, char* argv[] ) {
 	    if( serverPort != "" )
 	    {
 	      //Render new text
-	      serverPortInput->loadFromRenderedText( serverPort.c_str(), fontFamily, textColor );
+	      initialScreen->loadText( "serverPort", serverPort );
+	      //serverPortInput->loadFromRenderedText( serverPort.c_str(), fontFamily, textColor );
 	    }
 	    //Text is empty
 	    else
 	    {
 	      //Render space texture
-	      serverPortInput->loadFromRenderedText( " ", fontFamily, textColor );
+	      initialScreen->loadText( "serverPort", " " );
+	      //serverPortInput->loadFromRenderedText( " ", fontFamily, textColor );
 	    }
 	  }
 	}
@@ -173,7 +159,7 @@ int main( int argc, char* argv[] ) {
 	// Set window background
 	sdlHandler->setWindowBG(0, 0, 0);
 
-	logoPrincipal->render( logoCenter, 90 );
+	initialScreen->renderTexture( "logo", logoCenter, 90 );
 
 	if( !accept ) {
 	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
@@ -208,9 +194,9 @@ int main( int argc, char* argv[] ) {
 	SDL_RenderDrawRect( renderer, &outline3 );
 
 	//Render text textures
-	serverIPInput->render( textCenter, 305 );
-	serverPortInput->render( textCenter, 380 );
-	acceptButton->render( buttonTextCenter, 480 );
+	initialScreen->renderTexture( "serverIP", textCenter, 305 );
+	initialScreen->renderTexture( "serverPort", textCenter, 380 );
+	initialScreen->renderTexture( "accept", buttonTextCenter, 480 );
 	}
 	//Update screen
 	sdlHandler->updateWindow();
