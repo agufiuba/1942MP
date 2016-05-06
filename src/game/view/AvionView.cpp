@@ -67,13 +67,13 @@ void AvionView::cargarClips(){
 }
 
 bool AvionView::cargarImagenDelAvion( string filename ){
-	vistaAvionTexture = new Texture();
+	vistaAvionTexture = new Texture( rendererAvion );
 
 	if (rendererAvion == NULL){
 		printf("nulo");
 	}
 
-	if (!vistaAvionTexture->loadFromFile(filename, rendererAvion)) {
+	if (!vistaAvionTexture->loadFromFile(filename)) {
 		printf("Failed to load avion texture image!\n");
 		return false;
 	}
@@ -127,12 +127,12 @@ void AvionView::mostrar( int x, int y, int velX){
   	currentClip = &clipsDerecha[ frame ];
   }
 
-  vistaAvionTexture->render( x, y, rendererAvion, currentClip );
+  vistaAvionTexture->render( x, y, currentClip );
 }
 
 void AvionView::mostrarVueltereta(int x, int y, int frame){
   SDL_Rect* currentClip;
   currentClip = &clipsVueltereta[ frame ];
 
-  vistaAvionTexture->render( x, y, rendererAvion, currentClip );
+  vistaAvionTexture->render( x, y, currentClip );
 }

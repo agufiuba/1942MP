@@ -7,10 +7,9 @@
 
 #include "Isla.h"
 
-Isla::Isla(SDL_Renderer* &render, Posicion* posicion, int islaNumber) {
-	islaTxt = new Texture();
+Isla::Isla(SDL_Renderer* render, Posicion* posicion, int islaNumber) {
 	this->posicion = posicion;
-	this->render = render;
+	islaTxt = new Texture( render );
 
 	vector<const char*> direcciones;
 	direcciones.push_back(DIR_ISLA_1);
@@ -22,10 +21,10 @@ Isla::Isla(SDL_Renderer* &render, Posicion* posicion, int islaNumber) {
 	if (islaNumber >= 5) {
 		islaNumber = 0;
 	}
-	islaTxt->loadFromFile(direcciones[islaNumber], render);
+	islaTxt->loadFromFile( direcciones[islaNumber] );
 
 
-	islaTxt->render(posicion->getX(), posicion->getYsdl(), render, NULL);
+	islaTxt->render( posicion->getX(), posicion->getYsdl() );
 }
 
 Isla::~Isla() {
@@ -34,7 +33,7 @@ Isla::~Isla() {
 
 void Isla::vivir(int x, int y) {
 	posicion->mover(0, -3);
-	islaTxt->render(posicion->getX(), posicion->getYsdl(), render, NULL);
+	islaTxt->render( posicion->getX(), posicion->getYsdl() );
 
 }
 

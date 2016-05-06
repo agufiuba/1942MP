@@ -26,7 +26,7 @@ CONF = ./src/xml/conf/* ./src/xml/parser/GameParser.cpp
 COMPILER = -std=c++11
 
 # libraries to link
-LINKER = -lSDL2 -lX11
+LINKER = -lSDL2 -lX11 -lSDL_ttf
 
 # game
 GAME = $(GAME_DIR)/1942MultiPlayer.cpp

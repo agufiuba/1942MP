@@ -37,7 +37,6 @@ Escenario::Escenario(int fps, int width, int height){
 
 void Escenario::inicializar() {
 	window = NULL;
-	fondoDePantalla = new Texture();
 	inicioCorrectamente = true;
 
 	// Inicializar SDL
@@ -66,8 +65,9 @@ void Escenario::inicializar() {
 		inicioCorrectamente = false;
 	}
 
+	fondoDePantalla = new Texture( gRenderer );
 	// Load fondo de pantalla
-	if (!fondoDePantalla->loadFromFile(DIR_FONDO_PANTALLA, gRenderer)) {
+	if (!fondoDePantalla->loadFromFile( DIR_FONDO_PANTALLA )) {
 		printErrorSDL("Fondo de Pantalla");
 		inicioCorrectamente = false;
 	}
@@ -97,7 +97,7 @@ void Escenario::printErrorSDL(string error) {
 
 void Escenario::actualizarEscenario(Posicion* pos) {
 	SDL_RenderClear(gRenderer);
-	fondoDePantalla->render(pos->getX(), pos->getYsdl(), gRenderer, NULL);
+	fondoDePantalla->render(pos->getX(), pos->getYsdl());
 
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir(0,0);
