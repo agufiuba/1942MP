@@ -3,7 +3,7 @@
 using namespace std;
 
 
-void AvionView::muere(){
+void AvionView::desconectar(){
 	string filename = "src/game/images/AvionSprites_gris.bmp";
 
 	if (!cargarImagenDelAvion(filename)) {

@@ -155,7 +155,7 @@ bool Avion::aunVive(){
 	return viviendo;
 }
 
-void Avion::matar(){
+void Avion::desconectar(){
 	this->viviendo = false;
-	vistaAvion->muere();
+	vistaAvion->desconectar();
 }

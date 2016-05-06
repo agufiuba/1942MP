@@ -175,7 +175,7 @@ void Escenario::run() {
 		//hardcodeo para probar la desconexion
 		i++;
 		if (i>200){
-			otroAvion->matar();
+			otroAvion->desconectar();
 		}// fin
 
 		start = SDL_GetTicks();

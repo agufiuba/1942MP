@@ -31,7 +31,7 @@ public:
 	void mostrar(int x, int y, int velX);
 	void mostrarVueltereta(int x, int y, int frame);
 	void cargarClips();
-	void muere();
+	void desconectar();
 };
 
 #endif /* SRC_VIEW_AVIONVIEW_H_ */

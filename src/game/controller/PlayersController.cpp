@@ -43,5 +43,5 @@ void PlayersController::press(SDL_Event *event){
 
 void PlayersController::hacerVivir(){
 	obj->vivir(velX, velY);
-	//controlDeMisiles->hacerVivir();
+
 }
