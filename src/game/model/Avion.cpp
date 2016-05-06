@@ -23,6 +23,10 @@ void Avion::inicializoVueltereta() {
 	t->correr();
 }
 
+bool Avion::haciendoVueltereta(){
+	return this->realizandoVueltereta;
+}
+
 Avion::~Avion(){
 	delete vistaAvion;
 	delete t;

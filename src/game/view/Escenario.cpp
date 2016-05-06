@@ -145,8 +145,8 @@ void Escenario::run() {
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
-	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(600, 0), azul);
-	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(400, 0), amarillo);
+	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(600, 100), azul);
+	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(400, 100), amarillo);
 
 	setFondosVivibles();
 

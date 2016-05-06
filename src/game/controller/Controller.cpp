@@ -26,7 +26,10 @@ void Controller::press(SDL_Event *event){
             case SDLK_UP: velY += velocidadStandard; break;
             case SDLK_DOWN: velY -= velocidadStandard; break;
 
-            case SDLK_SPACE: controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX(),obj->getY()); break;
+						case SDLK_SPACE:
+							if (!obj->haciendoVueltereta())
+								controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX(), obj->getY());
+							break;
 
             case SDLK_KP_ENTER: obj->inicializoVueltereta();break;
         }

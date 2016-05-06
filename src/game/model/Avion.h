@@ -42,8 +42,7 @@ public:
 	int getY();
 
 	void setVelocidadStandard(int vel);
-	void setHaciendoVueltereta();
-
+	bool haciendoVueltereta();
 	void inicializoVueltereta();
 
 	void vivir(int velX, int velY);
