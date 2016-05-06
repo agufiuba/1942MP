@@ -8,7 +8,6 @@ void AvionView::desconectar(){
 
 	if (!cargarImagenDelAvion(filename)) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
-		//TODO: faltaria que tire una excepcion
 	}
 }
 
@@ -83,9 +82,8 @@ bool AvionView::cargarImagenDelAvion( string filename ){
 }
 
 AvionView::AvionView(SDL_Renderer * unRenderer, string color){
-	//TODO pasarlo a sprites
-		anchoVista = 70;
-		largoVista = 60;
+	anchoVista = 70;
+	largoVista = 60;
 
 	cargarClips();
 
@@ -95,7 +93,6 @@ AvionView::AvionView(SDL_Renderer * unRenderer, string color){
 
 	if (!cargarImagenDelAvion(filename + color + ".bmp")) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
-		//TODO: faltaria que tire una excepcion
 	}
 
 }
@@ -113,7 +110,6 @@ AvionView::~AvionView(){
 }
 
 void AvionView::mostrar( int x, int y, int velX){
-		//cout << "x " << x << "       y "<< y <<endl;
 	bool izquierda = true;
 	int frame = 0;
 

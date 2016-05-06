@@ -10,17 +10,15 @@
 
 class Avion: public Vivible {
 private:
-	int anchoFondo, largoFondo; //TODO: esto estaria bueno poder sacarlo del screen
+	int anchoFondo, largoFondo;
+	int velocidadStandard;
+	bool viviendo;
+
+	bool realizandoVueltereta;
+	Timer* t;
 
 	AvionView* vistaAvion;
 	Posicion* posicion;
-	int velocidadStandard;
-
-	bool viviendo;
-	// Variables que involucran la vueltereta
-	bool realizandoVueltereta;
-
-	Timer* t;
 
 	void realizoVueltereta();
 	void mostrarVueltereta(int frame);

@@ -53,7 +53,6 @@ int Avion::getLargo() {
 }
 
 void Avion::moverEjeX(int velX) {
-
 	posicion->mover(velX,0);
 
 	if ((posicion->getX() < 0) || (posicion->getX() + getAncho() > getAnchoFondo())) {
@@ -62,7 +61,6 @@ void Avion::moverEjeX(int velX) {
 }
 
 void Avion::moverEjeY(int velY) {
-
 	posicion->mover(0,velY);
 
 	if ((posicion->getY() - getLargo() < 0) || (posicion->getY() > getLargoFondo())) {

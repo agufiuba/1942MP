@@ -12,7 +12,6 @@ using namespace std;
 class AvionView {
 
 private:
-	//The surfaces
 	Texture *vistaAvionTexture = NULL;
 	SDL_Renderer *rendererAvion;
 	SDL_Rect clipsDerecha[ 2 ];
