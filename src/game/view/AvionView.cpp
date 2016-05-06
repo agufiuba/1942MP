@@ -93,10 +93,11 @@ AvionView::AvionView(SDL_Renderer * unRenderer, string color){
 
 	string filename = "src/game/images/AvionSprites_";
 
-	if (!cargarImagenDelAvion(filename+color+".bmp")) {
+	if (!cargarImagenDelAvion(filename + color + ".bmp")) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
 		//TODO: faltaria que tire una excepcion
 	}
+
 }
 
 int AvionView::getAnchoVista(){

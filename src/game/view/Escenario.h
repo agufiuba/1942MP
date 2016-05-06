@@ -42,10 +42,19 @@ private:
 	int CANTIDAD_SCREEN_TOTAL = 30;
 	int VELOCIDAD_SCREEN = -3;
 
+	/*
+	enum Color { rojo = "rojo",
+							azul = "azul",
+							verde = "verde",
+							amarillo = "amarillo",
+							desconocido = "desconocido"
+	};*/
+
 	string rojo = "rojo";
 	string azul = "azul";
 	string verde = "verde";
 	string amarillo = "amarillo";
+	string desconocido = "desconocido";
 
 
 	const char* DIR_FONDO_PANTALLA = "src/game/images/fondoPantalla4000x4000Marcado.bmp";
