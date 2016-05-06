@@ -17,11 +17,6 @@ Screen::~Screen() {
       delete it->second;
     }
   }
-
-  // Delete figures
-  if( !( this->figures.empty() ) ) {
-
-  }
 }
 
 void Screen::loadFont( const char* FONT_PATH ) {
@@ -44,6 +39,11 @@ void Screen::loadTexture( string id, string path ) {
   }
 }
 
+void Screen::loadRectangle( string id, int x, int y, int width, int height ) {
+  SDL_Rect r = { x, y, width, height };
+  this->rectangles[ id ] = r;
+}
+
 void Screen::loadText( string id, string value ) {
   Texture* t = new Texture( this->renderer );
   if( t->loadFromRenderedText( value, this->fontFamily, this->fontColor ) ) {
@@ -61,6 +61,20 @@ void Screen::renderTexture( string id, int x, int y ) {
   it->second->render( x, y );
 }
 
+void Screen::renderRectangle( string id, bool outline ) {
+  map<string, SDL_Rect>::iterator it = this->rectangles.find( id );
+  if( it == this->rectangles.end() ) {
+    cout << endl << id << " rectangle not found!" << endl;
+    return;
+  }
+
+  if( outline ) {
+    SDL_RenderDrawRect( this->renderer, &it->second );
+  } else {
+    SDL_RenderFillRect( this->renderer, &it->second );
+  }
+}
+
 int Screen::getTextureWidth( string id ) {
   map<string, Texture*>::iterator it = this->textures.find( id );
   if( it == this->textures.end() ) {
@@ -68,4 +82,8 @@ int Screen::getTextureWidth( string id ) {
     return -1;
   }
   return it->second->getWidth();
+}
+
+void Screen::setRenderDrawColor( int r, int g, int b, int a ) {
+  SDL_SetRenderDrawColor( this->renderer, r, g, b, a );
 }

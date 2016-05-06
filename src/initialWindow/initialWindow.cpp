@@ -10,7 +10,6 @@ int main( int argc, char* argv[] ) {
   const int WINDOW_HEIGHT = 600;
   const char* WINDOW_TITLE = "1942MP Arcade";
   const int FRAMES_PER_SECOND = 10;
-  const char* FONT_PATH = "fonts/open_sans/OpenSans-Regular.ttf";
 
   bool quit = false;
 
@@ -32,27 +31,27 @@ int main( int argc, char* argv[] ) {
     initialScreen->loadText( "serverPort", serverPort );
     initialScreen->loadText( "accept", "ACEPTAR" );
 
-    // Enable text input
-    SDL_StartTextInput();
-
     int logoCenter = ( WINDOW_WIDTH - initialScreen->getTextureWidth( "logo" ) ) / 2;
     int promptCenter = logoCenter - 20;
     int buttonCenter = promptCenter + 15;
     int textCenter = promptCenter + 20;
     int buttonTextCenter = buttonCenter + ( ( 230 - initialScreen->getTextureWidth( "accept" ) ) / 2 );
-    bool firstPromptSelected = true;
+    int IPPromptOutline = 300, IPPromptOutline2 = 301, IPPromptOutline3 = 302;
+    int portPromptOutline = 375, portPromptOutline2 = 376, portPromptOutline3 = 377;
     int mouseX, mouseY;
+
+    bool firstPromptSelected = true;
     bool clicked = false;
     bool accept = false;
 
-    // Create prompt
-    SDL_Rect prompt1 = { promptCenter, 300, 260, 50 };
-    SDL_Rect prompt2 = { promptCenter, 375, 260, 50 };
-    SDL_Rect button = { promptCenter + 15, 475, 230, 50 };
-    SDL_Rect outline = { promptCenter, 0, 260, 50 };
-    SDL_Rect outline2 = { promptCenter + 1, 0, 258, 48 };
-    SDL_Rect outline3 = { promptCenter + 2, 0, 256, 46 };
-    
+    // Create prompts
+    initialScreen->loadRectangle( "promptIP", promptCenter, 300, 260, 50 );
+    initialScreen->loadRectangle( "promptPort", promptCenter, 375, 260, 50 );
+    initialScreen->loadRectangle( "button", promptCenter + 15, 475, 230, 50 );
+
+    // Enable text input
+    SDL_StartTextInput();
+
     while (!quit) {
       fps.correr();
       bool renderText = false;
@@ -127,14 +126,12 @@ int main( int argc, char* argv[] ) {
 	    {
 	      //Render new text
 	      initialScreen->loadText( "serverIP", serverIP );
-	      //serverIPInput->loadFromRenderedText( serverIP.c_str(), fontFamily, textColor );
 	    }
 	    //Text is empty
 	    else
 	    {
 	      //Render space texture
 	      initialScreen->loadText( "serverIP", " " );
-	      //serverIPInput->loadFromRenderedText( " ", fontFamily, textColor );
 	    }
 	  } else {
 
@@ -143,57 +140,60 @@ int main( int argc, char* argv[] ) {
 	    {
 	      //Render new text
 	      initialScreen->loadText( "serverPort", serverPort );
-	      //serverPortInput->loadFromRenderedText( serverPort.c_str(), fontFamily, textColor );
 	    }
 	    //Text is empty
 	    else
 	    {
 	      //Render space texture
 	      initialScreen->loadText( "serverPort", " " );
-	      //serverPortInput->loadFromRenderedText( " ", fontFamily, textColor );
 	    }
 	  }
 	}
 
-
 	// Set window background
 	sdlHandler->setWindowBG(0, 0, 0);
 
+	// Render logo
 	initialScreen->renderTexture( "logo", logoCenter, 90 );
 
 	if( !accept ) {
-	SDL_SetRenderDrawColor( renderer, 255, 255, 255, 255 );
-	SDL_RenderFillRect( renderer, &prompt1 );
-	SDL_RenderFillRect( renderer, &prompt2 );
+	// Set prompt color
+	initialScreen->setRenderDrawColor( 255, 255, 255, 255 );
+	// Render prompts
+	initialScreen->renderRectangle( "promptIP" );
+	initialScreen->renderRectangle( "promptPort" );
 	
-	SDL_SetRenderDrawColor( renderer, 160, 160, 160, 255 );
+	initialScreen->setRenderDrawColor( 160, 160, 160, 255 );
 	if( clicked ) {
 	  clicked = false;
 	  if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) 
 	      && ( mouseY > 475 ) && ( mouseY < ( 475 + 50 ) ) ) {
-	    SDL_SetRenderDrawColor( renderer, 86, 86, 86, 255 );
+	    initialScreen->setRenderDrawColor( 86, 86, 86, 255 );
 	    accept = true;
 	    cout << "Aceptar" << endl;
 	  }
 	}
-	SDL_RenderFillRect( renderer, &button );
-
+	initialScreen->renderRectangle( "button" );
+	
 	// Set outline color
-	SDL_SetRenderDrawColor( renderer, 19, 144, 27, 255 );
-	if( firstPromptSelected ) {
-	  outline.y = 300;
-	  outline2.y = 301;
-	  outline3.y = 302;
-	} else {
-	  outline.y = 375;
-	  outline2.y = 376;
-	  outline3.y = 377;
-	}
-	SDL_RenderDrawRect( renderer, &outline );
-	SDL_RenderDrawRect( renderer, &outline2 );
-	SDL_RenderDrawRect( renderer, &outline3 );
+	initialScreen->setRenderDrawColor( 19, 144, 27, 255 );
 
-	//Render text textures
+	if( firstPromptSelected ) {
+	  initialScreen->loadRectangle( "outline", promptCenter, IPPromptOutline, 260, 50 );
+	  initialScreen->loadRectangle( "outline2", promptCenter + 1, IPPromptOutline2, 258, 48 );
+	  initialScreen->loadRectangle( "outline3", promptCenter + 2, IPPromptOutline3, 256, 46 );
+	} else {
+	  initialScreen->loadRectangle( "outline", promptCenter, portPromptOutline, 260, 50 );
+	  initialScreen->loadRectangle( "outline2", promptCenter + 1, portPromptOutline2, 258, 48 );
+	  initialScreen->loadRectangle( "outline3", promptCenter + 2, portPromptOutline3, 256, 46 );
+	}
+
+	// Render outlines
+	initialScreen->renderRectangle( "outline", true );
+	initialScreen->renderRectangle( "outline2", true );
+	initialScreen->renderRectangle( "outline3", true );
+
+	// Render text textures
 	initialScreen->renderTexture( "serverIP", textCenter, 305 );
 	initialScreen->renderTexture( "serverPort", textCenter, 380 );
 	initialScreen->renderTexture( "accept", buttonTextCenter, 480 );
