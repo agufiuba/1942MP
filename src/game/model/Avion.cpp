@@ -154,3 +154,8 @@ int Avion::getY(){
 bool Avion::aunVive(){
 	return viviendo;
 }
+
+void Avion::matar(){
+	this->viviendo = false;
+	vistaAvion->muere();
+}

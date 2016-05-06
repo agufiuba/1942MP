@@ -47,6 +47,8 @@ public:
 
 	void vivir(int velX, int velY);
 	bool aunVive();
+
+	void matar();
 };
 
 #endif /* SRC_MODEL_AVION_H_ */

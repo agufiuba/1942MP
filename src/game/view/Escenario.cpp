@@ -145,16 +145,22 @@ void Escenario::run() {
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
-	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(600, 100), azul);
-	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(400, 100), amarillo);
+	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(1000, 100), azul);
+	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(800, 100), amarillo);
+	Vivible* otroAvion2 = new Avion(gRenderer, resolucion, new Posicion(600, 100), rojo);
+	Vivible* otroAvion3 = new Avion(gRenderer, resolucion, new Posicion(400, 100), verde);
 
 	setFondosVivibles();
 
 	IController* control = new Controller(unAvion, gRenderer);
 	IController* otroControl = new PlayersController(otroAvion, gRenderer);
+	IController* otroControl2 = new PlayersController(otroAvion2, gRenderer);
+	IController* otroControl3 = new PlayersController(otroAvion3, gRenderer);
 
 	controllersList.push_back(control);
 	controllersList.push_back(otroControl);
+	controllersList.push_back(otroControl2);
+	controllersList.push_back(otroControl3);
 
 	Posicion* posicionEscenario = new Posicion(0, pixelesArecorrer);
 	actualizarEscenario(posicionEscenario);
@@ -162,12 +168,24 @@ void Escenario::run() {
 	Uint32 start;
 	bool quit = false;
 
+	int i = 0; //hardcodeo
+
 	while (!quit) {
+
+		//hardcodeo para probar la desconexion
+		i++;
+		if (i>200){
+			otroAvion->matar();
+		}// fin
 
 		start = SDL_GetTicks();
 		while( SDL_PollEvent(&evento) != 0 ) {
 			control->press(&evento);
+
 			otroControl->press(&evento);
+			otroControl2->press(&evento);
+			otroControl3->press(&evento);
+
 			if(evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q) {
 				quit = true;
 				break;

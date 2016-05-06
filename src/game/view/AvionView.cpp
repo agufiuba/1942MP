@@ -3,7 +3,15 @@
 using namespace std;
 
 
-//TODO revisar
+void AvionView::muere(){
+	string filename = "src/game/images/AvionSprites_gris.bmp";
+
+	if (!cargarImagenDelAvion(filename)) {
+		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
+		//TODO: faltaria que tire una excepcion
+	}
+}
+
 void AvionView::cargarClips(){
 	int posYInicial = 50;
 

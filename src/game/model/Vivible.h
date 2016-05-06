@@ -20,6 +20,7 @@ class Vivible{
 	   virtual int getX(){return 0;};
 	   virtual int getY(){return 0;};
 	   virtual bool aunVive(){return true;};
+	   virtual void matar(){};
 
 	   virtual void setVelocidadStandard(int vel){};
 	   virtual void inicializoVueltereta(){};
