@@ -24,7 +24,7 @@ private:
 
 public:
 	bool cargarImagenDelAvion( string filename );
-	AvionView(SDL_Renderer* renderer);
+	AvionView(SDL_Renderer* renderer, string color);
 	~AvionView();
 	int getAnchoVista();
 	int getLargoVista();

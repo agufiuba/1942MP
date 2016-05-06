@@ -145,8 +145,8 @@ void Escenario::run() {
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
-	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(400, 0));
-	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(600, 0));
+	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(600, 0), azul);
+	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(400, 0), amarillo);
 
 	setFondosVivibles();
 
@@ -162,10 +162,8 @@ void Escenario::run() {
 	Uint32 start;
 	bool quit = false;
 
-	Timer fps;
-
 	while (!quit) {
-		//fps.correr();
+
 		start = SDL_GetTicks();
 		while( SDL_PollEvent(&evento) != 0 ) {
 			control->press(&evento);

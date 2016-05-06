@@ -2,13 +2,12 @@
 
 using namespace std;
 
-Avion::Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial) {
-	vistaAvion = new AvionView(renderer);
+Avion::Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color) {
+	vistaAvion = new AvionView(renderer, color);
 
 	viviendo = true;
 
-	x = posicionInicial->getX();
-	y = posicionInicial->getY();
+	this->posicion = posicionInicial;
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
@@ -19,7 +18,6 @@ Avion::Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posici
 }
 
 void Avion::inicializoVueltereta() {
-	velocidadEnVueltereta = -(getLargo() / 4);
 	realizandoVueltereta = true;
 	t->correr();
 }
@@ -27,6 +25,10 @@ void Avion::inicializoVueltereta() {
 Avion::~Avion(){
 	delete vistaAvion;
 	delete t;
+}
+
+void Avion::setVelocidadStandard(int vel){
+	velocidadStandard = vel;
 }
 
 int Avion::getAnchoFondo() {
@@ -46,18 +48,20 @@ int Avion::getLargo() {
 }
 
 void Avion::moverEjeX(int velX) {
-	x += velX;
 
-	if ((x < 0) || (x + getAncho() > getAnchoFondo())) {
-		x -= velX;
+	posicion->mover(velX,0);
+
+	if ((posicion->getX() < 0) || (posicion->getX() + getAncho() > getAnchoFondo())) {
+		posicion->mover(-velX,0);
 	}
 }
 
 void Avion::moverEjeY(int velY) {
-	y += velY;
 
-	if ((y < 0) || (y + getLargo() > getLargoFondo())) {
-		y -= velY;
+	posicion->mover(0,velY);
+
+	if ((posicion->getY() < 0) || (posicion->getY() + getLargo() > getLargoFondo())) {
+		posicion->mover(0,-velY);
 	}
 }
 
@@ -67,11 +71,11 @@ void Avion::mover(int velX, int velY) {
 }
 
 void Avion::mostrar(int velX){
-	vistaAvion->mostrar(x,y,velX);
+	vistaAvion->mostrar(posicion->getX(),posicion->getYsdl(),velX);
 }
 
 void Avion::mostrarVueltereta(int frame){
-	vistaAvion->mostrarVueltereta(x,y,frame);
+	vistaAvion->mostrarVueltereta(posicion->getX(),posicion->getYsdl(),frame);
 }
 
 void Avion::realizoVueltereta() {
@@ -82,7 +86,7 @@ void Avion::realizoVueltereta() {
 
 	if (t->tiempoActual() < tiempoIda) {
 		frame = 0;
-		mover(0, velocidadEnVueltereta);
+		mover(0, velocidadStandard);
 
 	} else {
 		if (t->tiempoActual() < tiempoIda + tiempoMuerto / 2) {
@@ -95,7 +99,7 @@ void Avion::realizoVueltereta() {
 			} else {
 				if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta) {
 					frame = 3;
-					mover(0, -velocidadEnVueltereta);
+					mover(0, -velocidadStandard);
 
 				} else {
 					if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta + tiempoMuerto / 2) {
@@ -108,7 +112,7 @@ void Avion::realizoVueltereta() {
 						} else {
 							if (t->tiempoActual() < tiempoIda + tiempoMuerto * 2 + tiempoVuelta + tiempoIda / 4) {
 								frame = 0;
-								mover(0, velocidadEnVueltereta);
+								mover(0, velocidadStandard);
 
 							} else {
 								realizandoVueltereta = false;
@@ -135,12 +139,12 @@ void Avion::vivir(int velX, int velY){
 
 
 int Avion::getX(){
-	return x;
+	return posicion->getX();
 }
 
 
 int Avion::getY(){
-	return y;
+	return posicion->getYsdl();
 }
 
 bool Avion::aunVive(){
