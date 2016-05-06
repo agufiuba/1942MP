@@ -30,9 +30,9 @@ MisilView::~MisilView() {
 
 
 bool MisilView::cargarImagenDelMisil( string filename ){
-	vistaMisilTexture = new Texture();
+	vistaMisilTexture = new Texture( rendererMisil );
 
-	if (!vistaMisilTexture->loadFromFile(filename, rendererMisil)) {
+	if (!vistaMisilTexture->loadFromFile(filename)) {
 		printf("Failed to load Misil texture image!\n");
 		return false;
 	}
@@ -50,5 +50,5 @@ bool MisilView::cargarImagenDelMisil( string filename ){
 
 
 void MisilView::mostrar( int x, int y){
-    vistaMisilTexture->render( x, y, rendererMisil, NULL );
+    vistaMisilTexture->render( x, y );
 }

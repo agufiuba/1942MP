@@ -22,13 +22,12 @@ private:
 	const char* DIR_ISLA_3 = "src/game/images/isla3.bmp";
 	const char* DIR_ISLA_4 = "src/game/images/isla4.bmp";
 	const char* PORTAAVION = "src/game/images/porta1.bmp";
-	SDL_Renderer* render;
 	Texture* islaTxt;
 	Posicion* posicion;
 	void inicializar();
 
 public:
-	Isla(SDL_Renderer* &render, Posicion* posicion, int islaNumber);
+	Isla(SDL_Renderer* render, Posicion* posicion, int islaNumber);
 	virtual ~Isla();
 	void vivir(int x, int y);
 
