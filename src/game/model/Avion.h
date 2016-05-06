@@ -40,7 +40,9 @@ public:
 	int getLargo();
 	int getX();
 	int getY();
+
 	void setVelocidadStandard(int vel);
+	void setHaciendoVueltereta();
 
 	void inicializoVueltereta();
 

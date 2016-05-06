@@ -17,6 +17,7 @@ class Vivible{
 	   virtual int getAncho(){return 0;};
 	   virtual int getLargo(){return 0;};
 	   virtual void setVelocidadStandard(int vel){};
+	   virtual void inicializoVueltereta(){};
 	   virtual void mostrar(){};
 	   virtual int getX(){return 0;};
 	   virtual int getY(){return 0;};

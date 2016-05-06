@@ -138,7 +138,6 @@ void Avion::vivir(int velX, int velY){
 	}
 }
 
-
 int Avion::getX(){
 	return posicion->getX();
 }
