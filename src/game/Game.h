@@ -19,8 +19,13 @@ class Game {
     string serverIP;
     string serverPort;
     Client* unCliente;
+    
+    string clientId;
+    string planeId;
+  
     void loadConnectionScreen();
     void loadValidationScreen();
+    void loadselectionPlane();
 
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
