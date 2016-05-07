@@ -21,7 +21,6 @@ void Game::start() {
   if( this->sdlHandler->createWindow( this->windowTitle.c_str(), this->windowWidth, this->windowHeight ) ) {
     this->running = true;
     this->loadConnectionScreen();
-    this->loadValidationScreen();
   }
 }
 
@@ -179,6 +178,11 @@ void Game::loadConnectionScreen() {
       if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) 
 	  && ( mouseY > 475 ) && ( mouseY < ( 475 + 50 ) ) ) {
 	runningScreen = false;
+  //Disable text input
+  SDL_StopTextInput();
+  delete initialScreen;
+				this->loadValidationScreen();
+				break;
       }
     }
     initialScreen->renderRectangle( "button" );
@@ -213,9 +217,6 @@ void Game::loadConnectionScreen() {
       SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
     }
   }
-  //Disable text input
-  SDL_StopTextInput();
-  delete initialScreen;
 }
 
 void Game::loadValidationScreen() {
@@ -224,18 +225,39 @@ void Game::loadValidationScreen() {
   SDL_Event e;
   Timer timer;
   string connectingText = "Conectando al servidor...";
+  string connectedText = "Se ha conectado al servidor";
   string failureText = "No se pudo conectar al servidor";
 
   Screen* validationScreen = new Screen( this->sdlHandler );
   validationScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   validationScreen->loadText( "connecting", connectingText, { 255, 255, 255, 255 } );
+  validationScreen->loadText( "connected", connectedText, { 255, 255, 255, 255 } );
+  validationScreen->loadText( "failure", failureText, { 255, 255, 255, 255 } );
 
   int logoCenter = ( this->windowWidth - validationScreen->getTextureWidth( "logo" ) ) / 2;
   int promptCenter = logoCenter - 20;
   int textCenter = promptCenter;
 
+  string continueButtonText = "CONTINUAR";
+  validationScreen->loadText( "continue", continueButtonText, {255,255,255,255} );
+  string backButtonText = "VOLVER";
+  validationScreen->loadText( "back", backButtonText, {255,255,255,255} );
+  validationScreen->loadRectangle( "button", promptCenter + 15, 475, 230, 50 );
+  int buttonCenter = promptCenter + 15;
+  int continueTextCenter = buttonCenter + ( ( 230 - validationScreen->getTextureWidth( "continue" ) ) / 2 );
+  int backTextCenter = buttonCenter + ( ( 230 - validationScreen->getTextureWidth( "back" ) ) / 2 );
+
   // Enable text input
   SDL_StartTextInput();
+
+  //Enviar al servidor IP y puerto
+  this->unCliente = new Client(serverIP,serverPort);
+
+  bool connected = false;
+  bool connectionFailed = false;
+  bool clicked = false;
+  int mouseX = 0;
+  int mouseY = 0;
 
   while( runningScreen ) {
     timer.correr();
@@ -246,6 +268,14 @@ void Game::loadValidationScreen() {
 	runningScreen = false;
 	this->running = false;
       }
+			if (e.button.type == SDL_MOUSEBUTTONDOWN) {
+				if (e.button.button == SDL_BUTTON_LEFT) {
+					clicked = true;
+					// Get the mouse offsets
+					mouseX = e.button.x;
+					mouseY = e.button.y;
+				}
+			}
     }
     // Set window background
     this->sdlHandler->setWindowBG(0, 0, 0);
@@ -253,8 +283,40 @@ void Game::loadValidationScreen() {
     // Render logo
     validationScreen->renderTexture( "logo", logoCenter, 90 );
 
+			if (clicked) {
+				clicked = false;
+				if ((mouseX > buttonCenter) && (mouseX < (buttonCenter + 230))
+						&& (mouseY > 475) && (mouseY < (475 + 50))) {
+					runningScreen = false;
+				  //Disable text input
+				  SDL_StopTextInput();
+				  delete validationScreen;
+					if (connectionFailed){
+				    this->loadConnectionScreen();
+					} else {
+						//TODO: siguiente pantalla RAMON
+					}
+					break;
+				}
+			}
+
     // Render text textures
-    validationScreen->renderTexture( "connecting", textCenter, 305 );
+    if (!connected){
+    	validationScreen->renderTexture( "connecting", textCenter, 305 );
+    } else {
+    	if (connectionFailed) {
+    		validationScreen->renderTexture( "failure", textCenter, 305 );
+        validationScreen->setRenderDrawColor( 234, 25 ,25 , 255 );
+        validationScreen->renderRectangle( "button" );
+    		validationScreen->renderTexture( "back", backTextCenter, 480 );
+    	} else {
+    		validationScreen->renderTexture( "connected", textCenter, 305 );
+        validationScreen->setRenderDrawColor( 19, 144, 27, 255 );
+        validationScreen->renderRectangle( "button" );
+    		validationScreen->renderTexture( "continue", continueTextCenter, 480 );
+    	}
+    }
+
 
     //Update screen
     this->sdlHandler->updateWindow();
@@ -262,8 +324,18 @@ void Game::loadValidationScreen() {
     if( timer.tiempoActual() < 1000 / this->fps ){
       SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
     }
+
+    if (!connected) {
+    	connectionFailed = !this->unCliente->connectToServer(); //TODO: Revisar la devolucion en false, devuelve true
+    	connected = true;
+    }
+
+/*
+    if (connectionFailed) {
+    	cout << "failed" << endl;
+    } else {
+    	cout << "connected" << endl;
+    } */
+
   }
-  //Disable text input
-  SDL_StopTextInput();
-  delete validationScreen;
 }

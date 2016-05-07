@@ -1,7 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
+
 #include <string>
+#include <thread>
+
 #include "../libs/xm_sdl/XM_SDL.h"
+#include "../libs/socket/Client.h"
+
 using namespace std;
 class Game {
   private:
@@ -13,6 +18,7 @@ class Game {
     string windowTitle;
     string serverIP;
     string serverPort;
+    Client* unCliente;
     void loadConnectionScreen();
     void loadValidationScreen();
 
@@ -20,6 +26,7 @@ class Game {
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
     ~Game();
     void start();
+    bool connectingToServer();
     void setWindowWidth( int width );
     void setWindowHeight( int height );
     void setWindowTitle( string title );

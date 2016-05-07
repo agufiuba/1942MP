@@ -7,6 +7,8 @@
 
 class Client {
   private:
+		string ip;
+		string puerto;
     int socketFD;
     bool connected;
     bool received;
@@ -20,7 +22,8 @@ class Client {
 
 public:
     Client( const char* configFileName );
-    void connectToServer();
+    Client( string ip, string puerto );
+    bool connectToServer();
     void disconnectFromServer();
     void shutdownConnection();
 //    vector<Evento*> getEventos();
