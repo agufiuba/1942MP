@@ -15,7 +15,7 @@ Client::Client( const char* configFileName ) {
   this->connected = false;
   this->logger = Logger::instance();
 
-//  this->config = XMLParser::parseClientConf( configFileName );
+  //  this->config = XMLParser::parseClientConf( configFileName );
 }
 
 Client::Client( string ip, string puerto ) {
@@ -25,7 +25,7 @@ Client::Client( string ip, string puerto ) {
   this->ip = ip;
   this->puerto = puerto;
 
-//  this->config = XMLParser::parseClientConf( configFileName );
+  //  this->config = XMLParser::parseClientConf( configFileName );
 }
 
 Client::~Client() {}
@@ -67,28 +67,28 @@ bool Client::connectToServer() {
   /* Connect to server */
   short triesLeft = 3;
 
-	while (!(this->connected) && triesLeft) {
-		if (connect(this->socketFD, (struct sockaddr*) &server,
-				sizeof(struct sockaddr)) == -1) {
-			triesLeft--;
-			/* 5s delay for retry */
-			if (triesLeft) {
-				this->logger->error( CONNECTION_RETRY);
-				theMutex.lock();
-				DEBUG_WARN(CONNECTION_RETRY);
-				theMutex.unlock();
-				usleep(1000000);
-			} else {
-				this->logger->warn(CONNECTION_ERROR(this->ip));
-				theMutex.lock();
-				DEBUG_PRINT(CONNECTION_ERROR( this->ip ));
-				theMutex.unlock();
-				return false;
-			}
-		} else {
-			this->connected = true;
-		}
-	}
+  while (!(this->connected) && triesLeft) {
+    if (connect(this->socketFD, (struct sockaddr*) &server,
+	  sizeof(struct sockaddr)) == -1) {
+      triesLeft--;
+      /* 5s delay for retry */
+      if (triesLeft) {
+	this->logger->error( CONNECTION_RETRY);
+	theMutex.lock();
+	DEBUG_WARN(CONNECTION_RETRY);
+	theMutex.unlock();
+	usleep(1000000);
+      } else {
+	this->logger->warn(CONNECTION_ERROR(this->ip));
+	theMutex.lock();
+	DEBUG_PRINT(CONNECTION_ERROR( this->ip ));
+	theMutex.unlock();
+	return false;
+      }
+    } else {
+      this->connected = true;
+    }
+  }
 
   timeval timeout;
   timeout.tv_sec = 0;
@@ -194,6 +194,28 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
 bool Client::sendData( Evento* e ) {
   this->received = false;
   if( send( this->socketFD, e, sizeof(Evento), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    //    theMutex.lock();
+    DEBUG_WARN( SEND_FAIL );
+    //    theMutex.unlock();
+    return false;
+  }
+
+  return true;
+}
+
+bool Client::sendData( PlayerData* data ) {
+  char id[2] = { 'P', 'D' };
+  this->received = false;
+  if( send( this->socketFD, id, sizeof( id ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    //    theMutex.lock();
+    DEBUG_WARN( SEND_FAIL );
+    //    theMutex.unlock();
+    return false;
+  }
+
+  if( send( this->socketFD, data, sizeof( PlayerData ), 0 ) == -1 ) {
     this->logger->error( SEND_FAIL );
     //    theMutex.lock();
     DEBUG_WARN( SEND_FAIL );

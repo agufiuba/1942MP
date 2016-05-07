@@ -20,7 +20,7 @@ Server::Server( const char* configFileName ) {
   this->allowConnections = false;
   this->eventQueue = new queue<map<int, Evento*>*>;
   this->logger = Logger::instance();
-//  this->config = XMLParser::parseServerConf( configFileName );
+  //  this->config = XMLParser::parseServerConf( configFileName );
 }
 
 Server::~Server() {
@@ -132,6 +132,55 @@ void* Server::getInAddr( struct sockaddr* sa ) {
   }
 }
 
+bool Server::receiveData( char id[2], int cfd, int size ) {
+  int numBytesRead;
+  mutex theMutex;
+
+  // Read data id
+  if( ( numBytesRead = recv( cfd, id, size, 0 ) ) == -1 ) {
+    close( cfd );
+    this->logger->warn( CONNECTION_TIMEOUT );
+    DEBUG_WARN( CONNECTION_TIMEOUT );
+  }
+
+  // if received data
+  if( numBytesRead > 0 ) {
+    if( numBytesRead != 1 ) {
+      theMutex.lock();
+      cout << endl << "ID: " << notice( string( id ) ) << endl;
+      theMutex.unlock();
+    }
+  } else {
+    return false;
+  }
+
+  return true;
+}
+
+bool Server::receiveData( PlayerData* data, int cfd ) {
+  int numBytesRead;
+  mutex theMutex;
+  // Read data
+  if( ( numBytesRead = recv( cfd, data, sizeof( PlayerData ), 0 ) ) == -1 ) {
+    close( cfd );
+    this->logger->warn( CONNECTION_TIMEOUT );
+    DEBUG_WARN( CONNECTION_TIMEOUT );
+  }
+
+  if( numBytesRead > 0 ) {
+    if( numBytesRead != 1 ) {
+      theMutex.lock();
+      cout << "Nombre del jugador: " << notice( string( data->name ) ) << endl;
+      cout << "Color seleccionado: " << notice( string( data->color ) ) << endl;
+      theMutex.unlock();
+    }
+  } else {
+    return false;
+  }
+
+  return true;
+}
+
 void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   int numBytesRead;
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
@@ -155,7 +204,9 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
     timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
     timeout.tv_usec = 0;
     bool receiving = true;
-    mutex theMutex;
+    bool failed = false;
+    char id[2];
+
     while( receiving ) {
       // seteo el timeout de recepcion de mensajes
       if( setsockopt( cfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof( timeout ) ) < 0 ) {
@@ -163,31 +214,52 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	exit( 1 );
       }
 
-      if( ( numBytesRead = recv( cfd, msgToRecv, sizeof( Mensaje ), 0 ) ) == -1 ) {
-	close( cfd );
-	this->logger->warn( CONNECTION_TIMEOUT );
-	DEBUG_WARN( CONNECTION_TIMEOUT );
+      failed = !( this->receiveData( id, cfd, sizeof( id ) ) );
+
+      if( !failed ) {
+	string dataID( id );
+	// Receive data type based on dataID 
+	if( dataID == "PD" ) {
+	  PlayerData* data = new PlayerData;
+	  failed = !( this->receiveData( data , cfd ) );
+	  delete data;
+	} 
       }
 
-      if( numBytesRead > 0 ) {
-	if( numBytesRead != 1 ) {
-	  theMutex.lock();
-	  cout << endl << "FD cliente: " << notice( to_string( cfd ) ) << endl;
-	  cout << "Evento recibido: " << notice( to_string(msgToRecv->value) ) << endl;
-	  cout << "Jugador que envio el evento: " << notice( to_string(msgToRecv->playerID) ) << endl;
-
-	  map<int,Evento*>* clientMsgFD = new map<int,Evento*>();
-	  clientMsgFD->insert( pair<int,Evento*>( cfd, msgToRecv ) );
-	  this->eventQueue->push( clientMsgFD );
-	  theMutex.unlock();
-	}
-      } else {
+      if( failed ) {
 	receiving = false;
 	cout << endl << warning( "El cliente " ) << clientIP
 	  << warning( " se desconecto" ) << endl;
 	this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
 	this->closeClient( cfd );
       }
+
+      // Read data
+      /*if( ( numBytesRead = recv( cfd, msgToRecv, sizeof( Mensaje ), 0 ) ) == -1 ) {
+	close( cfd );
+	this->logger->warn( CONNECTION_TIMEOUT );
+	DEBUG_WARN( CONNECTION_TIMEOUT );
+	}
+
+	if( numBytesRead > 0 ) {
+	if( numBytesRead != 1 ) {
+	theMutex.lock();
+	cout << endl << "FD cliente: " << notice( to_string( cfd ) ) << endl;
+	cout << "Evento recibido: " << notice( to_string(msgToRecv->value) ) << endl;
+	cout << "Jugador que envio el evento: " << notice( to_string(msgToRecv->playerID) ) << endl;
+
+	map<int,Evento*>* clientMsgFD = new map<int,Evento*>();
+	clientMsgFD->insert( pair<int,Evento*>( cfd, msgToRecv ) );
+	this->eventQueue->push( clientMsgFD );
+	theMutex.unlock();
+	}
+	} else {
+	receiving = false;
+	cout << endl << warning( "El cliente " ) << clientIP
+	<< warning( " se desconecto" ) << endl;
+	this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
+	this->closeClient( cfd );
+	}*/
     }
   } else {
     cout << endl << warning( "El cliente " ) << clientIP << warning( " se rechazo" ) << endl;
@@ -225,14 +297,14 @@ void Server::processQueue() {
 
       this->logger->info( "Msj de cliente: " + to_string(it->second->value ) );
 
-//      msgIsValid = this->processMsg( string((it->second)->tipo), string(((it->second)->valor)) );
-//      if( msgIsValid ) {
-	respuesta->value = MENSAJE_CORRECTO;
-	this->logger->info( to_string(respuesta->value) );
-//      } else {
-//	respuesta->value = MENSAJE_INCORRECTO;
-//	this->logger->warn( respuesta->value );
-//      }
+      //      msgIsValid = this->processMsg( string((it->second)->tipo), string(((it->second)->valor)) );
+      //      if( msgIsValid ) {
+      respuesta->value = MENSAJE_CORRECTO;
+      this->logger->info( to_string(respuesta->value) );
+      //      } else {
+      //	respuesta->value = MENSAJE_INCORRECTO;
+      //	this->logger->warn( respuesta->value );
+      //      }
       thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
       tSending.detach();
 
@@ -305,7 +377,7 @@ void Server::closeClient( int cfd ) {
 void Server::shutdown() {
   if( this->connected ) 
     this->closeConnection();
-  
+
   logger->warn( SERVER_CLOSE );
   DEBUG_WARN( SERVER_CLOSE );
   exit( 0 );
