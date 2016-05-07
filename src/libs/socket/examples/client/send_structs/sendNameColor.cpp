@@ -13,8 +13,11 @@ int main() {
   Client* client = new Client( "127.0.0.1", "8000" );
   client->connectToServer();
   client->sendData( data );
+  client->sendData( data );
+  client->sendData( data );
 
   delete client;
   delete data;
+
   return 0;
 }

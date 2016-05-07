@@ -31,7 +31,8 @@ class Server {
     void processQueue();
 //    bool processMsg( string type, string value );
     void sendData( int clientFD, Evento* data, int dataLength );
-    void receiveData( PlayerData* data );
+    bool receiveData( char id[2], int clientFD, int size );
+    bool receiveData( PlayerData* data, int clientFD );
 
   public:
     Server( const char* configFileName );
