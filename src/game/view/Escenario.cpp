@@ -20,6 +20,12 @@ Escenario::Escenario(int fps){
 	inicializar();
 }
 
+Escenario::Escenario(bool isFullScreen) {
+	this->isFullScreen = isFullScreen;
+	setResolucion();
+	inicializar();
+}
+
 Escenario::Escenario(int width, int height) {
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;

@@ -12,6 +12,7 @@
 #include "../controller/Timer.h"
 #include "../view/MisilView.h"
 #include "../model/Resolucion.h"
+#include "../model/Posicion.h"
 
 using namespace std;
 
@@ -20,8 +21,7 @@ private:
 	int anchoFondo, largoFondo;
 
 	MisilView* vistaMisil;
-	int x, y;
-
+	Posicion* posicion;
 	bool viviendo;
 
 	Timer* t;
@@ -32,7 +32,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Misil(SDL_Renderer * renderer, int x, int y, Resolucion* resolucion);
+	Misil(SDL_Renderer * renderer, Posicion* posicion, Resolucion* resolucion);
 	virtual ~Misil();
 
 	void vivir(int x,int y);

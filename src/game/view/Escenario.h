@@ -73,6 +73,7 @@ private:
 public:
 	Escenario();
 	Escenario(int fps);
+	Escenario(bool isFullScreen);
 	Escenario(int width, int height);
 	Escenario(int width, int height, bool isFullScreen);
 	Escenario(int fps, int width, int height);
