@@ -27,6 +27,14 @@ Escenario::Escenario(int width, int height) {
 	inicializar();
 }
 
+Escenario::Escenario(int width, int height, bool isFullScreen) {
+	this->SCREEN_WIDTH = width;
+	this->SCREEN_HEIGHT = height;
+	this->isFullScreen = isFullScreen;
+	resolucion = new Resolucion(width, height);
+	inicializar();
+}
+
 Escenario::Escenario(int fps, int width, int height){
 	this->FRAMES_PER_SECOND = fps;
 	this->SCREEN_WIDTH = width;
@@ -188,8 +196,8 @@ void Escenario::run() {
 
 			if(evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q) {
 				quit = true;
-				cout << "El ancho es " << SCREEN_WIDTH << endl;
-				cout << "El alto es " << SCREEN_HEIGHT << endl;
+//				cout << "El ancho es " << SCREEN_WIDTH << endl;
+//				cout << "El alto es " << SCREEN_HEIGHT << endl;
 				break;
 			}
 
