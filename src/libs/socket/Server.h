@@ -3,6 +3,7 @@
 #include "../logger/Logger.h"
 #include "../../xml/conf/ServerConf.h"
 #include "../../game/events/Events.cpp"
+#include "../../libs/data/player_data.h"
 #include <queue>
 #include <map>
 #include <string>
@@ -30,6 +31,7 @@ class Server {
     void processQueue();
 //    bool processMsg( string type, string value );
     void sendData( int clientFD, Evento* data, int dataLength );
+    void receiveData( PlayerData* data );
 
   public:
     Server( const char* configFileName );
