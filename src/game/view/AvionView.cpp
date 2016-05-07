@@ -83,7 +83,7 @@ bool AvionView::cargarImagenDelAvion( string filename ){
 
 AvionView::AvionView(SDL_Renderer * unRenderer, string color){
 	anchoVista = 70;
-	largoVista = 80;
+	largoVista = 60;
 
 	cargarClips();
 

@@ -64,7 +64,7 @@ void Avion::moverEjeX(int velX) {
 
 void Avion::moverEjeY(int velY) {
 	posicion->mover(0,velY);
-	cout << "El largo fondo es: " << getLargoFondo() << endl;
+	//cout << "El largo fondo es: " << getLargoFondo() << endl;
 	if ((posicion->getY() - getLargo() < 0) || (posicion->getY() > getLargoFondo())) {
 		posicion->mover(0,-velY);
 	}
