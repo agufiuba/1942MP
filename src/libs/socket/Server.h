@@ -2,7 +2,7 @@
 #define SERVER_H
 #include "../logger/Logger.h"
 #include "../../xml/conf/ServerConf.h"
-#include "../mensaje/mensaje.h"
+#include "../../game/events/Events.cpp"
 #include <queue>
 #include <map>
 #include <string>
@@ -16,9 +16,9 @@ class Server {
     bool connected;
     bool allowConnections;
     bool processing;
-    queue<map<int, Mensaje*>*>* msgQueue;
+    queue<map<int, Evento*>*>* eventQueue;
     Logger* logger;
-    ServerConf* config;
+//    ServerConf* config;
     static const int BACKLOG = 5;
     static const int MAX_UNREACHABLE_TIME = 5;
     void listenForConnections( int clientFD, struct sockaddr_storage clientAddress );
@@ -28,8 +28,8 @@ class Server {
     void* getInAddr( struct sockaddr* sa );
     void closeConnection();
     void processQueue();
-    bool processMsg( string type, string value );
-    void sendData( int clientFD, Mensaje* data, int dataLength );
+//    bool processMsg( string type, string value );
+    void sendData( int clientFD, Evento* data, int dataLength );
 
   public:
     Server( const char* configFileName );

@@ -22,11 +22,28 @@ XML = ./src/libs/tinyxml2.cpp
 # conf
 CONF = ./src/xml/conf/* ./src/xml/parser/GameParser.cpp
 
+# logger
+LOGGER = ./src/libs/logger/Logger.cpp
+
+# palette
+PALETTE = ./src/libs/palette/palette.cpp
+
 # compiler
 COMPILER = -std=c++11
 
 # libraries to link
-LINKER = -lSDL2 -lX11 -lSDL_ttf
+
+LINKER = -lSDL2 -lX11 -lSDL_ttf -pthread
+
+# event
+EVENT = $(GAME_DIR)/events/Events.cpp $(GAME_DIR)/events/CompanionEvent.cpp
+
+# client
+CLIENT = $(GAME_DIR)/client/GameClient.cpp ./src/libs/socket/Client.cpp
+
+# server
+SERVER = ./src/libs/socket/Server.cpp
+
 
 # game
 GAME = $(GAME_DIR)/1942MultiPlayer.cpp
@@ -60,7 +77,7 @@ CONTROLLER = $(CONTROLLER_CONTROLLER) $(PLAYERS_CONTROLLERS) $(MISILES_CONTROLLE
 # executable name
 EXE = 1942MultiPlayer.exe
 
-OBJS = $(MODEL) $(VIEW) $(CONTROLLER) $(CONF) $(XML) ./$(GAME)
+OBJS = $(MODEL) $(VIEW) $(CONTROLLER) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(CLIENT) $(SERVER) $(EVENT) $(GAME)
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)
