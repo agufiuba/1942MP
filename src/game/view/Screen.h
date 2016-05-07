@@ -23,7 +23,7 @@ class Screen {
     ~Screen();
     void loadTexture( string id, string path );
     void loadRectangle( string id, int x, int y, int width, int height );
-    void loadText( string id, string value );
+    void loadText( string id, string value, SDL_Color textColor = { 0, 0, 0, 255 } );
     void loadFont( const char* FONT_PATH );
     void renderTexture( string id, int x, int y );
     void renderRectangle( string id, bool outline = false );

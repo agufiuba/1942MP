@@ -14,12 +14,23 @@ Client::Client( const char* configFileName ) {
   this->socketFD = 0;
   this->connected = false;
   this->logger = Logger::instance();
+
+//  this->config = XMLParser::parseClientConf( configFileName );
+}
+
+Client::Client( string ip, string puerto ) {
+  this->socketFD = 0;
+  this->connected = false;
+  this->logger = Logger::instance();
+  this->ip = ip;
+  this->puerto = puerto;
+
 //  this->config = XMLParser::parseClientConf( configFileName );
 }
 
 Client::~Client() {}
 
-void Client::connectToServer() {
+bool Client::connectToServer() {
   mutex theMutex;
 
   if( this->connected ) {
@@ -27,7 +38,7 @@ void Client::connectToServer() {
     theMutex.lock();
     DEBUG_WARN( CONNECTION_ACTIVE );
     theMutex.unlock();
-    return;
+    return false;
   }
 
   const int MAX_DATA_SIZE = 10000; /* Max. number of bytes for recv */
@@ -35,22 +46,20 @@ void Client::connectToServer() {
   char buf[ MAX_DATA_SIZE ]; /* Received text buffer  */
   struct sockaddr_in server; /* Server address info */
 
-  // HARDCODEADO
-  string serverIP = "127.0.0.1";
-
   /* Create socket */
   if ( ( this->socketFD = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ) {
     this->logger->error( SOCKET_ERROR );
-    exit( -1 );
+    //exit( -1 );
+    return false;
   }
 
   server.sin_family = AF_INET;
 
-  // HARDCODEADO
-  server.sin_port = htons(8000);
-  if ((inet_aton(serverIP.c_str(), &server.sin_addr)) == 0) {
+  server.sin_port = htons(stoi(this->puerto));
+  if ((inet_aton(this->ip.c_str(), &server.sin_addr)) == 0) {
     this->logger->error( "IP invalido" );
-    exit( -1 );
+    return false;
+    //exit( -1 );
   }
 
   bzero( &( server.sin_zero ), 8 );
@@ -58,27 +67,28 @@ void Client::connectToServer() {
   /* Connect to server */
   short triesLeft = 3;
 
-  while( !( this->connected ) && triesLeft ) {
-    if( connect( this->socketFD, (struct sockaddr*) &server, sizeof(struct sockaddr) ) == -1 ) {
-      triesLeft--;
-      /* 5s delay for retry */
-      if ( triesLeft ) {
-	this->logger->error( CONNECTION_RETRY );
-	theMutex.lock();
-	DEBUG_WARN( CONNECTION_RETRY );
-	theMutex.unlock();
-	usleep( 5000000 );
-      } else {
-	this->logger->warn( CONNECTION_ERROR( serverIP ) );
-	theMutex.lock();
-	DEBUG_PRINT( CONNECTION_ERROR( serverIP ) );
-	theMutex.unlock();
-	return;
-      }
-    } else {
-      this->connected = true;
-    }
-  }
+	while (!(this->connected) && triesLeft) {
+		if (connect(this->socketFD, (struct sockaddr*) &server,
+				sizeof(struct sockaddr)) == -1) {
+			triesLeft--;
+			/* 5s delay for retry */
+			if (triesLeft) {
+				this->logger->error( CONNECTION_RETRY);
+				theMutex.lock();
+				DEBUG_WARN(CONNECTION_RETRY);
+				theMutex.unlock();
+				usleep(1000000);
+			} else {
+				this->logger->warn(CONNECTION_ERROR(this->ip));
+				theMutex.lock();
+				DEBUG_PRINT(CONNECTION_ERROR( this->ip ));
+				theMutex.unlock();
+				return false;
+			}
+		} else {
+			this->connected = true;
+		}
+	}
 
   timeval timeout;
   timeout.tv_sec = 0;
@@ -101,9 +111,9 @@ void Client::connectToServer() {
     close( this->socketFD );
   }
   if( numBytesRead > 0 ) {
-    this->logger->info( CONNECTION_SUCCESS( serverIP ) );
+    this->logger->info( CONNECTION_SUCCESS( this->ip ) );
     theMutex.lock();
-    DEBUG_PRINT( CONNECTION_SUCCESS( serverIP ) );
+    DEBUG_PRINT( CONNECTION_SUCCESS( this->ip ) );
     buf[ numBytesRead ] = '\0';
     string recvMsg = string( buf );
     this->logger->info( SERVER_MSG( recvMsg ) );
@@ -124,8 +134,10 @@ void Client::connectToServer() {
     thread tCheckAliveSend( &Client::checkAliveSend, this );
     tCheckAliveSend.detach();
 
-    thread tReceiving( &Client::receiving, this,  MAX_DATA_SIZE, serverIP.c_str() );
+    thread tReceiving( &Client::receiving, this,  MAX_DATA_SIZE, this->ip.c_str() );
     tReceiving.detach();
+
+    return true;
   }
 }
 
