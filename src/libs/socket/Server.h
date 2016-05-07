@@ -18,6 +18,8 @@ class Server {
     bool allowConnections;
     bool processing;
     queue<map<int, Evento*>*>* eventQueue;
+    map<string, int> playerFD;
+    map<string, string> playerColor;
     Logger* logger;
 //    ServerConf* config;
     static const int BACKLOG = 5;
@@ -33,6 +35,7 @@ class Server {
     void sendData( int clientFD, Evento* data, int dataLength );
     bool receiveData( char id[2], int clientFD, int size );
     bool receiveData( PlayerData* data, int clientFD );
+    void addPlayer( PlayerData* data, int clientFD );
 
   public:
     Server( const char* configFileName );

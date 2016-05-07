@@ -133,6 +133,28 @@ void* Server::getInAddr( struct sockaddr* sa ) {
   }
 }
 
+void Server::addPlayer( PlayerData* data, int cfd ) {
+  PlayerData* response = new PlayerData;
+  string validName = "no", validColor = "yes";
+  mutex theMutex;
+  
+  string selectedID( data->name );
+  string selectedColor( data->color );
+
+  theMutex.lock();
+  // if new player
+  if( this->playerFD.find( selectedID ) == this->playerFD.end() ) {
+    this->playerFD[ selectedID ] = cfd;
+    this->playerColor[ selectedID ] = selectedColor;
+    theMutex.unlock();
+    validName = "yes";
+  }
+
+  // Fill response struct
+  strcpy( response, validName.c_str() );
+  strcpy( response, validColor.c_str() );
+}
+
 void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   int numBytesRead;
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
