@@ -9,6 +9,8 @@ Game::Game( uint32_t sdlFlags ) {
   this->windowHeight = 600;
   this->windowTitle = "1942MP Arcade";
   this->fps = 10;
+  this->serverIP = "127.0.0.1";
+  this->serverPort = "8080";
 }
 
 Game::~Game() {
@@ -19,6 +21,7 @@ void Game::start() {
   if( this->sdlHandler->createWindow( this->windowTitle.c_str(), this->windowWidth, this->windowHeight ) ) {
     this->running = true;
     this->loadConnectionScreen();
+    this->loadValidationScreen();
   }
 }
 
@@ -37,15 +40,12 @@ void Game::setWindowTitle( string title ) {
 void Game::loadConnectionScreen() {
   SDL_Event e;
   Timer timer;
-
-  string serverIP = "127.0.0.1";
-  string serverPort = "8080";
   string acceptButtonText = "ACEPTAR";
 
-  Screen* initialScreen = new Screen( sdlHandler );
+  Screen* initialScreen = new Screen( this->sdlHandler );
   initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
-  initialScreen->loadText( "serverIP", serverIP );
-  initialScreen->loadText( "serverPort", serverPort );
+  initialScreen->loadText( "serverIP", this->serverIP );
+  initialScreen->loadText( "serverPort", this->serverPort );
   initialScreen->loadText( "accept", "ACEPTAR" );
 
   int logoCenter = ( this->windowWidth - initialScreen->getTextureWidth( "logo" ) ) / 2;
@@ -60,7 +60,6 @@ void Game::loadConnectionScreen() {
   bool runningScreen = true;
   bool firstPromptSelected = true;
   bool clicked = false;
-  bool accept = false;
 
   // Create prompts
   initialScreen->loadRectangle( "promptIP", promptCenter, 300, 260, 50 );
@@ -87,25 +86,14 @@ void Game::loadConnectionScreen() {
 	}
 	//Handle backspace
 	else if( firstPromptSelected ) {
-	  if( e.key.keysym.sym == SDLK_BACKSPACE && serverIP.length() > 0 ) {
+	  if( e.key.keysym.sym == SDLK_BACKSPACE && this->serverIP.length() > 0 ) {
 	    //lop off character
-	    serverIP.pop_back();
+	    this->serverIP.pop_back();
 	    renderText = true;
 	  }
-	} else if( e.key.keysym.sym == SDLK_BACKSPACE && serverPort.length() > 0 ) {
+	} else if( e.key.keysym.sym == SDLK_BACKSPACE && this->serverPort.length() > 0 ) {
 	  //lop off character
-	  serverPort.pop_back();
-	  renderText = true;
-	}
-	//Handle copy
-	else if( e.key.keysym.sym == SDLK_c && SDL_GetModState() & KMOD_CTRL )
-	{
-	  SDL_SetClipboardText( serverIP.c_str() );
-	}
-	//Handle paste
-	else if( e.key.keysym.sym == SDLK_v && SDL_GetModState() & KMOD_CTRL )
-	{
-	  serverIP = SDL_GetClipboardText();
+	  this->serverPort.pop_back();
 	  renderText = true;
 	}
       }
@@ -119,12 +107,12 @@ void Game::loadConnectionScreen() {
 	  //Append character
 	  if( firstPromptSelected ) {
 	    // Character limit for IP
-	    if( serverIP.length() < 15 )
-	      serverIP += e.text.text;
+	    if( this->serverIP.length() < 15 )
+	      this->serverIP += e.text.text;
 	  } else {
 	    // Character limit for port 
-	    if( serverPort.length() < 5 )
-	      serverPort += e.text.text;
+	    if( this->serverPort.length() < 5 )
+	      this->serverPort += e.text.text;
 	  }
 	  renderText = true;
 	}
@@ -141,14 +129,14 @@ void Game::loadConnectionScreen() {
     }
 
     //Rerender text if needed
-    if( renderText  && !accept )
+    if( renderText )
     {
       if( firstPromptSelected ) {
 	//Text is not empty
-	if( serverIP != "" )
+	if( this->serverIP != "" )
 	{
 	  //Render new text
-	  initialScreen->loadText( "serverIP", serverIP );
+	  initialScreen->loadText( "serverIP", this->serverIP );
 	}
 	//Text is empty
 	else
@@ -159,10 +147,10 @@ void Game::loadConnectionScreen() {
       } else {
 
 	//Text is not empty
-	if( serverPort != "" )
+	if( this->serverPort != "" )
 	{
 	  //Render new text
-	  initialScreen->loadText( "serverPort", serverPort );
+	  initialScreen->loadText( "serverPort", this->serverPort );
 	}
 	//Text is empty
 	else
@@ -179,53 +167,47 @@ void Game::loadConnectionScreen() {
     // Render logo
     initialScreen->renderTexture( "logo", logoCenter, 90 );
 
-    if( !accept ) {
-      // Set prompt color
-      initialScreen->setRenderDrawColor( 255, 255, 255, 255 );
-      // Render prompts
-      initialScreen->renderRectangle( "promptIP" );
-      initialScreen->renderRectangle( "promptPort" );
+    // Set prompt color
+    initialScreen->setRenderDrawColor( 255, 255, 255, 255 );
+    // Render prompts
+    initialScreen->renderRectangle( "promptIP" );
+    initialScreen->renderRectangle( "promptPort" );
 
-      initialScreen->setRenderDrawColor( 160, 160, 160, 255 );
-      if( clicked ) {
-	clicked = false;
-	if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) 
-	    && ( mouseY > 475 ) && ( mouseY < ( 475 + 50 ) ) ) {
-	  initialScreen->setRenderDrawColor( 86, 86, 86, 255 );
-	  accept = true;
-	}
+    initialScreen->setRenderDrawColor( 160, 160, 160, 255 );
+    if( clicked ) {
+      clicked = false;
+      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) 
+	  && ( mouseY > 475 ) && ( mouseY < ( 475 + 50 ) ) ) {
+	runningScreen = false;
       }
-      initialScreen->renderRectangle( "button" );
-
-      // Set outline color
-      initialScreen->setRenderDrawColor( 19, 144, 27, 255 );
-
-      if( firstPromptSelected ) {
-	initialScreen->loadRectangle( "outline", promptCenter, IPPromptOutline, 260, 50 );
-	initialScreen->loadRectangle( "outline2", promptCenter + 1, IPPromptOutline2, 258, 48 );
-	initialScreen->loadRectangle( "outline3", promptCenter + 2, IPPromptOutline3, 256, 46 );
-      } else {
-	initialScreen->loadRectangle( "outline", promptCenter, portPromptOutline, 260, 50 );
-	initialScreen->loadRectangle( "outline2", promptCenter + 1, portPromptOutline2, 258, 48 );
-	initialScreen->loadRectangle( "outline3", promptCenter + 2, portPromptOutline3, 256, 46 );
-      }
-
-      // Render outlines
-      initialScreen->renderRectangle( "outline", true );
-      initialScreen->renderRectangle( "outline2", true );
-      initialScreen->renderRectangle( "outline3", true );
-
-      // Render text textures
-      initialScreen->renderTexture( "serverIP", textCenter, 305 );
-      initialScreen->renderTexture( "serverPort", textCenter, 380 );
-      initialScreen->renderTexture( "accept", buttonTextCenter, 480 );
     }
+    initialScreen->renderRectangle( "button" );
+
+    // Set outline color
+    initialScreen->setRenderDrawColor( 19, 144, 27, 255 );
+
+    if( firstPromptSelected ) {
+      initialScreen->loadRectangle( "outline", promptCenter, IPPromptOutline, 260, 50 );
+      initialScreen->loadRectangle( "outline2", promptCenter + 1, IPPromptOutline2, 258, 48 );
+      initialScreen->loadRectangle( "outline3", promptCenter + 2, IPPromptOutline3, 256, 46 );
+    } else {
+      initialScreen->loadRectangle( "outline", promptCenter, portPromptOutline, 260, 50 );
+      initialScreen->loadRectangle( "outline2", promptCenter + 1, portPromptOutline2, 258, 48 );
+      initialScreen->loadRectangle( "outline3", promptCenter + 2, portPromptOutline3, 256, 46 );
+    }
+
+    // Render outlines
+    initialScreen->renderRectangle( "outline", true );
+    initialScreen->renderRectangle( "outline2", true );
+    initialScreen->renderRectangle( "outline3", true );
+
+    // Render text textures
+    initialScreen->renderTexture( "serverIP", textCenter, 305 );
+    initialScreen->renderTexture( "serverPort", textCenter, 380 );
+    initialScreen->renderTexture( "accept", buttonTextCenter, 480 );
+
     //Update screen
     sdlHandler->updateWindow();
-
-    // Accept button clicked
-    if( accept ) {
-    }
 
     if( timer.tiempoActual() < 1000 / this->fps ){
       SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
@@ -233,4 +215,55 @@ void Game::loadConnectionScreen() {
   }
   //Disable text input
   SDL_StopTextInput();
+  delete initialScreen;
+}
+
+void Game::loadValidationScreen() {
+  if( !( this->running ) ) return;
+  bool runningScreen = true; 
+  SDL_Event e;
+  Timer timer;
+  string connectingText = "Conectando al servidor...";
+  string failureText = "No se pudo conectar al servidor";
+
+  Screen* validationScreen = new Screen( this->sdlHandler );
+  validationScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
+  validationScreen->loadText( "connecting", connectingText, { 255, 255, 255, 255 } );
+
+  int logoCenter = ( this->windowWidth - validationScreen->getTextureWidth( "logo" ) ) / 2;
+  int promptCenter = logoCenter - 20;
+  int textCenter = promptCenter;
+
+  // Enable text input
+  SDL_StartTextInput();
+
+  while( runningScreen ) {
+    timer.correr();
+    bool renderText = false;
+    // Get events
+    while( this->sdlHandler->nextEvent( &e ) ) {
+      if( e.type == SDL_QUIT ) {
+	runningScreen = false;
+	this->running = false;
+      }
+    }
+    // Set window background
+    this->sdlHandler->setWindowBG(0, 0, 0);
+
+    // Render logo
+    validationScreen->renderTexture( "logo", logoCenter, 90 );
+
+    // Render text textures
+    validationScreen->renderTexture( "connecting", textCenter, 305 );
+
+    //Update screen
+    this->sdlHandler->updateWindow();
+
+    if( timer.tiempoActual() < 1000 / this->fps ){
+      SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
+    }
+  }
+  //Disable text input
+  SDL_StopTextInput();
+  delete validationScreen;
 }

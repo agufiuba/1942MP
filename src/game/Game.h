@@ -11,7 +11,10 @@ class Game {
     int windowWidth;
     int windowHeight;
     string windowTitle;
+    string serverIP;
+    string serverPort;
     void loadConnectionScreen();
+    void loadValidationScreen();
 
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );

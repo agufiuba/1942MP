@@ -44,9 +44,9 @@ void Screen::loadRectangle( string id, int x, int y, int width, int height ) {
   this->rectangles[ id ] = r;
 }
 
-void Screen::loadText( string id, string value ) {
+void Screen::loadText( string id, string value, SDL_Color textColor ) {
   Texture* t = new Texture( this->renderer );
-  if( t->loadFromRenderedText( value, this->fontFamily, this->fontColor ) ) {
+  if( t->loadFromRenderedText( value, this->fontFamily, textColor ) ) {
     this->addTexture( id, t );
   }
 }
