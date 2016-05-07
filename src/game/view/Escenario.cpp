@@ -152,7 +152,7 @@ void Escenario::run() {
 
 	setFondosVivibles();
 
-	IController* control = new Controller(unAvion, gRenderer);
+	IController* control = new Controller(unAvion, gRenderer, resolucion);
 	IController* otroControl = new PlayersController(otroAvion, gRenderer);
 	IController* otroControl2 = new PlayersController(otroAvion2, gRenderer);
 	IController* otroControl3 = new PlayersController(otroAvion3, gRenderer);

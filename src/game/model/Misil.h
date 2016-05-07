@@ -11,12 +11,13 @@
 #include "Vivible.h"
 #include "../controller/Timer.h"
 #include "../view/MisilView.h"
+#include "../model/Resolucion.h"
 
 using namespace std;
 
 class Misil: public Vivible {
 private:
-	int anchoFondo, largoFondo; //TODO: esto estaria bueno poder sacarlo del screen
+	int anchoFondo, largoFondo;
 
 	MisilView* vistaMisil;
 	int x, y;
@@ -31,7 +32,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Misil(SDL_Renderer * renderer, int x, int y);
+	Misil(SDL_Renderer * renderer, int x, int y, Resolucion* resolucion);
 	virtual ~Misil();
 
 	void vivir(int x,int y);

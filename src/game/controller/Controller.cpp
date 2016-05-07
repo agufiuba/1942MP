@@ -2,13 +2,14 @@
 
 using namespace std;
 
-Controller::Controller(Vivible * unObj,SDL_Renderer* &renderer){
+Controller::Controller(Vivible * unObj,SDL_Renderer* &renderer, Resolucion* resolucion){
 	velocidadStandard = 7;
 	obj = unObj;
 	obj->setVelocidadStandard(velocidadStandard);
 	velX = 0;
 	velY = 0;
-  controlDeMisiles = new ControllerMissiles(renderer);
+	resolucionPantalla = resolucion;
+ 	controlDeMisiles = new ControllerMissiles(renderer);
 }
 
 Controller::~Controller(){
@@ -30,7 +31,7 @@ void Controller::press(SDL_Event *event){
 
 						case SDLK_SPACE:
 							if (!obj->haciendoVueltereta())
-								controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX(), obj->getY());
+								controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX(), obj->getY(), resolucionPantalla);
 							break;
         }
     }

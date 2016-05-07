@@ -12,6 +12,7 @@
 #include "SDL2/SDL.h"
 #include "../model/Avion.h"
 #include "../model/Misil.h"
+#include "../model/Resolucion.h"
 
 #include <iostream>
 
@@ -23,11 +24,11 @@ class ControllerMissiles{
 		virtual ~ControllerMissiles();
 		void press(SDL_Event *event);
 		void hacerVivir();
-		void crearNuevoMisilEnPosicion(int x, int y);
+		void crearNuevoMisilEnPosicion(int x, int y, Resolucion* resolucion);
 	private:
 		CompositeVivibles* vivibles;
 		SDL_Renderer* rendererMisil;
-		int distanciaDeDesplazamiento = 5;//Todo sacarlo del hardcodeo
+		int distanciaDeDesplazamiento = 25;//Todo sacarlo del hardcodeo
 
 };
 

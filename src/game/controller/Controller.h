@@ -12,6 +12,7 @@
 #include "IController.h"
 #include "ControllerMissiles.h"
 #include "../model/Avion.h"
+#include "../model/Resolucion.h"
 
 #include <iostream>
 #include <string>
@@ -21,12 +22,12 @@ class Controller : public IController {
 private:
 	Vivible* obj;
 	int velX,velY;
-
+	Resolucion* resolucionPantalla;
 	ControllerMissiles* controlDeMisiles;
 	int velocidadStandard;
 
 public:
-	Controller(Vivible* unObj, SDL_Renderer* &renderer);
+	Controller(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion);
 	~Controller();
 	void press(SDL_Event *event);
 	void hacerVivir();

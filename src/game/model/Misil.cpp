@@ -8,7 +8,7 @@
 #include "Misil.h"
 using namespace std;
 
-Misil::Misil(SDL_Renderer* renderer, int x, int y) {
+Misil::Misil(SDL_Renderer* renderer, int x, int y, Resolucion* resolucion) {
 	vistaMisil = new MisilView(renderer);
 
 	viviendo = true;
@@ -16,8 +16,8 @@ Misil::Misil(SDL_Renderer* renderer, int x, int y) {
 	this->x = x;
 	this->y = y;
 
-	anchoFondo = 600; //TODO: hay que cambiarlo para que pueda conseguirlo desde el escenario
-	largoFondo = 600;
+	anchoFondo = resolucion->getWidthScreen();
+	largoFondo = resolucion->getHeightScreen();
 
 	t = new Timer();
 
