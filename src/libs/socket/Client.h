@@ -27,7 +27,7 @@ public:
     void disconnectFromServer();
     void shutdownConnection();
 //    vector<Evento*> getEventos();
-//    void sendCycle();
+    void sendCycle();
     ~Client();
 };
 #endif

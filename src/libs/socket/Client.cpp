@@ -119,7 +119,6 @@ bool Client::connectToServer() {
     this->logger->info( SERVER_MSG( recvMsg ) );
     DEBUG_PRINT( SERVER_MSG( recvMsg ) );
     theMutex.unlock();
-    return true;
   }
   if( numBytesRead == 0 ) {
     this->logger->warn( CONNECTION_LOST );
@@ -137,6 +136,8 @@ bool Client::connectToServer() {
 
     thread tReceiving( &Client::receiving, this,  MAX_DATA_SIZE, this->ip.c_str() );
     tReceiving.detach();
+
+    return true;
   }
 }
 
