@@ -33,7 +33,7 @@ private:
 	Resolucion* resolucion;
 
 	bool inicioCorrectamente;
-	bool isFullScreen = true;
+	bool isFullScreen = false;
 
 	int SCREEN_WIDTH;
 	int SCREEN_HEIGHT;
@@ -73,7 +73,9 @@ private:
 public:
 	Escenario();
 	Escenario(int fps);
+	Escenario(bool isFullScreen);
 	Escenario(int width, int height);
+	Escenario(int width, int height, bool isFullScreen);
 	Escenario(int fps, int width, int height);
 	~Escenario();
 	void run();

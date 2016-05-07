@@ -8,13 +8,12 @@
 #include "Misil.h"
 using namespace std;
 
-Misil::Misil(SDL_Renderer* renderer, int x, int y, Resolucion* resolucion) {
+Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion) {
 	vistaMisil = new MisilView(renderer);
 
 	viviendo = true;
 
-	this->x = x;
-	this->y = y;
+	this->posicion = posicion;
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
@@ -33,13 +32,13 @@ void Misil::vivir(int x,int velY){
 }
 
 void Misil::mostrar(){
-	vistaMisil->mostrar(this->x, this->y);
+	vistaMisil->mostrar(this->posicion->getX(), this->posicion->getYsdl());
 }
 
 void Misil::moverEjeY(int velY){
-	y -= velY;
-
-	if ((y < 0) || (y + getLargo() > getLargoFondo())) {
+	posicion->mover(0, velY);
+	int y = posicion->getY();
+	if (y + getLargo() > getLargoFondo()) {
 		viviendo = false;
 	}
 }

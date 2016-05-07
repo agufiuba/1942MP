@@ -20,9 +20,23 @@ Escenario::Escenario(int fps){
 	inicializar();
 }
 
+Escenario::Escenario(bool isFullScreen) {
+	this->isFullScreen = isFullScreen;
+	setResolucion();
+	inicializar();
+}
+
 Escenario::Escenario(int width, int height) {
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
+	resolucion = new Resolucion(width, height);
+	inicializar();
+}
+
+Escenario::Escenario(int width, int height, bool isFullScreen) {
+	this->SCREEN_WIDTH = width;
+	this->SCREEN_HEIGHT = height;
+	this->isFullScreen = isFullScreen;
 	resolucion = new Resolucion(width, height);
 	inicializar();
 }
@@ -145,7 +159,7 @@ void Escenario::run() {
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
-	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(1000, 100), azul);
+	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(100, 100), azul);
 	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(800, 100), amarillo);
 	Vivible* otroAvion2 = new Avion(gRenderer, resolucion, new Posicion(600, 100), rojo);
 	Vivible* otroAvion3 = new Avion(gRenderer, resolucion, new Posicion(400, 100), verde);
@@ -169,7 +183,7 @@ void Escenario::run() {
 	bool quit = false;
 
 	int i = 0; //hardcodeo
-
+	Posicion* posAvion = new Posicion(0,0);
 	while (!quit) {
 
 		//hardcodeo para probar la desconexion
@@ -188,6 +202,8 @@ void Escenario::run() {
 
 			if(evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q) {
 				quit = true;
+//				cout << "El ancho es " << SCREEN_WIDTH << endl;
+//				cout << "El alto es " << SCREEN_HEIGHT << endl;
 				break;
 			}
 
@@ -205,6 +221,8 @@ void Escenario::run() {
 		}
 
 		actualizarEscenario(posicionEscenario);
+		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
+		posAvion->print();
 		aplicarFPS(start);
 
 	}

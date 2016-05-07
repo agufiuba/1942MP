@@ -54,7 +54,9 @@ int Avion::getLargo() {
 
 void Avion::moverEjeX(int velX) {
 	posicion->mover(velX,0);
-
+//	cout << "El ancho avion es: " << getAncho() << endl;
+//	cout << "El ancho fondo es: " << getAnchoFondo() << endl;
+//	cout << "El largo fondo es: " << getLargoFondo() << endl;
 	if ((posicion->getX() < 0) || (posicion->getX() + getAncho() > getAnchoFondo())) {
 		posicion->mover(-velX,0);
 	}
@@ -62,7 +64,7 @@ void Avion::moverEjeX(int velX) {
 
 void Avion::moverEjeY(int velY) {
 	posicion->mover(0,velY);
-
+	//cout << "El largo fondo es: " << getLargoFondo() << endl;
 	if ((posicion->getY() - getLargo() < 0) || (posicion->getY() > getLargoFondo())) {
 		posicion->mover(0,-velY);
 	}
@@ -146,7 +148,7 @@ int Avion::getX(){
 
 
 int Avion::getY(){
-	return posicion->getYsdl();
+	return posicion->getY();
 }
 
 bool Avion::aunVive(){
