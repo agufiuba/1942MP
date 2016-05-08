@@ -116,10 +116,9 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir(0,0);
 	}
+	myControl->hacerVivir();
+	controllers->hacerVivir();
 
-	for (int i = 0; i < controllersList.size(); i++) {
-		controllersList[i]->hacerVivir();
-	}
 	SDL_RenderPresent(gRenderer);
 }
 
@@ -151,6 +150,21 @@ void Escenario::setFondosVivibles() {
 
 }
 
+void Escenario::setOtrosAviones() {
+	char key[] = "key";
+	char gon[] = "gon";
+	char max[] = "max";
+
+	Vivible* otroAvion1 = new Avion(key, gRenderer, resolucion, new Posicion(800, 100), amarillo);
+	Vivible* otroAvion2 = new Avion(gon, gRenderer, resolucion, new Posicion(600, 100), rojo);
+	Vivible* otroAvion3 = new Avion(max, gRenderer, resolucion, new Posicion(400, 100), verde);
+
+	controllers = new HandlerPlayersControllers(gRenderer);
+	controllers->setPlayer((Avion*)otroAvion1);
+	controllers->setPlayer((Avion*)otroAvion2);
+	controllers->setPlayer((Avion*)otroAvion3);
+}
+
 void Escenario::run() {
 	if (!inicioCorrectamente) {
 		return ;
@@ -159,22 +173,15 @@ void Escenario::run() {
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
-	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(100, 100), azul);
-	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(800, 100), amarillo);
-	Vivible* otroAvion2 = new Avion(gRenderer, resolucion, new Posicion(600, 100), rojo);
-	Vivible* otroAvion3 = new Avion(gRenderer, resolucion, new Posicion(400, 100), verde);
+	char ray[] = "ray";
+
+
+	Vivible* unAvion = new Avion(ray, gRenderer, resolucion, new Posicion(200, 100), azul);
 
 	setFondosVivibles();
+	setOtrosAviones();
 
-	IController* control = new Controller(unAvion, gRenderer, resolucion);
-	IController* otroControl = new PlayersController(otroAvion, gRenderer);
-	IController* otroControl2 = new PlayersController(otroAvion2, gRenderer);
-	IController* otroControl3 = new PlayersController(otroAvion3, gRenderer);
-
-	controllersList.push_back(control);
-	controllersList.push_back(otroControl);
-	controllersList.push_back(otroControl2);
-	controllersList.push_back(otroControl3);
+	myControl = new Controller(unAvion, gRenderer, resolucion);
 
 	Posicion* posicionEscenario = new Posicion(0, pixelesArecorrer);
 	actualizarEscenario(posicionEscenario);
@@ -182,28 +189,26 @@ void Escenario::run() {
 	Uint32 start;
 	bool quit = false;
 
-	int i = 0; //hardcodeo
+	int i = 0;
 	Posicion* posAvion = new Posicion(0,0);
 	while (!quit) {
 
-		//hardcodeo para probar la desconexion
-		i++;
-		if (i>200){
-			otroAvion->desconectar();
-		}// fin
-
 		start = SDL_GetTicks();
 		while( SDL_PollEvent(&evento) != 0 ) {
-			control->press(&evento);
 
-			otroControl->press(&evento);
-			otroControl2->press(&evento);
-			otroControl3->press(&evento);
+			myControl->press(&evento);
+			i++;
+			if (i > 15) {
+				controllers->mover("max",'U');
+				controllers->mover("max",'R');
+				i = 0;
+			}
+//			otroControl->press(&evento);
+//			otroControl2->press(&evento);
+//			otroControl3->press(&evento);
 
 			if(evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q) {
 				quit = true;
-//				cout << "El ancho es " << SCREEN_WIDTH << endl;
-//				cout << "El alto es " << SCREEN_HEIGHT << endl;
 				break;
 			}
 
@@ -226,7 +231,7 @@ void Escenario::run() {
 		aplicarFPS(start);
 
 	}
-	delete control;
+	delete myControl;
 	posicionEscenario->~Posicion();
 }
 

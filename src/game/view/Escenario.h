@@ -10,17 +10,18 @@
 #include <iostream>
 #include <string>
 
+#include <vector>
 #include "Texture.h"
+#include "Isla.h"
 #include "../model/Resolucion.h"
 #include "../model/Posicion.h"
 #include "../model/Avion.h"
+#include "../model/Vivible.h"
 #include "../controller/IController.h"
 #include "../controller/Controller.h"
 #include "../controller/PlayersController.h"
 #include "../controller/Timer.h"
-#include "../model/Vivible.h"
-#include "Isla.h"
-#include <vector>
+#include "../controller/HandlerPlayersControllers.h"
 
 class Escenario {
 
@@ -60,8 +61,10 @@ private:
 	const char* DIR_FONDO_PANTALLA = "src/game/images/fondoPantalla4000x4000Marcado.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
 
-	vector<IController*> controllersList;
+	//vector<IController*> controllersList;
 	vector<Vivible*> fondosVivibles;
+	IController* myControl;
+	HandlerPlayersControllers* controllers;
 
 	void inicializar();
 	void setResolucion();
@@ -69,6 +72,7 @@ private:
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
 	void setFondosVivibles();
+	void setOtrosAviones();
 
 public:
 	Escenario();

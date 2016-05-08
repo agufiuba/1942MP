@@ -30,6 +30,7 @@ public:
 	~PlayersController();
 	void press(SDL_Event *event);
 	void hacerVivir();
+	//Vivible* getVivibile();
 };
 
 #endif /* SRC_CONTROL_PLAYERS_CONTROLLER_H_ */
