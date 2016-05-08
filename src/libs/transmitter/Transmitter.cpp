@@ -3,10 +3,8 @@
 #include "../palette/palette.h"
 #define DEBUG 1
 #include "../debug/dg_msg.h"
-#include <string>
 #include <mutex>
 #include <iostream>
-using namespace std;
 
 Transmitter::Transmitter( int peerFD, Logger* logger ) {
   this->peerFD = peerFD;
@@ -15,14 +13,26 @@ Transmitter::Transmitter( int peerFD, Logger* logger ) {
 
 Transmitter::~Transmitter() {}
 
-bool Transmitter::sendData( PlayerData* data ) {
-  char id[2] = { 'P', 'D' };
-  if( send( this->peerFD, id, sizeof( id ), 0 ) == -1 ) {
+bool Transmitter::sendDataID( string id ) {
+  char dataID[2];
+  strcpy( dataID, id.c_str() ); 
+  
+  if( send( this->peerFD, dataID, sizeof( dataID ), 0 ) == -1 ) {
     this->logger->error( SEND_FAIL );
     DEBUG_WARN( SEND_FAIL );
     return false;
   }
 
+  return true;
+}
+
+bool Transmitter::sendData( PlayerData* data ) {
+  // Send data id
+  if( !( this->sendDataID( "PD" ) ) ) {
+    return false;
+  }
+
+  // Send data
   if( send( this->peerFD, data, sizeof( PlayerData ), 0 ) == -1 ) {
     this->logger->error( SEND_FAIL );
     DEBUG_WARN( SEND_FAIL );
