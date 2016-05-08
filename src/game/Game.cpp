@@ -476,10 +476,10 @@ void Game::loadselectionPlane() {
 		// Set window background
 		sdlHandler->setWindowBG(0, 0, 0);
 
-		int inputBluePlaneIdPosX = logoCenter-40;
-		int inputRedPlaneIdPosX = logoCenter+40;
-		int inputGreenPlaneIdPosX = logoCenter+120;
-		int inputYellowPlaneIdPosX = logoCenter+200;
+		int inputBluePlaneIdPosX = 250;
+		int inputRedPlaneIdPosX = 330;
+		int inputGreenPlaneIdPosX = 410;
+		int inputYellowPlaneIdPosX = 490;
 
 		// Render logo
 		initialScreen->renderTexture("logo", logoCenter, 90);
@@ -514,26 +514,25 @@ void Game::loadselectionPlane() {
 //					initialScreen->loadText("msgError", "Complete el Id del Jugador");
 //					error = true;
 				}
-
-			} else if ((mouseX > inputBluePlaneIdPosX ) && (mouseX < (inputBluePlaneIdPosX + 79))
+			} else if ((mouseX > inputBluePlaneIdPosX ) && (mouseX < (inputBluePlaneIdPosX + 60))
 					&& (mouseY > inputPlaneIdPosY) && (mouseY < (inputPlaneIdPosY+60))) {
 				bluePromptSelected = false;
 				redPromptSelected = true;
 				greenPromptSelected = false;
 				yellowPromptSelected = false;
-			} else if ((mouseX > inputRedPlaneIdPosX ) && (mouseX < (inputRedPlaneIdPosX + 79))
+			} else if ((mouseX > inputRedPlaneIdPosX ) && (mouseX < (inputRedPlaneIdPosX + 60))
 					&& (mouseY > inputPlaneIdPosY) && (mouseY < (inputPlaneIdPosY+60))) {
 				bluePromptSelected = false;
 				redPromptSelected = false;
 				greenPromptSelected = true;
 				yellowPromptSelected = false;
-			} else if ((mouseX > inputGreenPlaneIdPosX ) && (mouseX < (inputGreenPlaneIdPosX + 79))
+			} else if ((mouseX > inputGreenPlaneIdPosX ) && (mouseX < (inputGreenPlaneIdPosX + 60))
 					&& (mouseY > inputPlaneIdPosY) && (mouseY < (inputPlaneIdPosY+60))) {
 				bluePromptSelected = false;
 				redPromptSelected = false;
 				greenPromptSelected = true;
 				yellowPromptSelected = false;
-			} else if ((mouseX > inputYellowPlaneIdPosX ) && (mouseX < (inputYellowPlaneIdPosX + 79))
+			} else if ((mouseX > inputYellowPlaneIdPosX ) && (mouseX < (inputYellowPlaneIdPosX + 60))
 					&& (mouseY > inputPlaneIdPosY) && (mouseY < (inputPlaneIdPosY+60))) {
 				bluePromptSelected = false;
 				redPromptSelected = false;
