@@ -605,5 +605,3 @@ void Game::sendDataPlayer(){
 	  strcpy( data->color, this->planeId.c_str() );
 	  this->unCliente->sendData(data);
 }
-
-
