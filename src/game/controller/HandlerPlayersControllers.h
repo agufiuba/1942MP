@@ -19,9 +19,10 @@ class HandlerPlayersControllers {
 private:
 	map<string, IController*> mapaControllers;
 	SDL_Renderer* renderer;
+	Resolucion* resolucion;
 
 public:
-	HandlerPlayersControllers(SDL_Renderer* &renderer);
+	HandlerPlayersControllers(SDL_Renderer* &renderer, Resolucion* resolucion);
 	virtual ~HandlerPlayersControllers();
 	void setPlayer(Avion* vivible);
 	void mover(string id, char event);

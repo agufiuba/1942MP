@@ -61,10 +61,9 @@ private:
 	const char* DIR_FONDO_PANTALLA = "src/game/images/fondoPantalla4000x4000Marcado.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
 
-	//vector<IController*> controllersList;
-	vector<Vivible*> fondosVivibles;
 	IController* myControl;
 	HandlerPlayersControllers* controllers;
+	vector<Vivible*> fondosVivibles;
 
 	void inicializar();
 	void setResolucion();
@@ -73,6 +72,7 @@ private:
 	void aplicarFPS(Uint32 start);
 	void setFondosVivibles();
 	void setOtrosAviones();
+	void limpiarMemoria();
 
 public:
 	Escenario();

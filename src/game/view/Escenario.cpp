@@ -159,7 +159,7 @@ void Escenario::setOtrosAviones() {
 	Vivible* otroAvion2 = new Avion(gon, gRenderer, resolucion, new Posicion(600, 100), rojo);
 	Vivible* otroAvion3 = new Avion(max, gRenderer, resolucion, new Posicion(400, 100), verde);
 
-	controllers = new HandlerPlayersControllers(gRenderer);
+	controllers = new HandlerPlayersControllers(gRenderer, resolucion);
 	controllers->setPlayer((Avion*)otroAvion1);
 	controllers->setPlayer((Avion*)otroAvion2);
 	controllers->setPlayer((Avion*)otroAvion3);
@@ -197,15 +197,18 @@ void Escenario::run() {
 		while( SDL_PollEvent(&evento) != 0 ) {
 
 			myControl->press(&evento);
+
+			//TODO Aca se simula lo que seria el movimiento de otro jugador
 			i++;
-			if (i > 15) {
-				controllers->mover("max",'U');
-				controllers->mover("max",'R');
+			if (i > 55) {
+//				cout << "Realizo movimiento arriba" << endl;
+//				controllers->mover("max",'U');
+				//Realizo disparo
+				controllers->mover("max",'S');
+				//Realizo vueltera
+				//controllers->mover("max",'E');
 				i = 0;
 			}
-//			otroControl->press(&evento);
-//			otroControl2->press(&evento);
-//			otroControl3->press(&evento);
 
 			if(evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q) {
 				quit = true;
@@ -231,8 +234,12 @@ void Escenario::run() {
 		aplicarFPS(start);
 
 	}
-	delete myControl;
-	posicionEscenario->~Posicion();
+
+	limpiarMemoria();
+	delete posicionEscenario;
 }
 
-
+void Escenario::limpiarMemoria() {
+	delete myControl;
+	delete controllers;
+}

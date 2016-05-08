@@ -17,7 +17,8 @@ void startupClient() {
 	//Escenario* escenario = new Escenario(gc->escenario->ancho, gc->escenario->alto);
 
 	//Iniciar Pantalla
-	Escenario* escenario = new Escenario(800,600);
+	Escenario* escenario = new Escenario(800, 600);
+	//Escenario* escenario = new Escenario(true);
 	escenario->run();
 
 	// limpiar memoria

@@ -7,8 +7,9 @@
 
 #include "HandlerPlayersControllers.h"
 
-HandlerPlayersControllers::HandlerPlayersControllers(SDL_Renderer* &renderer) {
+HandlerPlayersControllers::HandlerPlayersControllers(SDL_Renderer* &renderer, Resolucion* resolucion) {
 	this->renderer = renderer;
+	this->resolucion = resolucion;
 }
 
 HandlerPlayersControllers::~HandlerPlayersControllers() {
@@ -18,7 +19,7 @@ HandlerPlayersControllers::~HandlerPlayersControllers() {
 }
 
 void HandlerPlayersControllers::setPlayer(Avion* player) {
-	IController* controller = new PlayersController(player, renderer);
+	IController* controller = new PlayersController(player, renderer, resolucion);
 	this->mapaControllers[player->getId()] = controller;
 }
 
@@ -29,10 +30,12 @@ void HandlerPlayersControllers::mover(string id, char evento) {
 	SDL_Keycode code;
 
 	switch(evento) {
-		case 'R': code = SDLK_d; break;
-		case 'L': code = SDLK_a; break;
-		case 'U': code = SDLK_w; break;
-		case 'D': code = SDLK_s; break;
+		case 'R': code = SDLK_RIGHT		; break;
+		case 'L': code = SDLK_LEFT		; break;
+		case 'U': code = SDLK_UP		; break;
+		case 'D': code = SDLK_DOWN		; break;
+		case 'E': code = SDLK_KP_ENTER	; break;
+		case 'S': code = SDLK_SPACE		; break;
 	}
 
 	eventoSdl->key.keysym.sym = code;
