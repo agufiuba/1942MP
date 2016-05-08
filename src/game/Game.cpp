@@ -10,7 +10,7 @@ Game::Game( uint32_t sdlFlags ) {
   this->windowTitle = "1942MP Arcade";
   this->fps = 10;
   this->serverIP = "127.0.0.1";
-  this->serverPort = "8080";
+  this->serverPort = "8000";
   this->clientId = " ";
   this->planeId = " ";
 }
@@ -342,188 +342,268 @@ void Game::loadValidationScreen() {
   }
 }
 
-void Game::loadselectionPlane(){
-  SDL_Event e;
-  Timer timer;
-  string acceptButtonText = "CONECTAR";
+void Game::loadselectionPlane() {
+	SDL_Event e;
+	Timer timer;
+	string acceptButtonText = "CONFIRMAR";
 
-  Screen* initialScreen = new Screen( this->sdlHandler );
-  initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
-  initialScreen->loadText( "clientText", "Cliente: ", { 0, 255, 0 } );
-  initialScreen->loadText( "clientId", this->clientId );
-  initialScreen->loadText( "planeText", "Avion: ", { 0, 255, 0 } );
-  initialScreen->loadText( "planeId", this->planeId);
-  initialScreen->loadText( "accept", "CONECTAR" );
+	Screen* initialScreen = new Screen(this->sdlHandler);
+	initialScreen->loadTexture("logo", "windowImages/1942logoPrincipal.bmp");
+	initialScreen->loadTexture("bluePlane", "../game/images/avionAzul.bmp");
+	initialScreen->loadTexture("redPlane", "../game/images/avionRojo.bmp");
+	initialScreen->loadTexture("greenPlane", "../game/images/avionVerde.bmp");
+	initialScreen->loadTexture("yellowPlane", "../game/images/avionAmarillo.bmp");
+	initialScreen->loadText("clientText", "  Jugador: ", { 0, 255, 100 });
+	initialScreen->loadText("planeText", " Avion: ", { 0, 255, 100 });
+	initialScreen->loadText("clientId", this->clientId);
+	initialScreen->loadText("accept", acceptButtonText);
 
-  int logoCenter = ( this->windowWidth - initialScreen->getTextureWidth( "logo" ) ) / 2;
-  int promptCenter = logoCenter - 20;
-  int buttonCenter = promptCenter + 15;
-  int textCenter = promptCenter + 20;
-  int textoIzquierda = 100;
-  int buttonTextCenter = buttonCenter + ( ( 230 - initialScreen->getTextureWidth( "accept" ) ) / 2 );
-  int IPPromptOutline = 300, IPPromptOutline2 = 301, IPPromptOutline3 = 302;
-  int portPromptOutline = 375, portPromptOutline2 = 376, portPromptOutline3 = 377;
-  int mouseX, mouseY;
+	int logoCenter = (this->windowWidth - initialScreen->getTextureWidth("logo")) / 2;
+	int promptCenter = logoCenter - 20;
+	int buttonCenter = promptCenter + 15;
+	int textCenter = promptCenter + 20;
+	int textoIzquierda = 100;
+	int buttonTextCenter = buttonCenter	+ ((230 - initialScreen->getTextureWidth("accept")) / 2);
+	int inputClientIdPosY = 250;
+	int inputPlaneIdPosY = 350;
+	int clientIdPromptOutline = inputClientIdPosY, clientIdPromptOutline2 =	inputClientIdPosY + 1, clientIdPromptOutline3 = inputClientIdPosY + 2;
+	int bluePlanePromptOutline = inputPlaneIdPosY, bluePlanePromptOutline2 = inputPlaneIdPosY + 1, bluePlanePromptOutline3 = inputPlaneIdPosY + 2;
+	int redPlanePromptOutline = inputPlaneIdPosY, redPlanePromptOutline2 = inputPlaneIdPosY + 1, redPlanePromptOutline3 = inputPlaneIdPosY + 2;
+	int greenPlanePromptOutline = inputPlaneIdPosY, greenPlanePromptOutline2 = inputPlaneIdPosY + 1, greenPlanePromptOutline3 = inputPlaneIdPosY + 2;
+	int yellowPlanePromptOutline = inputPlaneIdPosY, yellowPlanePromptOutline2 = inputPlaneIdPosY + 1, yellowPlanePromptOutline3 = inputPlaneIdPosY + 2;
 
-  bool runningScreen = true;
-  bool firstPromptSelected = true;
-  bool clicked = false;
+	int mouseX, mouseY;
 
-  // Create prompts
-  initialScreen->loadRectangle( "promptIP", promptCenter, 300, 260, 50 );
-  initialScreen->loadRectangle( "promptPort", promptCenter, 375, 260, 50 );
-  initialScreen->loadRectangle( "button", promptCenter + 15, 475, 230, 50 );
+	bool runningScreen = true;
+	bool firstPromptSelected = true;
+	bool bluePromptSelected = true;
+	bool redPromptSelected = false;
+	bool greenPromptSelected = false;
+	bool yellowPromptSelected = false;
+	bool clicked = false;
+	bool error = false;
+	// Create prompts
+	initialScreen->loadRectangle("promptClientId", promptCenter,inputClientIdPosY, 260, 50);
+	initialScreen->loadRectangle("button", promptCenter + 15, 450, 230, 50);
 
-  // Enable text input
-  SDL_StartTextInput();
+	// Enable text input
+	SDL_StartTextInput();
 
-  while( runningScreen ) {
-    timer.correr();
-    bool renderText = false;
+	while (runningScreen) {
+		timer.correr();
+		bool renderText = false;
 
-    // Get events
-    while( this->sdlHandler->nextEvent( &e ) ) {
-      if( e.type == SDL_QUIT ) {
-	runningScreen = false;
-	this->running = false;
-      } //Special key input
-      else if( e.type == SDL_KEYDOWN ) {
-	// Handle Tab
-	if( e.key.keysym.sym == SDLK_TAB ) {
-	  firstPromptSelected = !firstPromptSelected; 
+		// Get events
+		while (this->sdlHandler->nextEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				runningScreen = false;
+				this->running = false;
+			} //Special key input
+			else if (e.type == SDL_KEYDOWN) {
+				// Handle Tab
+				if (e.key.keysym.sym == SDLK_TAB && bluePromptSelected) {
+					bluePromptSelected = !bluePromptSelected;
+					redPromptSelected = !redPromptSelected;
+				} else 	if (e.key.keysym.sym == SDLK_TAB && redPromptSelected) {
+					redPromptSelected = !redPromptSelected;
+					greenPromptSelected = !greenPromptSelected;
+				} else if (e.key.keysym.sym == SDLK_TAB && greenPromptSelected) {
+					greenPromptSelected = !greenPromptSelected;
+					yellowPromptSelected = !yellowPromptSelected;
+				} else 	if (e.key.keysym.sym == SDLK_TAB && yellowPromptSelected) {
+					yellowPromptSelected = !yellowPromptSelected;
+					bluePromptSelected = !bluePromptSelected;
+				}
+				//Handle backspace
+				else if (firstPromptSelected) {
+					if (e.key.keysym.sym == SDLK_BACKSPACE && this->clientId.length() > 0) {
+						//lop off character
+						this->clientId.pop_back();
+						renderText = true;
+					}
+				} else if (e.key.keysym.sym == SDLK_BACKSPACE && this->planeId.length() > 0) {
+					//lop off character
+					this->planeId.pop_back();
+					renderText = true;
+				} else if(e.key.keysym.sym == SDL_SCANCODE_KP_ENTER){
+					runningScreen = false;
+				}
+			}
+			//Special text input event
+			else if (e.type == SDL_TEXTINPUT) {
+				//Not copy or pasting
+				if (!((e.text.text[0] == 'c' || e.text.text[0] == 'C')
+						&& (e.text.text[0] == 'v' || e.text.text[0] == 'V')
+						&& SDL_GetModState() & KMOD_CTRL)) {
+					//Append character
+					if (firstPromptSelected) {
+						// Character limit for IP
+						if (this->clientId.length() < 15)
+							this->clientId += e.text.text;
+					} else {
+						// Character limit for port
+						if (this->planeId.length() < 5)
+							this->planeId += e.text.text;
+					}
+					renderText = true;
+				}
+			}
+			// Handle button events
+			else if (e.button.type == SDL_MOUSEBUTTONDOWN) {
+				if (e.button.button == SDL_BUTTON_LEFT) {
+					clicked = true;
+					// Get the mouse offsets
+					mouseX = e.button.x;
+					mouseY = e.button.y;
+				}
+			}
+		}
+
+		//Rerender text if needed
+		if (renderText) {
+				//Text is not empty
+				if (this->clientId != " ") {
+					//Render new text
+					initialScreen->loadText("clientId", this->clientId);
+				}
+				//Text is empty
+				else {
+					//Render space texture
+					initialScreen->loadText("clientId", " ");
+				}
+		}
+
+		// Set window background
+		sdlHandler->setWindowBG(0, 0, 0);
+
+		int inputBluePlaneIdPosX = logoCenter-40;
+		int inputRedPlaneIdPosX = logoCenter+40;
+		int inputGreenPlaneIdPosX = logoCenter+120;
+		int inputYellowPlaneIdPosX = logoCenter+200;
+
+		// Render logo
+		initialScreen->renderTexture("logo", logoCenter, 90);
+		initialScreen->renderTexture("bluePlane", inputBluePlaneIdPosX, inputPlaneIdPosY);
+		initialScreen->renderTexture("redPlane", inputRedPlaneIdPosX, inputPlaneIdPosY);
+		initialScreen->renderTexture("greenPlane", inputGreenPlaneIdPosX, inputPlaneIdPosY);
+		initialScreen->renderTexture("yellowPlane", inputYellowPlaneIdPosX, inputPlaneIdPosY);
+
+		// Set prompt color
+		initialScreen->setRenderDrawColor(255, 255, 255, 255);
+		// Render prompts
+		initialScreen->renderRectangle("promptClientId");
+
+		initialScreen->setRenderDrawColor(160, 160, 160, 255);
+
+		if (clicked) {
+			clicked = false;
+			if ((mouseX > buttonCenter) && (mouseX < (buttonCenter + 230))	&& (mouseY > 475) && (mouseY < (475 + 50))) {
+				//runningScreen = false;
+				if(this->clientId != " " && this->clientId != ""){
+					if(bluePromptSelected){
+						this->planeId = "azul";
+					} else if(redPromptSelected){
+						this->planeId = "rojo";
+					} else if(greenPromptSelected){
+						this->planeId = "verde";
+					} else if(yellowPromptSelected){
+						this->planeId = "amarillo";
+					}
+					this->sendDataPlayer();
+//				}else{
+//					initialScreen->loadText("msgError", "Complete el Id del Jugador");
+//					error = true;
+				}
+
+			} else if ((mouseX > inputBluePlaneIdPosX ) && (mouseX < (inputBluePlaneIdPosX + 79))
+					&& (mouseY > inputPlaneIdPosY) && (mouseY < (inputPlaneIdPosY+60))) {
+				bluePromptSelected = false;
+				redPromptSelected = true;
+				greenPromptSelected = false;
+				yellowPromptSelected = false;
+			} else if ((mouseX > inputRedPlaneIdPosX ) && (mouseX < (inputRedPlaneIdPosX + 79))
+					&& (mouseY > inputPlaneIdPosY) && (mouseY < (inputPlaneIdPosY+60))) {
+				bluePromptSelected = false;
+				redPromptSelected = false;
+				greenPromptSelected = true;
+				yellowPromptSelected = false;
+			} else if ((mouseX > inputGreenPlaneIdPosX ) && (mouseX < (inputGreenPlaneIdPosX + 79))
+					&& (mouseY > inputPlaneIdPosY) && (mouseY < (inputPlaneIdPosY+60))) {
+				bluePromptSelected = false;
+				redPromptSelected = false;
+				greenPromptSelected = true;
+				yellowPromptSelected = false;
+			} else if ((mouseX > inputYellowPlaneIdPosX ) && (mouseX < (inputYellowPlaneIdPosX + 79))
+					&& (mouseY > inputPlaneIdPosY) && (mouseY < (inputPlaneIdPosY+60))) {
+				bluePromptSelected = false;
+				redPromptSelected = false;
+				greenPromptSelected = false;
+				yellowPromptSelected = true;
+			}
+		}
+		initialScreen->renderRectangle("button");
+
+		// Set outline color
+		initialScreen->setRenderDrawColor(19, 144, 27, 255);
+		initialScreen->loadRectangle("outline", promptCenter,clientIdPromptOutline, 260, 50);
+		initialScreen->loadRectangle("outline2", promptCenter + 1,clientIdPromptOutline2, 258, 48);
+		initialScreen->loadRectangle("outline3", promptCenter + 2,clientIdPromptOutline3, 256, 46);
+
+		if (bluePromptSelected){
+			initialScreen->loadRectangle("planeOutline", inputBluePlaneIdPosX,bluePlanePromptOutline, 60, 60);
+			initialScreen->loadRectangle("planeOutline2", inputBluePlaneIdPosX + 1,bluePlanePromptOutline2, 58, 58);
+			initialScreen->loadRectangle("planeOutline3", inputBluePlaneIdPosX + 2,bluePlanePromptOutline3, 56, 56);
+		} else if (redPromptSelected){
+			initialScreen->loadRectangle("planeOutline", inputRedPlaneIdPosX,redPlanePromptOutline, 60, 60);
+			initialScreen->loadRectangle("planeOutline2", inputRedPlaneIdPosX + 1,redPlanePromptOutline2, 58, 58);
+			initialScreen->loadRectangle("planeOutline3", inputRedPlaneIdPosX + 2,redPlanePromptOutline3, 56, 56);
+		} else if (greenPromptSelected){
+			initialScreen->loadRectangle("planeOutline", inputGreenPlaneIdPosX,greenPlanePromptOutline, 60, 60);
+			initialScreen->loadRectangle("planeOutline2", inputGreenPlaneIdPosX + 1,greenPlanePromptOutline2, 58, 58);
+			initialScreen->loadRectangle("planeOutline3", inputGreenPlaneIdPosX + 2,greenPlanePromptOutline3, 56, 56);
+		} else if (yellowPromptSelected){
+			initialScreen->loadRectangle("planeOutline", inputYellowPlaneIdPosX,yellowPlanePromptOutline, 60, 60);
+			initialScreen->loadRectangle("planeOutline2", inputYellowPlaneIdPosX + 1,yellowPlanePromptOutline2, 58, 58);
+			initialScreen->loadRectangle("planeOutline3", inputYellowPlaneIdPosX + 2,yellowPlanePromptOutline3, 56, 56);
+		}
+
+		// Render outlines
+		initialScreen->renderRectangle("outline", true);
+		initialScreen->renderRectangle("outline2", true);
+		initialScreen->renderRectangle("outline3", true);
+		initialScreen->renderRectangle("planeOutline", true);
+		initialScreen->renderRectangle("planeOutline2", true);
+		initialScreen->renderRectangle("planeOutline3", true);
+
+		// Render text textures
+		initialScreen->renderTexture("clientId", textCenter, inputClientIdPosY);
+		initialScreen->renderTexture("accept", buttonTextCenter, 450);
+		initialScreen->renderTexture("clientText", textoIzquierda,	inputClientIdPosY);
+		initialScreen->renderTexture("planeText", textoIzquierda, inputPlaneIdPosY);
+
+		if(error){
+			initialScreen->renderTexture("msgError", textCenter+50, inputClientIdPosY);
+			error = false;
+		}
+
+		//Update screen
+		sdlHandler->updateWindow();
+
+		if (timer.tiempoActual() < 1000 / this->fps) {
+			SDL_Delay((1000 / this->fps) - timer.tiempoActual());
+		}
 	}
-	//Handle backspace
-	else if( firstPromptSelected ) {
-	  if( e.key.keysym.sym == SDLK_BACKSPACE && this->clientId.length() > 0 ) {
-	    //lop off character
-	    this->clientId.pop_back();
-	    renderText = true;
-	  }
-	} else if( e.key.keysym.sym == SDLK_BACKSPACE && this->planeId.length() > 0 ) {
-	  //lop off character
-	  this->planeId.pop_back();
-	  renderText = true;
-	}
-      }
-      //Special text input event
-      else if( e.type == SDL_TEXTINPUT )
-      {
-	//Not copy or pasting
-	if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' ) 
-	      && SDL_GetModState() & KMOD_CTRL ) )
-	{
-	  //Append character
-	  if( firstPromptSelected ) {
-	    // Character limit for IP
-	    if( this->clientId.length() < 15 )
-	      this->clientId += e.text.text;
-	  } else {
-	    // Character limit for port 
-	    if( this->planeId.length() < 5 )
-	      this->planeId += e.text.text;
-	  }
-	  renderText = true;
-	}
-      }
-      // Handle button events
-      else if( e.button.type == SDL_MOUSEBUTTONDOWN ) {
-	if( e.button.button == SDL_BUTTON_LEFT ) {
-	  clicked = true;
-	  // Get the mouse offsets
-	  mouseX = e.button.x;
-	  mouseY = e.button.y;
-	}
-      }
-    }
-
-    //Rerender text if needed
-    if( renderText )
-    {
-      if( firstPromptSelected ) {
-	//Text is not empty
-	if( this->clientId != "" )
-	{
-	  //Render new text
-	  initialScreen->loadText( "clientId", this->clientId );
-	}
-	//Text is empty
-	else
-	{
-	  //Render space texture
-	  initialScreen->loadText( "clientId", " " );
-	}
-      } else {
-
-	//Text is not empty
-	if( this->planeId != "" )
-	{
-	  //Render new text
-	  initialScreen->loadText( "planeId", this->planeId );
-	}
-	//Text is empty
-	else
-	{
-	  //Render space texture
-	  initialScreen->loadText( "planeId", " " );
-	}
-      }
-    }
-
-    // Set window background
-    sdlHandler->setWindowBG(0, 0, 0);
-
-    // Render logo
-    initialScreen->renderTexture( "logo", logoCenter, 90 );
-
-    // Set prompt color
-    initialScreen->setRenderDrawColor( 255, 255, 255, 255 );
-    // Render prompts
-    initialScreen->renderRectangle( "promptIP" );
-    initialScreen->renderRectangle( "promptPort" );
-
-    initialScreen->setRenderDrawColor( 160, 160, 160, 255 );
-    if( clicked ) {
-      clicked = false;
-      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) 
-	  && ( mouseY > 475 ) && ( mouseY < ( 475 + 50 ) ) ) {
-	runningScreen = false;
-      }
-    }
-    initialScreen->renderRectangle( "button" );
-
-    // Set outline color
-    initialScreen->setRenderDrawColor( 19, 144, 27, 255 );
-
-    if( firstPromptSelected ) {
-      initialScreen->loadRectangle( "outline", promptCenter, IPPromptOutline, 260, 50 );
-      initialScreen->loadRectangle( "outline2", promptCenter + 1, IPPromptOutline2, 258, 48 );
-      initialScreen->loadRectangle( "outline3", promptCenter + 2, IPPromptOutline3, 256, 46 );
-    } else {
-      initialScreen->loadRectangle( "outline", promptCenter, portPromptOutline, 260, 50 );
-      initialScreen->loadRectangle( "outline2", promptCenter + 1, portPromptOutline2, 258, 48 );
-      initialScreen->loadRectangle( "outline3", promptCenter + 2, portPromptOutline3, 256, 46 );
-    }
-
-    // Render outlines
-    initialScreen->renderRectangle( "outline", true );
-    initialScreen->renderRectangle( "outline2", true );
-    initialScreen->renderRectangle( "outline3", true );
-
-    // Render text textures
-    initialScreen->renderTexture( "clientId", textCenter, 305 );
-    initialScreen->renderTexture( "planeId", textCenter, 380 );
-    initialScreen->renderTexture( "accept", buttonTextCenter, 480 );
-    initialScreen->renderTexture( "clientText", textoIzquierda, 305 );
-    initialScreen->renderTexture( "planeText", textoIzquierda, 380 );
-
-    //Update screen
-    sdlHandler->updateWindow();
-
-    if( timer.tiempoActual() < 1000 / this->fps ){
-      SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
-    }
-  }
-  //Disable text input
-  SDL_StopTextInput();
-  delete initialScreen;
+	//Disable text input
+	SDL_StopTextInput();
+	delete initialScreen;
 }
+
+
+void Game::sendDataPlayer(){
+	  PlayerData* data = new PlayerData;
+	  strcpy( data->name, this->clientId.c_str() );
+	  strcpy( data->color, this->planeId.c_str() );
+	  this->unCliente->sendData(data);
+}
+
+
