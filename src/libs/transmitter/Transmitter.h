@@ -2,10 +2,14 @@
 #define TRANSMITTER_H
 #include "../data/player_data.h"
 #include "../logger/Logger.h"
+#include <string>
+using namespace std;
+
 class Transmitter {
   private:
     int peerFD;
     Logger* logger;
+    bool sendDataID( string id );
 
   public:
     Transmitter( int peerFD, Logger* logger );
