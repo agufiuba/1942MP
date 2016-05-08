@@ -32,6 +32,31 @@ bool Transmitter::sendData( PlayerData* data ) {
   return true;
 }
 
+bool Transmitter::receiveData( char id[2], int size ) {
+  int numBytesRead;
+  mutex theMutex;
+
+  // Read data id
+  if( ( numBytesRead = recv( this->peerFD, id, size, 0 ) ) == -1 ) {
+    close( this->peerFD );
+    this->logger->warn( CONNECTION_TIMEOUT );
+    DEBUG_WARN( CONNECTION_TIMEOUT );
+  }
+
+  // if received data
+  if( numBytesRead > 0 ) {
+    if( numBytesRead != 1 ) {
+      theMutex.lock();
+      cout << endl << "ID: " << notice( string( id ) ) << endl;
+      theMutex.unlock();
+    }
+  } else {
+    return false;
+  }
+
+  return true;
+}
+
 bool Transmitter::receiveData( PlayerData* data ) {
   int numBytesRead;
   mutex theMutex;

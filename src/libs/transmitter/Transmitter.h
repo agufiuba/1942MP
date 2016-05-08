@@ -11,6 +11,7 @@ class Transmitter {
     Transmitter( int peerFD, Logger* logger );
     ~Transmitter();
     bool sendData( PlayerData* data );
+    bool receiveData( char id[2], int size );
     bool receiveData( PlayerData* data );
 };
 #endif

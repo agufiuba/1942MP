@@ -7,8 +7,9 @@ K = ../../../../utils/K.cpp
 DEFAULTS = ../../../../utils/Defaults.cpp
 PALETTE = ../../../palette/palette.cpp
 MENU = ../../../menu/Menu.cpp
+TMT = ../../../transmitter/Transmitter.cpp
 SERVER = ../../Server.cpp
-OBJS = server.cpp $(SERVER) $(LOGGER) $(CLIENT_CONF) $(XML_PARSER) $(XML) $(SERVER_CONF) $(K) $(DEFAULTS) $(PALETTE) $(MENU)
+OBJS = server.cpp $(SERVER) $(LOGGER) $(CLIENT_CONF) $(XML_PARSER) $(XML) $(SERVER_CONF) $(K) $(DEFAULTS) $(PALETTE) $(MENU) $(TMT)
 CC = g++
 COMPILER_FLAGS = -std=c++11 -Wno-write-strings
 LINKER_FLAGS = -pthread
