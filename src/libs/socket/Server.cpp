@@ -1,4 +1,5 @@
 #include "Server.h"
+#include "../transmitter/Transmitter.h"
 #include "../socket/sock_dep.h" /* socket dependencies */
 #include "../../xml/parser/XMLParser.h"
 #include "../palette/palette.h"
@@ -132,55 +133,6 @@ void* Server::getInAddr( struct sockaddr* sa ) {
   }
 }
 
-bool Server::receiveData( char id[2], int cfd, int size ) {
-  int numBytesRead;
-  mutex theMutex;
-
-  // Read data id
-  if( ( numBytesRead = recv( cfd, id, size, 0 ) ) == -1 ) {
-    close( cfd );
-    this->logger->warn( CONNECTION_TIMEOUT );
-    DEBUG_WARN( CONNECTION_TIMEOUT );
-  }
-
-  // if received data
-  if( numBytesRead > 0 ) {
-    if( numBytesRead != 1 ) {
-      theMutex.lock();
-      cout << endl << "ID: " << notice( string( id ) ) << endl;
-      theMutex.unlock();
-    }
-  } else {
-    return false;
-  }
-
-  return true;
-}
-
-bool Server::receiveData( PlayerData* data, int cfd ) {
-  int numBytesRead;
-  mutex theMutex;
-  // Read data
-  if( ( numBytesRead = recv( cfd, data, sizeof( PlayerData ), 0 ) ) == -1 ) {
-    close( cfd );
-    this->logger->warn( CONNECTION_TIMEOUT );
-    DEBUG_WARN( CONNECTION_TIMEOUT );
-  }
-
-  if( numBytesRead > 0 ) {
-    if( numBytesRead != 1 ) {
-      theMutex.lock();
-      cout << "Nombre del jugador: " << notice( string( data->name ) ) << endl;
-      cout << "Color seleccionado: " << notice( string( data->color ) ) << endl;
-      theMutex.unlock();
-    }
-  } else {
-    return false;
-  }
-
-  return true;
-}
-
 void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   int numBytesRead;
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
@@ -204,8 +156,10 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
     timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
     timeout.tv_usec = 0;
     bool receiving = true;
-    bool failed = false;
+    bool received;
     char id[2];
+    // Create transmitter for this client
+    Transmitter* tmt = new Transmitter( cfd, this->logger );
 
     while( receiving ) {
       // seteo el timeout de recepcion de mensajes
@@ -214,19 +168,26 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	exit( 1 );
       }
 
-      failed = !( this->receiveData( id, cfd, sizeof( id ) ) );
+      // Get id of next data to receive
+      received = tmt->receiveData( id, sizeof( id ) );
 
-      if( !failed ) {
+      if( received ) {
 	string dataID( id );
-	// Receive data type based on dataID 
+	// Receive data type based on fetched dataID 
 	if( dataID == "PD" ) {
 	  PlayerData* data = new PlayerData;
-	  failed = !( this->receiveData( data , cfd ) );
+
+	  if( received = tmt->receiveData( data ) ) {
+	    // Process received data
+	    cout << "Nombre del jugador: " << string( data->name ) << endl;
+	    cout << "Color del jugador: " << string( data->color ) << endl;
+	  }
+
 	  delete data;
 	} 
       }
 
-      if( failed ) {
+      if( !( received ) ) {
 	receiving = false;
 	cout << endl << warning( "El cliente " ) << clientIP
 	  << warning( " se desconecto" ) << endl;
