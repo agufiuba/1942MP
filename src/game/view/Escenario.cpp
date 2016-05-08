@@ -200,6 +200,7 @@ void Escenario::run() {
 
 			//TODO Aca se simula lo que seria el movimiento de otro jugador
 			i++;
+			cout<<i<<endl;
 			if (i > 55) {
 //				cout << "Realizo movimiento arriba" << endl;
 //				controllers->mover("max",'U');
@@ -229,8 +230,8 @@ void Escenario::run() {
 		}
 
 		actualizarEscenario(posicionEscenario);
-		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
-		posAvion->print();
+//		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
+//		posAvion->print();
 		aplicarFPS(start);
 
 	}
