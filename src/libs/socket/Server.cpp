@@ -156,7 +156,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
     timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
     timeout.tv_usec = 0;
     bool receiving = true;
-    bool failed = false;
+    bool received;
     char id[2];
     // Create transmitter for this client
     Transmitter* tmt = new Transmitter( cfd, this->logger );
@@ -168,19 +168,26 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	exit( 1 );
       }
 
-      failed = !( tmt->receiveData( id, sizeof( id ) ) );
+      // Get id of next data to receive
+      received = tmt->receiveData( id, sizeof( id ) );
 
-      if( !failed ) {
+      if( received ) {
 	string dataID( id );
-	// Receive data type based on dataID 
+	// Receive data type based on fetched dataID 
 	if( dataID == "PD" ) {
 	  PlayerData* data = new PlayerData;
-	  failed = !( tmt->receiveData( data ) );
+
+	  if( received = tmt->receiveData( data ) ) {
+	    // Process received data
+	    cout << "Nombre del jugador: " << string( data->name ) << endl;
+	    cout << "Color del jugador: " << string( data->color ) << endl;
+	  }
+
 	  delete data;
 	} 
       }
 
-      if( failed ) {
+      if( !( received ) ) {
 	receiving = false;
 	cout << endl << warning( "El cliente " ) << clientIP
 	  << warning( " se desconecto" ) << endl;

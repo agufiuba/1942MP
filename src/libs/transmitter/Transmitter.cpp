@@ -34,8 +34,6 @@ bool Transmitter::sendData( PlayerData* data ) {
 
 bool Transmitter::receiveData( char id[2], int size ) {
   int numBytesRead;
-  mutex theMutex;
-
   // Read data id
   if( ( numBytesRead = recv( this->peerFD, id, size, 0 ) ) == -1 ) {
     close( this->peerFD );
@@ -43,23 +41,11 @@ bool Transmitter::receiveData( char id[2], int size ) {
     DEBUG_WARN( CONNECTION_TIMEOUT );
   }
 
-  // if received data
-  if( numBytesRead > 0 ) {
-    if( numBytesRead != 1 ) {
-      theMutex.lock();
-      cout << endl << "ID: " << notice( string( id ) ) << endl;
-      theMutex.unlock();
-    }
-  } else {
-    return false;
-  }
-
-  return true;
+  return ( numBytesRead > 0 );
 }
 
 bool Transmitter::receiveData( PlayerData* data ) {
   int numBytesRead;
-  mutex theMutex;
   // Read data
   if( ( numBytesRead = recv( this->peerFD, data, sizeof( PlayerData ), 0 ) ) == -1 ) {
     close( this->peerFD );
@@ -67,16 +53,5 @@ bool Transmitter::receiveData( PlayerData* data ) {
     DEBUG_WARN( CONNECTION_TIMEOUT );
   }
 
-  if( numBytesRead > 0 ) {
-    if( numBytesRead != 1 ) {
-      theMutex.lock();
-      cout << "Nombre del jugador: " << notice( string( data->name ) ) << endl;
-      cout << "Color seleccionado: " << notice( string( data->color ) ) << endl;
-      theMutex.unlock();
-    }
-  } else {
-    return false;
-  }
-
-  return true;
+  return ( numBytesRead > 0 );
 }
