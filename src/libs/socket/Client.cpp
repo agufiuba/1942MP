@@ -1,4 +1,5 @@
 #include "Client.h"
+#include "../transmitter/Transmitter.h"
 #include "../socket/sock_dep.h" /* socket dependencies */
 #include "../../xml/parser/XMLParser.h"
 #include "../palette/palette.h"
@@ -205,25 +206,9 @@ bool Client::sendData( Evento* e ) {
 }
 
 bool Client::sendData( PlayerData* data ) {
-  char id[2] = { 'P', 'D' };
   this->received = false;
-  if( send( this->socketFD, id, sizeof( id ), 0 ) == -1 ) {
-    this->logger->error( SEND_FAIL );
-    //    theMutex.lock();
-    DEBUG_WARN( SEND_FAIL );
-    //    theMutex.unlock();
-    return false;
-  }
-
-  if( send( this->socketFD, data, sizeof( PlayerData ), 0 ) == -1 ) {
-    this->logger->error( SEND_FAIL );
-    //    theMutex.lock();
-    DEBUG_WARN( SEND_FAIL );
-    //    theMutex.unlock();
-    return false;
-  }
-
-  return true;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  return tmt->sendData( data );
 }
 
 //bool Client::sendMsg( string id ) {
