@@ -1,8 +1,9 @@
 LOGGER = ../../../../logger/Logger.cpp
 PALETTE = ../../../../palette/palette.cpp
 CLIENT = ../../../Client.cpp
+COMPANIONEVENT = ../../../../../game/events/CompanionEvent.cpp
 TMT = ../../../../transmitter/Transmitter.cpp
-OBJS = sendNameColor.cpp $(CLIENT) $(LOGGER) $(PALETTE) $(TMT)
+OBJS = sendNameColor.cpp $(CLIENT) $(LOGGER) $(PALETTE) $(TMT) $(COMPANIONEVENT)
 CC = g++
 COMPILER_FLAGS = -std=c++11
 LINKER_FLAGS = -pthread

@@ -1,4 +1,6 @@
 #include "../../../Client.h"
+#include "../../../../../game/events/CompanionEvent.h"
+
 #include <string>
 #include <iostream>
 using namespace std;
@@ -51,7 +53,29 @@ int main() {
     if( option == 0 ) {
       client->shutdownConnection();
     }
-  }
+    if( option == 4 ) {
+      Evento* e;
+      CompanionEvent* ce = new CompanionEvent();
+
+      e = ce->down();
+      client->sendData(e);
+
+      e = ce->up();
+      client->sendData(e);
+
+      e = ce->right();
+      client->sendData(e);
+
+      e = ce->left();
+      client->sendData(e);
+
+      e = ce->shot();
+      client->sendData(e);
+
+      e = ce->roll();
+      client->sendData(e);
+
+    }
 
   delete client;
   delete pData1;

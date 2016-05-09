@@ -237,22 +237,34 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       // Get id of next data to receive
       received = tmt->receiveData( id, sizeof( id ) );
 
-      if( received ) {
-	string dataID( id );
-	// Receive data type based on fetched dataID 
-	if( dataID == "PD" ) {
-	  PlayerData* data = new PlayerData;
 
-	  if( received = tmt->receiveData( data ) ) {
-	    // Process received data
-	    cout << "Nombre del jugador: " << string( data->name ) << endl;
-	    cout << "Color del jugador: " << string( data->color ) << endl;
-	    this->addPlayer( data, cfd );
-	  }
+			if (received) {
+				string dataID(id);
+				// Receive data type based on fetched dataID
+				if (dataID == "PD") {
+					PlayerData* data = new PlayerData;
 
-	  delete data;
-	} 
-      }
+					if (received = tmt->receiveData(data)) {
+						// Process received data
+						cout << "Nombre del jugador: " << string(data->name) << endl;
+						cout << "Color del jugador: " << string(data->color) << endl;
+						this->addPlayer( data, cfd );
+					}
+
+					delete data;
+				} else {
+					if (dataID == "EV") {
+						Evento* e = new Evento();
+
+						if (received = tmt->receiveData(e)){
+							cout << "Evento: " << e->value << endl;
+						}
+
+						delete e;
+					}
+				}
+
+			}
 
       if( !( received ) ) {
 	receiving = false;

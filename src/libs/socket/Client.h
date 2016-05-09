@@ -18,7 +18,6 @@ class Client {
     void checkAliveSend();
     void receiving( const int MAX_DATA_SIZE, const char* IP );
     void closeConnection();
-    bool sendData( Evento* e );
 
   public:
     Client( const char* configFileName );
@@ -30,5 +29,6 @@ class Client {
 //  vector<Evento*> getEventos();
     void sendCycle();
     bool sendData( PlayerData* data );
+    bool sendData( Evento* e );
 };
 #endif

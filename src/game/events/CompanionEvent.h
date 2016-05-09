@@ -5,14 +5,15 @@
 
 class CompanionEvent {
 public:
-    static Evento right(char);
-    static Evento left(char);
-    static Evento up(char);
-    static Evento down(char);
-    static Evento shot(char);
-    static Evento restart(char);
-    static Evento ready(char);
-    static Evento quit(char);
+    static Evento* right();
+    static Evento* left();
+    static Evento* up();
+    static Evento* down();
+    static Evento* shot();
+    static Evento* roll();
+    static Evento* restart();
+    static Evento* ready();
+    static Evento* quit();
 };
 
 #endif

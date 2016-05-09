@@ -201,15 +201,8 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
 
 bool Client::sendData( Evento* e ) {
   this->received = false;
-  if( send( this->socketFD, e, sizeof(Evento), 0 ) == -1 ) {
-    this->logger->error( SEND_FAIL );
-    //    theMutex.lock();
-    DEBUG_WARN( SEND_FAIL );
-    //    theMutex.unlock();
-    return false;
-  }
-
-  return true;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  return tmt->sendData( e );
 }
 
 bool Client::sendData( PlayerData* data ) {
