@@ -1,5 +1,6 @@
 #include "../../../Client.h"
 #include <string>
+#include <iostream>
 using namespace std;
 
 int main() {
@@ -15,6 +16,11 @@ int main() {
   client->sendData( data );
   client->sendData( data );
   client->sendData( data );
+
+  cout << "Recibiendo datos..." << endl;
+
+  while( true ) {
+  }
 
   delete client;
   delete data;

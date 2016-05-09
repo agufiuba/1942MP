@@ -25,6 +25,15 @@ Server::Server( const char* configFileName ) {
 }
 
 Server::~Server() {
+  // Delete players if any
+  if( !( this->players.empty() ) ) {
+    for( map<int, Player*>::iterator it = this->players.begin();
+	 it != this->players.end();
+	 ++it ) {
+      delete it->second;
+    }
+  }
+
   delete this->eventQueue;
 }
 
@@ -134,29 +143,50 @@ void* Server::getInAddr( struct sockaddr* sa ) {
 }
 
 void Server::addPlayer( PlayerData* data, int cfd ) {
-  PlayerData* response = new PlayerData;
   string validName = "no", validColor = "yes";
   mutex theMutex;
-  
-  string selectedID( data->name );
+  string selectedName( data->name );
   string selectedColor( data->color );
+  bool createPlayer = true;
 
   theMutex.lock();
-  // if new player
-  if( this->playerFD.find( selectedID ) == this->playerFD.end() ) {
-    this->playerFD[ selectedID ] = cfd;
-    this->playerColor[ selectedID ] = selectedColor;
+  for( map<int, Player*>::iterator it = this->players.begin();
+       it != this->players.end();
+       ++it ) {
+    // if already a player with that name
+    if( selectedName == it->second->getName() ) {
+      createPlayer = false;
+      break;
+    }
+  }
+  theMutex.unlock();
+
+  if( createPlayer ) {
+    // Add new player
+    Player* p = new Player( selectedName, selectedColor );
+    theMutex.lock();
+    this->players[ cfd ] = p;
     theMutex.unlock();
     validName = "yes";
   }
 
+  // Create response
+  PlayerData* response = new PlayerData;
   // Fill response struct
-  strcpy( response, validName.c_str() );
-  strcpy( response, validColor.c_str() );
+  strcpy( response->name, validName.c_str() );
+  strcpy( response->color, validColor.c_str() );
+
+  Transmitter* tmt = new Transmitter( cfd, this->logger );
+  if( !( tmt->sendData( response ) ) ) {
+    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::addPlayer" );
+    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::addPlayer" );
+  }
+
+  delete response;
+  delete tmt;
 }
 
 void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
-  int numBytesRead;
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
   Evento* msgToRecv = new Evento;
 
@@ -170,7 +200,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       << endl;
     this->logger->info( "Se inicio una conexion con el host: " + string( clientIP ) );
 
-    if( send( cfd, "Aceptado", 8, 0 ) == -1 ) {
+    if( send( cfd, "Aceptado", 9, 0 ) == -1 ) {
       this->logger->error( "Error al enviar que se acepto la conexion" );
     }
 
@@ -179,7 +209,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
     timeout.tv_usec = 0;
     bool receiving = true;
     bool received;
-    char id[2];
+    char id[3];
     // Create transmitter for this client
     Transmitter* tmt = new Transmitter( cfd, this->logger );
 
@@ -203,6 +233,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	    // Process received data
 	    cout << "Nombre del jugador: " << string( data->name ) << endl;
 	    cout << "Color del jugador: " << string( data->color ) << endl;
+	    this->addPlayer( data, cfd );
 	  }
 
 	  delete data;
@@ -244,6 +275,8 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	this->closeClient( cfd );
 	}*/
     }
+
+    delete tmt;
   } else {
     cout << endl << warning( "El cliente " ) << clientIP << warning( " se rechazo" ) << endl;
     this->logger->warn( "El cliente " + string(clientIP) + " se rechazo" );

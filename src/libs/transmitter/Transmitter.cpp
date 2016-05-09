@@ -14,7 +14,9 @@ Transmitter::Transmitter( int peerFD, Logger* logger ) {
 Transmitter::~Transmitter() {}
 
 bool Transmitter::sendDataID( string id ) {
-  char dataID[2];
+  // Add string end mark
+  id += "\0";
+  char dataID[3];
   strcpy( dataID, id.c_str() ); 
   
   if( send( this->peerFD, dataID, sizeof( dataID ), 0 ) == -1 ) {
@@ -42,7 +44,7 @@ bool Transmitter::sendData( PlayerData* data ) {
   return true;
 }
 
-bool Transmitter::receiveData( char id[2], int size ) {
+bool Transmitter::receiveData( char id[3], int size ) {
   int numBytesRead;
   // Read data id
   if( ( numBytesRead = recv( this->peerFD, id, size, 0 ) ) == -1 ) {
@@ -50,6 +52,8 @@ bool Transmitter::receiveData( char id[2], int size ) {
     this->logger->warn( CONNECTION_TIMEOUT );
     DEBUG_WARN( CONNECTION_TIMEOUT );
   }
+
+  cout << "ID = " << string( id ) << endl;
 
   return ( numBytesRead > 0 );
 }
