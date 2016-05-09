@@ -53,8 +53,6 @@ bool Transmitter::receiveData( char id[3], int size ) {
     DEBUG_WARN( CONNECTION_TIMEOUT );
   }
 
-  cout << "ID = " << string( id ) << endl;
-
   return ( numBytesRead > 0 );
 }
 
