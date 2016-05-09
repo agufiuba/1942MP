@@ -8,6 +8,20 @@
 #include "Resolucion.h"
 #include <X11/Xlib.h>
 
+Resolucion* instancia = NULL;
+
+Resolucion* Resolucion::INSTANCE() {
+	if (!instancia)
+		instancia = new Resolucion();
+	return instancia;
+}
+
+Resolucion* Resolucion::INSTANCE(int x, int y) {
+	if (!instancia)
+		instancia = new Resolucion(x, y);
+	return instancia;
+}
+
 Resolucion::Resolucion() {
 	Display* disp = XOpenDisplay(NULL);
 	Screen*  screen = DefaultScreenOfDisplay(disp);

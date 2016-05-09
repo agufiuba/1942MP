@@ -13,10 +13,12 @@ class Resolucion {
 private:
 	int SCREEN_WIDTH;
 	int SCREEN_HEIGHT;
-
-public:
 	Resolucion();
 	Resolucion(int x, int y);
+
+public:
+	static Resolucion* INSTANCE();
+	static Resolucion* INSTANCE(int x, int y);
 	~Resolucion();
 	int getWidthScreen();
 	int getHeightScreen();

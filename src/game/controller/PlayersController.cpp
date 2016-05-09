@@ -38,16 +38,19 @@ void PlayersController::press(SDL_Event *event){
 
 void PlayersController::hacerVivir(){
 	obj->vivir(velX, velY);
-
-	if (lastEvent != NULL) {
-		switch(lastEvent->key.keysym.sym){
-			case SDLK_RIGHT: velX -= velocidadStandard; obj->vivir(velX, velY); break;
-			case SDLK_LEFT: velX += velocidadStandard; obj->vivir(velX, velY); break;
-			case SDLK_UP: velY -= velocidadStandard; cout<<"Bajo un cambio" << endl;obj->vivir(velX, velY); break;
-			case SDLK_DOWN: velY += velocidadStandard; obj->vivir(velX, velY); break;
-		}
-		lastEvent = NULL;
-
-	}
+	velX = 0;
+	velY = 0;
 	controlDeMisiles->hacerVivir();
+
+//  TODO: Dejo comentado otra solucion alternativa para que los aviones no se muevan sin control
+//	if (lastEvent != NULL) {
+//		switch(lastEvent->key.keysym.sym){
+//			case SDLK_RIGHT: velX -= velocidadStandard; obj->vivir(velX, velY); break;
+//			case SDLK_LEFT: velX += velocidadStandard; obj->vivir(velX, velY); break;
+//			case SDLK_UP: velY -= velocidadStandard; obj->vivir(velX, velY); break;
+//			case SDLK_DOWN: velY += velocidadStandard; obj->vivir(velX, velY); break;
+//		}
+//		lastEvent = NULL;
+//
+//	}
 }

@@ -29,7 +29,7 @@ Escenario::Escenario(bool isFullScreen) {
 Escenario::Escenario(int width, int height) {
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
-	resolucion = new Resolucion(width, height);
+	resolucion = Resolucion::INSTANCE(width, height);
 	inicializar();
 }
 
@@ -37,7 +37,7 @@ Escenario::Escenario(int width, int height, bool isFullScreen) {
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
 	this->isFullScreen = isFullScreen;
-	resolucion = new Resolucion(width, height);
+	resolucion = Resolucion::INSTANCE(width, height);
 	inicializar();
 }
 
@@ -45,7 +45,7 @@ Escenario::Escenario(int fps, int width, int height){
 	this->FRAMES_PER_SECOND = fps;
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
-	resolucion = new Resolucion(width, height);
+	resolucion = Resolucion::INSTANCE(width, height);
 	inicializar();
 }
 
@@ -79,8 +79,8 @@ void Escenario::inicializar() {
 		inicioCorrectamente = false;
 	}
 
-	fondoDePantalla = new Texture( gRenderer );
 	// Load fondo de pantalla
+	fondoDePantalla = new Texture( gRenderer );
 	if (!fondoDePantalla->loadFromFile( DIR_FONDO_PANTALLA )) {
 		printErrorSDL("Fondo de Pantalla");
 		inicioCorrectamente = false;
@@ -99,7 +99,7 @@ Escenario::~Escenario() {
 }
 
 void Escenario::setResolucion() {
-	resolucion = new Resolucion();
+	resolucion = Resolucion::INSTANCE();
 	SCREEN_HEIGHT = resolucion->getHeightScreen();
 	SCREEN_WIDTH = resolucion->getWidthScreen();
 }
@@ -200,10 +200,11 @@ void Escenario::run() {
 
 			//TODO Aca se simula lo que seria el movimiento de otro jugador
 			i++;
-			cout<<i<<endl;
+			//cout<<i<<endl;
 			if (i > 15) {
 //				cout << "Realizo movimiento arriba" << endl;
 				controllers->mover("max",'U');
+				controllers->mover("gon",'R');
 				//Realizo disparo
 				//controllers->mover("max",'S');
 				//Realizo vueltera
@@ -230,8 +231,8 @@ void Escenario::run() {
 		}
 
 		actualizarEscenario(posicionEscenario);
-//		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
-//		posAvion->print();
+		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
+		posAvion->print();
 		aplicarFPS(start);
 
 	}

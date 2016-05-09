@@ -126,7 +126,6 @@ void AvionView::mostrar( int x, int y, int velX){
   }else{
   	currentClip = &clipsDerecha[ frame ];
   }
-
   vistaAvionTexture->render( x, y, currentClip );
 }
 
