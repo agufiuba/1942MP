@@ -28,6 +28,9 @@ LOGGER = ./src/libs/logger/Logger.cpp
 # palette
 PALETTE = ./src/libs/palette/palette.cpp
 
+# transmitter
+TMT = src/libs/transmitter/Transmitter.cpp
+
 # compiler
 COMPILER = -std=c++11
 
@@ -55,6 +58,7 @@ VIVIBLE = $(MODEL_DIR)/Vivible.h
 COMPOSITE = $(MODEL_DIR)/CompositeVivibles.cpp
 AVION = $(MODEL_DIR)/Avion.cpp
 MISIL = $(MODEL_DIR)/Misil.cpp
+PLAYER = $(MODEL_DIR)/Player.cpp
 
 # view
 AVION_VIEW = $(VIEW_DIR)/AvionView.cpp
@@ -70,14 +74,14 @@ MISILES_CONTROLLERS = $(CONTROLLER_DIR)/ControllerMissiles.cpp
 TIMER_CONTROLLER = $(CONTROLLER_DIR)/Timer.cpp 
 
 # M V C
-MODEL = $(RESOLUCION) $(POSICION) $(VIVIBLE) $(COMPOSITE) $(AVION) $(MISIL)
+MODEL = $(RESOLUCION) $(POSICION) $(VIVIBLE) $(COMPOSITE) $(AVION) $(MISIL) $(PLAYER)
 VIEW = $(AVION_VIEW) $(TEXTURE) $(BACKGROUND) $(ISLA) $(MISIL_VIEW)
 CONTROLLER = $(CONTROLLER_CONTROLLER) $(PLAYERS_CONTROLLERS) $(MISILES_CONTROLLERS) $(TIMER_CONTROLLER)
 
 # executable name
 EXE = 1942MultiPlayer.exe
 
-OBJS = $(MODEL) $(VIEW) $(CONTROLLER) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(CLIENT) $(SERVER) $(EVENT) $(GAME)
+OBJS = $(MODEL) $(VIEW) $(CONTROLLER) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(TMT) $(CLIENT) $(SERVER) $(EVENT) $(GAME)
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)
