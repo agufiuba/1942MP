@@ -4,6 +4,7 @@
 #include "../../xml/conf/ServerConf.h"
 #include "../../game/events/Events.cpp"
 #include "../../libs/data/player_data.h"
+#include "../../game/model/Player.h"
 #include <queue>
 #include <map>
 #include <string>
@@ -18,6 +19,7 @@ class Server {
     bool allowConnections;
     bool processing;
     queue<map<int, Evento*>*>* eventQueue;
+    map<int, Player*> players;
     Logger* logger;
 //    ServerConf* config;
     static const int BACKLOG = 5;
@@ -33,6 +35,7 @@ class Server {
     void sendData( int clientFD, Evento* data, int dataLength );
     bool receiveData( char id[2], int clientFD, int size );
     bool receiveData( PlayerData* data, int clientFD );
+    void addPlayer( PlayerData* data, int clientFD );
 
   public:
     Server( const char* configFileName );

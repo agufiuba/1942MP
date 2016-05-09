@@ -154,11 +154,13 @@ void Client::checkAliveSend() {
 }
 
 void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
-  int numBytesRead;
   timeval timeout;
   timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
   timeout.tv_usec = 0;
-  Mensaje* buf = new Mensaje;
+  bool received;
+  char id[3];
+  // Create transmitter
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
 
   while ( this->connected ) {
     // seteo el timeout de recepcion de mensajes
@@ -167,29 +169,34 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
       exit( 1 );
     }
 
-    if( ( numBytesRead = recv( this->socketFD, buf, MAX_DATA_SIZE, 0 ) ) == -1 ) {
-      close( this->socketFD );
-      this->connected = false;
-      this->logger->warn( CONNECTION_TIMEOUT );
-      DEBUG_WARN( CONNECTION_TIMEOUT );
-      return;
+    // Get id of next data to receive
+    received = tmt->receiveData( id, sizeof( id ) );
+
+    if( received ) {
+      string dataID( id );
+      // Receive data type based on fetched dataID 
+      if( dataID == "PD" ) {
+	PlayerData* data = new PlayerData;
+
+	if( received = tmt->receiveData( data ) ) {
+	  // Process received data
+	  cout << "Nombre del jugador: " << string( data->name ) << endl;
+	  cout << "Color del jugador: " << string( data->color ) << endl;
+	}
+
+	delete data;
+      } 
     }
 
-    if( numBytesRead > 0 ) {
-      if( numBytesRead != 1 ) {
-	string recvMsg = string( buf->valor );
-	this->logger->info( SERVER_MSG( recvMsg ) );
-	DEBUG_PRINT( SERVER_MSG( recvMsg ) );
-	this->received = true;
-      }
-    }
-    if( numBytesRead == 0 ){
+    if( !( received ) ) {
       this->logger->warn( CONNECTION_LOST );
       DEBUG_WARN( CONNECTION_LOST );
       this->connected = false;
       close( this->socketFD );
     }
   }
+
+  delete tmt;
 }
 
 bool Client::sendData( Evento* e ) {
