@@ -25,6 +25,7 @@ private:
 	int velocidadStandard;
 	Resolucion* resolucionPantalla;
 	ControllerMissiles* controlDeMisiles;
+	SDL_Event* lastEvent;
 
 public:
 	PlayersController(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion);

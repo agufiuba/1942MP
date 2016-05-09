@@ -201,11 +201,11 @@ void Escenario::run() {
 			//TODO Aca se simula lo que seria el movimiento de otro jugador
 			i++;
 			cout<<i<<endl;
-			if (i > 55) {
+			if (i > 15) {
 //				cout << "Realizo movimiento arriba" << endl;
-//				controllers->mover("max",'U');
+				controllers->mover("max",'U');
 				//Realizo disparo
-				controllers->mover("max",'S');
+				//controllers->mover("max",'S');
 				//Realizo vueltera
 				//controllers->mover("max",'E');
 				i = 0;

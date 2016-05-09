@@ -10,6 +10,7 @@ PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* &renderer, Re
 	velY = 0;
 	resolucionPantalla = resolucion;
 	controlDeMisiles = new ControllerMissiles(renderer);
+	lastEvent = NULL;
 }
 
 PlayersController::~PlayersController(){
@@ -18,7 +19,7 @@ PlayersController::~PlayersController(){
 }
 
 void PlayersController::press(SDL_Event *event){
-
+		lastEvent = event;
         switch(event->key.keysym.sym){
 
             case SDLK_RIGHT: velX += velocidadStandard; break;
@@ -37,5 +38,16 @@ void PlayersController::press(SDL_Event *event){
 
 void PlayersController::hacerVivir(){
 	obj->vivir(velX, velY);
+
+	if (lastEvent != NULL) {
+		switch(lastEvent->key.keysym.sym){
+			case SDLK_RIGHT: velX -= velocidadStandard; obj->vivir(velX, velY); break;
+			case SDLK_LEFT: velX += velocidadStandard; obj->vivir(velX, velY); break;
+			case SDLK_UP: velY -= velocidadStandard; cout<<"Bajo un cambio" << endl;obj->vivir(velX, velY); break;
+			case SDLK_DOWN: velY += velocidadStandard; obj->vivir(velX, velY); break;
+		}
+		lastEvent = NULL;
+
+	}
 	controlDeMisiles->hacerVivir();
 }
