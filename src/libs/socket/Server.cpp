@@ -143,7 +143,7 @@ void* Server::getInAddr( struct sockaddr* sa ) {
 }
 
 void Server::addPlayer( PlayerData* data, int cfd ) {
-  string validName = "no", validColor = "yes";
+  string validName = "Y", validColor = "Y";
   mutex theMutex;
   string selectedName( data->name );
   string selectedColor( data->color );
@@ -156,7 +156,22 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
     // if already a player with that name
     if( selectedName == it->second->getName() ) {
       createPlayer = false;
-      break;
+      validName = "N";
+      // if player with such name is not active
+      if( !( it->second->isActive() ) ) {
+	// resume player game
+	selectedColor = it->second->getColor();
+	this->players.erase( it );
+	createPlayer = true;
+	validName = "R";
+	validColor = "R";
+	break;
+      } 
+    }
+    // if already a player with that color 
+    if( selectedColor == it->second->getColor() ) {
+      createPlayer = false;
+      validColor = "N";
     }
   }
   theMutex.unlock();
@@ -167,7 +182,6 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
     theMutex.lock();
     this->players[ cfd ] = p;
     theMutex.unlock();
-    validName = "yes";
   }
 
   // Create response
