@@ -296,6 +296,7 @@ void Game::loadValidationScreen() {
 					if (connectionFailed){
 				    this->loadConnectionScreen();
 					} else {
+						this->setPlanesActives(true,false,true,false);//TODO aca va el seteo
 						this->loadselectionPlane();
 					}
 					break;
@@ -342,21 +343,39 @@ void Game::loadValidationScreen() {
   }
 }
 
+
+void Game::setPlanesActives(bool blue,bool red,bool green,bool yellow){
+	this->bluePlaneActive = blue;
+	this->redPlaneActive = red;
+	this->greenPlaneActive = green;
+	this->yellowPlaneActive = yellow;
+}
+
 void Game::loadselectionPlane() {
 	SDL_Event e;
 	Timer timer;
-	string acceptButtonText = "CONFIRMAR";
 
 	Screen* initialScreen = new Screen(this->sdlHandler);
+
+//	this->setInitialScreen()
 	initialScreen->loadTexture("logo", "windowImages/1942logoPrincipal.bmp");
-	initialScreen->loadTexture("bluePlane", "../game/images/avionAzul.bmp");
-	initialScreen->loadTexture("redPlane", "../game/images/avionRojo.bmp");
-	initialScreen->loadTexture("greenPlane", "../game/images/avionVerde.bmp");
-	initialScreen->loadTexture("yellowPlane", "../game/images/avionAmarillo.bmp");
 	initialScreen->loadText("clientText", "  Jugador: ", { 0, 255, 100 });
 	initialScreen->loadText("planeText", " Avion: ", { 0, 255, 100 });
 	initialScreen->loadText("clientId", this->clientId);
-	initialScreen->loadText("accept", acceptButtonText);
+	initialScreen->loadText("accept", "CONTINUAR");
+
+	if (bluePlaneActive){
+		initialScreen->loadTexture("bluePlane", "../game/images/avionAzul.bmp");
+	}
+	if (redPlaneActive){
+		initialScreen->loadTexture("redPlane", "../game/images/avionRojo.bmp");
+	}
+	if (greenPlaneActive){
+		initialScreen->loadTexture("greenPlane", "../game/images/avionVerde.bmp");
+	}
+	if (yellowPlaneActive){
+		initialScreen->loadTexture("yellowPlane", "../game/images/avionAmarillo.bmp");
+	}
 
 	int logoCenter = (this->windowWidth - initialScreen->getTextureWidth("logo")) / 2;
 	int promptCenter = logoCenter - 20;
@@ -382,6 +401,7 @@ void Game::loadselectionPlane() {
 	bool yellowPromptSelected = false;
 	bool clicked = false;
 	bool error = false;
+
 	// Create prompts
 	initialScreen->loadRectangle("promptClientId", promptCenter,inputClientIdPosY, 260, 50);
 	initialScreen->loadRectangle("button", promptCenter + 15, 450, 230, 50);
@@ -402,17 +422,56 @@ void Game::loadselectionPlane() {
 			else if (e.type == SDL_KEYDOWN) {
 				// Handle Tab
 				if (e.key.keysym.sym == SDLK_TAB && bluePromptSelected) {
+
 					bluePromptSelected = !bluePromptSelected;
-					redPromptSelected = !redPromptSelected;
+					if (this->redPlaneActive){
+						redPromptSelected = !redPromptSelected;
+					} else if (this->greenPlaneActive){
+						greenPromptSelected = !greenPromptSelected;
+					} else if (this->yellowPlaneActive){
+						yellowPromptSelected = !yellowPromptSelected;
+					} else{
+						bluePromptSelected = !bluePromptSelected;
+					}
+
 				} else 	if (e.key.keysym.sym == SDLK_TAB && redPromptSelected) {
+
 					redPromptSelected = !redPromptSelected;
-					greenPromptSelected = !greenPromptSelected;
+					if (this->greenPlaneActive){
+						greenPromptSelected = !greenPromptSelected;
+					} else if (this->yellowPlaneActive){
+						yellowPromptSelected = !yellowPromptSelected;
+					} else if (this->bluePlaneActive){
+						bluePromptSelected = !bluePromptSelected;
+					} else {
+						redPromptSelected = !redPromptSelected;
+					}
+
 				} else if (e.key.keysym.sym == SDLK_TAB && greenPromptSelected) {
+
 					greenPromptSelected = !greenPromptSelected;
-					yellowPromptSelected = !yellowPromptSelected;
+					if (this->yellowPlaneActive){
+						yellowPromptSelected = !yellowPromptSelected;
+					} else if (this->bluePlaneActive){
+						bluePromptSelected = !bluePromptSelected;
+					} else if (this->redPlaneActive){
+						redPromptSelected = !redPromptSelected;
+					}else {
+						greenPromptSelected = !greenPromptSelected;
+					}
+
 				} else 	if (e.key.keysym.sym == SDLK_TAB && yellowPromptSelected) {
+
 					yellowPromptSelected = !yellowPromptSelected;
-					bluePromptSelected = !bluePromptSelected;
+					if (this->bluePlaneActive){
+						bluePromptSelected = !bluePromptSelected;
+					} else if (this->redPlaneActive){
+						redPromptSelected = !redPromptSelected;
+					}else if (this->greenPlaneActive){
+						greenPromptSelected = !greenPromptSelected;
+					} else {
+						yellowPromptSelected = !yellowPromptSelected;
+					}
 				}
 				//Handle backspace
 				else if (firstPromptSelected) {
@@ -483,10 +542,18 @@ void Game::loadselectionPlane() {
 
 		// Render logo
 		initialScreen->renderTexture("logo", logoCenter, 90);
-		initialScreen->renderTexture("bluePlane", inputBluePlaneIdPosX, inputPlaneIdPosY);
-		initialScreen->renderTexture("redPlane", inputRedPlaneIdPosX, inputPlaneIdPosY);
-		initialScreen->renderTexture("greenPlane", inputGreenPlaneIdPosX, inputPlaneIdPosY);
-		initialScreen->renderTexture("yellowPlane", inputYellowPlaneIdPosX, inputPlaneIdPosY);
+		if (bluePlaneActive){
+			initialScreen->renderTexture("bluePlane", inputBluePlaneIdPosX, inputPlaneIdPosY);
+		}
+		if (redPlaneActive){
+			initialScreen->renderTexture("redPlane", inputRedPlaneIdPosX, inputPlaneIdPosY);
+		}
+		if (greenPlaneActive){
+			initialScreen->renderTexture("greenPlane", inputGreenPlaneIdPosX, inputPlaneIdPosY);
+		}
+		if (yellowPlaneActive){
+			initialScreen->renderTexture("yellowPlane", inputYellowPlaneIdPosX, inputPlaneIdPosY);
+		}
 
 		// Set prompt color
 		initialScreen->setRenderDrawColor(255, 255, 255, 255);
@@ -604,5 +671,3 @@ void Game::sendDataPlayer(){
 	  strcpy( data->color, this->planeId.c_str() );
 	  this->unCliente->sendData(data);
 }
-
-

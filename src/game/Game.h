@@ -24,10 +24,16 @@ class Game {
     string clientId;
     string planeId;
   
+    bool bluePlaneActive;
+    bool redPlaneActive;
+    bool greenPlaneActive;
+    bool yellowPlaneActive;
+
     void loadConnectionScreen();
     void loadValidationScreen();
     void loadselectionPlane();
     void sendDataPlayer();
+    void setPlanesActives(bool blue,bool red,bool green,bool yellow);
 
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
