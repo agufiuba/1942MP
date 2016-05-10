@@ -200,6 +200,40 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
   delete tmt;
 }
 
+
+void Server::sendPlanesActives(int cfd){
+
+	  PlanesActives* planes = new PlanesActives;
+	  planes->blue = true;
+	  planes->red = true;
+	  planes->green = true;
+	  planes->yellow = true;
+
+	  mutex theMutex;
+	  theMutex.lock();
+	  for( map<int, Player*>::iterator it = this->players.begin(); it != this->players.end();  ++it ) {
+	    // if already a player with that color
+		  if( it->second->getColor() == "azul" ) {
+			  planes->blue = false;
+	      } else if( it->second->getColor() == "rojo" ) {
+		      planes->red = false;
+		  } else if( it->second->getColor() == "verde" ) {
+			  planes->green = false;
+		  } else if( it->second->getColor() == "amarillo" ) {
+		      planes->yellow = false;
+		  }
+	  }
+	  theMutex.unlock();
+	  Transmitter* tmt = new Transmitter( cfd, this->logger );
+	  if( !( tmt->sendData( planes ) ) ) {
+	    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::addPlayer" );
+	    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::addPlayer" );
+	  }
+
+	  delete planes;
+	  delete tmt;
+}
+
 void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
   Evento* msgToRecv = new Evento;
@@ -214,9 +248,12 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       << endl;
     this->logger->info( "Se inicio una conexion con el host: " + string( clientIP ) );
 
-    if( send( cfd, "Aceptado", 9, 0 ) == -1 ) {
+    if( send( cfd, "Aceptado", 8, 0 ) == -1 ) {
       this->logger->error( "Error al enviar que se acepto la conexion" );
     }
+
+    usleep(1);
+    this->sendPlanesActives( cfd);
 
     timeval timeout;
     timeout.tv_sec = this->MAX_UNREACHABLE_TIME;

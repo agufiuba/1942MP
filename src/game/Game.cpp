@@ -296,7 +296,11 @@ void Game::loadValidationScreen() {
 					if (connectionFailed){
 				    this->loadConnectionScreen();
 					} else {
-						this->setPlanesActives(true,false,true,false);//TODO aca va el seteo
+						PlanesActives* planes = this->unCliente->getPlanesActives();
+						this->bluePlaneActive = planes->blue;
+						this->redPlaneActive = planes->red;
+						this->greenPlaneActive = planes->green;
+						this->yellowPlaneActive = planes->yellow;
 						this->loadselectionPlane();
 					}
 					break;
