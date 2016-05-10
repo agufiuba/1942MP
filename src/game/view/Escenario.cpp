@@ -161,9 +161,9 @@ void Escenario::setFondosVivibles() {
 }
 
 void Escenario::setOtrosAviones() {
-	char key[] = "key";
-	char gon[] = "gon";
-	char max[] = "max";
+	string key = "key";
+	string gon = "gon";
+	string max = "max";
 
 	Vivible* otroAvion1 = new Avion(key, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), amarillo);
 	Vivible* otroAvion2 = new Avion(gon, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 10, 100), rojo);
@@ -174,6 +174,12 @@ void Escenario::setOtrosAviones() {
 	controllers->setPlayer((Avion*)otroAvion2);
 	controllers->setPlayer((Avion*)otroAvion3);
 }
+void Escenario::configurarJugador(PlayerData* jugador){
+	string name(jugador->name);
+	string color (jugador->color);
+	Vivible* unAvion = new Avion(name, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), color);
+	myControl = new Controller(unAvion, gRenderer, resolucion);
+}
 
 SDL_Event* Escenario::run() {
 	if (!inicioCorrectamente) {
@@ -183,14 +189,10 @@ SDL_Event* Escenario::run() {
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
-	char ray[] = "ray";
-
-	Vivible* unAvion = new Avion(ray, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), azul);
 
 	setFondosVivibles();
 	setOtrosAviones();
 
-	myControl = new Controller(unAvion, gRenderer, resolucion);
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	actualizarEscenario(posicionEscenario);
@@ -240,8 +242,8 @@ SDL_Event* Escenario::run() {
 		}
 
 		actualizarEscenario(posicionEscenario);
-		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
-		posAvion->print();
+//		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
+//		posAvion->print();
 		aplicarFPS(start);
 
 	}

@@ -13,7 +13,7 @@ using namespace std;
 
 void startupClient() {
 	Game* game = new Game();
-	game->start("gameconf.xml");
+	game->start();
 	// Delete game
 }
 

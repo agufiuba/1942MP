@@ -60,6 +60,22 @@ bool Transmitter::sendData( PlanesActives* data ) {
   return true;
 }
 
+bool Transmitter::sendData( GameConf* data ) {
+  // Send data id
+  if( !( this->sendDataID( "CO" ) ) ) {
+    return false;
+  }
+
+  // Send data
+  if( send( this->peerFD, data, sizeof( GameConf ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+    return false;
+  }
+
+  return true;
+}
+
 bool Transmitter::receiveData( char id[3], int size ) {
   int numBytesRead;
   // Read data id
@@ -89,6 +105,18 @@ bool Transmitter::receiveData( PlanesActives* data ) {
   int numBytesRead;
   // Read data
   if( ( numBytesRead = recv( this->peerFD, data, sizeof( PlanesActives ), 0 ) ) == -1 ) {
+    close( this->peerFD );
+    this->logger->warn( CONNECTION_TIMEOUT );
+    DEBUG_WARN( CONNECTION_TIMEOUT );
+  }
+
+  return ( numBytesRead > 0 );
+}
+
+bool Transmitter::receiveData( GameConf* data ) {
+  int numBytesRead;
+  // Read data
+  if( ( numBytesRead = recv( this->peerFD, data, sizeof( GameConf ), 0 ) ) == -1 ) {
     close( this->peerFD );
     this->logger->warn( CONNECTION_TIMEOUT );
     DEBUG_WARN( CONNECTION_TIMEOUT );

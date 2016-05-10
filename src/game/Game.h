@@ -25,7 +25,7 @@ class Game {
     string serverIP;
     string serverPort;
     Client* unCliente;
-    
+    PlayerData* jugador;
     string clientId;
     string planeId;
   
@@ -41,10 +41,12 @@ class Game {
     void sendDataPlayer();
     void setPlanesActives(bool blue,bool red,bool green,bool yellow);
 
+    void cargarEscenario();
+
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
     ~Game();
-    void start(string);
+    void start();
     bool connectingToServer();
     void setWindowWidth( int width );
     void setWindowHeight( int height );

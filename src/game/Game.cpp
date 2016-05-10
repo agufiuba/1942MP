@@ -20,18 +20,26 @@ Game::~Game() {
   delete sdlHandler;
 }
 
-void Game::start(string fn) {
-    gc = GameParser::parse(fn);
+void Game::cargarEscenario() {
+	SDL_Event* exitEven = new SDL_Event();
+	exitEven->key.keysym.sym = SDLK_r;
+	while (exitEven->key.keysym.sym == SDLK_r) {
+		while(!unCliente->gcnew){}
+		gc = unCliente->gc;
+		unCliente->gcnew=false;
+		escenario = new Escenario();
+		escenario->configurarJugador(this->jugador);
+		exitEven = escenario->run();
+		delete escenario;
+	}
+}
+
+void Game::start() {
   if( this->sdlHandler->createWindow( this->windowTitle.c_str(), this->windowWidth, this->windowHeight ) ) {
 	  this->running = true;
 	  this->loadConnectionScreen();
+	  cargarEscenario();
   }
-//	escenario = new Escenario();
-//	SDL_Event* exitEven = new SDL_Event();
-//	exitEven->key.keysym.sym = SDLK_r;
-//	while (exitEven->key.keysym.sym == SDLK_r) {
-//		exitEven = escenario->run();
-//	}
 }
 
 void Game::setWindowWidth( int width ) {
@@ -690,10 +698,10 @@ void Game::loadselectionPlane() {
 
 
 void Game::sendDataPlayer(){
-	  PlayerData* data = new PlayerData;
-	  strcpy( data->name, this->clientId.c_str() );
-	  strcpy( data->color, this->planeId.c_str() );
-	  this->unCliente->sendData(data);
+	  this->jugador = new PlayerData;
+	  strcpy( jugador->name, this->clientId.c_str() );
+	  strcpy( jugador->color, this->planeId.c_str() );
+	  this->unCliente->sendData(jugador);
 }
 
 

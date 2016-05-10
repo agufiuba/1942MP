@@ -2,9 +2,9 @@
 
 using namespace std;
 
-Avion::Avion(char id[20], SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color) {
+Avion::Avion(string id, SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color) {
 
-	this->id = string(id);
+	this->id = id;
 	vistaAvion = new AvionView(renderer, color);
 	viviendo = true;
 

@@ -30,7 +30,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Avion(char id[20], SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color);
+	Avion(string id, SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color);
 	~Avion();
 
 	string getId();
