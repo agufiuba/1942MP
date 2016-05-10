@@ -17,11 +17,11 @@
 
 class Isla : public Vivible {
 private:
-	const char* DIR_ISLA_1 = "src/game/images/isla1.bmp";
-	const char* DIR_ISLA_2 = "src/game/images/isla2.bmp";
-	const char* DIR_ISLA_3 = "src/game/images/isla3.bmp";
-	const char* DIR_ISLA_4 = "src/game/images/isla4.bmp";
-	const char* PORTAAVION = "src/game/images/porta1.bmp";
+	const char* DIR_ISLA_1 = "src/game/images/islas/isla1.bmp";
+	const char* DIR_ISLA_2 = "src/game/images/islas/isla2.bmp";
+	const char* DIR_ISLA_3 = "src/game/images/islas/isla3-chica.bmp";
+	const char* DIR_ISLA_4 = "src/game/images/islas/isla4-chica.bmp";
+	const char* PORTAAVION = "src/game/images/portaviones/porta1.bmp";
 	Texture* islaTxt;
 	Posicion* posicion;
 	void inicializar();

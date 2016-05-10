@@ -22,7 +22,6 @@ void ControllerMissiles::press(SDL_Event *event){
 }
 
 void ControllerMissiles::crearNuevoMisilEnPosicion(int x, int y,Resolucion* resolucion){
-
 	Vivible* misilNuevo = new Misil(rendererMisil, new Posicion(x,y),resolucion);
 	this->vivibles->agregarObjetoVivible(misilNuevo);
 }

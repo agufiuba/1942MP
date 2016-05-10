@@ -29,7 +29,7 @@ Escenario::Escenario(bool isFullScreen) {
 Escenario::Escenario(int width, int height) {
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
-	resolucion = new Resolucion(width, height);
+	resolucion = Resolucion::INSTANCE(width, height);
 	inicializar();
 }
 
@@ -37,7 +37,7 @@ Escenario::Escenario(int width, int height, bool isFullScreen) {
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
 	this->isFullScreen = isFullScreen;
-	resolucion = new Resolucion(width, height);
+	resolucion = Resolucion::INSTANCE(width, height);
 	inicializar();
 }
 
@@ -45,7 +45,7 @@ Escenario::Escenario(int fps, int width, int height){
 	this->FRAMES_PER_SECOND = fps;
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
-	resolucion = new Resolucion(width, height);
+	resolucion = Resolucion::INSTANCE(width, height);
 	inicializar();
 }
 
@@ -79,8 +79,8 @@ void Escenario::inicializar() {
 		inicioCorrectamente = false;
 	}
 
-	fondoDePantalla = new Texture( gRenderer );
 	// Load fondo de pantalla
+	fondoDePantalla = new Texture( gRenderer );
 	if (!fondoDePantalla->loadFromFile( DIR_FONDO_PANTALLA )) {
 		printErrorSDL("Fondo de Pantalla");
 		inicioCorrectamente = false;
@@ -99,7 +99,7 @@ Escenario::~Escenario() {
 }
 
 void Escenario::setResolucion() {
-	resolucion = new Resolucion();
+	resolucion = Resolucion::INSTANCE();
 	SCREEN_HEIGHT = resolucion->getHeightScreen();
 	SCREEN_WIDTH = resolucion->getWidthScreen();
 }
@@ -116,10 +116,9 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir(0,0);
 	}
+	myControl->hacerVivir();
+	controllers->hacerVivir();
 
-	for (int i = 0; i < controllersList.size(); i++) {
-		controllersList[i]->hacerVivir();
-	}
 	SDL_RenderPresent(gRenderer);
 }
 
@@ -133,77 +132,95 @@ void Escenario::aplicarFPS(Uint32 start) {
 
 void Escenario::setFondosVivibles() {
 
-	Vivible* isla = new Isla(gRenderer, new Posicion(1150, 700), 1);
-	Vivible* isla2 = new Isla(gRenderer, new Posicion(300, 2200), 2);
-	Vivible* isla3 = new Isla(gRenderer, new Posicion(560, 3400), 3);
-	Vivible* isla4 = new Isla(gRenderer, new Posicion(0, 4500), 1);
-	Vivible* isla5 = new Isla(gRenderer, new Posicion(600, 5700), 2);
-	Vivible* isla6 = new Isla(gRenderer, new Posicion(750, 6400), 3);
-	Vivible* portaAvion = new Isla(gRenderer, new Posicion(500, 500), 4);
+	//limpiarFondosVivibles();
 
-	fondosVivibles.push_back(isla);
+	Vivible* isla1 = new Isla(gRenderer, new Posicion(250, 1800), 3);
+	Vivible* isla2 = new Isla(gRenderer, new Posicion(450, 1300), 2);
+	Vivible* isla3 = new Isla(gRenderer, new Posicion(150, 3000), 1);
+	Vivible* isla4 = new Isla(gRenderer, new Posicion(700, 1500), 2);
+//	Vivible* isla5 = new Isla(gRenderer, new Posicion(450, 2500), 1);
+//	Vivible* isla6 = new Isla(gRenderer, new Posicion(450, 2700), 1);
+	Vivible* portaAvion1 = new Isla(gRenderer, new Posicion(50, 1200), 4);
+//	Vivible* portaAvion2 = new Isla(gRenderer, new Posicion(300, 300), 4);
+//	Vivible* portaAvion3 = new Isla(gRenderer, new Posicion(550, 300), 4);
+//	Vivible* portaAvion4 = new Isla(gRenderer, new Posicion(800, 300), 4);
+
+	fondosVivibles.push_back(isla1);
 	fondosVivibles.push_back(isla2);
 	fondosVivibles.push_back(isla3);
 	fondosVivibles.push_back(isla4);
-	fondosVivibles.push_back(isla5);
-	fondosVivibles.push_back(isla6);
-	fondosVivibles.push_back(portaAvion);
+//	fondosVivibles.push_back(isla5);
+//	fondosVivibles.push_back(isla6);
+	fondosVivibles.push_back(portaAvion1);
+//	fondosVivibles.push_back(portaAvion2);
+//	fondosVivibles.push_back(portaAvion3);
+//	fondosVivibles.push_back(portaAvion4);
 
 }
 
-void Escenario::run() {
+void Escenario::setOtrosAviones() {
+	char key[] = "key";
+	char gon[] = "gon";
+	char max[] = "max";
+
+	Vivible* otroAvion1 = new Avion(key, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), amarillo);
+	Vivible* otroAvion2 = new Avion(gon, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 10, 100), rojo);
+	Vivible* otroAvion3 = new Avion(max, gRenderer, resolucion, new Posicion(SCREEN_WIDTH * 3/4, 100), verde);
+
+	controllers = new HandlerPlayersControllers(gRenderer, resolucion);
+	controllers->setPlayer((Avion*)otroAvion1);
+	controllers->setPlayer((Avion*)otroAvion2);
+	controllers->setPlayer((Avion*)otroAvion3);
+}
+
+SDL_Event* Escenario::run() {
 	if (!inicioCorrectamente) {
-		return ;
+		return NULL;
 	}
 
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
-	Vivible* unAvion = new Avion(gRenderer, resolucion, new Posicion(100, 100), azul);
-	Vivible* otroAvion = new Avion(gRenderer, resolucion, new Posicion(800, 100), amarillo);
-	Vivible* otroAvion2 = new Avion(gRenderer, resolucion, new Posicion(600, 100), rojo);
-	Vivible* otroAvion3 = new Avion(gRenderer, resolucion, new Posicion(400, 100), verde);
+	char ray[] = "ray";
+
+	Vivible* unAvion = new Avion(ray, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), azul);
 
 	setFondosVivibles();
+	setOtrosAviones();
 
-	IController* control = new Controller(unAvion, gRenderer, resolucion);
-	IController* otroControl = new PlayersController(otroAvion, gRenderer);
-	IController* otroControl2 = new PlayersController(otroAvion2, gRenderer);
-	IController* otroControl3 = new PlayersController(otroAvion3, gRenderer);
+	myControl = new Controller(unAvion, gRenderer, resolucion);
 
-	controllersList.push_back(control);
-	controllersList.push_back(otroControl);
-	controllersList.push_back(otroControl2);
-	controllersList.push_back(otroControl3);
-
-	Posicion* posicionEscenario = new Posicion(0, pixelesArecorrer);
+	Posicion* posicionEscenario = new Posicion(0, 0);
 	actualizarEscenario(posicionEscenario);
 
 	Uint32 start;
 	bool quit = false;
 
-	int i = 0; //hardcodeo
+	int i = 0;
 	Posicion* posAvion = new Posicion(0,0);
 	while (!quit) {
 
-		//hardcodeo para probar la desconexion
-		i++;
-		if (i>200){
-			otroAvion->desconectar();
-		}// fin
-
 		start = SDL_GetTicks();
 		while( SDL_PollEvent(&evento) != 0 ) {
-			control->press(&evento);
 
-			otroControl->press(&evento);
-			otroControl2->press(&evento);
-			otroControl3->press(&evento);
+			myControl->press(&evento);
 
-			if(evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q) {
+			//TODO Aca se simula lo que seria el movimiento de otro jugador
+			//i++;
+			//cout<<i<<endl;
+			//if (i > 15) {
+//				cout << "Realizo movimiento arriba" << endl;
+				//controllers->mover("max",'U');
+				//controllers->mover("gon",'R');
+				//Realizo disparo
+				//controllers->mover("max",'S');
+				//Realizo vueltera
+				//controllers->mover("max",'E');
+			//	i = 0;
+			//}
+
+			if(evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r) {
 				quit = true;
-//				cout << "El ancho es " << SCREEN_WIDTH << endl;
-//				cout << "El alto es " << SCREEN_HEIGHT << endl;
 				break;
 			}
 
@@ -217,7 +234,7 @@ void Escenario::run() {
 		} else {
 			screensRecorridos += CANTIDAD_SCREEN;
 			posicionEscenario->setPosicion(0, pixelesArecorrer);
-			//setFondosVivibles();
+			setFondosVivibles();
 		}
 
 		actualizarEscenario(posicionEscenario);
@@ -226,8 +243,24 @@ void Escenario::run() {
 		aplicarFPS(start);
 
 	}
-	delete control;
-	posicionEscenario->~Posicion();
+
+	limpiarMemoria();
+	delete posicionEscenario;
+	return &evento;
 }
 
+void Escenario::limpiarMemoria() {
+	delete myControl;
+	delete controllers;
+	limpiarFondosVivibles();
+}
 
+void Escenario::limpiarFondosVivibles() {
+
+	if (fondosVivibles.size() > 0) {
+		for (int i = 0 ; i < fondosVivibles.size(); i++) {
+			delete fondosVivibles[i];
+		}
+	}
+
+}

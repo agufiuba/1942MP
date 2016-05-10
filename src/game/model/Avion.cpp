@@ -2,9 +2,10 @@
 
 using namespace std;
 
-Avion::Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color) {
-	vistaAvion = new AvionView(renderer, color);
+Avion::Avion(char id[20], SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color) {
 
+	this->id = string(id);
+	vistaAvion = new AvionView(renderer, color);
 	viviendo = true;
 
 	this->posicion = posicionInicial;
@@ -30,6 +31,10 @@ bool Avion::haciendoVueltereta(){
 Avion::~Avion(){
 	delete vistaAvion;
 	delete t;
+}
+
+string Avion::getId() {
+	return this->id;
 }
 
 void Avion::setVelocidadStandard(int vel){

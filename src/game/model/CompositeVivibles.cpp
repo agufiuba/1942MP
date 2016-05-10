@@ -20,25 +20,22 @@ CompositeVivibles::~CompositeVivibles() {
 }
 
 void CompositeVivibles::vivir(int x, int y){
+	int eliminar = -1;
 	for (int var = 0; var < vectorObjetos.size(); ++var) {
-		if(vectorObjetos[var]->aunVive()){
-			vectorObjetos[var]->vivir(x,y);
+		Vivible* obj= vectorObjetos[var];
+		if(obj->aunVive()){
+			obj->vivir(x,y);
 		} else {
-			/*Vivible* eliminar = vectorObjetos[var];
-			vectorObjetos.
-			delete eliminar;*/
-
+			eliminar = var;
 		}
 	}
-	//this->mostrar(y);
+	if (eliminar >= 0 ){
+		Vivible* objEliminar = vectorObjetos[eliminar];
+		delete objEliminar;
+		vectorObjetos.erase(vectorObjetos.begin()+eliminar);
+	}
 }
 
 void CompositeVivibles::agregarObjetoVivible(Vivible* &unObj){
 	vectorObjetos.push_back(unObj);
 }
-
-/*void CompositeVivibles::mostrar(int velY){
-	for (int var = 0; var < vectorObjetos.size(); ++var) {
-		vectorObjetos[var]->mostrar(velY);
-		}
-}*/

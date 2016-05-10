@@ -10,17 +10,18 @@
 #include <iostream>
 #include <string>
 
+#include <vector>
 #include "Texture.h"
+#include "Isla.h"
 #include "../model/Resolucion.h"
 #include "../model/Posicion.h"
 #include "../model/Avion.h"
+#include "../model/Vivible.h"
 #include "../controller/IController.h"
 #include "../controller/Controller.h"
 #include "../controller/PlayersController.h"
 #include "../controller/Timer.h"
-#include "../model/Vivible.h"
-#include "Isla.h"
-#include <vector>
+#include "../controller/HandlerPlayersControllers.h"
 
 class Escenario {
 
@@ -57,10 +58,11 @@ private:
 	string desconocido = "desconocido";
 
 
-	const char* DIR_FONDO_PANTALLA = "src/game/images/fondoPantalla4000x4000Marcado.bmp";
+	const char* DIR_FONDO_PANTALLA = "src/game/images/fondos/fondoPantalla4000x4000.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
 
-	vector<IController*> controllersList;
+	IController* myControl;
+	HandlerPlayersControllers* controllers;
 	vector<Vivible*> fondosVivibles;
 
 	void inicializar();
@@ -69,6 +71,9 @@ private:
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
 	void setFondosVivibles();
+	void setOtrosAviones();
+	void limpiarMemoria();
+	void limpiarFondosVivibles();
 
 public:
 	Escenario();
@@ -78,7 +83,7 @@ public:
 	Escenario(int width, int height, bool isFullScreen);
 	Escenario(int fps, int width, int height);
 	~Escenario();
-	void run();
+	SDL_Event* run();
 };
 
 #endif /* ESCENARIO_H_ */

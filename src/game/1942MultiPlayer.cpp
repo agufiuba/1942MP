@@ -16,12 +16,21 @@ void startupClient() {
 	//GameConf* gc = GameParser::parse("gc.xml");
 	//Escenario* escenario = new Escenario(gc->escenario->ancho, gc->escenario->alto);
 
-	//Iniciar Pantalla
-	Escenario* escenario = new Escenario(800,600);
-	escenario->run();
+	SDL_Event* exitEven = new SDL_Event();
+	exitEven->key.keysym.sym = SDLK_r;
 
-	// limpiar memoria
-	escenario->~Escenario();
+	while (exitEven->key.keysym.sym == SDLK_r) {
+
+//		Iniciar Pantalla
+		Escenario* escenario = new Escenario(800, 600);
+//		Escenario* escenario = new Escenario(true);
+
+//		run
+		exitEven = escenario->run();
+
+//		 limpiar memoria
+		delete escenario;
+	}
 
 }
 
@@ -43,17 +52,24 @@ void stopServer() {
  */
 int main(int argc, char* argv[]) {
 
-	string mode = argv[1];
+	cout<<argc<<endl;
+	if (argc > 1) {
+		string mode = argv[1];
 
-	if (mode == CLIENT) {
-		const char* fileName = argv[2] ? argv[2] : "default-cc.xml";
-		startupClient();
+		if (mode == CLIENT) {
+			const char* fileName = argv[2] ? argv[2] : "default-cc.xml";
+			startupClient();
 
-	} else if (mode == SERVER) {
-		startupServer();
+		} else if (mode == SERVER) {
+			startupServer();
 
+		} else {
+			cout<< "Debe seleccionar modo de inicio con parametro: client/server"
+					<< endl;
+		}
 	} else {
-		cout << "Debe seleccionar modo de inicio con parametro: client/server" << endl;
+		cout << "Debe seleccionar modo de inicio con parametro: client/server"
+				<< endl;
 	}
 
 	return 0;

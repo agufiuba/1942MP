@@ -23,10 +23,12 @@ private:
 	int velX,velY;
 	const int distanciaDeDesplazamiento = 4;
 	int velocidadStandard;
-	//ControllerMissiles* controlDeMisiles;
+	Resolucion* resolucionPantalla;
+	ControllerMissiles* controlDeMisiles;
+	SDL_Event* lastEvent;
 
 public:
-	PlayersController(Vivible* unObj, SDL_Renderer* &renderer);
+	PlayersController(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion);
 	~PlayersController();
 	void press(SDL_Event *event);
 	void hacerVivir();

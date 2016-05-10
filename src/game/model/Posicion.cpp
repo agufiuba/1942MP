@@ -19,7 +19,7 @@ Posicion::~Posicion() {
 }
 
 void Posicion::initResolucion() {
-	resolucion = new Resolucion();
+	resolucion = Resolucion::INSTANCE();
 	limiteY = resolucion->getHeightScreen();
 }
 

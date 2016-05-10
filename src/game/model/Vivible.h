@@ -8,6 +8,8 @@
 #ifndef SRC_MODEL_VIVIBLE_H_
 #define SRC_MODEL_VIVIBLE_H_
 
+#include <string>
+
 using namespace std;
 
 class Vivible{

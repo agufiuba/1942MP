@@ -10,6 +10,7 @@
 
 class Avion: public Vivible {
 private:
+	string id;
 	int anchoFondo, largoFondo;
 	int velocidadStandard;
 	bool viviendo;
@@ -29,9 +30,10 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Avion(SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color);
+	Avion(char id[20], SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color);
 	~Avion();
 
+	string getId();
 	int getAnchoFondo();
 	int getLargoFondo();
 	int getAncho();
