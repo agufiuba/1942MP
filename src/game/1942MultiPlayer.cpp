@@ -3,6 +3,7 @@
 
 // #include "../xml/parser/GameParser.h"
 #include "view/Escenario.h"
+#include "Game.h"
 
 string CLIENT = "client";
 string SERVER = "server";
@@ -15,6 +16,10 @@ void startupClient() {
 	// Agustin
 	//GameConf* gc = GameParser::parse("gc.xml");
 	//Escenario* escenario = new Escenario(gc->escenario->ancho, gc->escenario->alto);
+
+	Game* game = new Game();
+	game->start();
+
 
 	SDL_Event* exitEven = new SDL_Event();
 	exitEven->key.keysym.sym = SDLK_r;

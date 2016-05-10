@@ -16,8 +16,12 @@ MODEL_DIR = $(GAME_DIR)/model
 VIEW_DIR = $(GAME_DIR)/view
 CONTROLLER_DIR = $(GAME_DIR)/controller
 
+WINDOWINITIAL = $(GAME_DIR)/Game.cpp
+
 # xml
 XML = ./src/libs/tinyxml2.cpp
+
+XM_SDL = ./src/libs/xm_sdl/XM_SDL.cpp
 
 # conf
 CONF = ./src/xml/conf/* ./src/xml/parser/GameParser.cpp
@@ -36,7 +40,7 @@ COMPILER = -std=c++11
 
 # libraries to link
 
-LINKER = -lSDL2 -lX11 -lSDL_ttf -pthread
+LINKER = -lSDL2 -lX11 -lSDL2_ttf -pthread
 
 # event
 EVENT = $(GAME_DIR)/events/Events.cpp $(GAME_DIR)/events/CompanionEvent.cpp
@@ -66,6 +70,8 @@ TEXTURE = $(VIEW_DIR)/Texture.cpp
 BACKGROUND = $(VIEW_DIR)/Escenario.cpp
 ISLA = $(VIEW_DIR)/Isla.cpp
 MISIL_VIEW = $(VIEW_DIR)/MisilView.cpp
+SCREEN = $(VIEW_DIR)/Screen.cpp
+
 
 # controller
 CONTROLLER_CONTROLLER = $(CONTROLLER_DIR)/Controller.cpp
@@ -76,13 +82,13 @@ HANDLER_CONTROLLER = $(CONTROLLER_DIR)/HandlerPlayersControllers.cpp
 
 # M V C
 MODEL = $(RESOLUCION) $(POSICION) $(VIVIBLE) $(COMPOSITE) $(AVION) $(MISIL) $(PLAYER)
-VIEW = $(AVION_VIEW) $(TEXTURE) $(BACKGROUND) $(ISLA) $(MISIL_VIEW)
+VIEW = $(AVION_VIEW) $(TEXTURE) $(BACKGROUND) $(ISLA) $(MISIL_VIEW) $(SCREEN)
 CONTROLLER = $(CONTROLLER_CONTROLLER) $(PLAYERS_CONTROLLERS) $(MISILES_CONTROLLERS) $(TIMER_CONTROLLER) $(HANDLER_CONTROLLER)
 
 # executable name
 EXE = 1942MultiPlayer.exe
 
-OBJS = $(MODEL) $(VIEW) $(CONTROLLER) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(TMT) $(CLIENT) $(SERVER) $(EVENT) $(GAME)
+OBJS = $(MODEL) $(VIEW) $(CONTROLLER) $(WINDOWINITIAL) $(XM_SDL) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(TMT) $(CLIENT) $(SERVER) $(EVENT) $(GAME)
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)
