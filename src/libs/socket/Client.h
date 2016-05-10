@@ -13,6 +13,7 @@ class Client {
     int socketFD;
     bool connected;
     bool received;
+    bool playerOk;
     Logger* logger;
     PlanesActives* planes;
 
@@ -34,5 +35,6 @@ class Client {
     void sendCycle();
     bool sendData( PlayerData* data );
     PlanesActives* getPlanesActives();
+    bool isPlayerOk();
 };
 #endif

@@ -182,6 +182,13 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
 		    // Process received data
 		    cout << "Nombre del jugador: " << string( data->name ) << endl;
 		    cout << "Color del jugador: " << string( data->color ) << endl;
+		    string name( data->name );
+		    string color( data->color );
+		    if ( name == "Y" && color == "Y"){
+		    	this->playerOk = true;
+		    }else {
+		    	this->playerOk =false;
+		    }
 		  }
 		  delete data;
 
@@ -325,4 +332,8 @@ void Client::closeConnection() {
 
 PlanesActives* Client::getPlanesActives(){
 	return this->planes;
+}
+
+bool Client::isPlayerOk(){
+	return this->playerOk;
 }

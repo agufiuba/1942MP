@@ -32,6 +32,7 @@ class Game {
     void loadConnectionScreen();
     void loadValidationScreen();
     void loadselectionPlane();
+    void loadWaitingGame();
     void sendDataPlayer();
     void setPlanesActives(bool blue,bool red,bool green,bool yellow);
 
