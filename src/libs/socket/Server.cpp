@@ -211,6 +211,8 @@ void Server::receiveClientData(int cfd, struct sockaddr_storage client_addr) {
 			sizeof clientIP);
 
 	if (this->allowConnections) {
+		players2.push_back(cfd);
+
 		cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
 				<< endl;
 		this->logger->info(
@@ -375,12 +377,24 @@ void Server::processQueue() {
 
 
 /*      if( !( this->players.empty() ) ) {
-        for( map<int, Player*>::iterator itPlayers = this->players.begin(); itPlayers != this->players.end() ; ++itPlayers ) {
-          if ((itPlayers->second)->getName())
+        for( map<int, Player*>::iterator itP = this->players.begin();itP != this->players.end();++itP ) {
+          if( (itP->first) != it->first){
+          	sendData(itP->first, it->second);
+          }
         }
       }*/
 
-      sendData(it->first, it->second);
+
+    	if (players2.size() > 0) {
+    		for (int i = 0 ; i < players2.size(); i++) {
+    			if (players2[i] != it->first) {
+    				sendData(players2[i],it->second);
+    			}
+    		}
+    	}
+
+
+      //sendData(it->first, it->second);
 
       delete data;
 

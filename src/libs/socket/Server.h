@@ -21,6 +21,8 @@ class Server {
     queue<map<int, Evento*>*>* eventQueue;
     map<int, Player*> players;
 
+    vector<int> players2;
+
     Logger* logger;
 //    ServerConf* config;
     static const int BACKLOG = 5;
