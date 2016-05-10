@@ -200,43 +200,45 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
   delete tmt;
 }
 
-void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
-  char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
-  Evento* msgToRecv = new Evento;
+void Server::receiveClientData(int cfd, struct sockaddr_storage client_addr) {
+	char clientIP[ INET_ADDRSTRLEN]; // connected client IP
+	Evento* msgToRecv = new Evento;
+	mutex theMutex;
 
-  // get connected host IP in presentation format
-  inet_ntop( client_addr.ss_family,
-      this->getInAddr( (struct sockaddr*) (&client_addr) ), clientIP,
-      sizeof clientIP);
+	// get connected host IP in presentation format
+	inet_ntop(client_addr.ss_family,
+			this->getInAddr((struct sockaddr*) (&client_addr)), clientIP,
+			sizeof clientIP);
 
-  if( this->allowConnections ) {
-    cout << endl << notice( "Se inicio una conexion con el host: " ) << clientIP
-      << endl;
-    this->logger->info( "Se inicio una conexion con el host: " + string( clientIP ) );
+	if (this->allowConnections) {
+		cout << endl << notice("Se inicio una conexion con el host: ") << clientIP
+				<< endl;
+		this->logger->info(
+				"Se inicio una conexion con el host: " + string(clientIP));
 
-    if( send( cfd, "Aceptado", 9, 0 ) == -1 ) {
-      this->logger->error( "Error al enviar que se acepto la conexion" );
-    }
+		if (send(cfd, "Aceptado", 9, 0) == -1) {
+			this->logger->error("Error al enviar que se acepto la conexion");
+		}
 
-    timeval timeout;
-    timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
-    timeout.tv_usec = 0;
-    bool receiving = true;
-    bool received;
-    char id[3];
-    // Create transmitter for this client
-    Transmitter* tmt = new Transmitter( cfd, this->logger );
+		timeval timeout;
+		timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
+		timeout.tv_usec = 0;
+		bool receiving = true;
+		bool received;
+		char id[3];
+		// Create transmitter for this client
+		Transmitter* tmt = new Transmitter(cfd, this->logger);
 
-    while( receiving ) {
-      // seteo el timeout de recepcion de mensajes
-      if( setsockopt( cfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof( timeout ) ) < 0 ) {
-	cout << "Error sockopt" << endl;
-	exit( 1 );
-      }
+		while (receiving) {
+			// seteo el timeout de recepcion de mensajes
+			if (setsockopt(cfd, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,
+					sizeof(timeout)) < 0) {
+				cout << "Error sockopt" << endl;
+				exit(1);
+			}
 
-      // Get id of next data to receive
-      received = tmt->receiveData( id, sizeof( id ) );
-
+			// Get id of next data to receive
+			received = tmt->receiveData(id, sizeof(id));
 
 			if (received) {
 				string dataID(id);
@@ -248,7 +250,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 						// Process received data
 						cout << "Nombre del jugador: " << string(data->name) << endl;
 						cout << "Color del jugador: " << string(data->color) << endl;
-						this->addPlayer( data, cfd );
+						this->addPlayer(data, cfd);
 					}
 
 					delete data;
@@ -256,59 +258,78 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 					if (dataID == "EV") {
 						Evento* e = new Evento();
 
-						if (received = tmt->receiveData(e)){
+						if (received = tmt->receiveData(e)) {
 							cout << "Evento: " << e->value << endl;
+
+//							if( numBytesRead > 0 ) {
+//							if( numBytesRead != 1 ) {
+							theMutex.lock();
+							cout << endl << "FD cliente: " << notice(to_string(cfd)) << endl;
+
+							map<int, Evento*>* clientMsgFD = new map<int, Evento*>();
+							clientMsgFD->insert(pair<int, Evento*>(cfd, e));
+							this->eventQueue->push(clientMsgFD);
+							theMutex.unlock();
+							/*}
+							 } else {
+							 receiving = false;
+							 cout << endl << warning( "El cliente " ) << clientIP
+							 << warning( " se desconecto" ) << endl;
+							 this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
+							 this->closeClient( cfd );
+							 }*/
+
 						}
 
-						delete e;
 					}
 				}
 
 			}
 
-      if( !( received ) ) {
-	receiving = false;
-	cout << endl << warning( "El cliente " ) << clientIP
-	  << warning( " se desconecto" ) << endl;
-	this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
-	this->closeClient( cfd );
-      }
+			if (!(received)) {
+				receiving = false;
+				cout << endl << warning("El cliente ") << clientIP
+						<< warning(" se desconecto") << endl;
+				this->logger->warn("El Cliente " + string(clientIP) + " se desconecto");
+				this->closeClient(cfd);
+			}
 
-      // Read data
-      /*if( ( numBytesRead = recv( cfd, msgToRecv, sizeof( Mensaje ), 0 ) ) == -1 ) {
-	close( cfd );
-	this->logger->warn( CONNECTION_TIMEOUT );
-	DEBUG_WARN( CONNECTION_TIMEOUT );
-	}
+			// Read data
+			/*      if( ( numBytesRead = recv( cfd, msgToRecv, sizeof( Mensaje ), 0 ) ) == -1 ) {
+			 close( cfd );
+			 this->logger->warn( CONNECTION_TIMEOUT );
+			 DEBUG_WARN( CONNECTION_TIMEOUT );
+			 }
 
-	if( numBytesRead > 0 ) {
-	if( numBytesRead != 1 ) {
-	theMutex.lock();
-	cout << endl << "FD cliente: " << notice( to_string( cfd ) ) << endl;
-	cout << "Evento recibido: " << notice( to_string(msgToRecv->value) ) << endl;
-	cout << "Jugador que envio el evento: " << notice( to_string(msgToRecv->playerID) ) << endl;
+			 if( numBytesRead > 0 ) {
+			 if( numBytesRead != 1 ) {
+			 theMutex.lock();
+			 cout << endl << "FD cliente: " << notice( to_string( cfd ) ) << endl;
+			 cout << "Evento recibido: " << notice( to_string(msgToRecv->value) ) << endl;
+			 cout << "Jugador que envio el evento: " << notice( to_string(msgToRecv->playerID) ) << endl;
 
-	map<int,Evento*>* clientMsgFD = new map<int,Evento*>();
-	clientMsgFD->insert( pair<int,Evento*>( cfd, msgToRecv ) );
-	this->eventQueue->push( clientMsgFD );
-	theMutex.unlock();
-	}
+			 map<int,Evento*>* clientMsgFD = new map<int,Evento*>();
+			 clientMsgFD->insert( pair<int,Evento*>( cfd, msgToRecv ) );
+			 this->eventQueue->push( clientMsgFD );
+			 theMutex.unlock();
+			 }
+			 } else {
+			 receiving = false;
+			 cout << endl << warning( "El cliente " ) << clientIP
+			 << warning( " se desconecto" ) << endl;
+			 this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
+			 this->closeClient( cfd );
+			 }*/
+		}
+
+		delete tmt;
 	} else {
-	receiving = false;
-	cout << endl << warning( "El cliente " ) << clientIP
-	<< warning( " se desconecto" ) << endl;
-	this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
-	this->closeClient( cfd );
-	}*/
-    }
-
-    delete tmt;
-  } else {
-    cout << endl << warning( "El cliente " ) << clientIP << warning( " se rechazo" ) << endl;
-    this->logger->warn( "El cliente " + string(clientIP) + " se rechazo" );
-    usleep( 1000000 );
-    this->closeClient( cfd );
-  }
+		cout << endl << warning("El cliente ") << clientIP << warning(" se rechazo")
+				<< endl;
+		this->logger->warn("El cliente " + string(clientIP) + " se rechazo");
+		usleep(1000000);
+		this->closeClient(cfd);
+	}
 }
 
 void Server::checkAliveSend( int cfd ) {
@@ -335,7 +356,8 @@ void Server::processQueue() {
       this->eventQueue->pop();
 
       map<int,Evento*>::iterator it = data->begin();
-      //cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->valor << endl;
+
+      cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->value << endl;
 
       this->logger->info( "Msj de cliente: " + to_string(it->second->value ) );
 
@@ -347,8 +369,11 @@ void Server::processQueue() {
       //	respuesta->value = MENSAJE_INCORRECTO;
       //	this->logger->warn( respuesta->value );
       //      }
-      thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
-      tSending.detach();
+
+      //thread tSending( sendData, it->first);
+      //tSending.detach();
+
+      sendData(it->first, it->second);
 
       delete data;
 
@@ -399,11 +424,17 @@ void Server::processQueue() {
 //  return respuesta;
 //}
 
+/*
 void Server::sendData( int cfd, Evento* data, int dataLength ){
   if( send( cfd, data, dataLength, 0 ) == -1 ) {
     this->logger->warn( SEND_FAIL );
     DEBUG_WARN( SEND_FAIL );
   }
+}*/
+
+void Server::sendData( int cfd, Evento* data ) {
+  Transmitter* tmt = new Transmitter( cfd, this->logger );
+  tmt->sendData( data );
 }
 
 void Server::closeClient( int cfd ) {

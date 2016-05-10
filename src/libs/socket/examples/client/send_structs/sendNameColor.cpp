@@ -60,19 +60,19 @@ int main() {
 
       e = ce->down();
       client->sendData(e);
-
+      usleep(1000);
       e = ce->up();
       client->sendData(e);
-
+      usleep(1000);
       e = ce->right();
       client->sendData(e);
-
+      usleep(1000);
       e = ce->left();
       client->sendData(e);
-
+      usleep(1000);
       e = ce->shot();
       client->sendData(e);
-
+      usleep(1000);
       e = ce->roll();
       client->sendData(e);
 

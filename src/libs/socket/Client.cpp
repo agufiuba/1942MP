@@ -153,50 +153,59 @@ void Client::checkAliveSend() {
   }
 }
 
-void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
-  timeval timeout;
-  timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
-  timeout.tv_usec = 0;
-  bool received;
-  char id[3];
-  // Create transmitter
-  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
+	timeval timeout;
+	timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
+	timeout.tv_usec = 0;
+	bool received;
+	char id[3];
+	// Create transmitter
+	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
 
-  while ( this->connected ) {
-    // seteo el timeout de recepcion de mensajes
-    if( setsockopt( this->socketFD, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout) ) < 0 ) {
-      cout << "Error sockopt" << endl;
-      exit( 1 );
-    }
+	while (this->connected) {
+		// seteo el timeout de recepcion de mensajes
+		if (setsockopt(this->socketFD, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,
+				sizeof(timeout)) < 0) {
+			cout << "Error sockopt" << endl;
+			exit(1);
+		}
 
-    // Get id of next data to receive
-    received = tmt->receiveData( id, sizeof( id ) );
+		// Get id of next data to receive
+		received = tmt->receiveData(id, sizeof(id));
 
-    if( received ) {
-      string dataID( id );
-      // Receive data type based on fetched dataID 
-      if( dataID == "PD" ) {
-	PlayerData* data = new PlayerData;
+		if (received) {
+			string dataID(id);
+			// Receive data type based on fetched dataID
+			if (dataID == "PD") {
+				PlayerData* data = new PlayerData;
 
-	if( received = tmt->receiveData( data ) ) {
-	  // Process received data
-	  cout << "Nombre del jugador: " << string( data->name ) << endl;
-	  cout << "Color del jugador: " << string( data->color ) << endl;
+				if (received = tmt->receiveData(data)) {
+					// Process received data
+					cout << "Nombre del jugador: " << string(data->name) << endl;
+					cout << "Color del jugador: " << string(data->color) << endl;
+				}
+
+				delete data;
+			}else {
+				if (dataID == "EV") {
+					Evento* e = new Evento();
+
+					if (received = tmt->receiveData(e)) {
+						cout << "Evento: " << e->value << endl;
+					}
+				}
+			}
+		}
+
+		if (!(received)) {
+			this->logger->warn( CONNECTION_LOST);
+			DEBUG_WARN(CONNECTION_LOST);
+			this->connected = false;
+			close(this->socketFD);
+		}
 	}
 
-	delete data;
-      } 
-    }
-
-    if( !( received ) ) {
-      this->logger->warn( CONNECTION_LOST );
-      DEBUG_WARN( CONNECTION_LOST );
-      this->connected = false;
-      close( this->socketFD );
-    }
-  }
-
-  delete tmt;
+	delete tmt;
 }
 
 bool Client::sendData( Evento* e ) {
@@ -302,7 +311,52 @@ void Client::shutdownConnection() {
 void Client::closeConnection() {
   mutex theMutex;
   close( this->socketFD );
-  this->connected = false;
+  this->connected = false;void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
+  	timeval timeout;
+  	timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
+  	timeout.tv_usec = 0;
+  	bool received;
+  	char id[3];
+  	// Create transmitter
+  	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
+
+  	while (this->connected) {
+  		// seteo el timeout de recepcion de mensajes
+  		if (setsockopt(this->socketFD, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,
+  				sizeof(timeout)) < 0) {
+  			cout << "Error sockopt" << endl;
+  			exit(1);
+  		}
+
+  		// Get id of next data to receive
+  		received = tmt->receiveData(id, sizeof(id));
+
+  		if (received) {
+  			string dataID(id);
+  			// Receive data type based on fetched dataID
+  			if (dataID == "PD") {
+  				PlayerData* data = new PlayerData;
+
+  				if (received = tmt->receiveData(data)) {
+  					// Process received data
+  					cout << "Nombre del jugador: " << string(data->name) << endl;
+  					cout << "Color del jugador: " << string(data->color) << endl;
+  				}
+
+  				delete data;
+  			}
+  		}
+
+  		if (!(received)) {
+  			this->logger->warn( CONNECTION_LOST);
+  			DEBUG_WARN(CONNECTION_LOST);
+  			this->connected = false;
+  			close(this->socketFD);
+  		}
+  	}
+
+  	delete tmt;
+  }
   this->logger->warn( CONNECTION_CLOSE );
   theMutex.lock();
   DEBUG_WARN( CONNECTION_CLOSE );

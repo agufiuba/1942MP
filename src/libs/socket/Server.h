@@ -32,7 +32,8 @@ class Server {
     void closeConnection();
     void processQueue();
 //    bool processMsg( string type, string value );
-    void sendData( int clientFD, Evento* data, int dataLength );
+    //void sendData( int clientFD, Evento* data, int dataLength );
+    void sendData( int clientFD, Evento* data);
     bool receiveData( char id[2], int clientFD, int size );
     bool receiveData( PlayerData* data, int clientFD );
     void addPlayer( PlayerData* data, int clientFD );
