@@ -19,6 +19,7 @@ using namespace std;
 
 typedef struct Evento {
     char value;
+    char name[15];
 } Evento;
 
 #endif
