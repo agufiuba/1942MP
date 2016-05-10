@@ -10,6 +10,7 @@ void displayMenu() {
   cout << "1. Conectar " << endl;
   cout << "2. Enviar playerData => name: sosuke, color: blue" << endl;
   cout << "3. Enviar playerData => name: sosuke, color: yellow" << endl;
+  cout << "4. Enviar eventos de avion" << endl;
   cout << "0. Salir" << endl;
 }
 
@@ -76,6 +77,7 @@ int main() {
       client->sendData(e);
 
     }
+  }
 
   delete client;
   delete pData1;
