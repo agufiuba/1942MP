@@ -385,6 +385,8 @@ void Server::processQueue() {
       }*/
 
 
+      //TODO: Esto despues hay que cambiarlo por lo de arriba
+
     	if (players2.size() > 0) {
     		for (int i = 0 ; i < players2.size(); i++) {
     			if (players2[i] != it->first) {
