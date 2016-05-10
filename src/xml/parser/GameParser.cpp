@@ -7,9 +7,9 @@ GameConf *GameParser::parse(string fn) {
     GameConf *gc = new GameConf;
     doc.LoadFile(fn.c_str());
     gc->sprites = sprites(&doc);
-    tuple<int, int> anchoalto = ventana(&doc);
-    gc->ventanaAncho = get<0>(anchoalto);
-    gc->ventanaAlto = get<1>(anchoalto);
+//    tuple<int, int> anchoalto = ventana(&doc);
+//    gc->ventanaAncho = get<0>(anchoalto);
+//    gc->ventanaAlto = get<1>(anchoalto);
     gc->escenario = escenario(&doc);
     gc->avion = avion(&doc);
     return gc;
@@ -46,15 +46,15 @@ SpriteConf *GameParser::sprite(XMLElement *e) {
     return spriteConf;
 }
 
-tuple<int, int> GameParser::ventana(XMLDocument *doc) {
-    XMLElement *ventanaE = doc->FirstChildElement("ventana");
-    XMLElement *altoE = ventanaE->FirstChildElement("alto");
-    XMLElement *anchoE = ventanaE->FirstChildElement("ancho");
-    int ancho, alto;
-    altoE->QueryIntText(&alto);
-    anchoE->QueryIntText(&ancho);
-    return make_tuple(ancho, alto);
-}
+//tuple<int, int> GameParser::ventana(XMLDocument *doc) {
+//    XMLElement *ventanaE = doc->FirstChildElement("ventana");
+//    XMLElement *altoE = ventanaE->FirstChildElement("alto");
+//    XMLElement *anchoE = ventanaE->FirstChildElement("ancho");
+//    int ancho, alto;
+//    altoE->QueryIntText(&alto);
+//    anchoE->QueryIntText(&ancho);
+//    return make_tuple(ancho, alto);
+//}
 
 EscenarioConf *GameParser::escenario(XMLDocument *doc) {
     EscenarioConf *ec = new EscenarioConf;

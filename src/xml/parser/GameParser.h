@@ -22,7 +22,7 @@ private:
 
     static EscenarioConf *escenario(XMLDocument *);
 
-    static tuple<int, int> ventana(XMLDocument *);
+//    static tuple<int, int> ventana(XMLDocument *);
 
     static vector<ElementoConf *> elementos(XMLElement *);
 

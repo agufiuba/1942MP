@@ -11,8 +11,8 @@ using namespace std;
 
 class GameConf {
 public:
-    unsigned short int ventanaAncho;
-    unsigned short int ventanaAlto;
+//    unsigned short int ventanaAncho;
+//    unsigned short int ventanaAlto;
     vector<SpriteConf *> sprites;
     EscenarioConf *escenario;
     AvionConf* avion;

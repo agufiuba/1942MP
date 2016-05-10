@@ -7,10 +7,15 @@
 #include "../libs/xm_sdl/XM_SDL.h"
 #include "../libs/socket/Client.h"
 #include "../libs/data/player_data.h"
+#include "../xml/conf/GameConf.h"
+#include "view/Escenario.h"
+#include <SDL2/SDL.h>
 
 using namespace std;
 class Game {
   private:
+    GameConf* gc;
+    Escenario* escenario;
     XM_SDL* sdlHandler; 
     bool running;
     int fps;
@@ -39,7 +44,7 @@ class Game {
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
     ~Game();
-    void start();
+    void start(string);
     bool connectingToServer();
     void setWindowWidth( int width );
     void setWindowHeight( int height );

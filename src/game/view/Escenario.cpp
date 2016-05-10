@@ -7,6 +7,8 @@
 
 #include "Escenario.h"
 
+#include "../../xml/parser/GameParser.h"
+
 using namespace std;
 
 Escenario::Escenario(){
