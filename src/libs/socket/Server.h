@@ -20,6 +20,7 @@ class Server {
     bool processing;
     queue<map<int, Evento*>*>* eventQueue;
     map<int, Player*> players;
+
     Logger* logger;
 //    ServerConf* config;
     static const int BACKLOG = 5;

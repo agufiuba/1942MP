@@ -373,6 +373,13 @@ void Server::processQueue() {
       //thread tSending( sendData, it->first);
       //tSending.detach();
 
+
+/*      if( !( this->players.empty() ) ) {
+        for( map<int, Player*>::iterator itPlayers = this->players.begin(); itPlayers != this->players.end() ; ++itPlayers ) {
+          if ((itPlayers->second)->getName())
+        }
+      }*/
+
       sendData(it->first, it->second);
 
       delete data;

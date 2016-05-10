@@ -181,8 +181,6 @@ SDL_Event* Escenario::run() {
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
-  Client* client = new Client( "127.0.0.1", "8000" );
-  client->connectToServer();
 
 	char ray[] = "ray";
 
@@ -190,6 +188,9 @@ SDL_Event* Escenario::run() {
 
 	setFondosVivibles();
 	setOtrosAviones();
+
+  Client* client = new Client( "127.0.0.1", "8000" , this->controllers);
+  client->connectToServer();
 
 	myControl = new Controller(unAvion, gRenderer, resolucion, client);
 

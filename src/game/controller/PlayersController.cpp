@@ -38,8 +38,8 @@ void PlayersController::press(SDL_Event *event){
 
 void PlayersController::hacerVivir(){
 	obj->vivir(velX, velY);
-	velX = 0;
-	velY = 0;
+/*	velX = 0;
+	velY = 0;*/
 	controlDeMisiles->hacerVivir();
 
 //  TODO: Dejo comentado otra solucion alternativa para que los aviones no se muevan sin control

@@ -4,9 +4,11 @@
 #include "../logger/Logger.h"
 #include "../../xml/conf/ClientConf.h"
 #include "../../game/events/Events.cpp"
+#include "../../game/controller/HandlerPlayersControllers.h"
 
 class Client {
   private:
+		HandlerPlayersControllers* pc;
     string ip;
     string puerto;
     int socketFD;
@@ -22,6 +24,7 @@ class Client {
   public:
     Client( const char* configFileName );
     Client( string ip, string puerto );
+    Client (string ip, string puerto, HandlerPlayersControllers* handlerPlayersControllers);
     ~Client();
     bool connectToServer();
     void disconnectFromServer();

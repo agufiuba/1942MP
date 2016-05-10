@@ -29,6 +29,17 @@ Client::Client( string ip, string puerto ) {
   //  this->config = XMLParser::parseClientConf( configFileName );
 }
 
+Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlayersControllers) {
+	this->pc = handlerPlayersControllers;
+  this->socketFD = 0;
+  this->connected = false;
+  this->logger = Logger::instance();
+  this->ip = ip;
+  this->puerto = puerto;
+
+  //  this->config = XMLParser::parseClientConf( configFileName );
+}
+
 Client::~Client() {}
 
 bool Client::connectToServer() {
@@ -192,6 +203,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 
 					if (received = tmt->receiveData(e)) {
 						cout << "Evento: " << e->value << endl;
+
+						this->pc->mover("key",e->value);
 					}
 				}
 			}
