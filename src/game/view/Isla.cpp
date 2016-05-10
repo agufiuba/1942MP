@@ -28,7 +28,8 @@ Isla::Isla(SDL_Renderer* render, Posicion* posicion, int islaNumber) {
 }
 
 Isla::~Isla() {
-
+	delete posicion;
+	delete islaTxt;
 }
 
 void Isla::vivir(int x, int y) {

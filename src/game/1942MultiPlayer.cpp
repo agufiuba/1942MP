@@ -16,13 +16,21 @@ void startupClient() {
 	//GameConf* gc = GameParser::parse("gc.xml");
 	//Escenario* escenario = new Escenario(gc->escenario->ancho, gc->escenario->alto);
 
-	//Iniciar Pantalla
-	Escenario* escenario = new Escenario(800, 600);
-	//Escenario* escenario = new Escenario(true);
-	escenario->run();
+	SDL_Event* exitEven = new SDL_Event();
+	exitEven->key.keysym.sym = SDLK_r;
 
-	// limpiar memoria
-	escenario->~Escenario();
+	while (exitEven->key.keysym.sym == SDLK_r) {
+
+//		Iniciar Pantalla
+		Escenario* escenario = new Escenario(800, 600);
+//		Escenario* escenario = new Escenario(true);
+
+//		run
+		exitEven = escenario->run();
+
+//		 limpiar memoria
+		delete escenario;
+	}
 
 }
 

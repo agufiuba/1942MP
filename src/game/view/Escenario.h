@@ -58,7 +58,7 @@ private:
 	string desconocido = "desconocido";
 
 
-	const char* DIR_FONDO_PANTALLA = "src/game/images/fondoPantalla4000x4000Marcado.bmp";
+	const char* DIR_FONDO_PANTALLA = "src/game/images/fondos/fondoPantalla4000x4000.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
 
 	IController* myControl;
@@ -73,6 +73,7 @@ private:
 	void setFondosVivibles();
 	void setOtrosAviones();
 	void limpiarMemoria();
+	void limpiarFondosVivibles();
 
 public:
 	Escenario();
@@ -82,7 +83,7 @@ public:
 	Escenario(int width, int height, bool isFullScreen);
 	Escenario(int fps, int width, int height);
 	~Escenario();
-	void run();
+	SDL_Event* run();
 };
 
 #endif /* ESCENARIO_H_ */
