@@ -10,7 +10,7 @@ int main() {
 
   if( sdlHandler->createWindow( WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT ) ) {
     sdlHandler->setWindowBG( 254, 125, 90 );
-    sdlHandler->setWindowBG( "images/background.bmp" );
+    sdlHandler->setWindowBG( "src/images/background.bmp" );
 
     while( true ) {
       if( sdlHandler->nextEvent().type == SDL_QUIT ) {
