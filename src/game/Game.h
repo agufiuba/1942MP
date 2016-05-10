@@ -6,6 +6,7 @@
 
 #include "../libs/xm_sdl/XM_SDL.h"
 #include "../libs/socket/Client.h"
+#include "../libs/data/player_data.h"
 
 using namespace std;
 class Game {
@@ -19,8 +20,21 @@ class Game {
     string serverIP;
     string serverPort;
     Client* unCliente;
+    
+    string clientId;
+    string planeId;
+  
+    bool bluePlaneActive;
+    bool redPlaneActive;
+    bool greenPlaneActive;
+    bool yellowPlaneActive;
+
     void loadConnectionScreen();
     void loadValidationScreen();
+    void loadselectionPlane();
+    void loadWaitingGame();
+    void sendDataPlayer();
+    void setPlanesActives(bool blue,bool red,bool green,bool yellow);
 
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );

@@ -176,16 +176,30 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
       string dataID( id );
       // Receive data type based on fetched dataID 
       if( dataID == "PD" ) {
-	PlayerData* data = new PlayerData;
+    	  PlayerData* data = new PlayerData;
 
-	if( received = tmt->receiveData( data ) ) {
-	  // Process received data
-	  cout << "Nombre del jugador: " << string( data->name ) << endl;
-	  cout << "Color del jugador: " << string( data->color ) << endl;
-	}
+		  if( received = tmt->receiveData( data ) ) {
+		    // Process received data
+		    cout << "Nombre del jugador: " << string( data->name ) << endl;
+		    cout << "Color del jugador: " << string( data->color ) << endl;
+		    string name( data->name );
+		    string color( data->color );
+		    if ( name == "Y" && color == "Y"){
+		    	this->playerOk = true;
+		    }else {
+		    	this->playerOk =false;
+		    }
+		  }
+		  delete data;
 
-	delete data;
-      } 
+      } else if (dataID == "PA" ){
+
+    	  PlanesActives* data = new PlanesActives;
+    	  if( received = tmt->receiveData( data ) ) {
+    		  this->planes = data;
+  		  }
+
+      }
     }
 
     if( !( received ) ) {
@@ -314,4 +328,12 @@ void Client::closeConnection() {
   theMutex.lock();
   DEBUG_WARN( CONNECTION_CLOSE );
   theMutex.unlock();
+}
+
+PlanesActives* Client::getPlanesActives(){
+	return this->planes;
+}
+
+bool Client::isPlayerOk(){
+	return this->playerOk;
 }
