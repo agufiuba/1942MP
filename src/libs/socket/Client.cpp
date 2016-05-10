@@ -203,6 +203,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 
 					if (received = tmt->receiveData(e)) {
 						cout << "Evento: " << e->value << endl;
+						cout << "PlayerName: " << e->name <<endl;
+
 
 						this->pc->mover("key",e->value);
 					}

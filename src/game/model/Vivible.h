@@ -24,6 +24,8 @@ class Vivible{
 	   virtual bool aunVive(){return true;};
 	   virtual void desconectar(){};
 
+	   virtual string getId(){return 0;};
+
 	   virtual void setVelocidadStandard(int vel){};
 	   virtual void inicializoVueltereta(){};
 	   virtual bool haciendoVueltereta(){return true;};
