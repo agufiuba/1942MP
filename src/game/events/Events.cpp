@@ -6,7 +6,7 @@
 #define ARRIBA 'U'
 #define ABAJO 'D'
 #define DISPARO 'S'
-#define VUELTERETA 'V'
+#define VUELTERETA 'E'
 #define LISTO 'M'
 #define REINICIAR 'N'
 #define SALIR 'Q'

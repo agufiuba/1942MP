@@ -30,7 +30,7 @@ void Controller::press(SDL_Event *event){
             case SDLK_UP: velY += velocidadStandard; cliente->sendData(ce->up(obj->getId())); break;
             case SDLK_DOWN: velY -= velocidadStandard; cliente->sendData(ce->down(obj->getId()));break;
 
-            case SDLK_KP_ENTER: obj->inicializoVueltereta();break;
+            case SDLK_KP_ENTER: obj->inicializoVueltereta(); cliente->sendData(ce->roll(obj->getId())); break;
 
 			case SDLK_SPACE:
 				if (!obj->haciendoVueltereta())
