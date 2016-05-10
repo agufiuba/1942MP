@@ -10,6 +10,8 @@
 #include <thread>
 #include <mutex>
 #include <iostream>
+#include "../../xml/parser/GameParser.h"
+
 using namespace std;
 
 Server::Server( const char* configFileName ) {
@@ -231,6 +233,19 @@ void Server::sendPlanesActives(int cfd){
 	  }
 
 	  delete planes;
+	  delete tmt;
+}
+
+void Server::sendConf(int cfd){
+//	  mutex theMutex;
+//	  theMutex.lock();
+//	  theMutex.unlock();
+	  GameConf* gc = GameParser::parse("gameconf.xml");
+	  Transmitter* tmt = new Transmitter( cfd, this->logger );
+	  if( !( tmt->sendData( gc ) ) ) {
+	    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+	    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+	  }
 	  delete tmt;
 }
 

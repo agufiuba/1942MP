@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "controller/Timer.h"
 #include "view/Screen.h"
+#include "../xml/parser/GameParser.h"
 
 Game::Game( uint32_t sdlFlags ) {
   this->sdlHandler = new XM_SDL( sdlFlags );
@@ -19,10 +20,25 @@ Game::~Game() {
   delete sdlHandler;
 }
 
+void Game::cargarEscenario() {
+	SDL_Event* exitEven = new SDL_Event();
+	exitEven->key.keysym.sym = SDLK_r;
+	while (exitEven->key.keysym.sym == SDLK_r) {
+		while(!unCliente->gcnew){}
+		gc = unCliente->gc;
+		unCliente->gcnew=false;
+		escenario = new Escenario();
+		escenario->configurarJugador(this->jugador);
+		exitEven = escenario->run();
+		delete escenario;
+	}
+}
+
 void Game::start() {
   if( this->sdlHandler->createWindow( this->windowTitle.c_str(), this->windowWidth, this->windowHeight ) ) {
-    this->running = true;
-    this->loadConnectionScreen();
+	  this->running = true;
+	  this->loadConnectionScreen();
+	  cargarEscenario();
   }
 }
 
@@ -83,7 +99,7 @@ void Game::loadConnectionScreen() {
       else if( e.type == SDL_KEYDOWN ) {
 	// Handle Tab
 	if( e.key.keysym.sym == SDLK_TAB ) {
-	  firstPromptSelected = !firstPromptSelected; 
+	  firstPromptSelected = !firstPromptSelected;
 	}
 	//Handle backspace
 	else if( firstPromptSelected ) {
@@ -102,7 +118,7 @@ void Game::loadConnectionScreen() {
       else if( e.type == SDL_TEXTINPUT )
       {
 	//Not copy or pasting
-	if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' ) 
+	if( !( ( e.text.text[ 0 ] == 'c' || e.text.text[ 0 ] == 'C' ) && ( e.text.text[ 0 ] == 'v' || e.text.text[ 0 ] == 'V' )
 	      && SDL_GetModState() & KMOD_CTRL ) )
 	{
 	  //Append character
@@ -111,7 +127,7 @@ void Game::loadConnectionScreen() {
 	    if( this->serverIP.length() < 15 )
 	      this->serverIP += e.text.text;
 	  } else {
-	    // Character limit for port 
+	    // Character limit for port
 	    if( this->serverPort.length() < 5 )
 	      this->serverPort += e.text.text;
 	  }
@@ -177,7 +193,7 @@ void Game::loadConnectionScreen() {
     initialScreen->setRenderDrawColor( 160, 160, 160, 255 );
     if( clicked ) {
       clicked = false;
-      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) 
+      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) )
 	  && ( mouseY > 475 ) && ( mouseY < ( 475 + 50 ) ) ) {
 	runningScreen = false;
   //Disable text input
@@ -223,7 +239,7 @@ void Game::loadConnectionScreen() {
 
 void Game::loadValidationScreen() {
   if( !( this->running ) ) return;
-  bool runningScreen = true; 
+  bool runningScreen = true;
   SDL_Event e;
   Timer timer;
   string connectingText = "Conectando al servidor...";
@@ -682,10 +698,10 @@ void Game::loadselectionPlane() {
 
 
 void Game::sendDataPlayer(){
-	  PlayerData* data = new PlayerData;
-	  strcpy( data->name, this->clientId.c_str() );
-	  strcpy( data->color, this->planeId.c_str() );
-	  this->unCliente->sendData(data);
+	  this->jugador = new PlayerData;
+	  strcpy( jugador->name, this->clientId.c_str() );
+	  strcpy( jugador->color, this->planeId.c_str() );
+	  this->unCliente->sendData(jugador);
 }
 
 
@@ -725,4 +741,3 @@ int i =0;
   }
 
 }
-

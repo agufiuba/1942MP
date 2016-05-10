@@ -7,10 +7,15 @@
 #include "../libs/xm_sdl/XM_SDL.h"
 #include "../libs/socket/Client.h"
 #include "../libs/data/player_data.h"
+#include "../xml/conf/GameConf.h"
+#include "view/Escenario.h"
+#include <SDL2/SDL.h>
 
 using namespace std;
 class Game {
   private:
+    GameConf* gc;
+    Escenario* escenario;
     XM_SDL* sdlHandler; 
     bool running;
     int fps;
@@ -20,7 +25,7 @@ class Game {
     string serverIP;
     string serverPort;
     Client* unCliente;
-    
+    PlayerData* jugador;
     string clientId;
     string planeId;
   
@@ -35,6 +40,8 @@ class Game {
     void loadWaitingGame();
     void sendDataPlayer();
     void setPlanesActives(bool blue,bool red,bool green,bool yellow);
+
+    void cargarEscenario();
 
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );

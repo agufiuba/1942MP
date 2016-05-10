@@ -3,7 +3,7 @@
 #include "../data/player_data.h"
 #include "../data/planes_actives.h"
 #include "../logger/Logger.h"
-#include "../../xml/conf/ClientConf.h"
+#include "../../xml/conf/GameConf.h"
 #include "../../game/events/Events.cpp"
 
 class Client {
@@ -18,13 +18,13 @@ class Client {
     PlanesActives* planes;
 
     static const int MAX_UNREACHABLE_TIME = 5;
-    //    ClientConf* config;
     void checkAliveSend();
     void receiving( const int MAX_DATA_SIZE, const char* IP );
     void closeConnection();
     bool sendData( Evento* e );
 
   public:
+    GameConf* gc;
     Client( const char* configFileName );
     Client( string ip, string puerto );
     ~Client();
@@ -36,5 +36,6 @@ class Client {
     bool sendData( PlayerData* data );
     PlanesActives* getPlanesActives();
     bool isPlayerOk();
+    bool gcnew;
 };
 #endif

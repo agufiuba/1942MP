@@ -13,6 +13,7 @@
 #include <vector>
 #include "Texture.h"
 #include "Isla.h"
+#include "../../libs/data/player_data.h"
 #include "../model/Resolucion.h"
 #include "../model/Posicion.h"
 #include "../model/Avion.h"
@@ -22,6 +23,7 @@
 #include "../controller/PlayersController.h"
 #include "../controller/Timer.h"
 #include "../controller/HandlerPlayersControllers.h"
+#include "../../xml/conf/GameConf.h"
 
 class Escenario {
 
@@ -74,6 +76,7 @@ private:
 	void setOtrosAviones();
 	void limpiarMemoria();
 	void limpiarFondosVivibles();
+	GameConf* gc;
 
 public:
 	Escenario();
@@ -84,6 +87,8 @@ public:
 	Escenario(int fps, int width, int height);
 	~Escenario();
 	SDL_Event* run();
+	void configurarJugador(PlayerData* jugador);
+
 };
 
 #endif /* ESCENARIO_H_ */

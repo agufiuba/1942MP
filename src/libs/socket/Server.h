@@ -39,7 +39,7 @@ class Server {
     void addPlayer( PlayerData* data, int clientFD );
 
     void sendPlanesActives(int cfd);
-
+    void sendConf(int);
   public:
     Server( const char* configFileName );
     ~Server();

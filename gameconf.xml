@@ -1,0 +1,47 @@
+<sprites>
+	<sprite>
+		<id>avion</id>
+		<path>"path/avion"</path>
+		<cantidad>1</cantidad>
+		<ancho>10</ancho>
+		<alto>11</alto>
+	</sprite>
+        <sprite>
+                <id>barco</id>
+                <path>"path/barco"</path>
+                <cantidad>2</cantidad>
+                <ancho>20</ancho>
+                <alto>22</alto>
+        </sprite>
+</sprites>
+<escenario>
+	<ancho>1400</ancho>
+	<alto>600</alto>
+	<fondo>
+		<spriteID>agua</spriteID>
+	</fondo>
+	<elementos>
+	        <elemento>
+                	<spriteID>isla</spriteID>
+        	        <posicion>
+	                        <x>10</x>
+                        	<y>15</y>
+                	</posicion>
+        	</elemento>
+		<elemento>
+                        <spriteID>isla2</spriteID>
+                        <posicion>
+                                <x>30</x>
+                                <y>40</y>
+                        </posicion>
+                </elemento>
+
+	</elementos>
+</escenario>
+<avion>
+	<velocidadDesplazamiento>10</velocidadDesplazamiento>
+	<velocidadDisparos>6</velocidadDisparos>
+	<avionSpriteID>avion</avionSpriteID>
+	<vueltaSpriteID>disparo</vueltaSpriteID>
+	<disparosSpriteID>vuelta</disparosSpriteID>
+</avion>

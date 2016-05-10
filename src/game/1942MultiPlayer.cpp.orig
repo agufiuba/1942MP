@@ -12,9 +12,33 @@ using namespace std;
 
 
 void startupClient() {
+
+<<<<<<< d48ef210ea85d97b139cc61551c3b57f9ae56010
+	// Agustin
+	//GameConf* gc = GameParser::parse("gc.xml");
+	//Escenario* escenario = new Escenario(gc->escenario->ancho, gc->escenario->alto);
+
 	Game* game = new Game();
 	game->start();
-	// Delete game
+
+
+=======
+>>>>>>> WIP
+	SDL_Event* exitEven = new SDL_Event();
+	exitEven->key.keysym.sym = SDLK_r;
+
+	while (exitEven->key.keysym.sym == SDLK_r) {
+
+//		Iniciar Pantalla
+		Escenario* escenario = new Escenario("gameconf.xml");
+
+//		run
+		exitEven = escenario->run();
+
+//		 limpiar memoria
+		delete escenario;
+	}
+
 }
 
 void startupServer() {

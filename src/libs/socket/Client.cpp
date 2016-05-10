@@ -15,7 +15,7 @@ Client::Client( const char* configFileName ) {
   this->socketFD = 0;
   this->connected = false;
   this->logger = Logger::instance();
-
+  gcnew = false;
   //  this->config = XMLParser::parseClientConf( configFileName );
 }
 
@@ -199,6 +199,12 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
     		  this->planes = data;
   		  }
 
+      } else if (dataID == "CO"){
+    	  GameConf* data;
+    	  if( received = tmt->receiveData( data ) ) {
+    		  gcnew = received;
+    	      gc = data;
+    	  }
       }
     }
 
