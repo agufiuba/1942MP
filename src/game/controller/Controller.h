@@ -13,6 +13,8 @@
 #include "ControllerMissiles.h"
 #include "../model/Avion.h"
 #include "../model/Resolucion.h"
+#include "../events/CompanionEvent.h"
+#include "../../libs/socket/Client.h"
 
 #include <iostream>
 #include <string>
@@ -25,9 +27,10 @@ private:
 	Resolucion* resolucionPantalla;
 	ControllerMissiles* controlDeMisiles;
 	int velocidadStandard;
+	Client* cliente;
 
 public:
-	Controller(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion);
+	Controller(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion, Client* client);
 	~Controller();
 	void press(SDL_Event *event);
 	void hacerVivir();

@@ -181,6 +181,9 @@ SDL_Event* Escenario::run() {
 	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
 
+  Client* client = new Client( "127.0.0.1", "8000" );
+  client->connectToServer();
+
 	char ray[] = "ray";
 
 	Vivible* unAvion = new Avion(ray, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), azul);
@@ -188,7 +191,7 @@ SDL_Event* Escenario::run() {
 	setFondosVivibles();
 	setOtrosAviones();
 
-	myControl = new Controller(unAvion, gRenderer, resolucion);
+	myControl = new Controller(unAvion, gRenderer, resolucion, client);
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	actualizarEscenario(posicionEscenario);
@@ -238,8 +241,8 @@ SDL_Event* Escenario::run() {
 		}
 
 		actualizarEscenario(posicionEscenario);
-		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
-		posAvion->print();
+		//posAvion->setPosicion(unAvion->getX(), unAvion->getY());
+		//posAvion->print();
 		aplicarFPS(start);
 
 	}
@@ -247,6 +250,10 @@ SDL_Event* Escenario::run() {
 	limpiarMemoria();
 	delete posicionEscenario;
 	return &evento;
+}
+
+HandlerPlayersControllers* Escenario::getControllers(){
+	return this->controllers;
 }
 
 void Escenario::limpiarMemoria() {

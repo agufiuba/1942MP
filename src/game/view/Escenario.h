@@ -13,6 +13,7 @@
 #include <vector>
 #include "Texture.h"
 #include "Isla.h"
+#include "../../libs/socket/Client.h"
 #include "../model/Resolucion.h"
 #include "../model/Posicion.h"
 #include "../model/Avion.h"
@@ -84,6 +85,8 @@ public:
 	Escenario(int fps, int width, int height);
 	~Escenario();
 	SDL_Event* run();
+
+	HandlerPlayersControllers* getControllers();
 };
 
 #endif /* ESCENARIO_H_ */
