@@ -43,6 +43,8 @@ class Game {
 
     void cargarEscenario();
 
+    void crearGameConfHardcodeada();
+
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
     ~Game();

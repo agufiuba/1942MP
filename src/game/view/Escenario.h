@@ -24,6 +24,7 @@
 #include "../controller/Timer.h"
 #include "../controller/HandlerPlayersControllers.h"
 #include "../../xml/conf/GameConf.h"
+#include "../../xml/conf/EscenarioConf.h"
 #include "../../libs/socket/Client.h"
 
 class Escenario {
@@ -35,7 +36,7 @@ private:
 	SDL_Rect posicion;
 	SDL_Event evento;
 	Resolucion* resolucion;
-
+	EscenarioConf* configuracion;
 	Client* client;
 
 	bool inicioCorrectamente;
@@ -62,13 +63,14 @@ private:
 	string amarillo = "amarillo";
 	string desconocido = "desconocido";
 
-
-	const char* DIR_FONDO_PANTALLA = "src/game/images/fondos/fondoPantalla4000x4000.bmp";
+	string idFondo = "agua";
+	string DIR_FONDO_PANTALLA = "src/game/images/fondos/fondoPantalla4000x4000.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
 
 	IController* myControl;
 	HandlerPlayersControllers* controllers;
 	vector<Vivible*> fondosVivibles;
+	bool islasPorDefecto = true;
 
 	Client* unCliente;
 
@@ -88,6 +90,7 @@ public:
 	Escenario(int fps);
 	Escenario(bool isFullScreen);
 	Escenario(int width, int height);
+	Escenario(EscenarioConf* configuracion);
 	Escenario(int width, int height, bool isFullScreen);
 	Escenario(int fps, int width, int height);
 	~Escenario();
