@@ -7,29 +7,34 @@
 
 #include "Isla.h"
 
-Isla::Isla(SDL_Renderer* render, Posicion* posicion, int islaNumber) {
+using namespace std;
+
+Isla::Isla(SDL_Renderer* render, Posicion* posicion, string id) {
 	this->posicion = posicion;
 	islaTxt = new Texture( render );
 
-	vector<const char*> direcciones;
-	direcciones.push_back(DIR_ISLA_1);
-	direcciones.push_back(DIR_ISLA_2);
-	direcciones.push_back(DIR_ISLA_3);
-	direcciones.push_back(DIR_ISLA_4);
-	direcciones.push_back(PORTAAVION);
+	string dir = mapearIsla(id);
 
-	if (islaNumber >= 5) {
-		islaNumber = 0;
-	}
-	islaTxt->loadFromFile( direcciones[islaNumber] );
-
-
+	islaTxt->loadFromFile(dir);
 	islaTxt->render( posicion->getX(), posicion->getYsdl() );
 }
 
 Isla::~Isla() {
 	delete posicion;
 	delete islaTxt;
+}
+
+string Isla::mapearIsla(string id) {
+
+	string tipoIsla = "src/game/images/image-not-found.bmp";
+
+	if (id == "isla1")	tipoIsla = DIR_ISLA_1;
+	else if (id == "isla2")	tipoIsla = DIR_ISLA_2;
+	else if (id == "isla3")	tipoIsla = DIR_ISLA_3;
+	else if (id == "isla4")	tipoIsla = DIR_ISLA_4;
+	else if (id == "portaavion")	tipoIsla = PORTAAVION;
+
+	return tipoIsla;
 }
 
 void Isla::vivir(int x, int y) {

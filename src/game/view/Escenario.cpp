@@ -35,6 +35,27 @@ Escenario::Escenario(int width, int height) {
 	inicializar();
 }
 
+Escenario::Escenario(EscenarioConf* configuracion) {
+
+	this->configuracion = configuracion;
+
+	if (configuracion->alto != 0 && configuracion->ancho != 0) {
+		this->SCREEN_WIDTH = configuracion->ancho;
+		this->SCREEN_HEIGHT = configuracion->alto ;
+		resolucion = Resolucion::INSTANCE(SCREEN_WIDTH, SCREEN_HEIGHT);
+	} else {
+		setResolucion();
+	}
+
+	if (configuracion->fondo != "" && this->idFondo != idFondo) {
+		DIR_FONDO_PANTALLA = "src/game/images/image-not-found.bmp";
+	}
+
+	islasPorDefecto = (configuracion->elementos.size() == 0);
+
+	inicializar();
+}
+
 Escenario::Escenario(int width, int height, bool isFullScreen) {
 	this->SCREEN_WIDTH = width;
 	this->SCREEN_HEIGHT = height;
@@ -140,29 +161,31 @@ void Escenario::setClient(Client* cliente){
 
 void Escenario::setFondosVivibles() {
 
-	//limpiarFondosVivibles();
+	if (islasPorDefecto) {
+		Vivible* isla1 = new Isla(gRenderer, new Posicion(250, 1800), "isla4");
+		Vivible* isla2 = new Isla(gRenderer, new Posicion(450, 1300), "isla3");
+		Vivible* isla3 = new Isla(gRenderer, new Posicion(150, 3000), "isla2");
+		Vivible* isla4 = new Isla(gRenderer, new Posicion(700, 1500), "isla3");
+		Vivible* portaAvion1 = new Isla(gRenderer, new Posicion(50, 1200), "portaavion");
 
-	Vivible* isla1 = new Isla(gRenderer, new Posicion(250, 1800), 3);
-	Vivible* isla2 = new Isla(gRenderer, new Posicion(450, 1300), 2);
-	Vivible* isla3 = new Isla(gRenderer, new Posicion(150, 3000), 1);
-	Vivible* isla4 = new Isla(gRenderer, new Posicion(700, 1500), 2);
-//	Vivible* isla5 = new Isla(gRenderer, new Posicion(450, 2500), 1);
-//	Vivible* isla6 = new Isla(gRenderer, new Posicion(450, 2700), 1);
-	Vivible* portaAvion1 = new Isla(gRenderer, new Posicion(50, 1200), 4);
-//	Vivible* portaAvion2 = new Isla(gRenderer, new Posicion(300, 300), 4);
-//	Vivible* portaAvion3 = new Isla(gRenderer, new Posicion(550, 300), 4);
-//	Vivible* portaAvion4 = new Isla(gRenderer, new Posicion(800, 300), 4);
+		fondosVivibles.push_back(isla1);
+		fondosVivibles.push_back(isla2);
+		fondosVivibles.push_back(isla3);
+		fondosVivibles.push_back(isla4);
+		fondosVivibles.push_back(portaAvion1);
 
-	fondosVivibles.push_back(isla1);
-	fondosVivibles.push_back(isla2);
-	fondosVivibles.push_back(isla3);
-	fondosVivibles.push_back(isla4);
-//	fondosVivibles.push_back(isla5);
-//	fondosVivibles.push_back(isla6);
-	fondosVivibles.push_back(portaAvion1);
-//	fondosVivibles.push_back(portaAvion2);
-//	fondosVivibles.push_back(portaAvion3);
-//	fondosVivibles.push_back(portaAvion4);
+	} else {
+
+		for (int i = 0; i < configuracion->elementos.size(); i++) {
+			int x = configuracion->elementos[i]->x;
+			int y = configuracion->elementos[i]->y;
+			string id = configuracion->elementos.at(i)->spriteID;
+			Vivible* isla = new Isla(gRenderer, new Posicion(x, y), id);
+			fondosVivibles.push_back(isla);
+		}
+
+	}
+
 
 }
 

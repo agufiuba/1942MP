@@ -20,6 +20,31 @@ Game::~Game() {
   delete sdlHandler;
 }
 
+void Game::crearGameConfHardcodeada() {
+	gc = new GameConf();
+	EscenarioConf* escenarioConf = new EscenarioConf();
+	escenarioConf->ancho = 800;
+	escenarioConf->alto = 600;
+	escenarioConf->fondo = "agua";
+
+	//TODO: esto comentado se puede probar. si se quiere probar, descomentarlo
+//	ElementoConf* el1 = new ElementoConf();
+//	el1->spriteID = "isla1";
+//	el1->x = 200;
+//	el1->y = 200;
+//
+//	ElementoConf* el2 = new ElementoConf();
+//	el2->spriteID = "portaavionGFEDGS";
+//	el2->x = 600;
+//	el2->y = 600;
+//
+//	escenarioConf->elementos.push_back(el1);
+//	escenarioConf->elementos.push_back(el2);
+
+
+	gc->escenario = escenarioConf;
+}
+
 void Game::cargarEscenario() {
 	SDL_Event* exitEven = new SDL_Event();
 	exitEven->key.keysym.sym = SDLK_r;
@@ -27,7 +52,9 @@ void Game::cargarEscenario() {
 		//while(!unCliente->gcnew){}
 		//gc = unCliente->gc;
 		//unCliente->gcnew=false;
-		escenario = new Escenario(800,600);
+
+		crearGameConfHardcodeada();
+		escenario = new Escenario(gc->escenario);
 
 		escenario->setClient(unCliente);
 		escenario->configurarJugador(this->jugador);

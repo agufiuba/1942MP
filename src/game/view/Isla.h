@@ -14,20 +14,22 @@
 #include "../model/Vivible.h"
 #include "../model/Posicion.h"
 #include "Texture.h"
+#include <string>
 
 class Isla : public Vivible {
 private:
-	const char* DIR_ISLA_1 = "src/game/images/islas/isla1.bmp";
-	const char* DIR_ISLA_2 = "src/game/images/islas/isla2.bmp";
-	const char* DIR_ISLA_3 = "src/game/images/islas/isla3-chica.bmp";
-	const char* DIR_ISLA_4 = "src/game/images/islas/isla4-chica.bmp";
-	const char* PORTAAVION = "src/game/images/portaviones/porta1.bmp";
+	string DIR_ISLA_1 = "src/game/images/islas/isla1.bmp";
+	string DIR_ISLA_2 = "src/game/images/islas/isla2.bmp";
+	string DIR_ISLA_3 = "src/game/images/islas/isla3-chica.bmp";
+	string DIR_ISLA_4 = "src/game/images/islas/isla4-chica.bmp";
+	string PORTAAVION = "src/game/images/portaviones/porta1.bmp";
 	Texture* islaTxt;
 	Posicion* posicion;
 	void inicializar();
+	string mapearIsla(string);
 
 public:
-	Isla(SDL_Renderer* render, Posicion* posicion, int islaNumber);
+	Isla(SDL_Renderer* render, Posicion* posicion, string id);
 	virtual ~Isla();
 	void vivir(int x, int y);
 
