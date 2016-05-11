@@ -112,6 +112,10 @@ ifeq ($(p), server)
 	EXE = ./src/libs/socket/examples/server/server.exe
 endif
 
+PARAM = ./$(arch)
+ifeq ($(arch), )
+	PARAM = 
+endif
 
 OBJS = $(COMPILE) $(MODEL) $(VIEW) $(CONTROLLER) $(WINDOWINITIAL) $(XM_SDL) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(TMT) $(RED) $(EVENT) $(UTILS)
 
@@ -119,7 +123,7 @@ all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)
 	
 run:
-	./$(EXE) $(p)
+	./$(EXE) $(p) $(PARAM)
 	
 valgrind:
 	valgrind --leak-check=full ./$(EXE) $(p)

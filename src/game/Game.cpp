@@ -48,11 +48,11 @@ void Game::cargarEscenario() {
 	SDL_Event* exitEven = new SDL_Event();
 	exitEven->key.keysym.sym = SDLK_r;
 	while (exitEven->key.keysym.sym == SDLK_r) {
-		//while(!unCliente->gcnew){}
-		//gc = unCliente->gc;
-		//unCliente->gcnew=false;
+		while(!unCliente->gcnew){}
+		gc = unCliente->gc;
+		unCliente->gcnew=false;
 
-		crearGameConfHardcodeada();
+//		crearGameConfHardcodeada();
 		escenario = new Escenario(gc);
 
 		escenario->setClient(unCliente);
@@ -733,7 +733,7 @@ void Game::sendDataPlayer(){
 
 void Game::loadWaitingGame() {
 
-  bool esperandoInicio =true;
+  bool esperandoInicio =false;
   Timer timer;
   string connectingText = "Esperando Jugadores...";
   Screen* waitingScreen = new Screen( this->sdlHandler );
@@ -745,7 +745,7 @@ void Game::loadWaitingGame() {
 
   // Enable text input
   SDL_StartTextInput();
-  while(esperandoInicio){
+  while(!esperandoInicio){
 	  // Set window background
 	  this->sdlHandler->setWindowBG(0, 0, 0);
 	  // Render logo
@@ -753,9 +753,7 @@ void Game::loadWaitingGame() {
 	  waitingScreen->renderTexture("connecting", logoCenter, 300 );
 	  //Update screen
 	  this->sdlHandler->updateWindow();
-
-	  usleep(3000000);//TODO aca se debe informar qe estan todos los jugadores.
-	  esperandoInicio = false;
+	  esperandoInicio = this->unCliente->gcnew;
   }
 
   //Disable text input

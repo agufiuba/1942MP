@@ -26,6 +26,7 @@ class Transmitter {
     bool receiveData( PlanesActives* data );
     bool receiveData( GameConf* data );
 	
+    bool sendDataCO();
 	bool sendData( Evento* e );
     bool receiveData( Evento* e );
 };

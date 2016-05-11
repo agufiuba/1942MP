@@ -251,6 +251,11 @@ bool Client::sendData( Evento* e ) {
   return tmt->sendData( e );
 }
 
+bool Client::sendDataCO() {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  return tmt->sendDataCO();
+}
+
 bool Client::sendData( PlayerData* data ) {
   this->received = false;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );

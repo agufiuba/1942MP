@@ -88,6 +88,13 @@ bool Transmitter::sendData( PlanesActives* data ) {
   return true;
 }
 
+bool Transmitter::sendDataCO(){
+	if( !( this->sendDataID( "CO" ) ) ) {
+	   return false;
+	 }
+}
+
+
 bool Transmitter::sendData( GameConf* data ) {
   // Send data id
   if( !( this->sendDataID( "CO" ) ) ) {

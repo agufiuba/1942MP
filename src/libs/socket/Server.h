@@ -25,7 +25,7 @@ class Server {
     vector<int> players2;
 
     Logger* logger;
-//    ServerConf* config;
+    ServerConf* config;
     static const int BACKLOG = 5;
     static const int MAX_UNREACHABLE_TIME = 5;
     void listenForConnections( int clientFD, struct sockaddr_storage clientAddress );

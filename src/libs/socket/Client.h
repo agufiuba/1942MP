@@ -41,7 +41,7 @@ class Client {
     bool isPlayerOk();
     bool gcnew;
 	bool sendData( Evento* e );
-
+	bool sendDataCO();
 	void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
 };
 #endif
