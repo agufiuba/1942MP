@@ -47,7 +47,7 @@ void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers){
 }
 
 bool Client::allPlayersReady(){
-	return (allPlayers.size() == 1);
+	return (allPlayers.size() == 2);
 }
 
 bool Client::connectToServer() {
@@ -178,6 +178,9 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 	timeout.tv_usec = 0;
 	bool received;
 	char id[3];
+
+	int numBytesRead;
+
 	// Create transmitter
 	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
 
@@ -190,7 +193,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 		}
 
 		// Get id of next data to receive
-		received = tmt->receiveData(id, sizeof(id));
+		received = tmt->receiveData(id, sizeof(id), numBytesRead);
 
 		if (received) {
 			string dataID(id);
@@ -198,7 +201,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			if (dataID == "PD") {
 				PlayerData* data = new PlayerData;
 
-				if (received = tmt->receiveData(data)) {
+				if (received = tmt->receiveData(data, numBytesRead)) {
 					// Process received data
 					cout << "Nombre del jugador: " << string(data->name) << endl;
 					cout << "Color del jugador: " << string(data->color) << endl;
@@ -215,35 +218,40 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			} else if (dataID == "PA") {
 
 				PlanesActives* data = new PlanesActives;
-				if (received = tmt->receiveData(data)) {
+				if (received = tmt->receiveData(data, numBytesRead)) {
 					this->planes = data;
 				}
 
 			} else if (dataID == "CO") {
 				GameConf* data;
-				if (received = tmt->receiveData(data)) {
+				if (received = tmt->receiveData(data, numBytesRead)) {
 					gcnew = received;
 					gc = data;
 				}
 			} else if (dataID == "EV") {
 				Evento* e = new Evento();
 
-				if (received = tmt->receiveData(e)) {
+				if (received = tmt->receiveData(e, numBytesRead)) {
 					cout << "Evento: " << e->value << endl;
 					cout << "PlayerName: " << e->name << endl;
 
-					this->pc->mover("key", e->value);
+					this->pc->mover(e->name, e->value);
 				}
 			} else if (dataID == "PR") {
 				PlayerData* data = new PlayerData;
 
-				if (received = tmt->receiveData(data)) {
+				if (received = tmt->receiveData(data, numBytesRead)) {
 					// Process received data
 					cout << "READY -->Nombre del jugador: " << string(data->name) << endl;
 					cout << "READY -->Color del jugador: " << string(data->color) << endl;
 					this->allPlayers.push_back(data);
 				}
 			}
+		  if ( numBytesRead == -1 ) {
+		    close( socketFD );
+		    this->logger->warn( CONNECTION_TIMEOUT );
+		    DEBUG_WARN( CONNECTION_TIMEOUT );
+		  }
 		}
 
 		if (!(received)) {
