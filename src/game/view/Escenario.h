@@ -24,6 +24,7 @@
 #include "../controller/Timer.h"
 #include "../controller/HandlerPlayersControllers.h"
 #include "../../xml/conf/GameConf.h"
+#include "../../libs/socket/Client.h"
 
 class Escenario {
 
@@ -34,6 +35,8 @@ private:
 	SDL_Rect posicion;
 	SDL_Event evento;
 	Resolucion* resolucion;
+
+	Client* client;
 
 	bool inicioCorrectamente;
 	bool isFullScreen = false;
@@ -67,6 +70,8 @@ private:
 	HandlerPlayersControllers* controllers;
 	vector<Vivible*> fondosVivibles;
 
+	Client* unCliente;
+
 	void inicializar();
 	void setResolucion();
 	void printErrorSDL(string error);
@@ -88,6 +93,9 @@ public:
 	~Escenario();
 	SDL_Event* run();
 	void configurarJugador(PlayerData* jugador);
+
+	HandlerPlayersControllers* getHandler();
+	void setClient(Client* cliente);
 
 };
 

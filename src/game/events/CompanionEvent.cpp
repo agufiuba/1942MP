@@ -1,57 +1,64 @@
 #include "CompanionEvent.h"
 
-Evento CompanionEvent::right(char playerID) {
-    Evento e;
-    e.playerID = playerID;
-    e.value = DERECHA;
+Evento* CompanionEvent::right(string n) {
+		Evento* e = new Evento();
+    e->value = DERECHA;
+    strcpy(e->name, n.c_str());
     return e;
 }
 
-Evento CompanionEvent::left(char playerID) {
-    Evento e;
-    e.playerID = playerID;
-    e.value = IZQUIERDA;
+Evento* CompanionEvent::left(string n) {
+		Evento* e = new Evento();
+    e->value = IZQUIERDA;
+    strcpy(e->name, n.c_str());
     return e;
 }
 
-Evento CompanionEvent::up(char playerID) {
-    Evento e;
-    e.playerID = playerID;
-    e.value = ARRIBA;
+Evento* CompanionEvent::up(string n) {
+		Evento* e = new Evento();
+    e->value = ARRIBA;
+    strcpy(e->name, n.c_str());
     return e;
 }
 
-Evento CompanionEvent::down(char playerID) {
-    Evento e;
-    e.playerID = playerID;
-    e.value = ABAJO;
+Evento* CompanionEvent::down(string n) {
+		Evento* e = new Evento();
+    e->value = ABAJO;
+    strcpy(e->name, n.c_str());
     return e;
 }
 
-Evento CompanionEvent::shot(char playerID) {
-    Evento e;
-    e.playerID = playerID;
-    e.value = DISPARO;
+Evento* CompanionEvent::shot(string n) {
+		Evento* e = new Evento();
+    e->value = DISPARO;
+    strcpy(e->name, n.c_str());
     return e;
 }
 
-Evento CompanionEvent::ready(char playerID) {
-    Evento e;
-    e.playerID = playerID;
-    e.value = LISTO;
+Evento* CompanionEvent::roll(string n) {
+		Evento* e = new Evento();
+    e->value = VUELTERETA;
+    strcpy(e->name, n.c_str());
     return e;
 }
 
-Evento CompanionEvent::restart(char playerID) {
-    Evento e;
-    e.playerID = playerID;
-    e.value = REINICIAR;
+Evento* CompanionEvent::ready(string n) {
+    Evento* e = new Evento();
+    e->value = LISTO;
+    strcpy(e->name, n.c_str());
     return e;
 }
 
-Evento CompanionEvent::quit(char playerID) {
-    Evento e;
-    e.playerID = playerID;
-    e.value = SALIR;
+Evento* CompanionEvent::restart(string n) {
+		Evento* e = new Evento();
+    e->value = REINICIAR;
+    strcpy(e->name, n.c_str());
+    return e;
+}
+
+Evento* CompanionEvent::quit(string n) {
+		Evento* e = new Evento();
+    e->value = SALIR;
+    strcpy(e->name, n.c_str());
     return e;
 }

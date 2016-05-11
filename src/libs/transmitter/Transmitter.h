@@ -5,6 +5,8 @@
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
 #include <string>
+#include "../../game/events/CompanionEvent.h"
+
 using namespace std;
 
 class Transmitter {
@@ -23,5 +25,8 @@ class Transmitter {
     bool receiveData( PlayerData* data );
     bool receiveData( PlanesActives* data );
     bool receiveData( GameConf* data );
+	
+	bool sendData( Evento* e );
+    bool receiveData( Evento* e );
 };
 #endif

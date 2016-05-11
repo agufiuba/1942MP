@@ -4,10 +4,13 @@
 #include "../data/planes_actives.h"
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
+#include "../../xml/conf/ClientConf.h"
 #include "../../game/events/Events.cpp"
+#include "../../game/controller/HandlerPlayersControllers.h"
 
 class Client {
   private:
+	HandlerPlayersControllers* pc;
     string ip;
     string puerto;
     int socketFD;
@@ -21,12 +24,12 @@ class Client {
     void checkAliveSend();
     void receiving( const int MAX_DATA_SIZE, const char* IP );
     void closeConnection();
-    bool sendData( Evento* e );
 
   public:
     GameConf* gc;
     Client( const char* configFileName );
     Client( string ip, string puerto );
+    Client (string ip, string puerto, HandlerPlayersControllers* handlerPlayersControllers);
     ~Client();
     bool connectToServer();
     void disconnectFromServer();
@@ -37,5 +40,8 @@ class Client {
     PlanesActives* getPlanesActives();
     bool isPlayerOk();
     bool gcnew;
+	bool sendData( Evento* e );
+
+	void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
 };
 #endif

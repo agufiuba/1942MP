@@ -1,3 +1,4 @@
+
 #include "Server.h"
 #include "../transmitter/Transmitter.h"
 #include "../socket/sock_dep.h" /* socket dependencies */
@@ -252,13 +253,15 @@ void Server::sendConf(int cfd){
 void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
   Evento* msgToRecv = new Evento;
-
+	mutex theMutex;
+  
   // get connected host IP in presentation format
   inet_ntop( client_addr.ss_family,
       this->getInAddr( (struct sockaddr*) (&client_addr) ), clientIP,
       sizeof clientIP);
 
   if( this->allowConnections ) {
+	  players2.push_back(cfd);
     cout << endl << notice( "Se inicio una conexion con el host: " ) << clientIP
       << endl;
     this->logger->info( "Se inicio una conexion con el host: " + string( clientIP ) );
@@ -303,7 +306,25 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	  }
 
 	  delete data;
-	} 
+	} else if (dataID == "EV") {
+		Evento* e = new Evento();
+
+		if (received = tmt->receiveData(e)) {
+			cout << "Evento: " << e->value << endl;
+
+			theMutex.lock();
+			cout << endl << "FD cliente: " << notice(to_string(cfd)) << endl;
+
+			map<int, Evento*>* clientMsgFD = new map<int, Evento*>();
+			clientMsgFD->insert(pair<int, Evento*>(cfd, e));
+			this->eventQueue->push(clientMsgFD);
+			theMutex.unlock();
+
+
+		}
+
+	}
+	
       }
 
       if( !( received ) ) {
@@ -375,7 +396,7 @@ void Server::processQueue() {
       this->eventQueue->pop();
 
       map<int,Evento*>::iterator it = data->begin();
-      //cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->valor << endl;
+      cout << "FD cliente: " << it->first << " --  Mensaje: " << (it->second)->value << endl;
 
       this->logger->info( "Msj de cliente: " + to_string(it->second->value ) );
 
@@ -387,9 +408,29 @@ void Server::processQueue() {
       //	respuesta->value = MENSAJE_INCORRECTO;
       //	this->logger->warn( respuesta->value );
       //      }
-      thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
-      tSending.detach();
+      //thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
+      //tSending.detach();
+		
+		/*      if( !( this->players.empty() ) ) {
+        for( map<int, Player*>::iterator itP = this->players.begin();itP != this->players.end();++itP ) {
+          if( (itP->first) != it->first){
+          	sendData(itP->first, it->second);
+          }
+        }
+      }*/
 
+
+      //TODO: Esto despues hay que cambiarlo por lo de arriba
+
+    	if (players2.size() > 0) {
+    		for (int i = 0 ; i < players2.size(); i++) {
+    			if (players2[i] != it->first) {
+    				sendData(players2[i],it->second);
+    			}
+    		}
+    	}
+		
+		
       delete data;
 
       theMutex.unlock();
@@ -439,11 +480,17 @@ void Server::processQueue() {
 //  return respuesta;
 //}
 
+/*
 void Server::sendData( int cfd, Evento* data, int dataLength ){
   if( send( cfd, data, dataLength, 0 ) == -1 ) {
     this->logger->warn( SEND_FAIL );
     DEBUG_WARN( SEND_FAIL );
   }
+}*/
+
+void Server::sendData( int cfd, Evento* data ) {
+  Transmitter* tmt = new Transmitter( cfd, this->logger );
+  tmt->sendData( data );
 }
 
 void Server::closeClient( int cfd ) {
