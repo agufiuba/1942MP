@@ -21,6 +21,9 @@ class Server {
     bool processing;
     queue<map<int, Evento*>*>* eventQueue;
     map<int, Player*> players;
+
+    vector<int> players2;
+
     Logger* logger;
 //    ServerConf* config;
     static const int BACKLOG = 5;
@@ -33,7 +36,8 @@ class Server {
     void closeConnection();
     void processQueue();
 //    bool processMsg( string type, string value );
-    void sendData( int clientFD, Evento* data, int dataLength );
+    //void sendData( int clientFD, Evento* data, int dataLength );
+    void sendData( int clientFD, Evento* data);
     bool receiveData( char id[2], int clientFD, int size );
     bool receiveData( PlayerData* data, int clientFD );
     void addPlayer( PlayerData* data, int clientFD );

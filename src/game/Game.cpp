@@ -24,11 +24,15 @@ void Game::cargarEscenario() {
 	SDL_Event* exitEven = new SDL_Event();
 	exitEven->key.keysym.sym = SDLK_r;
 	while (exitEven->key.keysym.sym == SDLK_r) {
-		while(!unCliente->gcnew){}
-		gc = unCliente->gc;
-		unCliente->gcnew=false;
-		escenario = new Escenario();
+		//while(!unCliente->gcnew){}
+		//gc = unCliente->gc;
+		//unCliente->gcnew=false;
+		escenario = new Escenario(800,600);
+
+		escenario->setClient(unCliente);
 		escenario->configurarJugador(this->jugador);
+
+		unCliente->setHandler(escenario->getHandler());
 		exitEven = escenario->run();
 		delete escenario;
 	}

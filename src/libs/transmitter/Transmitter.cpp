@@ -13,6 +13,34 @@ Transmitter::Transmitter( int peerFD, Logger* logger ) {
 
 Transmitter::~Transmitter() {}
 
+bool Transmitter::sendData( Evento* e ) {
+  // Send data id
+  if( !( this->sendDataID( "EV" ) ) ) {
+    return false;
+  }
+
+  // Send data
+  if( send( this->peerFD, e, sizeof( Evento ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+    return false;
+  }
+
+  return true;
+}
+
+bool Transmitter::receiveData( Evento* e ) {
+  int numBytesRead;
+  // Read data
+  if( ( numBytesRead = recv( this->peerFD, e, sizeof( Evento ), 0 ) ) == -1 ) {
+    close( this->peerFD );
+    this->logger->warn( CONNECTION_TIMEOUT );
+    DEBUG_WARN( CONNECTION_TIMEOUT );
+  }
+
+  return ( numBytesRead > 0 );
+}
+
 bool Transmitter::sendDataID( string id ) {
   // Add string end mark
   id += "\0";

@@ -88,6 +88,8 @@ void Escenario::inicializar() {
 		inicioCorrectamente = false;
 	}
 
+	setOtrosAviones();
+
 }
 
 Escenario::~Escenario() {
@@ -132,6 +134,10 @@ void Escenario::aplicarFPS(Uint32 start) {
 	}
 }
 
+void Escenario::setClient(Client* cliente){
+		this->unCliente = cliente;
+}
+
 void Escenario::setFondosVivibles() {
 
 	//limpiarFondosVivibles();
@@ -160,6 +166,11 @@ void Escenario::setFondosVivibles() {
 
 }
 
+
+HandlerPlayersControllers* Escenario::getHandler(){
+	return this->controllers;
+}
+
 void Escenario::setOtrosAviones() {
 	string key = "key";
 	string gon = "gon";
@@ -178,7 +189,7 @@ void Escenario::configurarJugador(PlayerData* jugador){
 	string name(jugador->name);
 	string color (jugador->color);
 	Vivible* unAvion = new Avion(name, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), color);
-	myControl = new Controller(unAvion, gRenderer, resolucion);
+	myControl = new Controller(unAvion, gRenderer, resolucion, this->unCliente);
 }
 
 SDL_Event* Escenario::run() {
@@ -191,7 +202,7 @@ SDL_Event* Escenario::run() {
 
 
 	setFondosVivibles();
-	setOtrosAviones();
+	//setOtrosAviones();
 
 
 	Posicion* posicionEscenario = new Posicion(0, 0);

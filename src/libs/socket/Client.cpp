@@ -29,7 +29,22 @@ Client::Client( string ip, string puerto ) {
   //  this->config = XMLParser::parseClientConf( configFileName );
 }
 
+Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlayersControllers) {
+	this->pc = handlerPlayersControllers;
+  this->socketFD = 0;
+  this->connected = false;
+  this->logger = Logger::instance();
+  this->ip = ip;
+  this->puerto = puerto;
+
+  //  this->config = XMLParser::parseClientConf( configFileName );
+}
+
 Client::~Client() {}
+
+void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers){
+	this->pc = handlerPlayersControllers;
+}
 
 bool Client::connectToServer() {
   mutex theMutex;
@@ -205,7 +220,18 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
     		  gcnew = received;
     	      gc = data;
     	  }
-      }
+      } else if (dataID == "EV") {
+			Evento* e = new Evento();
+	
+			if (received = tmt->receiveData(e)) {
+				cout << "Evento: " << e->value << endl;
+				cout << "PlayerName: " << e->name <<endl;
+	
+	
+				this->pc->mover("key",e->value);
+			}
+		}
+
     }
 
     if( !( received ) ) {
@@ -221,15 +247,8 @@ void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
 
 bool Client::sendData( Evento* e ) {
   this->received = false;
-  if( send( this->socketFD, e, sizeof(Evento), 0 ) == -1 ) {
-    this->logger->error( SEND_FAIL );
-    //    theMutex.lock();
-    DEBUG_WARN( SEND_FAIL );
-    //    theMutex.unlock();
-    return false;
-  }
-
-  return true;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  return tmt->sendData( e );
 }
 
 bool Client::sendData( PlayerData* data ) {
