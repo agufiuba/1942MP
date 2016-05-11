@@ -2,7 +2,6 @@
 
 #include <arpa/inet.h>
 #include <asm-generic/socket.h>
-#include <bits/socket_type.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -35,7 +34,7 @@ Server::Server(const char* configFileName) {
 	this->allowConnections = false;
 	this->eventQueue = new queue<map<int, Evento*>*>;
 	this->logger = Logger::instance();
-	this->cconfig = XMLParser::parseServerConf( configFileName );
+	this->config = XMLParser::parseServerConf( configFileName );
 }
 
 Server::~Server() {
@@ -353,7 +352,7 @@ void Server::receiveClientData(int cfd, struct sockaddr_storage client_addr) {
 
 					}
 
-				} else if (dataID = "CO") {
+				} else if (dataID == "CO") {
 					this->sendConf(cfd);
 				}
 

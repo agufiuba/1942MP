@@ -1,14 +1,14 @@
 <sprites>
 	<sprite>
 		<id>porta1</id>
-		<path>"src/game/images/portaviones/porta1.bmp"</path>
+		<path>"src/game/images/portaviones/porta11.bmp"</path>
 		<cantidad>1</cantidad>
 		<ancho>4000</ancho>
 		<alto>4000</alto>
 	</sprite>
     <sprite>
         <id>isla1</id>
-        <path>"src/game/images/islas/isla1.bmp"</path>
+        <path>"src/game/images/islas/islaweff1.bmp"</path>
         <cantidad>1</cantidad>
         <ancho>4000</ancho>
         <alto>4000</alto>

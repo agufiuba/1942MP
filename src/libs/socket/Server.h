@@ -9,6 +9,8 @@
 #include <queue>
 #include <map>
 #include <string>
+#include "../../xml/parser/XMLParser.h"
+
 using namespace std;
 
 class Server {
