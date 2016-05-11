@@ -2,7 +2,7 @@
 
 #modo: client o server
 
-#Compile  : make
+#Compile  : make p=modo
 
 #Run      : make run p=modo
 
@@ -36,7 +36,7 @@ PALETTE = ./src/libs/palette/palette.cpp
 TMT = src/libs/transmitter/Transmitter.cpp
 
 # compiler
-COMPILER = -std=c++11
+COMPILER = -std=c++11 -Wno-write-strings
 
 # libraries to link
 
@@ -44,16 +44,6 @@ LINKER = -lSDL2 -lX11 -lSDL2_ttf -pthread
 
 # event
 EVENT = $(GAME_DIR)/events/Events.cpp $(GAME_DIR)/events/CompanionEvent.cpp
-
-# client
-CLIENT = $(GAME_DIR)/client/GameClient.cpp ./src/libs/socket/Client.cpp
-
-# server
-SERVER = ./src/libs/socket/Server.cpp
-
-
-# game
-GAME = $(GAME_DIR)/1942MultiPlayer.cpp
 
 # model
 RESOLUCION = $(MODEL_DIR)/Resolucion.cpp
@@ -85,10 +75,45 @@ MODEL = $(RESOLUCION) $(POSICION) $(VIVIBLE) $(COMPOSITE) $(AVION) $(MISIL) $(PL
 VIEW = $(AVION_VIEW) $(TEXTURE) $(BACKGROUND) $(ISLA) $(MISIL_VIEW) $(SCREEN)
 CONTROLLER = $(CONTROLLER_CONTROLLER) $(PLAYERS_CONTROLLERS) $(MISILES_CONTROLLERS) $(TIMER_CONTROLLER) $(HANDLER_CONTROLLER)
 
-# executable name
-EXE = 1942MultiPlayer.exe
+# RED
+# client
+CLIENT = $(GAME_DIR)/client/GameClient.cpp ./src/libs/socket/Client.cpp
 
-OBJS = $(MODEL) $(VIEW) $(CONTROLLER) $(WINDOWINITIAL) $(XM_SDL) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(TMT) $(CLIENT) $(SERVER) $(EVENT) $(GAME)
+# server
+SERVER = ./src/libs/socket/Server.cpp
+
+RED = $(CLIENT) $(SERVER)
+
+
+# Otros
+XML_PARSER = ./src/xml/parser/XMLParser.cpp
+K = ./src/utils/K.cpp
+DEFAULTS = ./src/utils/Defaults.cpp
+MENU = ./src/libs/menu/Menu.cpp
+
+UTILS = $(K) $(DEFAULTS) $(XML_PARSER) $(MENU)
+
+# compile
+
+COMPILE =  $(GAME_DIR)/1942MultiPlayer.cpp
+ifeq ($(p), client)
+	COMPILE = $(GAME_DIR)/1942MultiPlayer.cpp
+endif
+ifeq ($(p), server)
+	COMPILE = ./src/libs/socket/examples/server/server.cpp
+endif
+
+# executable name
+EXE = 
+ifeq ($(p), client)
+	EXE = 1942MultiPlayer.exe
+endif
+ifeq ($(p), server)
+	EXE = ./src/libs/socket/examples/server/server.exe
+endif
+
+
+OBJS = $(COMPILE) $(MODEL) $(VIEW) $(CONTROLLER) $(WINDOWINITIAL) $(XM_SDL) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(TMT) $(RED) $(EVENT) $(UTILS)
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)
