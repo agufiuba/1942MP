@@ -18,7 +18,7 @@ using namespace std;
 Server::Server( const char* configFileName ) {
   this->socketFD = 0;
   this->clientCount = 0;
-  this->maxClientCount = 2;
+  this->maxClientCount = 1;
   this->listening = false;
   this->connected = false;
   this->processing = false;
@@ -67,6 +67,7 @@ void Server::initialize() {
     this->logger->error( "Error al obtener la direccion, " + string( gai_strerror( rv ) ) );
     exit( -1 );
   }
+
 
   int yes = 1;
   // loop through results and bind to one of them
@@ -165,6 +166,7 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
       if( !( it->second->isActive() ) ) {
 	// resume player game
 	selectedColor = it->second->getColor();
+	delete it->second;
 	this->players.erase( it );
 	createPlayer = true;
 	validName = "R";
@@ -185,9 +187,6 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
     Player* p = new Player( selectedName, selectedColor );
     theMutex.lock();
     this->players[ cfd ] = p;
-    if( this->players.size() == this->maxClientCount ) {
-      this->createPlayers();  
-    }
     theMutex.unlock();
   }
 
@@ -214,20 +213,25 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
 }
 
 void Server::createPlayers() {
-  for( map<int, Player*>::iterator it = this->players.begin();
-       it != this->players.end();
-       ++it ) {
-    Transmitter* tmt = new Transmitter( it->first, this->logger );
+	for (int i = 0; i < this->players.size(); i++) {
+		map<int, Player*>::iterator it2 = this->players.begin();
 
-    PlayerData* player = new PlayerData; 
-    strcpy( player->name, it->second->getName().c_str() );
-    strcpy( player->color, it->second->getColor().c_str() );
+		for (map<int, Player*>::iterator it = this->players.begin();
+				it != this->players.end(); ++it) {
+			Transmitter* tmt = new Transmitter(it2->first, this->logger);
 
-    while( !tmt->sendData( player ) );
+			PlayerData* player = new PlayerData;
+			strcpy(player->name, it->second->getName().c_str());
+			strcpy(player->color, it->second->getColor().c_str());
 
-    delete player;
-    delete tmt;
-  }
+			while (!tmt->sendData(player, "PR"));
+
+			delete player;
+			delete tmt;
+		}
+
+		it2++;
+	}
 }
 
 void Server::sendPlanesActives(int cfd){

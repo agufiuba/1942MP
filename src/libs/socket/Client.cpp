@@ -46,6 +46,10 @@ void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers){
 	this->pc = handlerPlayersControllers;
 }
 
+bool Client::allPlayersReady(){
+	return (allPlayers.size() == 1);
+}
+
 bool Client::connectToServer() {
   mutex theMutex;
 
@@ -168,81 +172,88 @@ void Client::checkAliveSend() {
   }
 }
 
-void Client::receiving( const int MAX_DATA_SIZE, const char *IP ){
-  timeval timeout;
-  timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
-  timeout.tv_usec = 0;
-  bool received;
-  char id[3];
-  // Create transmitter
-  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
+	timeval timeout;
+	timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
+	timeout.tv_usec = 0;
+	bool received;
+	char id[3];
+	// Create transmitter
+	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
 
-  while ( this->connected ) {
-    // seteo el timeout de recepcion de mensajes
-    if( setsockopt( this->socketFD, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout, sizeof(timeout) ) < 0 ) {
-      cout << "Error sockopt" << endl;
-      exit( 1 );
-    }
+	while (this->connected) {
+		// seteo el timeout de recepcion de mensajes
+		if (setsockopt(this->socketFD, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,
+				sizeof(timeout)) < 0) {
+			cout << "Error sockopt" << endl;
+			exit(1);
+		}
 
-    // Get id of next data to receive
-    received = tmt->receiveData( id, sizeof( id ) );
+		// Get id of next data to receive
+		received = tmt->receiveData(id, sizeof(id));
 
-    if( received ) {
-      string dataID( id );
-      // Receive data type based on fetched dataID 
-      if( dataID == "PD" ) {
-    	  PlayerData* data = new PlayerData;
+		if (received) {
+			string dataID(id);
+			// Receive data type based on fetched dataID
+			if (dataID == "PD") {
+				PlayerData* data = new PlayerData;
 
-		  if( received = tmt->receiveData( data ) ) {
-		    // Process received data
-		    cout << "Nombre del jugador: " << string( data->name ) << endl;
-		    cout << "Color del jugador: " << string( data->color ) << endl;
-		    string name( data->name );
-		    string color( data->color );
-		    if ( name == "Y" && color == "Y"){
-		    	this->playerOk = true;
-		    }else {
-		    	this->playerOk =false;
-		    }
-		  }
-		  delete data;
+				if (received = tmt->receiveData(data)) {
+					// Process received data
+					cout << "Nombre del jugador: " << string(data->name) << endl;
+					cout << "Color del jugador: " << string(data->color) << endl;
+					string name(data->name);
+					string color(data->color);
+					if (name == "Y" && color == "Y") {
+						this->playerOk = true;
+					} else {
+						this->playerOk = false;
+					}
+				}
+				delete data;
 
-      } else if (dataID == "PA" ){
+			} else if (dataID == "PA") {
 
-    	  PlanesActives* data = new PlanesActives;
-    	  if( received = tmt->receiveData( data ) ) {
-    		  this->planes = data;
-  		  }
+				PlanesActives* data = new PlanesActives;
+				if (received = tmt->receiveData(data)) {
+					this->planes = data;
+				}
 
-      } else if (dataID == "CO"){
-    	  GameConf* data;
-    	  if( received = tmt->receiveData( data ) ) {
-    		  gcnew = received;
-    	      gc = data;
-    	  }
-      } else if (dataID == "EV") {
-			Evento* e = new Evento();
-	
-			if (received = tmt->receiveData(e)) {
-				cout << "Evento: " << e->value << endl;
-				cout << "PlayerName: " << e->name <<endl;
-	
-	
-				this->pc->mover("key",e->value);
+			} else if (dataID == "CO") {
+				GameConf* data;
+				if (received = tmt->receiveData(data)) {
+					gcnew = received;
+					gc = data;
+				}
+			} else if (dataID == "EV") {
+				Evento* e = new Evento();
+
+				if (received = tmt->receiveData(e)) {
+					cout << "Evento: " << e->value << endl;
+					cout << "PlayerName: " << e->name << endl;
+
+					this->pc->mover("key", e->value);
+				}
+			} else if (dataID == "PR") {
+				PlayerData* data = new PlayerData;
+
+				if (received = tmt->receiveData(data)) {
+					// Process received data
+					cout << "READY -->Nombre del jugador: " << string(data->name) << endl;
+					cout << "READY -->Color del jugador: " << string(data->color) << endl;
+				}
 			}
 		}
 
-    }
+		if (!(received)) {
+			this->logger->warn( CONNECTION_LOST);
+			DEBUG_WARN(CONNECTION_LOST);
+			this->connected = false;
+			close(this->socketFD);
+		}
+	}
 
-    if( !( received ) ) {
-      this->logger->warn( CONNECTION_LOST );
-      DEBUG_WARN( CONNECTION_LOST );
-      this->connected = false;
-      close( this->socketFD );
-    }
-  }
-
-  delete tmt;
+	delete tmt;
 }
 
 bool Client::sendData( Evento* e ) {

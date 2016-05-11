@@ -744,7 +744,7 @@ void Game::loadWaitingGame() {
 
   // Enable text input
   SDL_StartTextInput();
-  while(esperandoInicio){
+  while(unCliente->allPlayersReady()){
     // Set window background
     this->sdlHandler->setWindowBG(0, 0, 0);
     // Render logo

@@ -20,6 +20,7 @@ class Transmitter {
     ~Transmitter();
     bool sendData( PlayerData* data );
     bool sendData( PlanesActives* data );
+    bool sendData( PlayerData* data, string s );
     bool sendData( GameConf* );
     bool receiveData( char id[2], int size );
     bool receiveData( PlayerData* data );

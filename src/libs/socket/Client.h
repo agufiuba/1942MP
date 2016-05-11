@@ -7,6 +7,7 @@
 #include "../../xml/conf/ClientConf.h"
 #include "../../game/events/Events.cpp"
 #include "../../game/controller/HandlerPlayersControllers.h"
+#include <vector>
 
 class Client {
   private:
@@ -19,6 +20,8 @@ class Client {
     bool playerOk;
     Logger* logger;
     PlanesActives* planes;
+
+    vector<PlayerData*> allPlayers;
 
     static const int MAX_UNREACHABLE_TIME = 5;
     void checkAliveSend();
@@ -41,6 +44,7 @@ class Client {
     bool isPlayerOk();
     bool gcnew;
 	bool sendData( Evento* e );
+	bool allPlayersReady();
 
 	void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
 };
