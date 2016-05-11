@@ -435,9 +435,6 @@ void Game::loadselectionPlane() {
 	}
 
 	int logoCenter = (this->windowWidth - initialScreen->getTextureWidth("logo")) / 2;
-	cout<<"******************"<<endl;
-	cout<<logoCenter<<endl;
-	cout<<"******************"<<endl;
 	int promptCenter = logoCenter - 20;
 	int buttonCenter = promptCenter + 15;
 	int textCenter = promptCenter + 20;
@@ -464,7 +461,7 @@ void Game::loadselectionPlane() {
 
 	// Create prompts
 	initialScreen->loadRectangle("promptClientId", promptCenter,inputClientIdPosY, 260, 50);
-	initialScreen->loadRectangle("button", promptCenter + 15, 450, 230, 50);
+	initialScreen->loadRectangle("button", promptCenter + 15, 475, 230, 50);
 
 	// Enable text input
 	SDL_StartTextInput();
@@ -621,8 +618,6 @@ void Game::loadselectionPlane() {
 		if (clicked) {
 			clicked = false;
 			if ((mouseX > buttonCenter) && (mouseX < (buttonCenter + 230))	&& (mouseY > 475) && (mouseY < (475 + 50))) {
-				//runningScreen = false;
-				if(this->clientId != ""){
 					if(bluePromptSelected){
 						this->planeId = "azul";
 					} else if(redPromptSelected){
@@ -632,6 +627,7 @@ void Game::loadselectionPlane() {
 					} else if(yellowPromptSelected){
 						this->planeId = "amarillo";
 					}
+				if(this->clientId != "" && this->planeId != ""){
 					this->sendDataPlayer();
 					runningScreen = false;
 				}
@@ -706,7 +702,7 @@ void Game::loadselectionPlane() {
 			initialScreen->renderTexture("msgError", textCenter+100, inputClientIdPosY);
 		}
 
-		initialScreen->renderTexture("accept", buttonTextCenter, 450);
+		initialScreen->renderTexture("accept", buttonTextCenter, 475);
 		initialScreen->renderTexture("clientText", textoIzquierda,	inputClientIdPosY);
 		initialScreen->renderTexture("planeText", textoIzquierda, inputPlaneIdPosY);
 
@@ -741,34 +737,30 @@ void Game::loadWaitingGame() {
   bool esperandoInicio =true;
   Timer timer;
   string connectingText = "Esperando Jugadores...";
-  Screen* validationScreen = new Screen( this->sdlHandler );
-  validationScreen->loadTexture( "logo", "src/initialWindow/windowImages/1942logoPrincipal.bmp" );
-  validationScreen->loadText( "connecting", connectingText, { 255, 255, 255, 255 } );
+  Screen* waitingScreen = new Screen( this->sdlHandler );
+  waitingScreen->loadTexture( "logo", "src/initialWindow/windowImages/1942logoPrincipal.bmp" );
+  waitingScreen->loadText( "connecting", connectingText, { 255, 255, 255, 255 } );
 
-  int logoCenter = ( this->windowWidth - validationScreen->getTextureWidth( "logo" ) ) / 2;
+  int logoCenter = ( this->windowWidth - waitingScreen->getTextureWidth( "logo" ) ) / 2;
   int promptCenter = logoCenter - 20;
-  int textCenter = promptCenter;
 
   // Enable text input
   SDL_StartTextInput();
-  // Set window background
-  this->sdlHandler->setWindowBG(0, 0, 0);
-  // Render logo
-  validationScreen->renderTexture( "logo", logoCenter, 90 );
-  validationScreen->renderTexture("connecting", logoCenter, 300 );
-  //Update screen
-  this->sdlHandler->updateWindow();
-int i =0;
   while(esperandoInicio){
-	  i++;
-	  if(i>1000){
-		  esperandoInicio = false;
-	  }
+	  // Set window background
+	  this->sdlHandler->setWindowBG(0, 0, 0);
+	  // Render logo
+	  waitingScreen->renderTexture( "logo", logoCenter, 90 );
+	  waitingScreen->renderTexture("connecting", logoCenter, 300 );
+	  //Update screen
+	  this->sdlHandler->updateWindow();
+
+	  usleep(3000000);//TODO aca se debe informar qe estan todos los jugadores.
+	  esperandoInicio = false;
   }
 
-  usleep(5000000);
-  if( timer.tiempoActual() < 1000 / this->fps ){
-    SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
-  }
-
+  //Disable text input
+  SDL_StopTextInput();
+  delete waitingScreen;
 }
+

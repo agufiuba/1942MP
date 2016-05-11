@@ -31,23 +31,24 @@ bool Texture::loadFromFile( std::string path)
 
   image = SDL_LoadBMP( path.c_str() );
   if( image == NULL ) {
-    cout << "Unable to load image.\nSDL error: " << SDL_GetError() << endl;
+	  path = "src/game/images/desconocido.bmp";
+	  image = SDL_LoadBMP( path.c_str() );
+  }
+  if( image == NULL ) {
+	cout << "Unable to load image.\nSDL error: " << SDL_GetError() << endl;
   } else {
-    //Color de la imagen jugador (le saco el fondo)
-    SDL_SetColorKey( image, SDL_TRUE, SDL_MapRGB( image->format, 0xFF, 0xFF, 0xFF ) );
+	//Color de la imagen jugador (le saco el fondo)
+	SDL_SetColorKey( image, SDL_TRUE, SDL_MapRGB( image->format, 0xFF, 0xFF, 0xFF ) );
 
-    //Create texture from surface pixels
-    newTexture = SDL_CreateTextureFromSurface( renderer, image );
-    if( newTexture == NULL )
-    {
-      printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
-    }
-    else
-    {
-      //Get image dimensions
-      mWidth = image->w;
-      mHeight = image->h;
-    }
+	//Create texture from surface pixels
+	newTexture = SDL_CreateTextureFromSurface( renderer, image );
+	if( newTexture == NULL ){
+	  printf( "Unable to create texture from %s! SDL Error: %s\n", path.c_str(), SDL_GetError() );
+	} else {
+	  //Get image dimensions
+	  mWidth = image->w;
+	  mHeight = image->h;
+	}
   }
 
   SDL_FreeSurface(image);
