@@ -17,7 +17,7 @@ MisilView::MisilView(SDL_Renderer * unRenderer) {
 
 	rendererMisil = unRenderer;
 
-	if (!cargarImagenDelMisil("src/game/images/ball.bmp")) {
+	if (!cargarImagenDelMisil("src/game/images/bala.bmp")) {
 		cout << "Vista del misil no ha sido cargada correctamente.." << endl;
 		//TODO: faltaria que tire una excepcion
 	}
