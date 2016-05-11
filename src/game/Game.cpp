@@ -21,11 +21,11 @@ Game::~Game() {
 }
 
 void Game::crearGameConfHardcodeada() {
-	gc = new GameConf();
-	EscenarioConf* escenarioConf = new EscenarioConf();
-	escenarioConf->ancho = 800;
-	escenarioConf->alto = 600;
-	escenarioConf->fondo = "agua";
+	gc = GameParser::parse("gameconf.xml");
+//	EscenarioConf* escenarioConf = new EscenarioConf();
+//	escenarioConf->ancho = 800;
+//	escenarioConf->alto = 600;
+//	escenarioConf->fondo = "agua";
 
 	//TODO: esto comentado se puede probar. si se quiere probar, descomentarlo
 //	ElementoConf* el1 = new ElementoConf();
@@ -41,8 +41,7 @@ void Game::crearGameConfHardcodeada() {
 //	escenarioConf->elementos.push_back(el1);
 //	escenarioConf->elementos.push_back(el2);
 
-
-	gc->escenario = escenarioConf;
+//	gc->escenario = escenarioConf;
 }
 
 void Game::cargarEscenario() {
@@ -54,7 +53,7 @@ void Game::cargarEscenario() {
 		//unCliente->gcnew=false;
 
 		crearGameConfHardcodeada();
-		escenario = new Escenario(gc->escenario);
+		escenario = new Escenario(gc);
 
 		escenario->setClient(unCliente);
 		escenario->configurarJugador(this->jugador);
@@ -763,4 +762,3 @@ void Game::loadWaitingGame() {
   SDL_StopTextInput();
   delete waitingScreen;
 }
-

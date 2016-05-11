@@ -15,14 +15,14 @@ class GameParser {
 public:
     static GameConf *parse(string);
 
+    static int findSprite(vector<SpriteConf *>, string);
+
 private:
     static vector<SpriteConf *> sprites(XMLDocument *);
 
     static SpriteConf *sprite(XMLElement *);
 
     static EscenarioConf *escenario(XMLDocument *);
-
-//    static tuple<int, int> ventana(XMLDocument *);
 
     static vector<ElementoConf *> elementos(XMLElement *);
 

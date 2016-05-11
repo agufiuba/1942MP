@@ -9,13 +9,19 @@
 
 using namespace std;
 
-class GameConf {
-public:
-//    unsigned short int ventanaAncho;
-//    unsigned short int ventanaAlto;
+typedef struct GameConf {
     vector<SpriteConf *> sprites;
     EscenarioConf *escenario;
-    AvionConf* avion;
-};
+    AvionConf *avion;
+} GameConf;
+
+//class GameConf {
+//public:
+////    unsigned short int ventanaAncho;
+////    unsigned short int ventanaAlto;
+//    vector<SpriteConf *> sprites;
+//    EscenarioConf *escenario;
+//    AvionConf* avion;
+//};
 
 #endif
