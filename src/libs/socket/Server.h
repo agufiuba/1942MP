@@ -15,6 +15,7 @@ class Server {
   private:
     int socketFD;
     int clientCount;
+    int maxClientCount;
     bool listening;
     bool connected;
     bool allowConnections;
@@ -44,6 +45,7 @@ class Server {
 
     void sendPlanesActives(int cfd);
     void sendConf(int);
+    void createPlayers();
   public:
     Server( const char* configFileName );
     ~Server();

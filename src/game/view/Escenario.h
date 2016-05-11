@@ -97,6 +97,9 @@ public:
 
 	HandlerPlayersControllers* getHandler();
 	void setClient(Client* cliente);
+	void configurarAvionAmigo(PlayerData* playerData);
+	void configurarMiAmigo(PlayerData* playerData);
+
 
 };
 
