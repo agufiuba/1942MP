@@ -35,23 +35,23 @@ Escenario::Escenario(int width, int height) {
 	inicializar();
 }
 
-Escenario::Escenario(EscenarioConf* configuracion) {
+Escenario::Escenario(GameConf* configuracion) {
 
-	this->configuracion = configuracion;
+	this->gc = configuracion;
 
-	if (configuracion->alto != 0 && configuracion->ancho != 0) {
-		this->SCREEN_WIDTH = configuracion->ancho;
-		this->SCREEN_HEIGHT = configuracion->alto ;
+	if (gc->escenario->alto != 0 && gc->escenario->ancho != 0) {
+		this->SCREEN_WIDTH = gc->escenario->ancho;
+		this->SCREEN_HEIGHT = gc->escenario->alto;
 		resolucion = Resolucion::INSTANCE(SCREEN_WIDTH, SCREEN_HEIGHT);
 	} else {
 		setResolucion();
 	}
 
-	if (configuracion->fondo != "" && this->idFondo != idFondo) {
-		DIR_FONDO_PANTALLA = "src/game/images/image-not-found.bmp";
-	}
+	int spriteN = GameParser::findSprite(gc->sprites, gc->escenario->fondo);
+	if (spriteN != -1)
+		DIR_FONDO_PANTALLA = gc->sprites[spriteN]->path;
 
-	islasPorDefecto = (configuracion->elementos.size() == 0);
+	islasPorDefecto = (gc->escenario->elementos.size() == 0);
 
 	inicializar();
 }
@@ -161,30 +161,32 @@ void Escenario::setClient(Client* cliente){
 
 void Escenario::setFondosVivibles() {
 
-	if (islasPorDefecto) {
-		Vivible* isla1 = new Isla(gRenderer, new Posicion(250, 1800), "isla4");
-		Vivible* isla2 = new Isla(gRenderer, new Posicion(450, 1300), "isla3");
-		Vivible* isla3 = new Isla(gRenderer, new Posicion(150, 3000), "isla2");
-		Vivible* isla4 = new Isla(gRenderer, new Posicion(700, 1500), "isla3");
-		Vivible* portaAvion1 = new Isla(gRenderer, new Posicion(50, 1200), "portaavion");
+//	if (islasPorDefecto) {
+//		Vivible* isla1 = new Isla(gRenderer, new Posicion(250, 1800), "isla4");
+//		Vivible* isla2 = new Isla(gRenderer, new Posicion(450, 1300), "isla3");
+//		Vivible* isla3 = new Isla(gRenderer, new Posicion(150, 3000), "isla2");
+//		Vivible* isla4 = new Isla(gRenderer, new Posicion(700, 1500), "isla3");
+//		Vivible* portaAvion1 = new Isla(gRenderer, new Posicion(50, 1200), "portaavion");
+//
+//		fondosVivibles.push_back(isla1);
+//		fondosVivibles.push_back(isla2);
+//		fondosVivibles.push_back(isla3);
+//		fondosVivibles.push_back(isla4);
+//		fondosVivibles.push_back(portaAvion1);
+//
+//	} else {
 
-		fondosVivibles.push_back(isla1);
-		fondosVivibles.push_back(isla2);
-		fondosVivibles.push_back(isla3);
-		fondosVivibles.push_back(isla4);
-		fondosVivibles.push_back(portaAvion1);
-
-	} else {
-
-		for (int i = 0; i < configuracion->elementos.size(); i++) {
-			int x = configuracion->elementos[i]->x;
-			int y = configuracion->elementos[i]->y;
-			string id = configuracion->elementos.at(i)->spriteID;
-			Vivible* isla = new Isla(gRenderer, new Posicion(x, y), id);
-			fondosVivibles.push_back(isla);
+		for (int i = 0; i < gc->escenario->elementos.size(); i++) {
+			int x = gc->escenario->elementos[i]->x;
+			int y = gc->escenario->elementos[i]->y;
+			int index = GameParser::findSprite(gc->sprites, gc->escenario->elementos[i]->spriteID);
+			if(index >= 0){
+				Vivible* isla = new Isla(gRenderer, new Posicion(x, y), gc->sprites[index]->path);
+				fondosVivibles.push_back(isla);
+			}
 		}
 
-	}
+//	}
 
 
 }
@@ -267,7 +269,7 @@ SDL_Event* Escenario::run() {
 		bool isFinNivel = screensRecorridos >= CANTIDAD_SCREEN_TOTAL;
 
 		if (!isFinNivel && posicionEscenario->getY() > SCREEN_HEIGHT) {
-			posicionEscenario->mover(0,VELOCIDAD_SCREEN);
+			posicionEscenario->mover(0,VELOCIDAD 	_SCREEN);
 
 		} else {
 			screensRecorridos += CANTIDAD_SCREEN;

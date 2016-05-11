@@ -36,7 +36,6 @@ private:
 	SDL_Rect posicion;
 	SDL_Event evento;
 	Resolucion* resolucion;
-	EscenarioConf* configuracion;
 	Client* client;
 
 	bool inicioCorrectamente;
@@ -63,8 +62,7 @@ private:
 	string amarillo = "amarillo";
 	string desconocido = "desconocido";
 
-	string idFondo = "agua";
-	string DIR_FONDO_PANTALLA = "src/game/images/fondos/fondoPantalla4000x4000.bmp";
+	string DIR_FONDO_PANTALLA = "src/game/images/image-not-found.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
 
 	IController* myControl;
@@ -90,7 +88,7 @@ public:
 	Escenario(int fps);
 	Escenario(bool isFullScreen);
 	Escenario(int width, int height);
-	Escenario(EscenarioConf* configuracion);
+	Escenario(GameConf* configuracion);
 	Escenario(int width, int height, bool isFullScreen);
 	Escenario(int fps, int width, int height);
 	~Escenario();

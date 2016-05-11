@@ -13,8 +13,8 @@ int main() {
     cout << endl;
 
     cout << "ventana" << endl;
-    cout << "   ancho " << gc->ventanaAncho << endl;
-    cout << "   alto " << gc->ventanaAlto << endl;
+    cout << "   ancho " << gc->escenario->ancho << endl;
+    cout << "   alto " << gc->escenario->alto << endl;
     cout << "sprites" << endl;
     for (int i = 0; i < gc->sprites.size(); i++) {
         cout << "   sprite" << endl;
@@ -30,10 +30,10 @@ int main() {
     cout << "   fondo " << gc->escenario->fondo << endl;
     cout << "   elementos" << endl;
     for (int i = 0; i < gc->escenario->elementos.size(); i++) {
-        cout << "   elemento" << endl;
-        cout << "       spriteID " << gc->escenario->elementos[i]->spriteID << endl;
-        cout << "       x " << gc->escenario->elementos[i]->x << endl;
-        cout << "       y " << gc->escenario->elementos[i]->y << endl;
+        cout << "      elemento" << endl;
+        cout << "          spriteID " << gc->escenario->elementos[i]->spriteID << endl;
+        cout << "          x " << gc->escenario->elementos[i]->x << endl;
+        cout << "          y " << gc->escenario->elementos[i]->y << endl;
     }
     cout << "avion" << endl;
     cout << "   velocidadDesplazamiento " << gc->avion->velocidadDesplazamiento << endl;
@@ -42,4 +42,6 @@ int main() {
     cout << "   vueltaSpriteID " << gc->avion->vueltaSpriteID << endl;
     cout << "   disparosSpriteID " << gc->avion->disparosSpriteID << endl;
     cout << endl;
+
+    cout << GameParser::findSprite(gc->sprites, gc->escenario->fondo)->path << endl;
 }

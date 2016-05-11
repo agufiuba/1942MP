@@ -111,3 +111,19 @@ AvionConf *GameParser::avion(XMLDocument *doc) {
     avionConf->velocidadDisparos = velocidadDisparos;
     return avionConf;
 }
+
+int GameParser::findSprite(vector<SpriteConf *> sprites, string spriteID) {
+    int i = 0;
+    SpriteConf *s;
+    bool found = false;
+    while (i < sprites.size() && !found) {
+        s = sprites[i];
+        if (s->id == spriteID)
+            found = true;
+        i++;
+    }
+    if (found)
+        return i - 1;
+    else
+        return -1;
+}

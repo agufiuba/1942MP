@@ -18,11 +18,6 @@
 
 class Isla : public Vivible {
 private:
-	string DIR_ISLA_1 = "src/game/images/islas/isla1.bmp";
-	string DIR_ISLA_2 = "src/game/images/islas/isla2.bmp";
-	string DIR_ISLA_3 = "src/game/images/islas/isla3-chica.bmp";
-	string DIR_ISLA_4 = "src/game/images/islas/isla4-chica.bmp";
-	string PORTAAVION = "src/game/images/portaviones/porta1.bmp";
 	Texture* islaTxt;
 	Posicion* posicion;
 	void inicializar();
