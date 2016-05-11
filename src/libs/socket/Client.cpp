@@ -241,6 +241,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					// Process received data
 					cout << "READY -->Nombre del jugador: " << string(data->name) << endl;
 					cout << "READY -->Color del jugador: " << string(data->color) << endl;
+					this->allPlayers.push_back(data);
 				}
 			}
 		}
@@ -372,4 +373,8 @@ PlanesActives* Client::getPlanesActives(){
 
 bool Client::isPlayerOk(){
 	return this->playerOk;
+}
+
+vector<PlayerData*> Client::getPlayers() {
+  return this->allPlayers;
 }

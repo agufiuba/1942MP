@@ -56,7 +56,14 @@ void Game::cargarEscenario() {
     escenario = new Escenario(gc);
 
     escenario->setClient(unCliente);
-    escenario->configurarJugador(this->jugador);
+
+    for( int i = 0; i < this->unCliente->getPlayers().size(); i++) {
+      if( this->clientId == this->unCliente->getPlayers()[i]->name ) {
+	escenario->configurarMiAvion(this->unCliente->getPlayers()[i]);
+      } else {
+	escenario->configurarAvionAmigo(this->unCliente->getPlayers()[i]);
+      }
+    }
 
     unCliente->setHandler(escenario->getHandler());
     exitEven = escenario->run();
@@ -732,8 +739,7 @@ void Game::sendDataPlayer(){
 
 
 void Game::loadWaitingGame() {
-  bool esperandoInicio =true;
-  Timer timer;
+  SDL_Event e;
   string connectingText = "Esperando Jugadores...";
   Screen* waitingScreen = new Screen( this->sdlHandler );
   waitingScreen->loadTexture( "logo", "src/initialWindow/windowImages/1942logoPrincipal.bmp" );
@@ -744,7 +750,14 @@ void Game::loadWaitingGame() {
 
   // Enable text input
   SDL_StartTextInput();
-  while(unCliente->allPlayersReady()){
+  while( !unCliente->allPlayersReady()){
+
+    while (this->sdlHandler->nextEvent(&e)) {
+      if (e.type == SDL_QUIT) {
+	this->running = false;
+	exit(1);
+      } //Special key input
+    }
     // Set window background
     this->sdlHandler->setWindowBG(0, 0, 0);
     // Render logo
@@ -753,8 +766,6 @@ void Game::loadWaitingGame() {
     //Update screen
     this->sdlHandler->updateWindow();
 
-    usleep(3000000);//TODO aca se debe informar qe estan todos los jugadores.
-    esperandoInicio = false;
   }
 
   //Disable text input

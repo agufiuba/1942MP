@@ -212,7 +212,7 @@ void Escenario::configurarAvionAmigo(PlayerData* playerData){
   controllers->setPlayer((Avion*)avionAmigo);
 }
 
-void Escenario::configurarMiAmigo(PlayerData* playerData){
+void Escenario::configurarMiAvion(PlayerData* playerData){
   Vivible* avion = new Avion(playerData->name, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), playerData->color);
   myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
 }
