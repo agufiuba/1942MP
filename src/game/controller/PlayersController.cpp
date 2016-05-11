@@ -30,7 +30,7 @@ void PlayersController::press(SDL_Event *event){
             case SDLK_SPACE:
 				if (!obj->haciendoVueltereta()){
 					cout << "tirando misiles" << endl;
-					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX(), obj->getY(), resolucionPantalla);
+					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla);
 				}
 				break;
         }

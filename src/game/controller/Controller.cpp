@@ -34,7 +34,7 @@ void Controller::press(SDL_Event *event){
 
 			case SDLK_SPACE:
 				if (!obj->haciendoVueltereta())
-					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX(), obj->getY(), resolucionPantalla);
+					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla);
 					cliente->sendData(ce->shot(obj->getId()));
 				break;
         }
