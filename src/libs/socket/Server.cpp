@@ -18,6 +18,7 @@ using namespace std;
 Server::Server( const char* configFileName ) {
   this->socketFD = 0;
   this->clientCount = 0;
+  this->maxClientCount = 1;
   this->listening = false;
   this->connected = false;
   this->processing = false;
@@ -31,8 +32,8 @@ Server::~Server() {
   // Delete players if any
   if( !( this->players.empty() ) ) {
     for( map<int, Player*>::iterator it = this->players.begin();
-	 it != this->players.end();
-	 ++it ) {
+	it != this->players.end();
+	++it ) {
       delete it->second;
     }
   }
@@ -66,6 +67,7 @@ void Server::initialize() {
     this->logger->error( "Error al obtener la direccion, " + string( gai_strerror( rv ) ) );
     exit( -1 );
   }
+
 
   int yes = 1;
   // loop through results and bind to one of them
@@ -128,7 +130,7 @@ void Server::listenForConnections( int cfd, struct sockaddr_storage client_addr 
     this->clientCount++;
 
     //HARDCODEADO
-    this->allowConnections = ( this->clientCount <= 4 );
+    this->allowConnections = ( this->clientCount <= this->maxClientCount );
 
     thread tCheckAliveSend( &Server::checkAliveSend, this, cfd);
     tCheckAliveSend.detach();
@@ -154,8 +156,8 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
 
   theMutex.lock();
   for( map<int, Player*>::iterator it = this->players.begin();
-       it != this->players.end();
-       ++it ) {
+      it != this->players.end();
+      ++it ) {
     // if already a player with that name
     if( selectedName == it->second->getName() ) {
       createPlayer = false;
@@ -164,6 +166,7 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
       if( !( it->second->isActive() ) ) {
 	// resume player game
 	selectedColor = it->second->getColor();
+	delete it->second;
 	this->players.erase( it );
 	createPlayer = true;
 	validName = "R";
@@ -201,67 +204,94 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
 
   delete response;
   delete tmt;
+
+  theMutex.lock();
+  if( this->players.size() == this->maxClientCount ) {
+    this->createPlayers();  
+  }
+  theMutex.unlock();
 }
 
+void Server::createPlayers() {
+	for (int i = 0; i < this->players.size(); i++) {
+		map<int, Player*>::iterator it2 = this->players.begin();
+
+		for (map<int, Player*>::iterator it = this->players.begin();
+				it != this->players.end(); ++it) {
+			Transmitter* tmt = new Transmitter(it2->first, this->logger);
+
+			PlayerData* player = new PlayerData;
+			strcpy(player->name, it->second->getName().c_str());
+			strcpy(player->color, it->second->getColor().c_str());
+
+			while (!tmt->sendData(player, "PR"));
+
+			delete player;
+			delete tmt;
+		}
+
+		it2++;
+	}
+}
 
 void Server::sendPlanesActives(int cfd){
 
-	  PlanesActives* planes = new PlanesActives;
-	  planes->blue = true;
-	  planes->red = true;
-	  planes->green = true;
-	  planes->yellow = true;
+  PlanesActives* planes = new PlanesActives;
+  planes->blue = true;
+  planes->red = true;
+  planes->green = true;
+  planes->yellow = true;
 
-	  mutex theMutex;
-	  theMutex.lock();
-	  for( map<int, Player*>::iterator it = this->players.begin(); it != this->players.end();  ++it ) {
-	    // if already a player with that color
-		  if( it->second->getColor() == "azul" ) {
-			  planes->blue = false;
-	      } else if( it->second->getColor() == "rojo" ) {
-		      planes->red = false;
-		  } else if( it->second->getColor() == "verde" ) {
-			  planes->green = false;
-		  } else if( it->second->getColor() == "amarillo" ) {
-		      planes->yellow = false;
-		  }
-	  }
-	  theMutex.unlock();
-	  Transmitter* tmt = new Transmitter( cfd, this->logger );
-	  if( !( tmt->sendData( planes ) ) ) {
-	    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::addPlayer" );
-	    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::addPlayer" );
-	  }
+  mutex theMutex;
+  theMutex.lock();
+  for( map<int, Player*>::iterator it = this->players.begin(); it != this->players.end();  ++it ) {
+    // if already a player with that color
+    if( it->second->getColor() == "azul" ) {
+      planes->blue = false;
+    } else if( it->second->getColor() == "rojo" ) {
+      planes->red = false;
+    } else if( it->second->getColor() == "verde" ) {
+      planes->green = false;
+    } else if( it->second->getColor() == "amarillo" ) {
+      planes->yellow = false;
+    }
+  }
+  theMutex.unlock();
+  Transmitter* tmt = new Transmitter( cfd, this->logger );
+  if( !( tmt->sendData( planes ) ) ) {
+    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::addPlayer" );
+    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::addPlayer" );
+  }
 
-	  delete planes;
-	  delete tmt;
+  delete planes;
+  delete tmt;
 }
 
 void Server::sendConf(int cfd){
-//	  mutex theMutex;
-//	  theMutex.lock();
-//	  theMutex.unlock();
-	  GameConf* gc = GameParser::parse("gameconf.xml");
-	  Transmitter* tmt = new Transmitter( cfd, this->logger );
-	  if( !( tmt->sendData( gc ) ) ) {
-	    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
-	    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
-	  }
-	  delete tmt;
+  //	  mutex theMutex;
+  //	  theMutex.lock();
+  //	  theMutex.unlock();
+  GameConf* gc = GameParser::parse("gameconf.xml");
+  Transmitter* tmt = new Transmitter( cfd, this->logger );
+  if( !( tmt->sendData( gc ) ) ) {
+    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+  }
+  delete tmt;
 }
 
 void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
   Evento* msgToRecv = new Evento;
-	mutex theMutex;
-  
+  mutex theMutex;
+
   // get connected host IP in presentation format
   inet_ntop( client_addr.ss_family,
       this->getInAddr( (struct sockaddr*) (&client_addr) ), clientIP,
       sizeof clientIP);
 
   if( this->allowConnections ) {
-	  players2.push_back(cfd);
+    players2.push_back(cfd);
     cout << endl << notice( "Se inicio una conexion con el host: " ) << clientIP
       << endl;
     this->logger->info( "Se inicio una conexion con el host: " + string( clientIP ) );
@@ -307,24 +337,24 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 
 	  delete data;
 	} else if (dataID == "EV") {
-		Evento* e = new Evento();
+	  Evento* e = new Evento();
 
-		if (received = tmt->receiveData(e)) {
-			cout << "Evento: " << e->value << endl;
+	  if (received = tmt->receiveData(e)) {
+	    cout << "Evento: " << e->value << endl;
 
-			theMutex.lock();
-			cout << endl << "FD cliente: " << notice(to_string(cfd)) << endl;
+	    theMutex.lock();
+	    cout << endl << "FD cliente: " << notice(to_string(cfd)) << endl;
 
-			map<int, Evento*>* clientMsgFD = new map<int, Evento*>();
-			clientMsgFD->insert(pair<int, Evento*>(cfd, e));
-			this->eventQueue->push(clientMsgFD);
-			theMutex.unlock();
+	    map<int, Evento*>* clientMsgFD = new map<int, Evento*>();
+	    clientMsgFD->insert(pair<int, Evento*>(cfd, e));
+	    this->eventQueue->push(clientMsgFD);
+	    theMutex.unlock();
 
 
-		}
+	  }
 
 	}
-	
+
       }
 
       if( !( received ) ) {
@@ -410,27 +440,27 @@ void Server::processQueue() {
       //      }
       //thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
       //tSending.detach();
-		
-		/*      if( !( this->players.empty() ) ) {
-        for( map<int, Player*>::iterator itP = this->players.begin();itP != this->players.end();++itP ) {
-          if( (itP->first) != it->first){
-          	sendData(itP->first, it->second);
-          }
-        }
-      }*/
+
+      /*      if( !( this->players.empty() ) ) {
+	      for( map<int, Player*>::iterator itP = this->players.begin();itP != this->players.end();++itP ) {
+	      if( (itP->first) != it->first){
+	      sendData(itP->first, it->second);
+	      }
+	      }
+	      }*/
 
 
       //TODO: Esto despues hay que cambiarlo por lo de arriba
 
-    	if (players2.size() > 0) {
-    		for (int i = 0 ; i < players2.size(); i++) {
-    			if (players2[i] != it->first) {
-    				sendData(players2[i],it->second);
-    			}
-    		}
-    	}
-		
-		
+      if (players2.size() > 0) {
+	for (int i = 0 ; i < players2.size(); i++) {
+	  if (players2[i] != it->first) {
+	    sendData(players2[i],it->second);
+	  }
+	}
+      }
+
+
       delete data;
 
       theMutex.unlock();
@@ -481,12 +511,12 @@ void Server::processQueue() {
 //}
 
 /*
-void Server::sendData( int cfd, Evento* data, int dataLength ){
-  if( send( cfd, data, dataLength, 0 ) == -1 ) {
-    this->logger->warn( SEND_FAIL );
-    DEBUG_WARN( SEND_FAIL );
-  }
-}*/
+   void Server::sendData( int cfd, Evento* data, int dataLength ){
+   if( send( cfd, data, dataLength, 0 ) == -1 ) {
+   this->logger->warn( SEND_FAIL );
+   DEBUG_WARN( SEND_FAIL );
+   }
+   }*/
 
 void Server::sendData( int cfd, Evento* data ) {
   Transmitter* tmt = new Transmitter( cfd, this->logger );

@@ -7,10 +7,12 @@
 #include "../../xml/conf/ClientConf.h"
 #include "../../game/events/Events.cpp"
 #include "../../game/controller/HandlerPlayersControllers.h"
+#include <vector>
+using namespace std;
 
 class Client {
   private:
-	HandlerPlayersControllers* pc;
+    HandlerPlayersControllers* pc;
     string ip;
     string puerto;
     int socketFD;
@@ -19,6 +21,8 @@ class Client {
     bool playerOk;
     Logger* logger;
     PlanesActives* planes;
+
+    vector<PlayerData*> allPlayers;
 
     static const int MAX_UNREACHABLE_TIME = 5;
     void checkAliveSend();
@@ -34,14 +38,16 @@ class Client {
     bool connectToServer();
     void disconnectFromServer();
     void shutdownConnection();
-//  vector<Evento*> getEventos();
+    //  vector<Evento*> getEventos();
     void sendCycle();
     bool sendData( PlayerData* data );
     PlanesActives* getPlanesActives();
     bool isPlayerOk();
     bool gcnew;
-	bool sendData( Evento* e );
+    bool sendData( Evento* e );
+    bool allPlayersReady();
 
-	void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
+    void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
+    vector<PlayerData*> getPlayers();
 };
 #endif
