@@ -29,7 +29,7 @@ bool Transmitter::sendData( Evento* e ) {
   return true;
 }
 
-bool Transmitter::receiveData( Evento* e ) {
+bool Transmitter::receiveData( Evento* e , int & b) {
   int numBytesRead;
   // Read data
   if( ( numBytesRead = recv( this->peerFD, e, sizeof( Evento ), 0 ) ) == -1 ) {
@@ -120,7 +120,7 @@ bool Transmitter::sendData( GameConf* data ) {
   return true;
 }
 
-bool Transmitter::receiveData( char id[3], int size ) {
+bool Transmitter::receiveData( char id[3], int size , int & b) {
   int numBytesRead;
   // Read data id
   if( ( numBytesRead = recv( this->peerFD, id, size, 0 ) ) == -1 ) {
@@ -132,20 +132,15 @@ bool Transmitter::receiveData( char id[3], int size ) {
   return ( numBytesRead > 0 );
 }
 
-bool Transmitter::receiveData( PlayerData* data ) {
-  int numBytesRead;
+bool Transmitter::receiveData( PlayerData* data, int & b ) {
   // Read data
-  if( ( numBytesRead = recv( this->peerFD, data, sizeof( PlayerData ), 0 ) ) == -1 ) {
-    close( this->peerFD );
-    this->logger->warn( CONNECTION_TIMEOUT );
-    DEBUG_WARN( CONNECTION_TIMEOUT );
-  }
+  b = recv( this->peerFD, data, sizeof( PlayerData ), 0 ) ;
 
-  return ( numBytesRead > 0 );
+  return ( b > 0 );
 }
 
 
-bool Transmitter::receiveData( PlanesActives* data ) {
+bool Transmitter::receiveData( PlanesActives* data, int & b ) {
   int numBytesRead;
   // Read data
   if( ( numBytesRead = recv( this->peerFD, data, sizeof( PlanesActives ), 0 ) ) == -1 ) {
@@ -157,7 +152,7 @@ bool Transmitter::receiveData( PlanesActives* data ) {
   return ( numBytesRead > 0 );
 }
 
-bool Transmitter::receiveData( GameConf* data ) {
+bool Transmitter::receiveData( GameConf* data , int & b) {
   int numBytesRead;
   // Read data
   if( ( numBytesRead = recv( this->peerFD, data, sizeof( GameConf ), 0 ) ) == -1 ) {

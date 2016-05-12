@@ -18,7 +18,7 @@ using namespace std;
 Server::Server( const char* configFileName ) {
   this->socketFD = 0;
   this->clientCount = 0;
-  this->maxClientCount = 1;
+  this->maxClientCount = 2;
   this->listening = false;
   this->connected = false;
   this->processing = false;
@@ -213,8 +213,9 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
 }
 
 void Server::createPlayers() {
+	map<int, Player*>::iterator it2 = this->players.begin();
+
 	for (int i = 0; i < this->players.size(); i++) {
-		map<int, Player*>::iterator it2 = this->players.begin();
 
 		for (map<int, Player*>::iterator it = this->players.begin();
 				it != this->players.end(); ++it) {
@@ -284,6 +285,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
   Evento* msgToRecv = new Evento;
   mutex theMutex;
+  int numBytes;
 
   // get connected host IP in presentation format
   inet_ntop( client_addr.ss_family,
@@ -320,7 +322,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       }
 
       // Get id of next data to receive
-      received = tmt->receiveData( id, sizeof( id ) );
+      received = tmt->receiveData( id, sizeof( id ), numBytes );
 
       if( received ) {
 	string dataID( id );
@@ -328,7 +330,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	if( dataID == "PD" ) {
 	  PlayerData* data = new PlayerData;
 
-	  if( received = tmt->receiveData( data ) ) {
+	  if( received = tmt->receiveData( data, numBytes ) ) {
 	    // Process received data
 	    cout << "Nombre del jugador: " << string( data->name ) << endl;
 	    cout << "Color del jugador: " << string( data->color ) << endl;
@@ -339,7 +341,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if (dataID == "EV") {
 	  Evento* e = new Evento();
 
-	  if (received = tmt->receiveData(e)) {
+	  if (received = tmt->receiveData(e, numBytes)) {
 	    cout << "Evento: " << e->value << endl;
 
 	    theMutex.lock();
