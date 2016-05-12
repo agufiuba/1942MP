@@ -9,9 +9,10 @@
 
 using namespace std;
 
-ControllerMissiles::ControllerMissiles(SDL_Renderer* &renderer){
+ControllerMissiles::ControllerMissiles(int velocidadDisparo, SDL_Renderer* &renderer){
 	rendererMisil = renderer;
 	vivibles = new CompositeVivibles();
+	this->distanciaDeDesplazamiento = velocidadDisparo;
 }
 
 ControllerMissiles::~ControllerMissiles(){

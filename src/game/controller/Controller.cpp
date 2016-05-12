@@ -4,13 +4,15 @@ using namespace std;
 
 Controller::Controller(Vivible * unObj,SDL_Renderer* &renderer, Resolucion* resolucion, Client* client){
 	this->cliente = client;
-	velocidadStandard = 7;
+	velocidadStandard = ((Avion*) unObj)->getConfiguracion()->velocidadDesplazamiento;
 	obj = unObj;
 	obj->setVelocidadStandard(velocidadStandard);
 	velX = 0;
 	velY = 0;
 	resolucionPantalla = resolucion;
- 	controlDeMisiles = new ControllerMissiles(renderer);
+
+	int velocidadDisparo = velocidadStandard + ((Avion*) unObj)->getConfiguracion()->velocidadDisparos;
+ 	controlDeMisiles = new ControllerMissiles(velocidadDisparo, renderer);
 }
 
 Controller::~Controller(){

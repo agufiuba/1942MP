@@ -2,9 +2,14 @@
 
 using namespace std;
 
-Avion::Avion(string id, SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, string color) {
+Avion::Avion(PlayerData* playerData, SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf) {
+
+	string id(playerData->name);
+	string color (playerData->color);
 
 	this->id = id;
+	this->configuracion = conf;
+
 	vistaAvion = new AvionView(renderer, color);
 	viviendo = true;
 
@@ -55,6 +60,10 @@ int Avion::getAncho() {
 
 int Avion::getLargo() {
 	return vistaAvion->getLargoVista();
+}
+
+AvionConf* Avion::getConfiguracion() {
+	return this->configuracion;
 }
 
 void Avion::moverEjeX(int velX) {

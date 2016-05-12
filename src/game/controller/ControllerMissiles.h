@@ -20,7 +20,7 @@ using namespace std;
 
 class ControllerMissiles{
 	public:
-		ControllerMissiles(SDL_Renderer* &renderer);
+		ControllerMissiles(int velocidadDisparo, SDL_Renderer* &renderer);
 		virtual ~ControllerMissiles();
 		void press(SDL_Event *event);
 		void hacerVivir();

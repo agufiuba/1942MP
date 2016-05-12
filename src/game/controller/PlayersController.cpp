@@ -3,14 +3,16 @@
 using namespace std;
 
 PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* &renderer, Resolucion* resolucion){
-	velocidadStandard = 7;
+	velocidadStandard = ((Avion*) unObj)->getConfiguracion()->velocidadDesplazamiento;;
 	obj = unObj;
 	obj->setVelocidadStandard(velocidadStandard);
 	velX = 0;
 	velY = 0;
 	resolucionPantalla = resolucion;
-	controlDeMisiles = new ControllerMissiles(renderer);
-	lastEvent = NULL;
+
+	int velocidadDisparo = velocidadStandard + ((Avion*) unObj)->getConfiguracion()->velocidadDisparos;
+	controlDeMisiles = new ControllerMissiles(velocidadDisparo, renderer);
+//	lastEvent = NULL;
 }
 
 PlayersController::~PlayersController(){
@@ -19,7 +21,7 @@ PlayersController::~PlayersController(){
 }
 
 void PlayersController::press(SDL_Event *event){
-		lastEvent = event;
+//		lastEvent = event;
         switch(event->key.keysym.sym){
 
             case SDLK_RIGHT: velX += velocidadStandard; break;
