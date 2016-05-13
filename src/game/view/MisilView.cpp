@@ -9,17 +9,17 @@
 
 using namespace std;
 
-MisilView::MisilView(SDL_Renderer * unRenderer) {
-	//TODO pasarlo a sprites
-//	anchoVista = 120;
-//	largoVista = 120;
-
+MisilView::MisilView(SDL_Renderer * unRenderer, MisilConf* config) {
 
 	rendererMisil = unRenderer;
+	string imageId = config->disparosSpriteID;
 
-	if (!cargarImagenDelMisil("src/game/images/bala.bmp")) {
+	string filename = dir + imageId + ".bmp";
+
+	if (!cargarImagenDelMisil(filename)) {
 		cout << "Vista del misil no ha sido cargada correctamente.." << endl;
-		//TODO: faltaria que tire una excepcion
+		filename = dir + filenameDefault;
+		cargarImagenDelMisil(filename);
 	}
 
 }
@@ -27,7 +27,6 @@ MisilView::MisilView(SDL_Renderer * unRenderer) {
 MisilView::~MisilView() {
 	vistaMisilTexture->free();
 }
-
 
 bool MisilView::cargarImagenDelMisil( string filename ){
 	vistaMisilTexture = new Texture( rendererMisil );
@@ -39,15 +38,6 @@ bool MisilView::cargarImagenDelMisil( string filename ){
 
     return true;
 }
-
-//int MisilView::getAnchoVista(){
-//		return anchoVista;
-//}
-//
-//int MisilView::getLargoVista(){
-//		return largoVista;
-//}
-
 
 void MisilView::mostrar( int x, int y){
     vistaMisilTexture->render( x, y );

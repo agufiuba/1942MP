@@ -15,6 +15,8 @@
 #include "../model/Resolucion.h"
 #include "../events/CompanionEvent.h"
 #include "../../libs/socket/Client.h"
+#include "../../xml/conf/MisilConf.h"
+#include "../../xml/conf/AvionConf.h"
 
 #include <iostream>
 #include <string>
@@ -28,6 +30,7 @@ private:
 	ControllerMissiles* controlDeMisiles;
 	int velocidadStandard;
 	Client* cliente;
+	MisilConf* misilConf;
 
 public:
 	Controller(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion, Client* client);

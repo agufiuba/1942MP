@@ -43,8 +43,8 @@
 	</sprite>
 </sprites>
 <escenario>
-	<ancho>1200</ancho>
-	<alto>700</alto>
+	<ancho>800</ancho>
+	<alto>600</alto>
 	<fondo>
 		<spriteID>agua</spriteID>
 	</fondo>
@@ -69,6 +69,6 @@
 	<velocidadDesplazamiento>10</velocidadDesplazamiento>
 	<velocidadDisparos>6</velocidadDisparos>
 	<avionSpriteID>AvionSprites</avionSpriteID>
-	<vueltaSpriteID>disparo</vueltaSpriteID>
-	<disparosSpriteID>vuelta</disparosSpriteID>
+	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
+	<disparosSpriteID>bala</disparosSpriteID>
 </avion>

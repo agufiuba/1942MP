@@ -12,6 +12,7 @@
 #include "Texture.h"
 #include <string>
 #include <iostream>
+#include "../../xml/conf/MisilConf.h"
 
 using namespace std;
 
@@ -20,16 +21,13 @@ class MisilView {
 
 		Texture *vistaMisilTexture = NULL;
 		SDL_Renderer *rendererMisil;
-
-//		int anchoVista;
-//		int largoVista;
+		string dir = "src/game/images/";
+		string filenameDefault = "desconocido.bmp";
 
 	public:
-		MisilView(SDL_Renderer* renderer);
+		MisilView(SDL_Renderer* renderer, MisilConf* config);
 		virtual ~MisilView();
 		bool cargarImagenDelMisil( string filename );
-//		int getAnchoVista();
-//		int getLargoVista();
 		void mostrar(int x, int y);
 };
 

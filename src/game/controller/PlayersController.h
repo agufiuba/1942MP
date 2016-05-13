@@ -12,6 +12,8 @@
 #include "IController.h"
 #include "ControllerMissiles.h"
 #include "../model/Avion.h"
+#include "../../xml/conf/MisilConf.h"
+#include "../../xml/conf/AvionConf.h"
 
 #include <iostream>
 #include <string>
@@ -25,7 +27,8 @@ private:
 	int velocidadStandard;
 	Resolucion* resolucionPantalla;
 	ControllerMissiles* controlDeMisiles;
-	SDL_Event* lastEvent;
+	MisilConf* misilConf;
+//	SDL_Event* lastEvent;
 
 public:
 	PlayersController(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion);

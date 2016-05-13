@@ -9,10 +9,11 @@
 
 using namespace std;
 
-ControllerMissiles::ControllerMissiles(int velocidadDisparo, SDL_Renderer* &renderer){
+ControllerMissiles::ControllerMissiles(MisilConf* config, SDL_Renderer* &renderer){
 	rendererMisil = renderer;
 	vivibles = new CompositeVivibles();
-	this->distanciaDeDesplazamiento = velocidadDisparo;
+
+	this->distanciaDeDesplazamiento = config->velocidadDisparos;
 }
 
 ControllerMissiles::~ControllerMissiles(){
@@ -22,8 +23,8 @@ ControllerMissiles::~ControllerMissiles(){
 void ControllerMissiles::press(SDL_Event *event){
 }
 
-void ControllerMissiles::crearNuevoMisilEnPosicion(int x, int y,Resolucion* resolucion){
-	Vivible* misilNuevo = new Misil(rendererMisil, new Posicion(x,y),resolucion);
+void ControllerMissiles::crearNuevoMisilEnPosicion(int x, int y,Resolucion* resolucion, MisilConf* config){
+	Vivible* misilNuevo = new Misil(rendererMisil, new Posicion(x,y),resolucion, config);
 	this->vivibles->agregarObjetoVivible(misilNuevo);
 }
 
