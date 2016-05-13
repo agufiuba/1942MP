@@ -299,7 +299,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       sizeof clientIP);
 
   if( this->allowConnections ) {
-    players2.push_back(cfd);
+    //players2.push_back(cfd);
     cout << endl << notice( "Se inicio una conexion con el host: " ) << clientIP
       << endl;
     this->logger->info( "Se inicio una conexion con el host: " + string( clientIP ) );
@@ -381,6 +381,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	  << warning( " se desconecto" ) << endl;
 	this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
 	this->closeClient( cfd );
+				this->avisarDesconexionDeAvion(cfd);
       }
 
       // Read data
@@ -418,6 +419,20 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
     usleep( 1000000 );
     this->closeClient( cfd );
   }
+}
+
+void Server::avisarDesconexionDeAvion(int cfd) {
+	CompanionEvent* ce = new CompanionEvent();
+	string disconnectedPlayerName = this->players[cfd]->getName();
+
+	if (!(this->players.empty())) {
+		for (map<int, Player*>::iterator itP = this->players.begin(); itP != this->players.end(); ++itP) {
+			if ((itP->first) != cfd) {
+				sendData(itP->first, ce->quit(disconnectedPlayerName));
+			}
+		}
+	}
+	delete ce;
 }
 
 void Server::checkAliveSend( int cfd ) {
@@ -459,17 +474,17 @@ void Server::processQueue() {
       //thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
       //tSending.detach();
 
-      /*      if( !( this->players.empty() ) ) {
+        if( !( this->players.empty() ) ) {
 	      for( map<int, Player*>::iterator itP = this->players.begin();itP != this->players.end();++itP ) {
 	      if( (itP->first) != it->first){
 	      sendData(itP->first, it->second);
 	      }
 	      }
-	      }*/
+	      }
 
 
       //TODO: Esto despues hay que cambiarlo por lo de arriba
-
+/*
       if (players2.size() > 0) {
 	for (int i = 0 ; i < players2.size(); i++) {
 	  if (players2[i] != it->first) {
@@ -477,7 +492,7 @@ void Server::processQueue() {
 	  }
 	}
       }
-
+*/
 
       delete data;
 
@@ -535,6 +550,7 @@ void Server::processQueue() {
    DEBUG_WARN( SEND_FAIL );
    }
    }*/
+
 
 void Server::sendData( int cfd, Evento* data ) {
   Transmitter* tmt = new Transmitter( cfd, this->logger );

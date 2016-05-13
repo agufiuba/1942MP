@@ -10,6 +10,7 @@
 #include <queue>
 #include <map>
 #include <string>
+#include <iostream>
 using namespace std;
 
 class Server {
@@ -47,10 +48,12 @@ class Server {
     void sendPlanesActives(int cfd);
     void sendConf(int);
     void createPlayers();
+
   public:
     Server( const char* configFileName );
     ~Server();
     void initialize();
     void shutdown();
+    void avisarDesconexionDeAvion(int cfd);
 };
 #endif

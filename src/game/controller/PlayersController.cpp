@@ -25,12 +25,14 @@ PlayersController::~PlayersController(){
 
 void PlayersController::press(SDL_Event *event){
 //		lastEvent = event;
+	cout<< "se desconecto4"<<endl;
         switch(event->key.keysym.sym){
 
             case SDLK_RIGHT: velX += velocidadStandard; break;
             case SDLK_LEFT: velX -= velocidadStandard; break;
             case SDLK_UP: velY += velocidadStandard; break;
             case SDLK_DOWN: velY -= velocidadStandard; break;
+            case SDLK_AT: obj->desconectar(); break; // la o es una letra cualquiera. Como esta hecho con eventos, se tuvo que dejar asi
             case SDLK_KP_ENTER: obj->inicializoVueltereta();break;
             case SDLK_SPACE:
 				if (!obj->haciendoVueltereta()){
