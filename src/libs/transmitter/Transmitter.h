@@ -1,6 +1,7 @@
 #ifndef TRANSMITTER_H
 #define TRANSMITTER_H
 #include "../data/player_data.h"
+#include "../data/player_status.h"
 #include "../data/planes_actives.h"
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
@@ -20,10 +21,12 @@ class Transmitter {
     ~Transmitter();
     bool sendData( PlayerData* data );
     bool sendData( PlanesActives* data );
+    bool sendData( PlayerStatus* data );
     bool sendData( PlayerData* data, string s );
     bool sendData( GameConf* );
     bool receiveData( char id[2], int size , int & b);
     bool receiveData( PlayerData* data , int & b);
+    bool receiveData( PlayerStatus* data , int & b);
     bool receiveData( PlanesActives* data , int & b);
     bool receiveData( GameConf* data , int & b);
 	
