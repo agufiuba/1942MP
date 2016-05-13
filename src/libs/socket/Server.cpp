@@ -355,7 +355,6 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 
 	  delete data;
 	} else if (dataID == "EV") {
-	} else if (dataID == "EV") {
 	  Evento* e = new Evento();
 
 	  if (received = tmt->receiveData(e, numBytes)) {

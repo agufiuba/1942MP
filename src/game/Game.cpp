@@ -69,6 +69,8 @@ void Game::cargarEscenario() {
     exitEven = escenario->run();
     delete escenario;
   }
+  // Notify server of player disconnection
+  this->unCliente->sendPlayerDisconnection();
 }
 
 void Game::start() {

@@ -257,12 +257,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 		}
 
 		if (!(received)) {
-			Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
-			PlayerStatus* data = new PlayerStatus;
-			data->status = 'D';
-			// Send player status to server
-			tmt->sendData( data );
-			delete tmt;
 			this->logger->warn( CONNECTION_LOST);
 			DEBUG_WARN(CONNECTION_LOST);
 			this->connected = false;
@@ -283,6 +277,21 @@ bool Client::sendData( PlayerData* data ) {
   this->received = false;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   return tmt->sendData( data );
+}
+
+bool Client::sendPlayerDisconnection() {
+  this->received = false;
+  bool recvStatus;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  PlayerStatus* data = new PlayerStatus;
+  data->status = 'D';
+  // Send player status to server
+  recvStatus = tmt->sendData( data );
+
+  delete tmt;
+  delete data;
+
+  return recvStatus;
 }
 
 //bool Client::sendMsg( string id ) {

@@ -47,7 +47,7 @@ class Client {
     bool gcnew;
     bool sendData( Evento* e );
     bool allPlayersReady();
-
+    bool sendPlayerDisconnection();
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
     vector<PlayerData*> getPlayers();
 };
