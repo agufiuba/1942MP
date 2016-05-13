@@ -26,7 +26,7 @@ void HandlerPlayersControllers::setPlayer(Avion* player) {
 void HandlerPlayersControllers::mover(string id, char evento) {
 
 	IController* controller = mapaControllers[id];
-	SDL_Event* eventoSdl;
+	SDL_Event* eventoSdl = new SDL_Event;
 	SDL_Keycode code;
 
 	switch(evento) {
