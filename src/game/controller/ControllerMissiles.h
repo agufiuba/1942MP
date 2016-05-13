@@ -13,6 +13,7 @@
 #include "../model/Avion.h"
 #include "../model/Misil.h"
 #include "../model/Resolucion.h"
+#include "../../xml/conf/MisilConf.h"
 
 #include <iostream>
 
@@ -20,11 +21,11 @@ using namespace std;
 
 class ControllerMissiles{
 	public:
-		ControllerMissiles(SDL_Renderer* &renderer);
+		ControllerMissiles(MisilConf* config, SDL_Renderer* &renderer);
 		virtual ~ControllerMissiles();
 		void press(SDL_Event *event);
 		void hacerVivir();
-		void crearNuevoMisilEnPosicion(int x, int y, Resolucion* resolucion);
+		void crearNuevoMisilEnPosicion(int x, int y, Resolucion* resolucion, MisilConf* config);
 	private:
 		CompositeVivibles* vivibles;
 		SDL_Renderer* rendererMisil;

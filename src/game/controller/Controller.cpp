@@ -4,13 +4,18 @@ using namespace std;
 
 Controller::Controller(Vivible * unObj,SDL_Renderer* &renderer, Resolucion* resolucion, Client* client){
 	this->cliente = client;
-	velocidadStandard = 7;
+	AvionConf* conf = ((Avion*) unObj)->getConfiguracion();
+	velocidadStandard = conf->velocidadDesplazamiento;
 	obj = unObj;
 	obj->setVelocidadStandard(velocidadStandard);
 	velX = 0;
 	velY = 0;
 	resolucionPantalla = resolucion;
- 	controlDeMisiles = new ControllerMissiles(renderer);
+
+	misilConf = new MisilConf();
+	misilConf->disparosSpriteID = conf->disparosSpriteID;
+	misilConf->velocidadDisparos = conf->velocidadDisparos + conf->velocidadDesplazamiento;
+ 	controlDeMisiles = new ControllerMissiles(misilConf, renderer);
 }
 
 Controller::~Controller(){
@@ -34,7 +39,7 @@ void Controller::press(SDL_Event *event){
 
 			case SDLK_SPACE:
 				if (!obj->haciendoVueltereta())
-					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla);
+					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla, misilConf);
 					cliente->sendData(ce->shot(obj->getId()));
 				break;
         }

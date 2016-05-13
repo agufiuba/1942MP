@@ -13,6 +13,7 @@
 #include "../view/MisilView.h"
 #include "../model/Resolucion.h"
 #include "../model/Posicion.h"
+#include "../../xml/conf/MisilConf.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Misil(SDL_Renderer * renderer, Posicion* posicion, Resolucion* resolucion);
+	Misil(SDL_Renderer * renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config);
 	virtual ~Misil();
 
 	void vivir(int x,int y);

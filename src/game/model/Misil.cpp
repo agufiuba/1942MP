@@ -8,8 +8,8 @@
 #include "Misil.h"
 using namespace std;
 
-Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion) {
-	vistaMisil = new MisilView(renderer);
+Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config) {
+	vistaMisil = new MisilView(renderer, config);
 
 	viviendo = true;
 

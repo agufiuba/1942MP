@@ -3,14 +3,19 @@
 using namespace std;
 
 PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* &renderer, Resolucion* resolucion){
-	velocidadStandard = 7;
+	AvionConf* config = ((Avion*) unObj)->getConfiguracion();
+	velocidadStandard = config->velocidadDesplazamiento;;
 	obj = unObj;
 	obj->setVelocidadStandard(velocidadStandard);
 	velX = 0;
 	velY = 0;
 	resolucionPantalla = resolucion;
-	controlDeMisiles = new ControllerMissiles(renderer);
-	lastEvent = NULL;
+
+	misilConf = new MisilConf();
+	misilConf->disparosSpriteID = config->disparosSpriteID;
+	misilConf->velocidadDisparos = config->velocidadDisparos + config->velocidadDesplazamiento;
+	controlDeMisiles = new ControllerMissiles(misilConf, renderer);
+//	lastEvent = NULL;
 }
 
 PlayersController::~PlayersController(){
@@ -19,7 +24,7 @@ PlayersController::~PlayersController(){
 }
 
 void PlayersController::press(SDL_Event *event){
-		lastEvent = event;
+//		lastEvent = event;
         switch(event->key.keysym.sym){
 
             case SDLK_RIGHT: velX += velocidadStandard; break;
@@ -30,7 +35,7 @@ void PlayersController::press(SDL_Event *event){
             case SDLK_SPACE:
 				if (!obj->haciendoVueltereta()){
 					cout << "tirando misiles" << endl;
-					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla);
+					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla, misilConf);
 				}
 				break;
         }

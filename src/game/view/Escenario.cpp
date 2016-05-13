@@ -186,34 +186,34 @@ HandlerPlayersControllers* Escenario::getHandler(){
 }
 
 void Escenario::setOtrosAviones() {
-  string key = "key";
-  string gon = "gon";
-  string max = "max";
-
-  Vivible* otroAvion1 = new Avion(key, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), amarillo);
-  Vivible* otroAvion2 = new Avion(gon, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 10, 100), rojo);
-  Vivible* otroAvion3 = new Avion(max, gRenderer, resolucion, new Posicion(SCREEN_WIDTH * 3/4, 100), verde);
-
-  controllers = new HandlerPlayersControllers(gRenderer, resolucion);
-  controllers->setPlayer((Avion*)otroAvion1);
-  controllers->setPlayer((Avion*)otroAvion2);
-  controllers->setPlayer((Avion*)otroAvion3);
+//  string key = "key";
+//  string gon = "gon";
+//  string max = "max";
+//
+//  Vivible* otroAvion1 = new Avion(key, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), amarillo);
+//  Vivible* otroAvion2 = new Avion(gon, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 10, 100), rojo);
+//  Vivible* otroAvion3 = new Avion(max, gRenderer, resolucion, new Posicion(SCREEN_WIDTH * 3/4, 100), verde);
+//
+//  controllers = new HandlerPlayersControllers(gRenderer, resolucion);
+//  controllers->setPlayer((Avion*)otroAvion1);
+//  controllers->setPlayer((Avion*)otroAvion2);
+//  controllers->setPlayer((Avion*)otroAvion3);
 }
 
 void Escenario::configurarJugador(PlayerData* jugador){
-  string name(jugador->name);
-  string color (jugador->color);
-  Vivible* unAvion = new Avion(name, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), color);
+//  string name(jugador->name);
+//  string color (jugador->color);
+  Vivible* unAvion = new Avion(jugador, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), gc->avion);
   myControl = new Controller(unAvion, gRenderer, resolucion, this->unCliente);
 }
 
 void Escenario::configurarAvionAmigo(PlayerData* playerData){
-  Vivible* avionAmigo = new Avion(playerData->name, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), playerData->color);
+  Vivible* avionAmigo = new Avion(playerData, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), gc->avion);
   controllers->setPlayer((Avion*)avionAmigo);
 }
 
 void Escenario::configurarMiAvion(PlayerData* playerData){
-  Vivible* avion = new Avion(playerData->name, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), playerData->color);
+  Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), gc->avion);
   myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
 }
 

@@ -68,7 +68,7 @@
 <avion>
 	<velocidadDesplazamiento>10</velocidadDesplazamiento>
 	<velocidadDisparos>6</velocidadDisparos>
-	<avionSpriteID>avion</avionSpriteID>
-	<vueltaSpriteID>disparo</vueltaSpriteID>
-	<disparosSpriteID>vuelta</disparosSpriteID>
+	<avionSpriteID>AvionSprites</avionSpriteID>
+	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
+	<disparosSpriteID>bala</disparosSpriteID>
 </avion>
