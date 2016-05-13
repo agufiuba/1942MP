@@ -6,11 +6,10 @@
 
 using namespace std;
 
-class ElementoConf {
-public:
-    string spriteID;
+typedef struct ElementoConf {
+    char spriteID[20];
     int x;
     int y;
-};
+} ElementoConf;
 
 #endif

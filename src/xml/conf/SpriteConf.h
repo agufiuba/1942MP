@@ -6,13 +6,11 @@
 
 using namespace std;
 
-class SpriteConf {
-public:
-    string id;
-    string path;
-    int cantidad;
+typedef struct SpriteConf {
+    char id[20];
+    char path[80];
     int ancho;
     int alto;
-};
+} SpriteConf;
 
 #endif

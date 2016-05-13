@@ -22,7 +22,7 @@ private:
 
     static SpriteConf *sprite(XMLElement *);
 
-    static EscenarioConf *escenario(XMLDocument *);
+    static EscenarioConf *escenario(XMLDocument *, GameConf *gc);
 
     static vector<ElementoConf *> elementos(XMLElement *);
 

@@ -6,6 +6,7 @@
 #include "SpriteConf.h"
 #include "EscenarioConf.h"
 #include "AvionConf.h"
+#include "ElementoConf.h"
 
 using namespace std;
 
@@ -13,15 +14,8 @@ typedef struct GameConf {
     vector<SpriteConf *> sprites;
     EscenarioConf *escenario;
     AvionConf *avion;
+    int maxClients;
+    vector<ElementoConf *> elementos;
 } GameConf;
-
-//class GameConf {
-//public:
-////    unsigned short int ventanaAncho;
-////    unsigned short int ventanaAlto;
-//    vector<SpriteConf *> sprites;
-//    EscenarioConf *escenario;
-//    AvionConf* avion;
-//};
 
 #endif
