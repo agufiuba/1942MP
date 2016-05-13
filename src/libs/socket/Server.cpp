@@ -147,6 +147,12 @@ void* Server::getInAddr( struct sockaddr* sa ) {
   }
 }
 
+void Server::updatePlayerStatus( PlayerStatus* data, int cfd ) {
+  if( data->status == 'D' ) {
+    this->players[ cfd ]->deactivate();
+  }
+}
+
 void Server::addPlayer( PlayerData* data, int cfd ) {
   string validName = "Y", validColor = "Y";
   mutex theMutex;
@@ -335,6 +341,16 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	    cout << "Nombre del jugador: " << string( data->name ) << endl;
 	    cout << "Color del jugador: " << string( data->color ) << endl;
 	    this->addPlayer( data, cfd );
+	  }
+
+	  delete data;
+	} else if( dataID == "PS" ) {
+	  PlayerStatus* data = new PlayerStatus;
+
+	  if( received = tmt->receiveData( data, numBytes ) ) {
+	    // Process received data
+	    cout << "Player status: " << data->status << endl;
+	    this->updatePlayerStatus( data, cfd );
 	  }
 
 	  delete data;

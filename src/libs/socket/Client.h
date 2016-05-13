@@ -1,6 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 #include "../data/player_data.h"
+#include "../data/player_status.h"
 #include "../data/planes_actives.h"
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
@@ -46,7 +47,7 @@ class Client {
     bool gcnew;
     bool sendData( Evento* e );
     bool allPlayersReady();
-
+    bool sendPlayerDisconnection();
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
     vector<PlayerData*> getPlayers();
 };

@@ -4,6 +4,7 @@
 #include "../../xml/conf/ServerConf.h"
 #include "../../game/events/Events.cpp"
 #include "../../libs/data/player_data.h"
+#include "../../libs/data/player_status.h"
 #include "../../libs/data/planes_actives.h"
 #include "../../game/model/Player.h"
 #include <queue>
@@ -42,7 +43,7 @@ class Server {
     bool receiveData( char id[2], int clientFD, int size );
     bool receiveData( PlayerData* data, int clientFD );
     void addPlayer( PlayerData* data, int clientFD );
-
+    void updatePlayerStatus( PlayerStatus* data, int clientFD );
     void sendPlanesActives(int cfd);
     void sendConf(int);
     void createPlayers();

@@ -207,7 +207,9 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					cout << "Color del jugador: " << string(data->color) << endl;
 					string name(data->name);
 					string color(data->color);
-					if (name == "Y" && color == "Y") {
+					bool newPlayer = ( name == "Y" && color == "Y" );
+					bool resumePlayer = ( name == "R" && color == "R" );
+					if ( newPlayer || resumePlayer ) {
 						this->playerOk = true;
 					} else {
 						this->playerOk = false;
@@ -275,6 +277,21 @@ bool Client::sendData( PlayerData* data ) {
   this->received = false;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   return tmt->sendData( data );
+}
+
+bool Client::sendPlayerDisconnection() {
+  this->received = false;
+  bool recvStatus;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  PlayerStatus* data = new PlayerStatus;
+  data->status = 'D';
+  // Send player status to server
+  recvStatus = tmt->sendData( data );
+
+  delete tmt;
+  delete data;
+
+  return recvStatus;
 }
 
 //bool Client::sendMsg( string id ) {

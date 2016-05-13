@@ -88,6 +88,22 @@ bool Transmitter::sendData( PlayerData* data, string s ) {
   return true;
 }
 
+bool Transmitter::sendData( PlayerStatus* data ) {
+  // Send data id
+  if( !( this->sendDataID( "PS" ) ) ) {
+    return false;
+  }
+
+  // Send data
+  if( send( this->peerFD, data, sizeof( PlayerStatus ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+    return false;
+  }
+
+  return true;
+}
+
 bool Transmitter::sendData( PlanesActives* data ) {
   // Send data id
   if( !( this->sendDataID( "PA" ) ) ) {
@@ -139,6 +155,12 @@ bool Transmitter::receiveData( PlayerData* data, int & b ) {
   return ( b > 0 );
 }
 
+bool Transmitter::receiveData( PlayerStatus* data, int & b ) {
+  // Read data
+  b = recv( this->peerFD, data, sizeof( PlayerStatus ), 0 ) ;
+
+  return ( b > 0 );
+}
 
 bool Transmitter::receiveData( PlanesActives* data, int & b ) {
   int numBytesRead;
