@@ -1,24 +1,13 @@
-/*
- * MisilConf.h
- *
- *  Created on: 13/05/2016
- *      Author: gonzalo
- */
-
 #ifndef MISILCONF_H_
 #define MISILCONF_H_
-
 
 #include "string"
 
 using namespace std;
 
-class MisilConf {
-public:
+typedef struct MisilConf {
     int velocidadDisparos;
-    string disparosSpriteID;
-};
+    char disparosSpriteID[20];
+} MisilConf;
 
-
-
-#endif /* MISILCONF_H_ */
+#endif

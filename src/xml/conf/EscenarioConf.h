@@ -1,14 +1,10 @@
 #ifndef INC_1942MP_ESCENARIOCONF_H
 #define INC_1942MP_ESCENARIOCONF_H
 
-#include "ElementoConf.h"
-
-class EscenarioConf {
-public:
+typedef struct EscenarioConf {
     int ancho;
     int alto;
-    string fondo;
-    vector<ElementoConf *> elementos;
-};
+    char fondo[20];
+} EscenarioConf;
 
 #endif

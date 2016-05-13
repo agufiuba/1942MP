@@ -5,13 +5,12 @@
 
 using namespace std;
 
-class AvionConf {
-public:
+typedef struct AvionConf {
     int velocidadDesplazamiento;
     int velocidadDisparos;
-    string avionSpriteID;
-    string vueltaSpriteID;
-    string disparosSpriteID;
-};
+    char avionSpriteID[20];
+    char vueltaSpriteID[20];
+    char disparosSpriteID[20];
+} AvionConf;
 
 #endif

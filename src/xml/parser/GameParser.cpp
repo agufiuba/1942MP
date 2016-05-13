@@ -1,5 +1,6 @@
 #include "GameParser.h"
 
+#include <iostream>
 #include "tuple"
 
 GameConf *GameParser::parse(string fn) {
@@ -7,11 +8,11 @@ GameConf *GameParser::parse(string fn) {
     GameConf *gc = new GameConf;
     doc.LoadFile(fn.c_str());
     gc->sprites = sprites(&doc);
-//    tuple<int, int> anchoalto = ventana(&doc);
-//    gc->ventanaAncho = get<0>(anchoalto);
-//    gc->ventanaAlto = get<1>(anchoalto);
-    gc->escenario = escenario(&doc);
+    gc->escenario = escenario(&doc, gc);
     gc->avion = avion(&doc);
+    int mc;
+    doc.FirstChildElement("maxClients")->QueryIntText(&mc);
+    gc->maxClients = mc;
     return gc;
 }
 
@@ -30,17 +31,16 @@ SpriteConf *GameParser::sprite(XMLElement *e) {
     SpriteConf *spriteConf = new SpriteConf;
     XMLElement *idElement = e->FirstChildElement("id");
     XMLElement *pathElement = e->FirstChildElement("path");
-    XMLElement *cantidadElement = e->FirstChildElement("cantidad");
     XMLElement *anchoElement = e->FirstChildElement("ancho");
     XMLElement *altoElement = e->FirstChildElement("alto");
-    spriteConf->id = idElement->GetText();
-    spriteConf->path = pathElement->GetText();
-    spriteConf->path = spriteConf->path.substr(1, spriteConf->path.size() - 2);
-    int cantidad, alto, ancho;
-    cantidadElement->QueryIntText(&cantidad);
+    string id = idElement->GetText();
+    strcpy(spriteConf->id, id.c_str());
+    string path = pathElement->GetText();
+    path = path.substr(1, path.size() - 2);
+    strcpy(spriteConf->path, path.c_str());
+    int alto, ancho;
     altoElement->QueryIntText(&alto);
     anchoElement->QueryIntText(&ancho);
-    spriteConf->cantidad = cantidad;
     spriteConf->alto = alto;
     spriteConf->ancho = ancho;
     return spriteConf;
@@ -56,7 +56,7 @@ SpriteConf *GameParser::sprite(XMLElement *e) {
 //    return make_tuple(ancho, alto);
 //}
 
-EscenarioConf *GameParser::escenario(XMLDocument *doc) {
+EscenarioConf *GameParser::escenario(XMLDocument *doc, GameConf *gc) {
     EscenarioConf *ec = new EscenarioConf;
     XMLElement *escenarioE = doc->FirstChildElement("escenario");
     XMLElement *altoE = escenarioE->FirstChildElement("alto");
@@ -65,10 +65,10 @@ EscenarioConf *GameParser::escenario(XMLDocument *doc) {
     altoE->QueryIntText(&alto);
     anchoE->QueryIntText(&ancho);
     string fondoSpriteID = escenarioE->FirstChildElement("fondo")->FirstChildElement("spriteID")->GetText();
-    ec->fondo = fondoSpriteID;
+    strcpy(ec->fondo, fondoSpriteID.c_str());
     ec->alto = alto;
     ec->ancho = ancho;
-    ec->elementos = elementos(escenarioE);
+    gc->elementos = elementos(escenarioE);
     return ec;
 }
 
@@ -89,7 +89,7 @@ ElementoConf *GameParser::elemento(XMLElement *e) {
     int x, y;
     e->FirstChildElement("posicion")->FirstChildElement("x")->QueryIntText(&x);
     e->FirstChildElement("posicion")->FirstChildElement("y")->QueryIntText(&y);
-    elementoConf->spriteID = spriteID;
+    strcpy(elementoConf->spriteID, spriteID.c_str());
     elementoConf->x = x;
     elementoConf->y = y;
     return elementoConf;
@@ -104,9 +104,9 @@ AvionConf *GameParser::avion(XMLDocument *doc) {
     int velocidadDesplazamiento, velocidadDisparos;
     avionE->FirstChildElement("velocidadDesplazamiento")->QueryIntText(&velocidadDesplazamiento);
     avionE->FirstChildElement("velocidadDisparos")->QueryIntText(&velocidadDisparos);
-    avionConf->avionSpriteID = avionSpriteID;
-    avionConf->vueltaSpriteID = vueltaSpriteID;
-    avionConf->disparosSpriteID = disparosSpriteID;
+    strcpy(avionConf->avionSpriteID, avionSpriteID.c_str());
+    strcpy(avionConf->vueltaSpriteID, vueltaSpriteID.c_str());
+    strcpy(avionConf->disparosSpriteID, disparosSpriteID.c_str());
     avionConf->velocidadDesplazamiento = velocidadDesplazamiento;
     avionConf->velocidadDisparos = velocidadDisparos;
     return avionConf;
