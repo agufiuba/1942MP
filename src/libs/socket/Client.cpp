@@ -207,7 +207,9 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					cout << "Color del jugador: " << string(data->color) << endl;
 					string name(data->name);
 					string color(data->color);
-					if (name == "Y" && color == "Y") {
+					bool newPlayer = ( name == "Y" && color == "Y" );
+					bool resumePlayer = ( name == "R" && color == "R" );
+					if ( newPlayer || resumePlayer ) {
 						this->playerOk = true;
 					} else {
 						this->playerOk = false;
