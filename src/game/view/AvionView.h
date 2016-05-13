@@ -17,13 +17,15 @@ private:
 	SDL_Rect clipsDerecha[ 2 ];
 	SDL_Rect clipsIzquierda[ 2 ];
 	SDL_Rect clipsVueltereta[ 6 ];
+	string dir = "src/game/images/";
+	string filenameDefault = "desconocido.bmp";
 
 	int anchoVista;
 	int largoVista;
 
 public:
 	bool cargarImagenDelAvion( string filename );
-	AvionView(SDL_Renderer* renderer, string color);
+	AvionView(SDL_Renderer* renderer, string color, string imageId);
 	~AvionView();
 	int getAnchoVista();
 	int getLargoVista();

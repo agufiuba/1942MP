@@ -10,7 +10,7 @@ Avion::Avion(PlayerData* playerData, SDL_Renderer * &renderer, Resolucion* &reso
 	this->id = id;
 	this->configuracion = conf;
 
-	vistaAvion = new AvionView(renderer, color);
+	vistaAvion = new AvionView(renderer, color, conf->avionSpriteID);
 	viviendo = true;
 
 	this->posicion = posicionInicial;

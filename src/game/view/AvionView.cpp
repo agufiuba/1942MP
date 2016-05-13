@@ -81,18 +81,19 @@ bool AvionView::cargarImagenDelAvion( string filename ){
     return true;
 }
 
-AvionView::AvionView(SDL_Renderer * unRenderer, string color){
+AvionView::AvionView(SDL_Renderer * unRenderer, string color, string imageId){
 	anchoVista = 70;
 	largoVista = 60;
 
 	cargarClips();
-
 	rendererAvion = unRenderer;
 
-	string filename = "src/game/images/AvionSprites_";
+	string filename = dir + imageId + "_" + color + ".bmp";
 
-	if (!cargarImagenDelAvion(filename + color + ".bmp")) {
+	if (!cargarImagenDelAvion(filename)) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
+		filename = dir + filenameDefault;
+		cargarImagenDelAvion(filename);
 	}
 
 }
