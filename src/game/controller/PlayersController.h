@@ -28,7 +28,6 @@ private:
 	Resolucion* resolucionPantalla;
 	ControllerMissiles* controlDeMisiles;
 	MisilConf* misilConf;
-//	SDL_Event* lastEvent;
 
 public:
 	PlayersController(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion);

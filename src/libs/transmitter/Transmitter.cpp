@@ -26,6 +26,7 @@ bool Transmitter::sendData( Evento* e ) {
     return false;
   }
 
+  //TODO: Ver de borrar el evento e
   return true;
 }
 

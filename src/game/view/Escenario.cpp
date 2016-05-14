@@ -8,63 +8,63 @@
 #include "Escenario.h"
 using namespace std;
 
-Escenario::Escenario(){
-  setResolucion();
-  inicializar();
+Escenario::Escenario() {
+	setResolucion();
+	inicializar();
 }
 
-Escenario::Escenario(int fps){
-  this->FRAMES_PER_SECOND = fps;
-  setResolucion();
-  inicializar();
+Escenario::Escenario(int fps) {
+	this->FRAMES_PER_SECOND = fps;
+	setResolucion();
+	inicializar();
 }
 
 Escenario::Escenario(bool isFullScreen) {
-  this->isFullScreen = isFullScreen;
-  setResolucion();
-  inicializar();
+	this->isFullScreen = isFullScreen;
+	setResolucion();
+	inicializar();
 }
 
 Escenario::Escenario(int width, int height) {
-  this->SCREEN_WIDTH = width;
-  this->SCREEN_HEIGHT = height;
-  resolucion = Resolucion::INSTANCE(width, height);
-  inicializar();
+	this->SCREEN_WIDTH = width;
+	this->SCREEN_HEIGHT = height;
+	resolucion = Resolucion::INSTANCE(width, height);
+	inicializar();
 }
 
 Escenario::Escenario(GameConf* configuracion) {
-  this->gc = configuracion;
+	this->gc = configuracion;
 
-  if (gc->escenario->alto != 0 && gc->escenario->ancho != 0) {
-    this->SCREEN_WIDTH = gc->escenario->ancho;
-    this->SCREEN_HEIGHT = gc->escenario->alto;
-    resolucion = Resolucion::INSTANCE(SCREEN_WIDTH, SCREEN_HEIGHT);
-  } else {
-    setResolucion();
-  }
-  int spriteN = GameParser::findSprite(gc->sprites, gc->escenario->fondo);
-  if (spriteN != -1){
-    DIR_FONDO_PANTALLA = gc->sprites[spriteN]->path;
-  }
-  islasPorDefecto = (gc->elementos.size() == 0);
-  inicializar();
-  controllers = new HandlerPlayersControllers(gRenderer, resolucion);
+	if (gc->escenario->alto != 0 && gc->escenario->ancho != 0) {
+		this->SCREEN_WIDTH = gc->escenario->ancho;
+		this->SCREEN_HEIGHT = gc->escenario->alto;
+		resolucion = Resolucion::INSTANCE(SCREEN_WIDTH, SCREEN_HEIGHT);
+	} else {
+		setResolucion();
+	}
+
+	int spriteN = GameParser::findSprite(gc->sprites, gc->escenario->fondo);
+	if (spriteN != -1)
+		DIR_FONDO_PANTALLA = gc->sprites[spriteN]->path;
+
+	inicializar();
+	controllers = new HandlerPlayersControllers(gRenderer, resolucion);
 }
 
 Escenario::Escenario(int width, int height, bool isFullScreen) {
-  this->SCREEN_WIDTH = width;
-  this->SCREEN_HEIGHT = height;
-  this->isFullScreen = isFullScreen;
-  resolucion = Resolucion::INSTANCE(width, height);
-  inicializar();
+	this->SCREEN_WIDTH = width;
+	this->SCREEN_HEIGHT = height;
+	this->isFullScreen = isFullScreen;
+	resolucion = Resolucion::INSTANCE(width, height);
+	inicializar();
 }
 
-Escenario::Escenario(int fps, int width, int height){
-  this->FRAMES_PER_SECOND = fps;
-  this->SCREEN_WIDTH = width;
-  this->SCREEN_HEIGHT = height;
-  resolucion = Resolucion::INSTANCE(width, height);
-  inicializar();
+Escenario::Escenario(int fps, int width, int height) {
+	this->FRAMES_PER_SECOND = fps;
+	this->SCREEN_WIDTH = width;
+	this->SCREEN_HEIGHT = height;
+	resolucion = Resolucion::INSTANCE(width, height);
+	inicializar();
 }
 
 void Escenario::inicializar() {
@@ -106,103 +106,82 @@ void Escenario::inicializar() {
 }
 
 Escenario::~Escenario() {
-  resolucion->~Resolucion();
-  fondoDePantalla->free();
-  SDL_DestroyRenderer(gRenderer);
-  SDL_DestroyWindow(window);
-  gRenderer = NULL;
-  window = NULL;
-  SDL_Quit();
+	resolucion->~Resolucion();
+	fondoDePantalla->free();
+	SDL_DestroyRenderer(gRenderer);
+	SDL_DestroyWindow(window);
+	gRenderer = NULL;
+	window = NULL;
+	SDL_Quit();
 }
 
 void Escenario::setResolucion() {
-  resolucion = Resolucion::INSTANCE();
-  SCREEN_HEIGHT = resolucion->getHeightScreen();
-  SCREEN_WIDTH = resolucion->getWidthScreen();
+	resolucion = Resolucion::INSTANCE();
+	SCREEN_HEIGHT = resolucion->getHeightScreen();
+	SCREEN_WIDTH = resolucion->getWidthScreen();
 }
 
 void Escenario::printErrorSDL(string error) {
-  cout << "No se puede iniciarlizar "<< error << endl;
-  cout << "SDL Error: " << SDL_GetError() << endl;
+	cout << "No se puede iniciarlizar " << error << endl;
+	cout << "SDL Error: " << SDL_GetError() << endl;
 }
 
 void Escenario::actualizarEscenario(Posicion* pos) {
-  SDL_RenderClear(gRenderer);
-  fondoDePantalla->render(pos->getX(), pos->getYsdl());
+	SDL_RenderClear(gRenderer);
+	fondoDePantalla->render(pos->getX(), pos->getYsdl());
 
-  for (int i = 0; i < fondosVivibles.size(); i++) {
-    fondosVivibles[i]->vivir(0,0);
-  }
-  myControl->hacerVivir();
-  controllers->hacerVivir();
+	for (int i = 0; i < fondosVivibles.size(); i++) {
+		fondosVivibles[i]->vivir(0, 0);
+	}
+	myControl->hacerVivir();
+	controllers->hacerVivir();
 
-  SDL_RenderPresent(gRenderer);
+	SDL_RenderPresent(gRenderer);
 }
 
 void Escenario::aplicarFPS(Uint32 start) {
-  Uint32 dif = (SDL_GetTicks() - start);
-  int time = 1000 / FRAMES_PER_SECOND;
-  if(time > dif) {
-    SDL_Delay( time - dif);
-  }
+	Uint32 dif = (SDL_GetTicks() - start);
+	int time = 1000 / FRAMES_PER_SECOND;
+	if (time > dif) {
+		SDL_Delay(time - dif);
+	}
 }
 
 void Escenario::setClient(Client* cliente){
   this->unCliente = cliente;
 }
 
-void Escenario::setFondosVivibles() {
-  //	if (islasPorDefecto) {
-  //		Vivible* isla1 = new Isla(gRenderer, new Posicion(250, 1800), "isla4");
-  //		Vivible* isla2 = new Isla(gRenderer, new Posicion(450, 1300), "isla3");
-  //		Vivible* isla3 = new Isla(gRenderer, new Posicion(150, 3000), "isla2");
-  //		Vivible* isla4 = new Isla(gRenderer, new Posicion(700, 1500), "isla3");
-  //		Vivible* portaAvion1 = new Isla(gRenderer, new Posicion(50, 1200), "portaavion");
-  //
-  //		fondosVivibles.push_back(isla1);
-  //		fondosVivibles.push_back(isla2);
-  //		fondosVivibles.push_back(isla3);
-  //		fondosVivibles.push_back(isla4);
-  //		fondosVivibles.push_back(portaAvion1);
-  //
-  //	} else {
+void Escenario::configurarFondosVivibles() {
 
-  for (int i = 0; i < gc->elementos.size(); i++) {
-    int x = gc->elementos[i]->x;
-    int y = gc->elementos[i]->y;
-    int index = GameParser::findSprite(gc->sprites, gc->elementos[i]->spriteID);
-    if(index >= 0){
-      Vivible* isla = new Isla(gRenderer, new Posicion(x, y), gc->sprites[index]);
-      fondosVivibles.push_back(isla);
-    }
-  }
+	int cantRepeticiones = CANTIDAD_SCREEN_TOTAL / CANTIDAD_SCREEN;
+
+	for (int i = 0; i < gc->elementos.size(); i++) {
+		int x_gc = gc->elementos[i]->x;
+		int y_gc = gc->elementos[i]->y;
+		int index = GameParser::findSprite(gc->sprites,gc->elementos[i]->spriteID);
+
+		if (index >= 0) {
+
+			for (int j = 0; j < cantRepeticiones; j++) {
+				int x = x_gc;
+				int y = y_gc + (pixelesArecorrer * j);
+				Posicion* p = new Posicion(x,y);
+				Isla* isla = new Isla(gRenderer, p, gc->sprites[index]);
+				fondosVivibles.push_back(isla);
+			}
+		}
+	}
+
 }
 
-
-HandlerPlayersControllers* Escenario::getHandler(){
-  return this->controllers;
+HandlerPlayersControllers* Escenario::getHandler() {
+	return this->controllers;
 }
 
-void Escenario::setOtrosAviones() {
-//  string key = "key";
-//  string gon = "gon";
-//  string max = "max";
-//
-//  Vivible* otroAvion1 = new Avion(key, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), amarillo);
-//  Vivible* otroAvion2 = new Avion(gon, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 10, 100), rojo);
-//  Vivible* otroAvion3 = new Avion(max, gRenderer, resolucion, new Posicion(SCREEN_WIDTH * 3/4, 100), verde);
-//
-//  controllers = new HandlerPlayersControllers(gRenderer, resolucion);
-//  controllers->setPlayer((Avion*)otroAvion1);
-//  controllers->setPlayer((Avion*)otroAvion2);
-//  controllers->setPlayer((Avion*)otroAvion3);
-}
+void Escenario::configurarJugador(PlayerData* jugador) {
 
-void Escenario::configurarJugador(PlayerData* jugador){
-//  string name(jugador->name);
-//  string color (jugador->color);
-  Vivible* unAvion = new Avion(jugador, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), gc->avion);
-  myControl = new Controller(unAvion, gRenderer, resolucion, this->unCliente);
+	Vivible* unAvion = new Avion(jugador, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), gc->avion);
+	myControl = new Controller(unAvion, gRenderer, resolucion, this->unCliente);
 }
 
 void Escenario::configurarAvionAmigo(PlayerData* playerData){
@@ -216,47 +195,30 @@ void Escenario::configurarMiAvion(PlayerData* playerData){
 }
 
 SDL_Event* Escenario::run() {
+
 	if (!inicioCorrectamente) {
 		return NULL;
 	}
 
-	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
 	int screensRecorridos = 0;
-
-	setFondosVivibles();
-	//setOtrosAviones();
+	configurarFondosVivibles();
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	actualizarEscenario(posicionEscenario);
 
 	Uint32 start;
 	bool quit = false;
-
 	int i = 0;
-	Posicion* posAvion = new Posicion(0, 0);
+
+	bool isFinNivel = false;
+
 	while (!quit) {
 
 		start = SDL_GetTicks();
-		while (SDL_PollEvent(&evento) != 0) {
+		while (SDL_PollEvent(&evento) != 0 && evento.type != SDL_MOUSEMOTION) {
 
 			myControl->press(&evento);
-
-			//TODO Aca se simula lo que seria el movimiento de otro jugador
-			//i++;
-			//cout<<i<<endl;
-			//if (i > 15) {
-			//				cout << "Realizo movimiento arriba" << endl;
-			//controllers->mover("max",'U');
-			//controllers->mover("gon",'R');
-			//Realizo disparo
-			//controllers->mover("max",'S');
-			//Realizo vueltera
-			//controllers->mover("max",'E');
-			//	i = 0;
-			//}
-
-			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q
-					|| evento.key.keysym.sym == SDLK_r) {
+			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r) {
 				quit = true;
 
 				PlayerData* p = new PlayerData();
@@ -265,32 +227,27 @@ SDL_Event* Escenario::run() {
 				p->x = myControl->getVivible()->getX();
 				p->y = myControl->getVivible()->getY();
 
-				//cout << p->x << "        "<< p->y<<endl;
-
 				while (!this->unCliente->sendDataDisconnect(p));
 				usleep(100);
 
 				break;
 			}
-
 		}
 
-		bool isFinNivel = screensRecorridos >= CANTIDAD_SCREEN_TOTAL;
+		isFinNivel = screensRecorridos >= CANTIDAD_SCREEN_TOTAL;
 
-		if (!isFinNivel && posicionEscenario->getY() > SCREEN_HEIGHT) {
-			posicionEscenario->mover(0, VELOCIDAD_SCREEN);
+		if (!isFinNivel) {
 
-		} else {
-			screensRecorridos += CANTIDAD_SCREEN;
-			posicionEscenario->setPosicion(0, pixelesArecorrer);
-			setFondosVivibles();
+			if (posicionEscenario->getY() > SCREEN_HEIGHT) {
+				posicionEscenario->mover(0, VELOCIDAD_SCREEN);
+			} else {
+				screensRecorridos += CANTIDAD_SCREEN;
+				posicionEscenario->setPosicion(0, pixelesArecorrer);
+			}
+
+			actualizarEscenario(posicionEscenario);
+			aplicarFPS(start);
 		}
-
-		actualizarEscenario(posicionEscenario);
-		//		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
-		//		posAvion->print();
-		aplicarFPS(start);
-
 	}
 
 	limpiarMemoria();
@@ -299,17 +256,17 @@ SDL_Event* Escenario::run() {
 }
 
 void Escenario::limpiarMemoria() {
-  delete myControl;
-  delete controllers;
-  limpiarFondosVivibles();
+	delete myControl;
+	delete controllers;
+	limpiarFondosVivibles();
+	delete resolucion;
 }
 
 void Escenario::limpiarFondosVivibles() {
-
-  if (fondosVivibles.size() > 0) {
-    for (int i = 0 ; i < fondosVivibles.size(); i++) {
-      delete fondosVivibles[i];
-    }
-  }
-
+	if (fondosVivibles.size() > 0) {
+		for (int i = 0; i < fondosVivibles.size(); i++) {
+			delete fondosVivibles[i];
+		}
+	}
+	fondosVivibles.clear();
 }

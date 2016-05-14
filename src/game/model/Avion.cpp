@@ -35,6 +35,7 @@ bool Avion::haciendoVueltereta(){
 Avion::~Avion(){
 	delete vistaAvion;
 	delete t;
+	delete posicion;
 }
 
 string Avion::getId() {
