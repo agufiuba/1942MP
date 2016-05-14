@@ -245,7 +245,6 @@ bool Transmitter::receiveData( ElementoConf* data ) {
   return ( numBytesRead > 0 );
 }
 
-
 bool Transmitter::receiveData( EscenarioConf* data ) {
   int numBytesRead;
   // Read data
