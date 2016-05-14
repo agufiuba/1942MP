@@ -193,6 +193,7 @@ bool Transmitter::sendData( EscenarioConf* data ){
   if( !( this->sendDataID( "ES" ) ) ) {
 	return false;
   }
+
   // Send data
   if( send( this->peerFD, data, sizeof( EscenarioConf ), 0 ) == -1 ) {
 	this->logger->error( SEND_FAIL );

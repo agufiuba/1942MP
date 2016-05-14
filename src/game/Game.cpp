@@ -52,8 +52,8 @@ void Game::cargarEscenario() {
     //gc = unCliente->gc;
     //unCliente->gcnew=false;
 
-    crearGameConfHardcodeada();
-    escenario = new Escenario(gc);
+    //crearGameConfHardcodeada();
+    escenario = new Escenario(this->unCliente->getConfig());
 
     escenario->setClient(unCliente);
 
@@ -752,6 +752,13 @@ void Game::loadWaitingGame() {
 
   // Enable text input
   SDL_StartTextInput();
+  // Set window background
+  this->sdlHandler->setWindowBG(0, 0, 0);
+  // Render logo
+  waitingScreen->renderTexture( "logo", logoCenter, 90 );
+  waitingScreen->renderTexture("connecting", logoCenter, 300 );
+  //Update screen
+  this->sdlHandler->updateWindow();
   while( !unCliente->allPlayersReady()){
 
     while (this->sdlHandler->nextEvent(&e)) {
@@ -760,13 +767,7 @@ void Game::loadWaitingGame() {
 	exit(1);
       } //Special key input
     }
-    // Set window background
-    this->sdlHandler->setWindowBG(0, 0, 0);
-    // Render logo
-    waitingScreen->renderTexture( "logo", logoCenter, 90 );
-    waitingScreen->renderTexture("connecting", logoCenter, 300 );
-    //Update screen
-    this->sdlHandler->updateWindow();
+
 
   }
 

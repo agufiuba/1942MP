@@ -16,7 +16,7 @@ Client::Client( const char* configFileName ) {
   this->connected = false;
   this->logger = Logger::instance();
   this->configComplete = false;
-  //  this->config = XMLParser::parseClientConf( configFileName );
+  this->config = new GameConf;
 }
 
 Client::Client( string ip, string puerto ) {
@@ -25,8 +25,7 @@ Client::Client( string ip, string puerto ) {
   this->logger = Logger::instance();
   this->ip = ip;
   this->puerto = puerto;
-
-  //  this->config = XMLParser::parseClientConf( configFileName );
+  this->config = new GameConf;
 }
 
 Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlayersControllers) {
@@ -36,8 +35,7 @@ Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlay
   this->logger = Logger::instance();
   this->ip = ip;
   this->puerto = puerto;
-
-  //  this->config = XMLParser::parseClientConf( configFileName );
+  this->config = new GameConf;
 }
 
 Client::~Client() {}
@@ -179,6 +177,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 	bool received;
 	char id[3];
 
+	vector<ElementoConf*> elementos;
+	vector<SpriteConf*> sprites;
 	int numBytesRead;
 
 	// Create transmitter
@@ -235,7 +235,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				}
 			} else if (dataID == "PR") {
 				PlayerData* data = new PlayerData;
-
 				if (received = tmt->receiveData(data, numBytesRead)) {
 					// Process received data
 					cout << "READY -->Nombre del jugador: " << string(data->name) << endl;
@@ -243,35 +242,41 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					this->allPlayers.push_back(data);
 				}
 			} else if (dataID == "AV") {
-				AvionConf* data;
+				AvionConf* data = new AvionConf;
 				if (received = tmt->receiveData(data)) {
+					this->config->avion = data;
 					cout<<data->avionSpriteID<<endl;
 					cout<<data->disparosSpriteID<<endl;
 					cout<<data->velocidadDesplazamiento<<endl;
 				}
 			} else if (dataID == "EL") {
-				ElementoConf* data;
+				ElementoConf* data = new ElementoConf;
 				if (received = tmt->receiveData(data)) {
+					elementos.push_back(data);
 					cout<<data->spriteID <<endl;
 					cout<<data->x <<endl;
 					cout<<data->y <<endl;
 				}
 			} else if (dataID == "ES") {
-				EscenarioConf* data;
+				EscenarioConf* data = new EscenarioConf;
 				if (received = tmt->receiveData(data)) {
+					this->config->escenario = data;
 					cout<<data->alto <<endl;
 					cout<<data->ancho <<endl;
 					cout<<data->fondo <<endl;
 				}
 			} else if (dataID == "SC") {
-				SpriteConf* data;
+				SpriteConf* data = new SpriteConf;
 				if (received = tmt->receiveData(data)) {
+					sprites.push_back(data);
 					cout<<data->path <<endl;
 					cout<<data->id <<endl;
 					cout<<data->alto <<endl;
 					cout<<data->ancho <<endl;
 				}
 			} else if (dataID == "END") {
+				this->config->elementos = elementos;
+				this->config->sprites = sprites;
 				this->configComplete = true;
 			}
 		  if ( numBytesRead == -1 ) {
@@ -427,4 +432,9 @@ bool Client::isPlayerOk(){
 
 vector<PlayerData*> Client::getPlayers() {
   return this->allPlayers;
+}
+
+
+GameConf* Client::getConfig(){
+	return this->config;
 }

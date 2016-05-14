@@ -29,7 +29,7 @@ class Client {
     void checkAliveSend();
     void receiving( const int MAX_DATA_SIZE, const char* IP );
     void closeConnection();
-    GameConf* gc;
+    GameConf* config;
     bool configComplete;
 
   public:
@@ -50,5 +50,6 @@ class Client {
     bool sendPlayerDisconnection();
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
     vector<PlayerData*> getPlayers();
+    GameConf* getConfig();
 };
 #endif
