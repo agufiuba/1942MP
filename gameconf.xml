@@ -1,46 +1,40 @@
 <sprites>
-	<sprite>
-		<id>porta1</id>
-		<path>"src/game/images/portaviones/porta1.bmp"</path>
-		<cantidad>1</cantidad>
-		<ancho>4000</ancho>
-		<alto>4000</alto>
-	</sprite>
+    <sprite>
+	<id>porta1</id>
+	<path>"src/game/images/portaviones/porta1.bmp"</path>
+	<ancho>4000</ancho>
+	<alto>4000</alto>
+    </sprite>
     <sprite>
         <id>isla1</id>
         <path>"src/game/images/islas/isla1.bmp"</path>
-        <cantidad>1</cantidad>
         <ancho>4000</ancho>
         <alto>4000</alto>
     </sprite>
     <sprite>
         <id>isla2</id>
         <path>"src/game/images/islas/isla2.bmp"</path>
-        <cantidad>1</cantidad>
         <ancho>4000</ancho>
         <alto>4000</alto>
     </sprite>
     <sprite>
         <id>isla3</id>
         <path>"src/game/images/islas/isla3-chica.bmp"</path>
-        <cantidad>1</cantidad>
         <ancho>4000</ancho>
         <alto>4000</alto>
     </sprite>
     <sprite>
         <id>isla4</id>
         <path>"src/game/images/islas/isla4-chica.bmp"</path>
-        <cantidad>1</cantidad>
         <ancho>4000</ancho>
         <alto>4000</alto>
     </sprite>
-	<sprite>
-		<id>agua</id>
-		<path>"src/game/images/fondos/fondoPantalla4000x4000.bmp"</path>
-		<cantidad>1</cantidad>
-		<ancho>4000</ancho>
-		<alto>4000</alto>
-	</sprite>
+    <sprite>
+	<id>agua</id>
+	<path>"src/game/images/fondos/fondoPantalla4000x4000.bmp"</path>
+	<ancho>4000</ancho>
+	<alto>4000</alto>
+    </sprite>
 </sprites>
 <escenario>
 	<ancho>800</ancho>
@@ -72,3 +66,4 @@
 	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
 	<disparosSpriteID>bala</disparosSpriteID>
 </avion>
+<maxClients>2</maxClients>
