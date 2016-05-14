@@ -8,7 +8,7 @@ using namespace std;
 
 typedef struct SpriteConf {
     char id[20];
-    char path[80];
+    char path[30];
     int ancho;
     int alto;
 } SpriteConf;

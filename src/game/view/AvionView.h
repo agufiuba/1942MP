@@ -18,7 +18,6 @@ private:
 	SDL_Rect clipsIzquierda[ 2 ];
 	SDL_Rect clipsVueltereta[ 6 ];
 	string dir = "src/game/images/";
-	string filenameDefault = "desconocido.bmp";
 	string color;
 
 	int anchoVista;

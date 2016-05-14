@@ -34,8 +34,6 @@ void stopServer() {
  * @argv[2] --> archivo de configuracion si se inicia en modo client
  */
 int main(int argc, char* argv[]) {
-
-	cout<<argc<<endl;
 	if (argc > 1) {
 		string mode = argv[1];
 

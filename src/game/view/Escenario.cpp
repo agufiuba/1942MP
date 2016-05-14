@@ -6,7 +6,6 @@
  */
 
 #include "Escenario.h"
-#include "../../xml/parser/GameParser.h"
 using namespace std;
 
 Escenario::Escenario() {
@@ -69,41 +68,41 @@ Escenario::Escenario(int fps, int width, int height) {
 }
 
 void Escenario::inicializar() {
-	window = NULL;
-	inicioCorrectamente = true;
+  window = NULL;
+  inicioCorrectamente = true;
 
-	// Inicializar SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		printErrorSDL("SDL");
-		inicioCorrectamente = false;
-	}
+  // Inicializar SDL
+  if(SDL_Init(SDL_INIT_VIDEO) < 0) {
+    printErrorSDL("SDL");
+    inicioCorrectamente = false;
+  }
 
-	// Inicializar window
-	window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-	if (window == NULL) {
-		printErrorSDL("window");
-		inicioCorrectamente = false;
-	}
+  // Inicializar window
+  window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+  if(window == NULL) {
+    printErrorSDL("window");
+    inicioCorrectamente = false;
+  }
 
-	// Inicializar window FullScreen
-	if (isFullScreen && SDL_SetWindowFullscreen(window, SDL_TRUE) < 0) {
-		printErrorSDL("Full Screen");
-		inicioCorrectamente = false;
-	}
+  // Inicializar window FullScreen
+  if (isFullScreen && SDL_SetWindowFullscreen(window, SDL_TRUE) < 0) {
+    printErrorSDL("Full Screen");
+    inicioCorrectamente = false;
+  }
 
-	// Inicializar Renderer
-	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	if (gRenderer == NULL) {
-		printErrorSDL("Renderer");
-		inicioCorrectamente = false;
-	}
+  // Inicializar Renderer
+  gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  if (gRenderer == NULL) {
+    printErrorSDL("Renderer");
+    inicioCorrectamente = false;
+  }
 
-	// Load fondo de pantalla
-	fondoDePantalla = new Texture(gRenderer);
-	if (!fondoDePantalla->loadFromFile(DIR_FONDO_PANTALLA)) {
-		printErrorSDL("Fondo de Pantalla");
-		inicioCorrectamente = false;
-	}
+  // Load fondo de pantalla
+  fondoDePantalla = new Texture( gRenderer );
+  if (!fondoDePantalla->loadFromFile( "fondos/"+DIR_FONDO_PANTALLA )) {
+    printErrorSDL("Fondo de Pantalla");
+    inicioCorrectamente = false;
+  }
 }
 
 Escenario::~Escenario() {
@@ -148,22 +147,9 @@ void Escenario::aplicarFPS(Uint32 start) {
 	}
 }
 
-void Escenario::setClient(Client* cliente) {
-	this->unCliente = cliente;
+void Escenario::setClient(Client* cliente){
+  this->unCliente = cliente;
 }
-
-//void Escenario::setFondosVivibles() {
-//
-//	for (int i = 0; i < fondosVivibles.size(); i++) {
-//		int x = gc->elementos[i]->x;
-//		int y = gc->elementos[i]->y;
-//		int index = GameParser::findSprite(gc->sprites,gc->elementos[i]->spriteID);
-//		if (index >= 0) {
-//			Isla* isla = fondosVivibles[i];
-//			isla->setPosicion(new Posicion(x,y));
-//		}
-//	}
-//}
 
 void Escenario::configurarFondosVivibles() {
 
@@ -180,7 +166,7 @@ void Escenario::configurarFondosVivibles() {
 				int x = x_gc;
 				int y = y_gc + (pixelesArecorrer * j);
 				Posicion* p = new Posicion(x,y);
-				Isla* isla = new Isla(gRenderer, p, gc->sprites[index]->path);
+				Isla* isla = new Isla(gRenderer, p, gc->sprites[index]);
 				fondosVivibles.push_back(isla);
 			}
 		}
@@ -198,16 +184,14 @@ void Escenario::configurarJugador(PlayerData* jugador) {
 	myControl = new Controller(unAvion, gRenderer, resolucion, this->unCliente);
 }
 
-void Escenario::configurarAvionAmigo(PlayerData* playerData) {
-
-	Vivible* avionAmigo = new Avion(playerData, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), gc->avion);
-	controllers->setPlayer((Avion*) avionAmigo);
+void Escenario::configurarAvionAmigo(PlayerData* playerData){
+  Vivible* avionAmigo = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
+  controllers->setPlayer((Avion*)avionAmigo);
 }
 
-void Escenario::configurarMiAvion(PlayerData* playerData) {
-
-	Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), gc->avion);
-	myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
+void Escenario::configurarMiAvion(PlayerData* playerData){
+  Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
+  myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
 }
 
 SDL_Event* Escenario::run() {
@@ -217,7 +201,6 @@ SDL_Event* Escenario::run() {
 	}
 
 	int screensRecorridos = 0;
-
 	configurarFondosVivibles();
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
@@ -237,6 +220,16 @@ SDL_Event* Escenario::run() {
 			myControl->press(&evento);
 			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r) {
 				quit = true;
+
+				PlayerData* p = new PlayerData();
+
+				strcpy(p->name, (myControl->getVivible())->getId().c_str());
+				p->x = myControl->getVivible()->getX();
+				p->y = myControl->getVivible()->getY();
+
+				while (!this->unCliente->sendDataDisconnect(p));
+				usleep(100);
+
 				break;
 			}
 		}
@@ -255,7 +248,6 @@ SDL_Event* Escenario::run() {
 			actualizarEscenario(posicionEscenario);
 			aplicarFPS(start);
 		}
-
 	}
 
 	limpiarMemoria();

@@ -30,9 +30,7 @@ void HandlerPlayersControllers::mover(string id, char evento) {
 	SDL_Keycode code;
 
 	switch(evento) {
-		case 'Q': cout<< "se desconecto"<<endl;
-						code= SDLK_AT;
-						break;
+		case 'Q': code= SDLK_AT; break;
 		case 'R': code = SDLK_RIGHT		; break;
 		case 'L': code = SDLK_LEFT		; break;
 		case 'U': code = SDLK_UP		; break;
@@ -40,9 +38,8 @@ void HandlerPlayersControllers::mover(string id, char evento) {
 		case 'E': code = SDLK_KP_ENTER	; break;
 		case 'S': code = SDLK_SPACE		; break;
 	}
-	cout<< "se desconecto2"<<endl;
+
 	eventoSdl->key.keysym.sym = code;
-	cout<< "se desconecto3"<<endl;
 	controller->press(eventoSdl);
 }
 

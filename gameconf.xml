@@ -1,45 +1,39 @@
 <sprites>
     <sprite>
 	<id>porta1</id>
-	<path>"src/game/images/portaviones/porta1.bmp"</path>
+	<path>"porta1.bmp"</path>
 	<ancho>4000</ancho>
 	<alto>4000</alto>
     </sprite>
     <sprite>
         <id>isla1</id>
-        <path>"src/game/images/islas/isla1.bmp"</path>
+        <path>"isla1.bmp"</path>
         <ancho>4000</ancho>
         <alto>4000</alto>
     </sprite>
     <sprite>
         <id>isla2</id>
-        <path>"src/game/images/islas/isla2.bmp"</path>
+        <path>"isla2.bmp"</path>
         <ancho>4000</ancho>
         <alto>4000</alto>
     </sprite>
     <sprite>
         <id>isla3</id>
-        <path>"src/game/images/islas/isla3-chica.bmp"</path>
+        <path>"isla3-chica.bmp"</path>
         <ancho>4000</ancho>
         <alto>4000</alto>
     </sprite>
     <sprite>
         <id>isla4</id>
-        <path>"src/game/images/islas/isla4-chica.bmp"</path>
+        <path>"isla4-chica.bmp"</path>
         <ancho>4000</ancho>
         <alto>4000</alto>
     </sprite>
     <sprite>
-		<id>agua</id>
-		<path>"src/game/images/fondos/fondoPantalla4000x4000.bmp"</path>
-		<ancho>4000</ancho>
-		<alto>4000</alto>
-    </sprite>
-     <sprite>
-		<id>aguaMarcada</id>
-		<path>"src/game/images/fondos/fondoPantalla4000x4000Marcado.bmp"</path>
-		<ancho>4000</ancho>
-		<alto>4000</alto>
+	<id>agua</id>
+	<path>"fondoPantalla4000x4000.bmp"</path>
+	<ancho>4000</ancho>
+	<alto>4000</alto>
     </sprite>
 </sprites>
 <escenario>
@@ -82,6 +76,10 @@
 			<posicion>
 				<x>500</x>
 				<y>500</y>
+			<spriteID>porta1</spriteID>
+			<posicion>
+				<x>100</x>
+				<y>400</y>
 			</posicion>
 		</elemento>
 	</elementos>

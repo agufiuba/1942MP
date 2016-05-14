@@ -9,12 +9,13 @@
 
 using namespace std;
 
-Isla::Isla(SDL_Renderer* render, Posicion* posicion, string path) {
+Isla::Isla(SDL_Renderer* render, Posicion* posicion, SpriteConf* sprite) {
 
-	this->id = path;
+	this->id = sprite->path;
 	this->posicion = posicion;
-
 	islaTxt = new Texture( render );
+	string str(sprite->path);
+	string path = "islas/"+str;
 	islaTxt->loadFromFile(path);
 	islaTxt->render( posicion->getX(), posicion->getYsdl() );
 }

@@ -24,8 +24,6 @@ PlayersController::~PlayersController(){
 }
 
 void PlayersController::press(SDL_Event *event){
-
-	cout<< "se desconecto4"<<endl;
         switch(event->key.keysym.sym){
 
             case SDLK_RIGHT: velX += velocidadStandard; break;

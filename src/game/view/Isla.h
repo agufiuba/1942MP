@@ -14,6 +14,7 @@
 #include "../model/Vivible.h"
 #include "../model/Posicion.h"
 #include "Texture.h"
+#include "../../xml/conf/SpriteConf.h"
 #include <string>
 
 class Isla : public Vivible {
@@ -25,7 +26,7 @@ private:
 	string id;
 
 public:
-	Isla(SDL_Renderer* render, Posicion* posicion, string id);
+	Isla(SDL_Renderer* render, Posicion* posicion, SpriteConf* id);
 	virtual ~Isla();
 	void vivir(int x, int y);
 

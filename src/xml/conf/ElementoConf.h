@@ -7,7 +7,7 @@
 using namespace std;
 
 typedef struct ElementoConf {
-    char spriteID[20];
+    char spriteID[30];
     int x;
     int y;
 } ElementoConf;

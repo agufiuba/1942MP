@@ -28,10 +28,10 @@ bool Texture::loadFromFile( std::string path)
   //Load image at specified path
   SDL_Surface* image = NULL;
 
-
-  image = SDL_LoadBMP( path.c_str() );
+  string direccion = DIR_IMAGE+path;
+  image = SDL_LoadBMP( direccion.c_str() );
   if( image == NULL ) {
-	  path = "src/game/images/desconocido.bmp";
+	  path = DESCONOCIDO;
 	  image = SDL_LoadBMP( path.c_str() );
   }
   if( image == NULL ) {
