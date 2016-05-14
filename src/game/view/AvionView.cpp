@@ -11,6 +11,14 @@ void AvionView::desconectar(){
 	}
 }
 
+void AvionView::conectar(){
+	string filename = dir + "AvionSprites_" + color + ".bmp";
+
+	if (!cargarImagenDelAvion(filename)) {
+		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
+	}
+}
+
 void AvionView::cargarClips(){
 	int posYInicial = 50;
 
@@ -84,6 +92,7 @@ bool AvionView::cargarImagenDelAvion( string filename ){
 AvionView::AvionView(SDL_Renderer * unRenderer, string color, string imageId){
 	anchoVista = 70;
 	largoVista = 60;
+	this->color = color;
 
 	cargarClips();
 	rendererAvion = unRenderer;

@@ -19,6 +19,7 @@ private:
 	SDL_Rect clipsVueltereta[ 6 ];
 	string dir = "src/game/images/";
 	string filenameDefault = "desconocido.bmp";
+	string color;
 
 	int anchoVista;
 	int largoVista;
@@ -33,6 +34,7 @@ public:
 	void mostrarVueltereta(int x, int y, int frame);
 	void cargarClips();
 	void desconectar();
+	void conectar();
 };
 
 #endif /* SRC_VIEW_AVIONVIEW_H_ */

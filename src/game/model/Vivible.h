@@ -23,6 +23,7 @@ class Vivible{
 	   virtual int getY(){return 0;};
 	   virtual bool aunVive(){return true;};
 	   virtual void desconectar(){};
+	   virtual void conectar(){};
 
 	   virtual string getId(){return 0;};
 
