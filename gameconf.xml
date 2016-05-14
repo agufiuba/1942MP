@@ -1,9 +1,9 @@
 <sprites>
     <sprite>
-	<id>porta1</id>
-	<path>"porta1.bmp"</path>
-	<ancho>4000</ancho>
-	<alto>4000</alto>
+		<id>porta1</id>
+		<path>"porta1.bmp"</path>
+		<ancho>4000</ancho>
+		<alto>4000</alto>
     </sprite>
     <sprite>
         <id>isla1</id>
@@ -30,10 +30,10 @@
         <alto>4000</alto>
     </sprite>
     <sprite>
-	<id>agua</id>
-	<path>"fondoPantalla4000x4000.bmp"</path>
-	<ancho>4000</ancho>
-	<alto>4000</alto>
+		<id>agua</id>
+		<path>"fondoPantalla4000x4000.bmp"</path>
+		<ancho>4000</ancho>
+		<alto>4000</alto>
     </sprite>
 </sprites>
 <escenario>
@@ -76,10 +76,6 @@
 			<posicion>
 				<x>500</x>
 				<y>500</y>
-			<spriteID>porta1</spriteID>
-			<posicion>
-				<x>100</x>
-				<y>400</y>
 			</posicion>
 		</elemento>
 	</elementos>
