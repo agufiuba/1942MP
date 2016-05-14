@@ -52,8 +52,9 @@ void Game::cargarEscenario() {
     //gc = unCliente->gc;
     //unCliente->gcnew=false;
 
-    //crearGameConfHardcodeada();
-    escenario = new Escenario(this->unCliente->getConfig());
+    crearGameConfHardcodeada();
+    escenario = new Escenario(gc);
+//    escenario = new Escenario(this->unCliente->getConfig());
 
     escenario->setClient(unCliente);
 

@@ -214,8 +214,6 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
 
   theMutex.lock();
   if( this->players.size() == this->maxClientCount ) {
-	  cout<<"send conf: "<<cfd<<endl;
-    this->sendConf(cfd);
     cout<<"send players"<<endl;
     this->createPlayers();  
   }
@@ -227,6 +225,8 @@ void Server::createPlayers() {
 
 	for (int i = 0; i < this->players.size(); i++) {
 
+		//cout<<"send conf: "<<it2->first<<endl;
+	    //this->sendConf(it2->first);
 		for (map<int, Player*>::iterator it = this->players.begin();
 				it != this->players.end(); ++it) {
 			Transmitter* tmt = new Transmitter(it2->first, this->logger);
