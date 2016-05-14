@@ -4,7 +4,7 @@
 typedef struct EscenarioConf {
     int ancho;
     int alto;
-    char fondo[20];
+    char fondo[30];
 } EscenarioConf;
 
 #endif

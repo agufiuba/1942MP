@@ -272,11 +272,31 @@ bool Transmitter::receiveData( SpriteConf* data ) {
 }
 
 
-bool Transmitter::sendEndDataConf(){
+bool Transmitter::sendEndDataConf(int cantidad){
  // Send data id
-  if( !( this->sendDataID( "END" ) ) ) {
+  if( !( this->sendDataID( "FN" ) ) ) {
 	return false;
   }
+
+  // Send data
+  if( send( this->peerFD, to_string(cantidad).c_str(), 1, 0 ) == -1 ) {
+	this->logger->error( SEND_FAIL );
+	DEBUG_WARN( SEND_FAIL );
+	return false;
+  }
+
   return true;
+}
+
+bool Transmitter::receiveData( char data[1] ) {
+  int numBytesRead;
+  // Read data
+  if( ( numBytesRead = recv( this->peerFD, data, 1, 0 ) ) == -1 ) {
+    close( this->peerFD );
+    this->logger->warn( CONNECTION_TIMEOUT );
+    DEBUG_WARN( CONNECTION_TIMEOUT );
+  }
+
+  return ( numBytesRead > 0 );
 }
 

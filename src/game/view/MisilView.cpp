@@ -12,13 +12,11 @@ using namespace std;
 MisilView::MisilView(SDL_Renderer * unRenderer, MisilConf* config) {
 
 	rendererMisil = unRenderer;
-	string imageId = config->disparosSpriteID;
+	string filename = config->disparosSpriteID;
 
-	string filename = dir + imageId + ".bmp";
-
-	if (!cargarImagenDelMisil(filename)) {
+	if (!cargarImagenDelMisil(filename+".bmp")) {
 		cout << "Vista del misil no ha sido cargada correctamente.." << endl;
-		filename = dir + filenameDefault;
+		filename = filenameDefault;
 		cargarImagenDelMisil(filename);
 	}
 

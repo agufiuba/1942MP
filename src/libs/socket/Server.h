@@ -1,7 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 #include "../logger/Logger.h"
-#include "../../xml/conf/ServerConf.h"
+#include "../../xml/conf/GameConf.h"
 #include "../../game/events/Events.cpp"
 #include "../../libs/data/player_data.h"
 #include "../../libs/data/player_status.h"
@@ -28,7 +28,7 @@ class Server {
     vector<int> players2;
 
     Logger* logger;
-//    ServerConf* config;
+    GameConf* config;
     static const int BACKLOG = 5;
     static const int MAX_UNREACHABLE_TIME = 5;
     void listenForConnections( int clientFD, struct sockaddr_storage clientAddress );

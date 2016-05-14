@@ -24,6 +24,7 @@
 #include "../controller/Timer.h"
 #include "../controller/HandlerPlayersControllers.h"
 #include "../../xml/conf/GameConf.h"
+#include "../../xml/parser/GameParser.h"
 #include "../../xml/conf/EscenarioConf.h"
 #include "../../libs/socket/Client.h"
 
@@ -60,10 +61,9 @@ private:
 	string azul = "azul";
 	string verde = "verde";
 	string amarillo = "amarillo";
-	string desconocido = "desconocido";
-
-	string DIR_FONDO_PANTALLA = "src/game/images/image-not-found.bmp";
 	const char* WINDOW_TITLE = "1942 MultiPlayer";
+
+	string DIR_FONDO_PANTALLA;
 
 	IController* myControl;
 	HandlerPlayersControllers* controllers;

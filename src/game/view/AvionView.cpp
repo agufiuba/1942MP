@@ -4,7 +4,7 @@ using namespace std;
 
 
 void AvionView::desconectar(){
-	string filename = "src/game/images/AvionSprites_gris.bmp";
+	string filename = "AvionSprites_gris.bmp";
 
 	if (!cargarImagenDelAvion(filename)) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
@@ -12,7 +12,7 @@ void AvionView::desconectar(){
 }
 
 void AvionView::conectar(){
-	string filename = dir + "AvionSprites_" + color + ".bmp";
+	string filename = "AvionSprites_" + color + ".bmp";
 
 	if (!cargarImagenDelAvion(filename)) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
@@ -89,7 +89,7 @@ bool AvionView::cargarImagenDelAvion( string filename ){
     return true;
 }
 
-AvionView::AvionView(SDL_Renderer * unRenderer, string color, string imageId){
+AvionView::AvionView(SDL_Renderer * unRenderer, string color, string filename){
 	anchoVista = 70;
 	largoVista = 60;
 	this->color = color;
@@ -97,12 +97,10 @@ AvionView::AvionView(SDL_Renderer * unRenderer, string color, string imageId){
 	cargarClips();
 	rendererAvion = unRenderer;
 
-	string filename = dir + imageId + "_" + color + ".bmp";
-
-	if (!cargarImagenDelAvion(filename)) {
+	if (!cargarImagenDelAvion(filename+"_"+color+".bmp")) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
-		filename = dir + filenameDefault;
-		cargarImagenDelAvion(filename);
+		//filename = dir + filenameDefault;
+//		cargarImagenDelAvion(filename);
 	}
 
 }
