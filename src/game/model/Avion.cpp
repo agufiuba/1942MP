@@ -14,14 +14,13 @@ Avion::Avion(PlayerData* playerData, SDL_Renderer * &renderer, Resolucion* &reso
 	viviendo = true;
 
 	this->posicion = posicionInicial;
-	this->posicion->mover(0,getLargo());
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
 
 	t = new Timer();
 
-	inicializoVueltereta();
+/*	inicializoVueltereta();*/
 }
 
 void Avion::inicializoVueltereta() {

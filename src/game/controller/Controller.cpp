@@ -64,3 +64,7 @@ void Controller::hacerVivir(){
 	obj->vivir(velX, velY);
 	controlDeMisiles->hacerVivir();
 }
+
+Vivible* Controller::getVivible(){
+	return obj;
+}
