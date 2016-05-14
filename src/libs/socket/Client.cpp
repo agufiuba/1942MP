@@ -15,7 +15,7 @@ Client::Client( const char* configFileName ) {
   this->socketFD = 0;
   this->connected = false;
   this->logger = Logger::instance();
-  gcnew = false;
+  this->configComplete = false;
   //  this->config = XMLParser::parseClientConf( configFileName );
 }
 
@@ -222,12 +222,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					this->planes = data;
 				}
 
-			} else if (dataID == "CO") {
-				GameConf* data;
-				if (received = tmt->receiveData(data, numBytesRead)) {
-					gcnew = received;
-					gc = data;
-				}
 			} else if (dataID == "EV") {
 				Evento* e = new Evento();
 
@@ -246,6 +240,37 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					cout << "READY -->Color del jugador: " << string(data->color) << endl;
 					this->allPlayers.push_back(data);
 				}
+			} else if (dataID == "AV") {
+				AvionConf* data;
+				if (received = tmt->receiveData(data)) {
+					cout<<data->avionSpriteID<<endl;
+					cout<<data->disparosSpriteID<<endl;
+					cout<<data->velocidadDesplazamiento<<endl;
+				}
+			} else if (dataID == "EL") {
+				ElementoConf* data;
+				if (received = tmt->receiveData(data)) {
+					cout<<data->spriteID <<endl;
+					cout<<data->x <<endl;
+					cout<<data->y <<endl;
+				}
+			} else if (dataID == "ES") {
+				EscenarioConf* data;
+				if (received = tmt->receiveData(data)) {
+					cout<<data->alto <<endl;
+					cout<<data->ancho <<endl;
+					cout<<data->fondo <<endl;
+				}
+			} else if (dataID == "SC") {
+				SpriteConf* data;
+				if (received = tmt->receiveData(data)) {
+					cout<<data->path <<endl;
+					cout<<data->id <<endl;
+					cout<<data->alto <<endl;
+					cout<<data->ancho <<endl;
+				}
+			} else if (dataID == "END") {
+				this->configComplete = true;
 			}
 		  if ( numBytesRead == -1 ) {
 		    close( socketFD );

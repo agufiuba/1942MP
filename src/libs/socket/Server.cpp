@@ -12,13 +12,14 @@
 #include <mutex>
 #include <iostream>
 #include "../../xml/parser/GameParser.h"
+#include "../../xml/parser/XMLParser.h"
 
 using namespace std;
 
 Server::Server( const char* configFileName ) {
   this->socketFD = 0;
   this->clientCount = 0;
-  this->maxClientCount = 2;
+  this->maxClientCount = 1;
   this->listening = false;
   this->connected = false;
   this->processing = false;
@@ -207,6 +208,7 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
 
   theMutex.lock();
   if( this->players.size() == this->maxClientCount ) {
+    this->sendConf(cfd);
     this->createPlayers();  
   }
   theMutex.unlock();
@@ -268,18 +270,48 @@ void Server::sendPlanesActives(int cfd){
   delete tmt;
 }
 
+
 void Server::sendConf(int cfd){
-  //	  mutex theMutex;
-  //	  theMutex.lock();
-  //	  theMutex.unlock();
   GameConf* gc = GameParser::parse("gameconf.xml");
+
   Transmitter* tmt = new Transmitter( cfd, this->logger );
-  if( !( tmt->sendData( gc ) ) ) {
-    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
-    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+
+  AvionConf* avion = gc->avion;
+  if( !( tmt->sendData( avion ) ) ) {
+     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+   }
+
+  EscenarioConf* escenario = gc->escenario;
+  if( !( tmt->sendData( escenario ) ) ) {
+     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+   }
+
+  vector<ElementoConf*> elementos = gc->elementos;
+  for (int var = 0; var < elementos.size(); ++var) {
+	  ElementoConf* elemento = elementos[var];
+	  if( !( tmt->sendData( elemento ) ) ) {
+      DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+      this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+    }
   }
+  vector<SpriteConf* > sprites = gc->sprites;
+  for (int var = 0; var < sprites.size(); ++var) {
+	  SpriteConf* sprite = sprites[var];
+	  if( !( tmt->sendData( sprite ) ) ) {
+	     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+	     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+	   }
+
+  }
+  if( !( tmt->sendEndDataConf() ) ) {
+   DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+   this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+ }
   delete tmt;
 }
+
 
 void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP

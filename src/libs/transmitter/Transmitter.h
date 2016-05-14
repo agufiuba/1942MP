@@ -4,6 +4,10 @@
 #include "../data/planes_actives.h"
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
+#include "../../xml/conf/AvionConf.h"
+#include "../../xml/conf/ElementoConf.h"
+#include "../../xml/conf/EscenarioConf.h"
+#include "../../xml/conf/SpriteConf.h"
 #include <string>
 #include "../../game/events/CompanionEvent.h"
 
@@ -21,13 +25,20 @@ class Transmitter {
     bool sendData( PlayerData* data );
     bool sendData( PlanesActives* data );
     bool sendData( PlayerData* data, string s );
-    bool sendData( GameConf* );
     bool receiveData( char id[2], int size , int & b);
     bool receiveData( PlayerData* data , int & b);
     bool receiveData( PlanesActives* data , int & b);
-    bool receiveData( GameConf* data , int & b);
 	
 	bool sendData( Evento* e );
     bool receiveData( Evento* e , int & b);
+	bool sendData( AvionConf* e );
+	bool sendData( ElementoConf* e );
+	bool sendData( EscenarioConf* e );
+	bool sendData( SpriteConf* e );
+	bool receiveData( AvionConf* data );
+	bool receiveData( ElementoConf* data );
+	bool receiveData( EscenarioConf* data );
+	bool receiveData( SpriteConf* data );
+	bool sendEndDataConf();
 };
 #endif
