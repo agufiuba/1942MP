@@ -148,6 +148,11 @@ void Avion::realizoVueltereta() {
 
 
 void Avion::vivir(int velX, int velY){
+	if ((velX != 0 || velY != 0) && !viviendo) {
+		this->viviendo = true;
+		vistaAvion->conectar();
+	}
+
 	if (!realizandoVueltereta){
 		mover(velX, velY);
 		mostrar(velX);

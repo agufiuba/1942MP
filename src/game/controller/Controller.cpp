@@ -37,6 +37,9 @@ void Controller::press(SDL_Event *event){
 
             case SDLK_KP_ENTER: obj->inicializoVueltereta(); cliente->sendData(ce->roll(obj->getId())); break;
 
+            case SDLK_i: obj->desconectar(); break;
+
+
 			case SDLK_SPACE:
 				if (!obj->haciendoVueltereta())
 					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla, misilConf);
