@@ -45,7 +45,7 @@ bool Transmitter::sendDataID( string id ) {
   // Add string end mark
   id += "\0";
   char dataID[3];
-  strcpy( dataID, id.c_str() ); 
+  strcpy( dataID, id.c_str() );
   
   if( send( this->peerFD, dataID, sizeof( dataID ), 0 ) == -1 ) {
     this->logger->error( SEND_FAIL );
@@ -59,6 +59,22 @@ bool Transmitter::sendDataID( string id ) {
 bool Transmitter::sendData( PlayerData* data ) {
   // Send data id
   if( !( this->sendDataID( "PD" ) ) ) {
+    return false;
+  }
+
+  // Send data
+  if( send( this->peerFD, data, sizeof( PlayerData ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+    return false;
+  }
+
+  return true;
+}
+
+bool Transmitter::sendDataDisconnect( PlayerData* data ) {
+  // Send data id
+  if( !( this->sendDataID( "DP" ) ) ) {
     return false;
   }
 

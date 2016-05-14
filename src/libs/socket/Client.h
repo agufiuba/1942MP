@@ -46,6 +46,7 @@ class Client {
     //  vector<Evento*> getEventos();
     void sendCycle();
     bool sendData( PlayerData* data );
+    bool sendDataDisconnect( PlayerData* data);
     PlanesActives* getPlanesActives();
     bool isPlayerOk();
     bool sendData( Evento* e );

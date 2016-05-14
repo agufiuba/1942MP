@@ -1,8 +1,10 @@
 #include "Player.h"
 
-Player::Player( string name, string color ) {
+Player::Player( string name, string color, int x, int y ) {
   this->name = name;
   this->color = color;
+  this->x = x;
+  this->y = y;
   this->active = true;
 }
 
@@ -14,6 +16,22 @@ string Player::getName() {
 
 string Player::getColor() {
   return this->color;
+}
+
+int Player::getX() {
+  return this->x;
+}
+
+int Player::getY() {
+  return this->y;
+}
+
+void Player::setX(int x){
+	this->x = x;
+}
+
+void Player::setY(int y){
+	this->y = y;
 }
 
 bool Player::isActive() {

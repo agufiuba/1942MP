@@ -42,7 +42,10 @@ class Transmitter {
 	bool receiveData( ElementoConf* data );
 	bool receiveData( EscenarioConf* data );
 	bool receiveData( SpriteConf* data );
+
 	bool sendEndDataConf(int cantidad);
 	bool receiveData( char data[1] );
+	bool sendDataDisconnect( PlayerData* data );
+
 };
 #endif

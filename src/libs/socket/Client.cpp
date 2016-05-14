@@ -242,6 +242,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					// Process received data
 					cout << "READY -->Nombre del jugador: " << string(data->name) << endl;
 					cout << "READY -->Color del jugador: " << string(data->color) << endl;
+					cout << "READY -->Posicion X del jugador: " << data->x << endl;
+					cout << "READY -->Posicion Y del jugador: " << data->y << endl;
 					this->allPlayers.push_back(data);
 				}
 			} else if (dataID == "AV") {
@@ -316,6 +318,12 @@ bool Client::sendData( PlayerData* data ) {
   this->received = false;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   return tmt->sendData( data );
+}
+
+bool Client::sendDataDisconnect( PlayerData* data) {
+  this->received = false;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  return tmt->sendDataDisconnect(data);
 }
 
 bool Client::sendPlayerDisconnection() {

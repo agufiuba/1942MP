@@ -206,85 +206,96 @@ void Escenario::configurarJugador(PlayerData* jugador){
 }
 
 void Escenario::configurarAvionAmigo(PlayerData* playerData){
-  Vivible* avionAmigo = new Avion(playerData, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), gc->avion);
+  Vivible* avionAmigo = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
   controllers->setPlayer((Avion*)avionAmigo);
 }
 
 void Escenario::configurarMiAvion(PlayerData* playerData){
-  Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 4, 100), gc->avion);
+  Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
   myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
 }
 
 SDL_Event* Escenario::run() {
-  if (!inicioCorrectamente) {
-    return NULL;
-  }
+	if (!inicioCorrectamente) {
+		return NULL;
+	}
 
-  int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
-  int screensRecorridos = 0;
+	int pixelesArecorrer = CANTIDAD_SCREEN * SCREEN_HEIGHT;
+	int screensRecorridos = 0;
 
+	setFondosVivibles();
+	//setOtrosAviones();
 
-  setFondosVivibles();
-  //setOtrosAviones();
+	Posicion* posicionEscenario = new Posicion(0, 0);
+	actualizarEscenario(posicionEscenario);
 
+	Uint32 start;
+	bool quit = false;
 
-  Posicion* posicionEscenario = new Posicion(0, 0);
-  actualizarEscenario(posicionEscenario);
+	int i = 0;
+	Posicion* posAvion = new Posicion(0, 0);
+	while (!quit) {
 
-  Uint32 start;
-  bool quit = false;
+		start = SDL_GetTicks();
+		while (SDL_PollEvent(&evento) != 0) {
 
-  int i = 0;
-  Posicion* posAvion = new Posicion(0,0);
-  while (!quit) {
+			myControl->press(&evento);
 
-    start = SDL_GetTicks();
-    while( SDL_PollEvent(&evento) != 0 ) {
+			//TODO Aca se simula lo que seria el movimiento de otro jugador
+			//i++;
+			//cout<<i<<endl;
+			//if (i > 15) {
+			//				cout << "Realizo movimiento arriba" << endl;
+			//controllers->mover("max",'U');
+			//controllers->mover("gon",'R');
+			//Realizo disparo
+			//controllers->mover("max",'S');
+			//Realizo vueltera
+			//controllers->mover("max",'E');
+			//	i = 0;
+			//}
 
-      myControl->press(&evento);
+			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q
+					|| evento.key.keysym.sym == SDLK_r) {
+				quit = true;
 
-      //TODO Aca se simula lo que seria el movimiento de otro jugador
-      //i++;
-      //cout<<i<<endl;
-      //if (i > 15) {
-      //				cout << "Realizo movimiento arriba" << endl;
-      //controllers->mover("max",'U');
-      //controllers->mover("gon",'R');
-      //Realizo disparo
-      //controllers->mover("max",'S');
-      //Realizo vueltera
-      //controllers->mover("max",'E');
-      //	i = 0;
-      //}
+				PlayerData* p = new PlayerData();
 
-      if(evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r) {
-	quit = true;
-	break;
-      }
+				strcpy(p->name, (myControl->getVivible())->getId().c_str());
+				p->x = myControl->getVivible()->getX();
+				p->y = myControl->getVivible()->getY();
 
-    }
+				//cout << p->x << "        "<< p->y<<endl;
 
-    bool isFinNivel = screensRecorridos >= CANTIDAD_SCREEN_TOTAL;
+				while (!this->unCliente->sendDataDisconnect(p));
+				usleep(100);
 
-    if (!isFinNivel && posicionEscenario->getY() > SCREEN_HEIGHT) {
-      posicionEscenario->mover(0,VELOCIDAD_SCREEN);
+				break;
+			}
 
-    } else {
-      screensRecorridos += CANTIDAD_SCREEN;
-      posicionEscenario->setPosicion(0, pixelesArecorrer);
-      setFondosVivibles();
-    }
+		}
 
-    actualizarEscenario(posicionEscenario);
-    //		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
-    //		posAvion->print();
-    aplicarFPS(start);
+		bool isFinNivel = screensRecorridos >= CANTIDAD_SCREEN_TOTAL;
 
-  }
+		if (!isFinNivel && posicionEscenario->getY() > SCREEN_HEIGHT) {
+			posicionEscenario->mover(0, VELOCIDAD_SCREEN);
 
-  limpiarMemoria();
-  delete posicionEscenario;
-  return &evento;
+		} else {
+			screensRecorridos += CANTIDAD_SCREEN;
+			posicionEscenario->setPosicion(0, pixelesArecorrer);
+			setFondosVivibles();
+		}
+
+		actualizarEscenario(posicionEscenario);
+		//		posAvion->setPosicion(unAvion->getX(), unAvion->getY());
+		//		posAvion->print();
+		aplicarFPS(start);
+
+	}
+
+	limpiarMemoria();
+	delete posicionEscenario;
+	return &evento;
 }
 
 void Escenario::limpiarMemoria() {

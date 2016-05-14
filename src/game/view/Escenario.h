@@ -37,7 +37,6 @@ private:
 	SDL_Rect posicion;
 	SDL_Event evento;
 	Resolucion* resolucion;
-	Client* client;
 
 	bool inicioCorrectamente;
 	bool isFullScreen = false;

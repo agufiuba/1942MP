@@ -37,6 +37,7 @@ public:
 	~Controller();
 	void press(SDL_Event *event);
 	void hacerVivir();
+	Vivible* getVivible();
 };
 
 #endif /* SRC_CONTROL_CONTROLLER_H_ */

@@ -25,7 +25,9 @@ class Server {
     queue<map<int, Evento*>*>* eventQueue;
     map<int, Player*> players;
 
-    vector<int> players2;
+    //vector<int> players2;
+    int posicionInicialX;
+    int posicionInicialY;
 
     Logger* logger;
     GameConf* config;
