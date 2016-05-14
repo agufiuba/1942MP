@@ -12,7 +12,7 @@ PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* &renderer, Re
 	resolucionPantalla = resolucion;
 
 	misilConf = new MisilConf();
-	misilConf->disparosSpriteID = config->disparosSpriteID;
+	strcpy(misilConf->disparosSpriteID,config->disparosSpriteID);
 	misilConf->velocidadDisparos = config->velocidadDisparos + config->velocidadDesplazamiento;
 	controlDeMisiles = new ControllerMissiles(misilConf, renderer);
 //	lastEvent = NULL;

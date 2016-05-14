@@ -48,7 +48,7 @@ Escenario::Escenario(GameConf* configuracion) {
   if (spriteN != -1)
     DIR_FONDO_PANTALLA = gc->sprites[spriteN]->path;
 
-  islasPorDefecto = (gc->escenario->elementos.size() == 0);
+  islasPorDefecto = (gc->elementos.size() == 0);
   inicializar();
   controllers = new HandlerPlayersControllers(gRenderer, resolucion);
 }
@@ -169,10 +169,10 @@ void Escenario::setFondosVivibles() {
   //
   //	} else {
 
-  for (int i = 0; i < gc->escenario->elementos.size(); i++) {
-    int x = gc->escenario->elementos[i]->x;
-    int y = gc->escenario->elementos[i]->y;
-    int index = GameParser::findSprite(gc->sprites, gc->escenario->elementos[i]->spriteID);
+  for (int i = 0; i < gc->elementos.size(); i++) {
+    int x = gc->elementos[i]->x;
+    int y = gc->elementos[i]->y;
+    int index = GameParser::findSprite(gc->sprites, gc->elementos[i]->spriteID);
     if(index >= 0){
       Vivible* isla = new Isla(gRenderer, new Posicion(x, y), gc->sprites[index]->path);
       fondosVivibles.push_back(isla);

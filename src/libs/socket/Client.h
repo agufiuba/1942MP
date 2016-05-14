@@ -29,9 +29,10 @@ class Client {
     void checkAliveSend();
     void receiving( const int MAX_DATA_SIZE, const char* IP );
     void closeConnection();
+    GameConf* gc;
+    bool configComplete;
 
   public:
-    GameConf* gc;
     Client( const char* configFileName );
     Client( string ip, string puerto );
     Client (string ip, string puerto, HandlerPlayersControllers* handlerPlayersControllers);
@@ -44,7 +45,6 @@ class Client {
     bool sendData( PlayerData* data );
     PlanesActives* getPlanesActives();
     bool isPlayerOk();
-    bool gcnew;
     bool sendData( Evento* e );
     bool allPlayersReady();
     bool sendPlayerDisconnection();
