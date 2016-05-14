@@ -15,16 +15,16 @@ PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* &renderer, Re
 	strcpy(misilConf->disparosSpriteID,config->disparosSpriteID);
 	misilConf->velocidadDisparos = config->velocidadDisparos + config->velocidadDesplazamiento;
 	controlDeMisiles = new ControllerMissiles(misilConf, renderer);
-//	lastEvent = NULL;
 }
 
 PlayersController::~PlayersController(){
 		delete obj;
 		delete controlDeMisiles;
+		delete misilConf;
 }
 
 void PlayersController::press(SDL_Event *event){
-//		lastEvent = event;
+
 	cout<< "se desconecto4"<<endl;
         switch(event->key.keysym.sym){
 
@@ -45,19 +45,5 @@ void PlayersController::press(SDL_Event *event){
 
 void PlayersController::hacerVivir(){
 	obj->vivir(velX, velY);
-/*	velX = 0;
-	velY = 0;*/
 	controlDeMisiles->hacerVivir();
-
-//  TODO: Dejo comentado otra solucion alternativa para que los aviones no se muevan sin control
-//	if (lastEvent != NULL) {
-//		switch(lastEvent->key.keysym.sym){
-//			case SDLK_RIGHT: velX -= velocidadStandard; obj->vivir(velX, velY); break;
-//			case SDLK_LEFT: velX += velocidadStandard; obj->vivir(velX, velY); break;
-//			case SDLK_UP: velY -= velocidadStandard; obj->vivir(velX, velY); break;
-//			case SDLK_DOWN: velY += velocidadStandard; obj->vivir(velX, velY); break;
-//		}
-//		lastEvent = NULL;
-//
-//	}
 }

@@ -19,7 +19,7 @@ using namespace std;
 Server::Server( const char* configFileName ) {
   this->socketFD = 0;
   this->clientCount = 0;
-  this->maxClientCount = 2;
+  this->maxClientCount = 1; //MAX PLAYERS
   this->listening = false;
   this->connected = false;
   this->processing = false;

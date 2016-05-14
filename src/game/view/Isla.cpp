@@ -10,9 +10,11 @@
 using namespace std;
 
 Isla::Isla(SDL_Renderer* render, Posicion* posicion, string path) {
-	this->posicion = posicion;
-	islaTxt = new Texture( render );
 
+	this->id = path;
+	this->posicion = posicion;
+
+	islaTxt = new Texture( render );
 	islaTxt->loadFromFile(path);
 	islaTxt->render( posicion->getX(), posicion->getYsdl() );
 }
@@ -22,11 +24,17 @@ Isla::~Isla() {
 	delete islaTxt;
 }
 
+void Isla::setPosicion(Posicion* posicion) {
+	delete this->posicion;
+	this->posicion = posicion;
+}
+
 void Isla::vivir(int x, int y) {
 	posicion->mover(0, -3);
 	islaTxt->render( posicion->getX(), posicion->getYsdl() );
 }
 
+string Isla::getId() {return this->id;}
 int Isla::getAnchoFondo() {return 0;}
 int Isla::getLargoFondo(){return 0;}
 int Isla::getAncho(){return 0;}

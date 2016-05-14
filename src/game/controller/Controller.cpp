@@ -21,6 +21,7 @@ Controller::Controller(Vivible * unObj,SDL_Renderer* &renderer, Resolucion* reso
 Controller::~Controller(){
 		delete obj;
 		delete controlDeMisiles;
+		delete misilConf;
 }
 
 void Controller::press(SDL_Event *event){

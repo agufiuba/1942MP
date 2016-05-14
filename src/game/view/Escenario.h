@@ -45,16 +45,9 @@ private:
 	int SCREEN_HEIGHT;
 	int FRAMES_PER_SECOND = 30;
 	int CANTIDAD_SCREEN = 5;
-	int CANTIDAD_SCREEN_TOTAL = 30;
+	int CANTIDAD_SCREEN_TOTAL = 90;
 	int VELOCIDAD_SCREEN = -3;
-
-	/*
-	enum Color { rojo = "rojo",
-							azul = "azul",
-							verde = "verde",
-							amarillo = "amarillo",
-							desconocido = "desconocido"
-	};*/
+	int pixelesArecorrer = 4000;
 
 	string rojo = "rojo";
 	string azul = "azul";
@@ -67,8 +60,7 @@ private:
 
 	IController* myControl;
 	HandlerPlayersControllers* controllers;
-	vector<Vivible*> fondosVivibles;
-	bool islasPorDefecto = true;
+	vector<Isla*> fondosVivibles;
 
 	Client* unCliente;
 
@@ -77,10 +69,10 @@ private:
 	void printErrorSDL(string error);
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
-	void setFondosVivibles();
-	void setOtrosAviones();
+//	void setFondosVivibles();
 	void limpiarMemoria();
 	void limpiarFondosVivibles();
+	void configurarFondosVivibles();
 	GameConf* gc;
 
 public:
@@ -94,12 +86,10 @@ public:
 	~Escenario();
 	SDL_Event* run();
 	void configurarJugador(PlayerData* jugador);
-
 	HandlerPlayersControllers* getHandler();
 	void setClient(Client* cliente);
 	void configurarAvionAmigo(PlayerData* playerData);
 	void configurarMiAvion(PlayerData* playerData);
-
 
 };
 

@@ -30,10 +30,16 @@
         <alto>4000</alto>
     </sprite>
     <sprite>
-	<id>agua</id>
-	<path>"src/game/images/fondos/fondoPantalla4000x4000.bmp"</path>
-	<ancho>4000</ancho>
-	<alto>4000</alto>
+		<id>agua</id>
+		<path>"src/game/images/fondos/fondoPantalla4000x4000.bmp"</path>
+		<ancho>4000</ancho>
+		<alto>4000</alto>
+    </sprite>
+     <sprite>
+		<id>aguaMarcada</id>
+		<path>"src/game/images/fondos/fondoPantalla4000x4000Marcado.bmp"</path>
+		<ancho>4000</ancho>
+		<alto>4000</alto>
     </sprite>
 </sprites>
 <escenario>
@@ -55,6 +61,27 @@
 			<posicion>
 				<x>450</x>
 				<y>2500</y>
+			</posicion>
+		</elemento>
+		<elemento>
+			<spriteID>isla3</spriteID>
+			<posicion>
+				<x>600</x>
+				<y>100</y>
+			</posicion>
+		</elemento>
+		<elemento>
+			<spriteID>isla4</spriteID>
+			<posicion>
+				<x>2000</x>
+				<y>1100</y>
+			</posicion>
+		</elemento>
+		<elemento>
+			<spriteID>porta1</spriteID>
+			<posicion>
+				<x>500</x>
+				<y>500</y>
 			</posicion>
 		</elemento>
 	</elementos>

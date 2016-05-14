@@ -22,23 +22,24 @@ private:
 	Posicion* posicion;
 	void inicializar();
 	string mapearIsla(string);
+	string id;
 
 public:
 	Isla(SDL_Renderer* render, Posicion* posicion, string id);
 	virtual ~Isla();
 	void vivir(int x, int y);
 
-
+	string getId();
 	int getAnchoFondo();
 	int getLargoFondo();
 	int getAncho();
 	int getLargo();
 	int getX();
 	int getY();
-
 	void inicializoVueltereta();
-
 	bool aunVive();
+	void setPosicion(Posicion* posicion);
+
 };
 
 #endif /* ISLA_H_ */

@@ -45,7 +45,7 @@ void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers){
 }
 
 bool Client::allPlayersReady(){
-	return (allPlayers.size() == 2);
+	return (allPlayers.size() == 1);  //MAX PLAYERS
 }
 
 bool Client::connectToServer() {
