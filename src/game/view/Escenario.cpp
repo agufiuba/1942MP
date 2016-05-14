@@ -6,7 +6,6 @@
  */
 
 #include "Escenario.h"
-#include "../../xml/parser/GameParser.h"
 using namespace std;
 
 Escenario::Escenario(){
@@ -43,11 +42,10 @@ Escenario::Escenario(GameConf* configuracion) {
   } else {
     setResolucion();
   }
-
   int spriteN = GameParser::findSprite(gc->sprites, gc->escenario->fondo);
-  if (spriteN != -1)
+  if (spriteN != -1){
     DIR_FONDO_PANTALLA = gc->sprites[spriteN]->path;
-
+  }
   islasPorDefecto = (gc->elementos.size() == 0);
   inicializar();
   controllers = new HandlerPlayersControllers(gRenderer, resolucion);
@@ -101,7 +99,7 @@ void Escenario::inicializar() {
 
   // Load fondo de pantalla
   fondoDePantalla = new Texture( gRenderer );
-  if (!fondoDePantalla->loadFromFile( DIR_FONDO_PANTALLA )) {
+  if (!fondoDePantalla->loadFromFile( "fondos/"+DIR_FONDO_PANTALLA )) {
     printErrorSDL("Fondo de Pantalla");
     inicioCorrectamente = false;
   }
@@ -174,7 +172,7 @@ void Escenario::setFondosVivibles() {
     int y = gc->elementos[i]->y;
     int index = GameParser::findSprite(gc->sprites, gc->elementos[i]->spriteID);
     if(index >= 0){
-      Vivible* isla = new Isla(gRenderer, new Posicion(x, y), gc->sprites[index]->path);
+      Vivible* isla = new Isla(gRenderer, new Posicion(x, y), gc->sprites[index]);
       fondosVivibles.push_back(isla);
     }
   }

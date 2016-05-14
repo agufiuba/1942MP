@@ -38,6 +38,8 @@ class Texture{
     //Image dimensions
     int mWidth;
     int mHeight;
+    string DESCONOCIDO = "src/game/images/desconocido.bmp";
+    string DIR_IMAGE = "src/game/images/";
 };
 
 #endif /* SRC_GAME_EXAMPLES_LIBS_TEXTURE_H_ */

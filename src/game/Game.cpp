@@ -52,9 +52,9 @@ void Game::cargarEscenario() {
     //gc = unCliente->gc;
     //unCliente->gcnew=false;
 
-    crearGameConfHardcodeada();
-    escenario = new Escenario(gc);
-//    escenario = new Escenario(this->unCliente->getConfig());
+//    crearGameConfHardcodeada();
+//    escenario = new Escenario(gc);
+    escenario = new Escenario(this->unCliente->getConfig());
 
     escenario->setClient(unCliente);
 
@@ -100,7 +100,7 @@ void Game::loadConnectionScreen() {
   string acceptButtonText = "ACEPTAR";
 
   Screen* initialScreen = new Screen( this->sdlHandler );
-  initialScreen->loadTexture( "logo", "src/initialWindow/windowImages/1942logoPrincipal.bmp" );
+  initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   initialScreen->loadText( "serverIP", this->serverIP );
   initialScreen->loadText( "serverPort", this->serverPort );
   initialScreen->loadText( "accept", "ACEPTAR" );
@@ -287,7 +287,7 @@ void Game::loadValidationScreen() {
   string failureText = "No se pudo conectar al servidor";
 
   Screen* validationScreen = new Screen( this->sdlHandler );
-  validationScreen->loadTexture( "logo", "src/initialWindow/windowImages/1942logoPrincipal.bmp" );
+  validationScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   validationScreen->loadText( "connecting", connectingText, { 255, 255, 255, 255 } );
   validationScreen->loadText( "connected", connectedText, { 255, 255, 255, 255 } );
   validationScreen->loadText( "failure", failureText, { 255, 255, 255, 255 } );
@@ -425,22 +425,22 @@ void Game::loadselectionPlane() {
   Screen* initialScreen = new Screen(this->sdlHandler);
 
   //	this->setInitialScreen()
-  initialScreen->loadTexture("logo", "src/initialWindow/windowImages/1942logoPrincipal.bmp");
+  initialScreen->loadTexture("logo", "windowImages/1942logoPrincipal.bmp");
   initialScreen->loadText("clientText", "  Jugador: ", { 0, 255, 100 });
   initialScreen->loadText("planeText", " Avion: ", { 0, 255, 100 });
   initialScreen->loadText("accept", "CONTINUAR");
 
   if (bluePlaneActive){
-    initialScreen->loadTexture("bluePlane", "src/game/images/avionAzul.bmp");
+    initialScreen->loadTexture("bluePlane", "avionAzul.bmp");
   }
   if (redPlaneActive){
-    initialScreen->loadTexture("redPlane", "src/game/images/avionRojo.bmp");
+    initialScreen->loadTexture("redPlane", "avionRojo.bmp");
   }
   if (greenPlaneActive){
-    initialScreen->loadTexture("greenPlane", "src/game/images/avionVerde.bmp");
+    initialScreen->loadTexture("greenPlane", "avionVerde.bmp");
   }
   if (yellowPlaneActive){
-    initialScreen->loadTexture("yellowPlane", "src/game/images/avionAmarillo.bmp");
+    initialScreen->loadTexture("yellowPlane", "avionAmarillo.bmp");
   }
 
   int logoCenter = (this->windowWidth - initialScreen->getTextureWidth("logo")) / 2;
@@ -745,7 +745,7 @@ void Game::loadWaitingGame() {
   SDL_Event e;
   string connectingText = "Esperando Jugadores...";
   Screen* waitingScreen = new Screen( this->sdlHandler );
-  waitingScreen->loadTexture( "logo", "src/initialWindow/windowImages/1942logoPrincipal.bmp" );
+  waitingScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   waitingScreen->loadText( "connecting", connectingText, { 255, 255, 255, 255 } );
 
   int logoCenter = ( this->windowWidth - waitingScreen->getTextureWidth( "logo" ) ) / 2;

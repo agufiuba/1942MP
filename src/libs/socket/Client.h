@@ -9,6 +9,8 @@
 #include "../../game/events/Events.cpp"
 #include "../../game/controller/HandlerPlayersControllers.h"
 #include <vector>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
 class Client {
@@ -22,7 +24,8 @@ class Client {
     bool playerOk;
     Logger* logger;
     PlanesActives* planes;
-
+	vector<ElementoConf*> elementos;
+	vector<SpriteConf*> sprites;
     vector<PlayerData*> allPlayers;
 
     static const int MAX_UNREACHABLE_TIME = 5;

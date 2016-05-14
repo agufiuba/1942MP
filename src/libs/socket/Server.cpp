@@ -17,16 +17,16 @@
 using namespace std;
 
 Server::Server( const char* configFileName ) {
+  this->config = GameParser::parse("gameconf.xml");
   this->socketFD = 0;
   this->clientCount = 0;
-  this->maxClientCount = 2;
+  this->maxClientCount = this->config->maxClients;
   this->listening = false;
   this->connected = false;
   this->processing = false;
   this->allowConnections = false;
   this->eventQueue = new queue<map<int, Evento*>*>;
   this->logger = Logger::instance();
-  //  this->config = XMLParser::parseServerConf( configFileName );
 }
 
 Server::~Server() {
@@ -213,6 +213,7 @@ void Server::addPlayer( PlayerData* data, int cfd ) {
   delete tmt;
 
   theMutex.lock();
+  cout<<this->players.size()<<" aca estoy "<<this->maxClientCount<<endl;
   if( this->players.size() == this->maxClientCount ) {
     cout<<"send players"<<endl;
     this->createPlayers();  
@@ -225,8 +226,8 @@ void Server::createPlayers() {
 
 	for (int i = 0; i < this->players.size(); i++) {
 
-		//cout<<"send conf: "<<it2->first<<endl;
-	    //this->sendConf(it2->first);
+		cout<<"send conf: "<<it2->first<<endl;
+	    this->sendConf(it2->first);
 		for (map<int, Player*>::iterator it = this->players.begin();
 				it != this->players.end(); ++it) {
 			Transmitter* tmt = new Transmitter(it2->first, this->logger);
@@ -280,46 +281,40 @@ void Server::sendPlanesActives(int cfd){
 
 
 void Server::sendConf(int cfd){
-  GameConf* gc = GameParser::parse("gameconf.xml");
-
+  this->config = GameParser::parse("gameconf.xml");
   Transmitter* tmt = new Transmitter( cfd, this->logger );
 
-  AvionConf* avion = gc->avion;
+  AvionConf* avion = this->config->avion;
   if( !( tmt->sendData( avion ) ) ) {
-     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
-     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send avion" );
+     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send avion" );
    }
 
-  cout<<"Pase Avion"<<endl;
-  EscenarioConf* escenario = gc->escenario;
+  EscenarioConf* escenario = this->config->escenario;
   if( !( tmt->sendData( escenario ) ) ) {
-     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
-     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send escenario" );
+     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send escenario" );
    }
 
-  cout<<"Pase escenario"<<endl;
-  vector<ElementoConf*> elementos = gc->elementos;
+  vector<ElementoConf*> elementos = this->config->elementos;
   for (int var = 0; var < elementos.size(); ++var) {
 	  ElementoConf* elemento = elementos[var];
 	  if( !( tmt->sendData( elemento ) ) ) {
-      DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
-      this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+      DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send elementos" );
+      this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send elementos" );
     }
   }
 
-  cout<<"Pase elementos"<<endl;
-  vector<SpriteConf* > sprites = gc->sprites;
+  vector<SpriteConf* > sprites = this->config->sprites;
   for (int var = 0; var < sprites.size(); ++var) {
 	  SpriteConf* sprite = sprites[var];
 	  if( !( tmt->sendData( sprite ) ) ) {
-	     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
-	     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+	     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send Sprites" );
+	     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send Sprites" );
 	   }
-
   }
 
-  cout<<"Pase sprites"<<endl;
-  if( !( tmt->sendEndDataConf() ) ) {
+  if( !( tmt->sendEndDataConf(this->clientCount)) ) {
    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
  }

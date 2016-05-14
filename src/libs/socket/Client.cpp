@@ -25,6 +25,7 @@ Client::Client( string ip, string puerto ) {
   this->logger = Logger::instance();
   this->ip = ip;
   this->puerto = puerto;
+  this->configComplete = false;
   this->config = new GameConf;
 }
 
@@ -35,6 +36,7 @@ Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlay
   this->logger = Logger::instance();
   this->ip = ip;
   this->puerto = puerto;
+  this->configComplete = false;
   this->config = new GameConf;
 }
 
@@ -45,7 +47,10 @@ void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers){
 }
 
 bool Client::allPlayersReady(){
-	return (allPlayers.size() == 2);
+	if (this->configComplete){
+		return (allPlayers.size() == this->config->maxClients);
+	}
+	return false;
 }
 
 bool Client::connectToServer() {
@@ -177,8 +182,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 	bool received;
 	char id[3];
 
-	vector<ElementoConf*> elementos;
-	vector<SpriteConf*> sprites;
 	int numBytesRead;
 
 	// Create transmitter
@@ -245,39 +248,45 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				AvionConf* data = new AvionConf;
 				if (received = tmt->receiveData(data)) {
 					this->config->avion = data;
-					cout<<data->avionSpriteID<<endl;
-					cout<<data->disparosSpriteID<<endl;
-					cout<<data->velocidadDesplazamiento<<endl;
+//					cout<<data->avionSpriteID<<endl;
+//					cout<<data->disparosSpriteID<<endl;
+//					cout<<data->velocidadDesplazamiento<<endl;
 				}
 			} else if (dataID == "EL") {
 				ElementoConf* data = new ElementoConf;
 				if (received = tmt->receiveData(data)) {
-					elementos.push_back(data);
-					cout<<data->spriteID <<endl;
-					cout<<data->x <<endl;
-					cout<<data->y <<endl;
+					this->elementos.push_back(data);
+//					cout<<data->spriteID <<endl;
+//					cout<<data->x <<endl;
+//					cout<<data->y <<endl;
 				}
 			} else if (dataID == "ES") {
 				EscenarioConf* data = new EscenarioConf;
 				if (received = tmt->receiveData(data)) {
 					this->config->escenario = data;
-					cout<<data->alto <<endl;
-					cout<<data->ancho <<endl;
-					cout<<data->fondo <<endl;
+//					cout<<data->alto <<endl;
+//					cout<<data->ancho <<endl;
+//					cout<<data->fondo <<endl;
 				}
 			} else if (dataID == "SC") {
 				SpriteConf* data = new SpriteConf;
 				if (received = tmt->receiveData(data)) {
-					sprites.push_back(data);
-					cout<<data->path <<endl;
-					cout<<data->id <<endl;
-					cout<<data->alto <<endl;
-					cout<<data->ancho <<endl;
+					this->sprites.push_back(data);
+//					cout<<data->path <<endl;
+//					cout<<data->id <<endl;
+//					cout<<data->alto <<endl;
+//					cout<<data->ancho <<endl;
 				}
-			} else if (dataID == "END") {
-				this->config->elementos = elementos;
-				this->config->sprites = sprites;
-				this->configComplete = true;
+			} else if (dataID == "FN") {
+				char data[1];
+				if (received = tmt->receiveData(data)) {
+					int cant = atoi(data);
+//					cout<<cant<<endl;
+					this->config->maxClients = cant;
+					this->config->elementos = this->elementos;
+					this->config->sprites = this->sprites;
+					this->configComplete = true;
+				}
 			}
 		  if ( numBytesRead == -1 ) {
 		    close( socketFD );

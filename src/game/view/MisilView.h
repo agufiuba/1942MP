@@ -22,7 +22,7 @@ class MisilView {
 		Texture *vistaMisilTexture = NULL;
 		SDL_Renderer *rendererMisil;
 		string dir = "src/game/images/";
-		string filenameDefault = "desconocido.bmp";
+		string filenameDefault = "desconocido_chico.bmp";
 
 	public:
 		MisilView(SDL_Renderer* renderer, MisilConf* config);

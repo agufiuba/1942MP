@@ -8,9 +8,9 @@ using namespace std;
 typedef struct AvionConf {
     int velocidadDesplazamiento;
     int velocidadDisparos;
-    char avionSpriteID[20];
-    char vueltaSpriteID[20];
-    char disparosSpriteID[20];
+    char avionSpriteID[30];
+    char vueltaSpriteID[30];
+    char disparosSpriteID[30];
 } AvionConf;
 
 #endif
