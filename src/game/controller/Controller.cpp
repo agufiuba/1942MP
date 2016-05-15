@@ -64,8 +64,21 @@ void Controller::press(SDL_Event *event){
 void Controller::hacerVivir(){
 	obj->vivir(velX, velY);
 	controlDeMisiles->hacerVivir();
+
+	this->actualizarPosicionAvionEnServer();
 }
 
 Vivible* Controller::getVivible(){
 	return obj;
+}
+
+void Controller::actualizarPosicionAvionEnServer(){
+	PlayerData* p = new PlayerData();
+
+	strcpy(p->name, obj->getId().c_str());
+	p->x = obj->getX();
+	p->y = obj->getY();
+
+	while (!this->cliente->sendDataPosicion(p));
+	usleep(100);
 }
