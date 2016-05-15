@@ -320,7 +320,7 @@ bool Client::sendData( PlayerData* data ) {
   return tmt->sendData( data );
 }
 
-bool Client::sendDataDisconnect( PlayerData* data) {
+bool Client::sendDataPosicion( PlayerData* data) {
   this->received = false;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   return tmt->sendDataDisconnect(data);

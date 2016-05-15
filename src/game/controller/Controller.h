@@ -38,6 +38,8 @@ public:
 	void press(SDL_Event *event);
 	void hacerVivir();
 	Vivible* getVivible();
+
+	void actualizarPosicionAvionEnServer();
 };
 
 #endif /* SRC_CONTROL_CONTROLLER_H_ */

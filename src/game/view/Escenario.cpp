@@ -227,8 +227,10 @@ SDL_Event* Escenario::run() {
 				p->x = myControl->getVivible()->getX();
 				p->y = myControl->getVivible()->getY();
 
-				while (!this->unCliente->sendDataDisconnect(p));
-				usleep(100);
+				//cout << p->x << "        "<< p->y<<endl;
+
+				while (!this->unCliente->sendDataPosicion(p));
+   			usleep(100);
 
 				break;
 			}

@@ -420,7 +420,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 			  				Player* p = it->second;
 			  					p->setX(data->x);
 			  					p->setY(data->y);
-			  			  cout<< "Jugador: " << p->getName() << endl<< "Color: " << p->getColor() << endl<<"Posiciones :" << p->getX() << "    "<< p->getY()<<endl;
+			  			  //cout<< "Jugador: " << p->getName() << endl<< "Color: " << p->getColor() << endl<<"Posiciones :" << p->getX() << "    "<< p->getY()<<endl;
 			  			  break;
 			  			}
 			  	}
