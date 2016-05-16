@@ -81,4 +81,6 @@ void Controller::actualizarPosicionAvionEnServer(){
 
 	while (!this->cliente->sendDataPosicion(p));
 	usleep(100);
+
+	delete p;
 }
