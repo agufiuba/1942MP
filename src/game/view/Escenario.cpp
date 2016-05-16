@@ -108,6 +108,7 @@ void Escenario::inicializar() {
 Escenario::~Escenario() {
 	resolucion->~Resolucion();
 	fondoDePantalla->free();
+	limpiarMemoria();
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(window);
 	gRenderer = NULL;
@@ -178,6 +179,7 @@ HandlerPlayersControllers* Escenario::getHandler() {
 	return this->controllers;
 }
 
+//TODO no se usa mas al parecer
 void Escenario::configurarJugador(PlayerData* jugador) {
 
 	Vivible* unAvion = new Avion(jugador, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), gc->avion);
@@ -190,6 +192,7 @@ void Escenario::configurarAvionAmigo(PlayerData* playerData){
 }
 
 void Escenario::configurarMiAvion(PlayerData* playerData){
+	cout<<"Avion Config: "<<gc->avion->avionSpriteID<<endl;
   Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
   myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
 }
@@ -215,10 +218,17 @@ SDL_Event* Escenario::run() {
 	while (!quit) {
 
 		start = SDL_GetTicks();
+
+		if (this->unCliente->reset) {
+			SDL_Event* eventReset = new SDL_Event();
+			eventReset->key.keysym.sym = SDLK_r;
+			return eventReset;
+		}
+
 		while (SDL_PollEvent(&evento) != 0 && evento.type != SDL_MOUSEMOTION) {
 
 			myControl->press(&evento);
-			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r) {
+			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
 				quit = true;
 
 				PlayerData* p = new PlayerData();
@@ -252,7 +262,6 @@ SDL_Event* Escenario::run() {
 		}
 	}
 
-	limpiarMemoria();
 	delete posicionEscenario;
 	return &evento;
 }
@@ -261,7 +270,7 @@ void Escenario::limpiarMemoria() {
 	delete myControl;
 	delete controllers;
 	limpiarFondosVivibles();
-	delete resolucion;
+//	delete resolucion;
 }
 
 void Escenario::limpiarFondosVivibles() {

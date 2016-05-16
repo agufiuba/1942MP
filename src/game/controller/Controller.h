@@ -33,7 +33,7 @@ private:
 	MisilConf* misilConf;
 
 public:
-	Controller(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion, Client* client);
+	Controller(Vivible* unObj, SDL_Renderer* renderer, Resolucion* resolucion, Client* client);
 	~Controller();
 	void press(SDL_Event *event);
 	void hacerVivir();

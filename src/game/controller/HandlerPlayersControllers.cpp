@@ -7,7 +7,7 @@
 
 #include "HandlerPlayersControllers.h"
 
-HandlerPlayersControllers::HandlerPlayersControllers(SDL_Renderer* &renderer, Resolucion* resolucion) {
+HandlerPlayersControllers::HandlerPlayersControllers(SDL_Renderer* renderer, Resolucion* resolucion) {
 	this->renderer = renderer;
 	this->resolucion = resolucion;
 }
@@ -30,7 +30,7 @@ void HandlerPlayersControllers::mover(string id, char evento) {
 	SDL_Keycode code;
 
 	switch(evento) {
-		case 'Q': code= SDLK_AT; break;
+		case 'Q': code = SDLK_AT		; break;
 		case 'R': code = SDLK_RIGHT		; break;
 		case 'L': code = SDLK_LEFT		; break;
 		case 'U': code = SDLK_UP		; break;

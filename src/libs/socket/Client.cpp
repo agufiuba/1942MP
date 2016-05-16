@@ -16,6 +16,7 @@ Client::Client( const char* configFileName ) {
   this->connected = false;
   this->logger = Logger::instance();
   this->configComplete = false;
+  this->reset = false;
   this->config = new GameConf;
 }
 
@@ -26,6 +27,7 @@ Client::Client( string ip, string puerto ) {
   this->ip = ip;
   this->puerto = puerto;
   this->configComplete = false;
+  this->reset = false;
   this->config = new GameConf;
 }
 
@@ -37,6 +39,7 @@ Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlay
   this->ip = ip;
   this->puerto = puerto;
   this->configComplete = false;
+  this->reset = false;
   this->config = new GameConf;
 }
 
@@ -233,8 +236,12 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				if (received = tmt->receiveData(e, numBytesRead)) {
 					cout << "Evento: " << e->value << endl;
 					cout << "PlayerName: " << e->name << endl;
+					if (e->value == 'T'){
+						this->reset =true;
+					}else {
+						this->pc->mover(e->name, e->value);
+					}
 
-					this->pc->mover(e->name, e->value);
 				}
 			} else if (dataID == "PR") {
 				PlayerData* data = new PlayerData;
@@ -341,72 +348,6 @@ bool Client::sendPlayerDisconnection() {
   return recvStatus;
 }
 
-//bool Client::sendMsg( string id ) {
-//  if( !( this->connected ) ) {
-//    this->logger->warn( SEND_CERROR );
-//    //  theMutex.lock();
-//    DEBUG_WARN( SEND_CERROR );
-//    // theMutex.unlock();
-//    return false;
-//  }
-//
-//  Mensaje* msgToSend;
-//
-//  for( int i = 0; i < this->config->getMessages().size(); i++ ) {
-//    string msgID = this->config->getMessages()[i]->id;
-//    if( msgID == id ) {
-//      msgToSend = this->config->getMessages()[i];
-//      break;
-//    }
-//  }
-//
-//  int dataLength = sizeof( Mensaje );
-//  this->logger->info( SENT_DATA( msgToSend->valor ) );
-//  // theMutex.lock();
-//  DEBUG_PRINT( SENT_DATA( msgToSend->valor ) );
-//  // theMutex.unlock();
-//  return sendData( msgToSend, dataLength );
-//}
-
-//void Client::sendCycle() {
-//  if( !( this->connected ) ) {
-//    this->logger->warn( CONNECTION_NOT_ACTIVE );
-//    DEBUG_WARN( CONNECTION_NOT_ACTIVE );
-//    return;
-//  }
-//
-//  double timeout = 0;
-//  cout << "Ingrese duracion (en milisegundos): ";
-//  cin >> timeout;
-//
-//  while( timeout <= 0 ) {
-//    cout << endl << "Error - Debe ingresar un numero mayor a cero" << endl;
-//    cout << "Ingrese nuevamente durancion (en milisegundos): ";
-//    cin >> timeout;
-//  }
-//  timeout = timeout * 1000;
-//
-//  this->logger->info( "Se corre ciclar en " + to_string(timeout) + " milisegundos." );
-//  double diferencia = 0;
-//  int i = 0;
-//  this->received = true;
-//  clock_t start = clock();
-//  while( diferencia <= timeout && this->connected ) {
-//    if( this->received ){
-//      if( i >= this->config->getMessages().size() )
-//	i = 0;
-//      //cout << endl << "En el i: " << i;
-//
-//      if( !( sendData(getEventos()[i]) ) )
-//	return;
-//
-//      i++;
-//    }
-//    diferencia = clock() - start;
-//  }
-//  usleep( 10000 ); // solo para que el ultimo se muestre antes de hacer display del menu
-//}
-
 void Client::disconnectFromServer() {
   mutex theMutex;
   if( this->connected ) {
@@ -451,7 +392,33 @@ vector<PlayerData*> Client::getPlayers() {
   return this->allPlayers;
 }
 
-
 GameConf* Client::getConfig(){
 	return this->config;
+}
+
+bool Client::isConfigComplete(){
+	return this->configComplete;
+}
+
+void Client::setConfigComplete(bool config){
+	this->configComplete = config;
+}
+
+bool Client::sendGetConfig(){
+	  this->received = false;
+	  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+	  return tmt->sendGetConfig();
+}
+
+void Client::resetConfig(){
+	//delete this->config;
+	this->config = new GameConf;
+	while(this->elementos.size() > 0){
+		this->elementos.pop_back();
+		cout<<"elimino elemento"<<endl;
+	}
+	while(this->sprites.size() > 0){
+		this->sprites.pop_back();
+		cout<<"elimino sprite"<<endl;
+	}
 }

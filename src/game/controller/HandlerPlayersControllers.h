@@ -22,7 +22,7 @@ private:
 	Resolucion* resolucion;
 
 public:
-	HandlerPlayersControllers(SDL_Renderer* &renderer, Resolucion* resolucion);
+	HandlerPlayersControllers(SDL_Renderer* renderer, Resolucion* resolucion);
 	virtual ~HandlerPlayersControllers();
 	void setPlayer(Avion* vivible);
 	void mover(string id, char event);

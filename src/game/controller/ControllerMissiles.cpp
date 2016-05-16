@@ -9,7 +9,7 @@
 
 using namespace std;
 
-ControllerMissiles::ControllerMissiles(MisilConf* config, SDL_Renderer* &renderer){
+ControllerMissiles::ControllerMissiles(MisilConf* config, SDL_Renderer* renderer){
 	rendererMisil = renderer;
 	vivibles = new CompositeVivibles();
 

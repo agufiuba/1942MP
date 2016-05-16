@@ -42,7 +42,7 @@ class Game {
     void setPlanesActives(bool blue,bool red,bool green,bool yellow);
 
     void cargarEscenario();
-
+    void recorroConfig(GameConf*);
     void crearGameConfHardcodeada();
 
   public:

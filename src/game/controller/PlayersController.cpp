@@ -2,7 +2,7 @@
 
 using namespace std;
 
-PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* &renderer, Resolucion* resolucion){
+PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* renderer, Resolucion* resolucion){
 	AvionConf* config = ((Avion*) unObj)->getConfiguracion();
 	velocidadStandard = config->velocidadDesplazamiento;;
 	obj = unObj;
@@ -30,18 +30,29 @@ void PlayersController::press(SDL_Event *event){
             case SDLK_LEFT: velX -= velocidadStandard; break;
             case SDLK_UP: velY += velocidadStandard; break;
             case SDLK_DOWN: velY -= velocidadStandard; break;
-            case SDLK_AT: obj->desconectar(); break; // la o es una letra cualquiera. Como esta hecho con eventos, se tuvo que dejar asi
+            case SDLK_AT: desconectarAvion = true ;break; // la o es una letra cualquiera. Como esta hecho con eventos, se tuvo que dejar asi
             case SDLK_KP_ENTER: obj->inicializoVueltereta();break;
             case SDLK_SPACE:
 				if (!obj->haciendoVueltereta()){
 					cout << "tirando misiles" << endl;
-					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla, misilConf);
+					crearMisil = true;
 				}
 				break;
         }
 }
 
 void PlayersController::hacerVivir(){
+
+	if (desconectarAvion) {
+		obj->desconectar();
+		desconectarAvion = false;
+	}
+
 	obj->vivir(velX, velY);
+
+	if (crearMisil) {
+		controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla, misilConf);
+		crearMisil = false;
+	}
 	controlDeMisiles->hacerVivir();
 }

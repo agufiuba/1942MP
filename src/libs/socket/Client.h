@@ -55,5 +55,10 @@ class Client {
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
     vector<PlayerData*> getPlayers();
     GameConf* getConfig();
+    bool isConfigComplete();
+    void setConfigComplete(bool);
+    bool reset;
+    bool sendGetConfig();
+    void resetConfig();
 };
 #endif
