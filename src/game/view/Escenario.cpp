@@ -218,6 +218,13 @@ SDL_Event* Escenario::run() {
 	while (!quit) {
 
 		start = SDL_GetTicks();
+
+		if (this->unCliente->reset) {
+			SDL_Event* eventReset = new SDL_Event();
+			eventReset->key.keysym.sym = SDLK_r;
+			return eventReset;
+		}
+
 		while (SDL_PollEvent(&evento) != 0 && evento.type != SDL_MOUSEMOTION) {
 
 			myControl->press(&evento);

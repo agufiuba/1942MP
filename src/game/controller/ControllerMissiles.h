@@ -21,7 +21,7 @@ using namespace std;
 
 class ControllerMissiles{
 	public:
-		ControllerMissiles(MisilConf* config, SDL_Renderer* &renderer);
+		ControllerMissiles(MisilConf* config, SDL_Renderer* renderer);
 		virtual ~ControllerMissiles();
 		void press(SDL_Event *event);
 		void hacerVivir();

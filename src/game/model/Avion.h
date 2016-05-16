@@ -34,7 +34,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Avion(PlayerData* playerData, SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf);
+	Avion(PlayerData* playerData, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf);
 	~Avion();
 
 	string getId();

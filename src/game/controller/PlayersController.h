@@ -28,9 +28,11 @@ private:
 	Resolucion* resolucionPantalla;
 	ControllerMissiles* controlDeMisiles;
 	MisilConf* misilConf;
+	bool crearMisil = false;
+	bool desconectarAvion = false;
 
 public:
-	PlayersController(Vivible* unObj, SDL_Renderer* &renderer, Resolucion* resolucion);
+	PlayersController(Vivible* unObj, SDL_Renderer* renderer, Resolucion* resolucion);
 	~PlayersController();
 	void press(SDL_Event *event);
 	void hacerVivir();

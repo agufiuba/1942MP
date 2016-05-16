@@ -7,7 +7,7 @@
 
 #include "HandlerPlayersControllers.h"
 
-HandlerPlayersControllers::HandlerPlayersControllers(SDL_Renderer* &renderer, Resolucion* resolucion) {
+HandlerPlayersControllers::HandlerPlayersControllers(SDL_Renderer* renderer, Resolucion* resolucion) {
 	this->renderer = renderer;
 	this->resolucion = resolucion;
 }

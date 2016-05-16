@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Controller::Controller(Vivible * unObj,SDL_Renderer* &renderer, Resolucion* resolucion, Client* client){
+Controller::Controller(Vivible * unObj,SDL_Renderer* renderer, Resolucion* resolucion, Client* client){
 	this->cliente = client;
 	AvionConf* conf = ((Avion*) unObj)->getConfiguracion();
 	velocidadStandard = conf->velocidadDesplazamiento;

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Avion::Avion(PlayerData* playerData, SDL_Renderer * &renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf) {
+Avion::Avion(PlayerData* playerData, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf) {
 
 	string id(playerData->name);
 	string color (playerData->color);
