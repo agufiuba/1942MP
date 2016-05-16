@@ -40,6 +40,7 @@ void Controller::press(SDL_Event *event){
 
             case SDLK_i: obj->desconectar(); break;
 
+            case SDLK_r: cout<<"Se Reinicia la partida"<<endl;cliente->sendData(ce->restart(obj->getId()));break;
 
 			case SDLK_SPACE:
 				if (!obj->haciendoVueltereta())

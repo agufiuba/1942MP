@@ -325,6 +325,7 @@ void Server::sendConf(int cfd){
    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
  }
+  cout<<"Envio toda la Configuracion"<<endl;
   delete tmt;
 }
 
@@ -427,6 +428,9 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 			  }
 
 		delete data;
+	} else if(dataID == "CO" ){
+		cout<<"Reset cliente "<<cfd<<endl;
+		this->sendConf(cfd);
 	}
 
       }

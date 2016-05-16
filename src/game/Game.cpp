@@ -44,31 +44,63 @@ void Game::crearGameConfHardcodeada() {
   //	gc->escenario = escenarioConf;
 }
 
+void Game::recorroConfig(GameConf* game){
+
+	cout<<"CONFIGURACION"<<endl;
+	cout<<"AVION"<<endl;
+	cout<<game->avion->avionSpriteID<<endl;
+	cout<<game->avion->disparosSpriteID<<endl;
+	cout<<game->avion->velocidadDesplazamiento<<endl;
+	cout<<game->avion->velocidadDisparos<<endl;
+//	cout<<game->avion->vueltaSpriteID<<endl;
+	cout<<"Escenario"<<endl;
+	cout<<game->escenario->fondo<<endl;
+	cout<<"MAX CLIENTE"<<endl;
+	cout<<game->maxClients<<endl;
+	cout<<"ELEMENTOS"<<endl;
+	for (int var = 0; var < game->elementos.size(); ++var) {
+		cout<<game->elementos[var]->spriteID<<endl;
+	}
+	cout<<"SPRITES"<<endl;
+	for (int var = 0; var < game->sprites.size(); ++var) {
+		cout<<game->sprites[var]->id<<endl;
+		cout<<game->sprites[var]->path<<endl;
+	}
+}
+
 void Game::cargarEscenario() {
   SDL_Event* exitEven = new SDL_Event();
   exitEven->key.keysym.sym = SDLK_r;
-  while (exitEven->key.keysym.sym == SDLK_r) {
-    //while(!unCliente->gcnew){}
-    //gc = unCliente->gc;
-    //unCliente->gcnew=false;
-
+  bool inicia =true;
+  while (exitEven->key.keysym.sym == SDLK_r || this->unCliente->reset) {
+	if (!inicia){
+		cout<<"Se reinicio"<<endl;
+	    this->unCliente->setConfigComplete(false);
+		this->unCliente->sendGetConfig();
+		while(!unCliente->isConfigComplete()){}
+	}
+    this->unCliente->reset =false;
 //    crearGameConfHardcodeada();
 //    escenario = new Escenario(gc);
-    escenario = new Escenario(this->unCliente->getConfig());
 
+	recorroConfig(this->unCliente->getConfig());
+    escenario = new Escenario(this->unCliente->getConfig());
     escenario->setClient(unCliente);
 
     for( int i = 0; i < this->unCliente->getPlayers().size(); i++) {
       if( this->clientId == this->unCliente->getPlayers()[i]->name ) {
-	escenario->configurarMiAvion(this->unCliente->getPlayers()[i]);
+    	  escenario->configurarMiAvion(this->unCliente->getPlayers()[i]);
       } else {
-	escenario->configurarAvionAmigo(this->unCliente->getPlayers()[i]);
+    	  escenario->configurarAvionAmigo(this->unCliente->getPlayers()[i]);
       }
     }
 
     unCliente->setHandler(escenario->getHandler());
     exitEven = escenario->run();
     delete escenario;
+    this->unCliente->resetConfig();
+    cout << "****** Se inicia todo ***************** " <<endl;
+    inicia = false;
   }
   // Notify server of player disconnection
   this->unCliente->sendPlayerDisconnection();

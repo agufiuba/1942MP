@@ -8,7 +8,7 @@
 #define DISPARO 'S'
 #define VUELTERETA 'E'
 #define LISTO 'M'
-#define REINICIAR 'N'
+#define REINICIAR 'T'
 #define SALIR 'Q'
 #define MENSAJE_CORRECTO 'C'
 #define MENSAJE_INCORRECTO 'I'

@@ -46,6 +46,7 @@ class Transmitter {
 	bool sendEndDataConf(int cantidad);
 	bool receiveData( char data[1] );
 	bool sendDataDisconnect( PlayerData* data );
+	bool sendGetConfig();
 
 };
 #endif

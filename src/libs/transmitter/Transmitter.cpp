@@ -220,6 +220,7 @@ bool Transmitter::sendData( EscenarioConf* data ){
 
   return true;
 }
+
 bool Transmitter::sendData( SpriteConf* data ){
  // Send data id
   if( !( this->sendDataID( "SC" ) ) ) {
@@ -235,8 +236,6 @@ bool Transmitter::sendData( SpriteConf* data ){
 
   return true;
 }
-
-
 
 bool Transmitter::receiveData( AvionConf* data ) {
   int numBytesRead;
@@ -317,3 +316,11 @@ bool Transmitter::receiveData( char data[1] ) {
   return ( numBytesRead > 0 );
 }
 
+bool Transmitter::sendGetConfig(){
+ // Send data id
+  cout<<" Send CO "<<endl;
+  if( !( this->sendDataID( "CO" ) ) ) {
+	return false;
+  }
+  return true;
+}
