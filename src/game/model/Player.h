@@ -23,6 +23,7 @@ class Player {
     void setY(int y);
 
     bool isActive();
+    void activate();
     void deactivate();
 };
 #endif

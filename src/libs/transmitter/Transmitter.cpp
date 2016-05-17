@@ -73,9 +73,9 @@ bool Transmitter::sendData( PlayerData* data ) {
   return true;
 }
 
-bool Transmitter::sendData( StageData* data ) {
+bool Transmitter::sendData( StageData* data, string id ) {
   // Send data id
-  if( !( this->sendDataID( "SD" ) ) ) {
+  if( !( this->sendDataID( id ) ) ) {
     return false;
   }
 

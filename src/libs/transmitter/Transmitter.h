@@ -19,11 +19,11 @@ class Transmitter {
   private:
     int peerFD;
     Logger* logger;
-    bool sendDataID( string id );
 
   public:
     Transmitter( int peerFD, Logger* logger );
     ~Transmitter();
+    bool sendDataID( string id );
     bool sendData( PlayerData* data );
     bool sendData( PlanesActives* data );
     bool sendData( PlayerStatus* data );
@@ -40,7 +40,7 @@ class Transmitter {
 	bool sendData( ElementoConf* e );
 	bool sendData( EscenarioConf* e );
 	bool sendData( SpriteConf* e );
-	bool sendData( StageData* data );
+	bool sendData( StageData* data, string id );
 	bool receiveData( AvionConf* data );
 	bool receiveData( ElementoConf* data );
 	bool receiveData( EscenarioConf* data );

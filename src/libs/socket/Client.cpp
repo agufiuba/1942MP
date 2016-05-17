@@ -18,6 +18,7 @@ Client::Client( const char* configFileName ) {
   this->configComplete = false;
   this->reset = false;
   this->config = new GameConf;
+  this->stageOffset = 0;
 }
 
 Client::Client( string ip, string puerto ) {
@@ -29,6 +30,7 @@ Client::Client( string ip, string puerto ) {
   this->configComplete = false;
   this->reset = false;
   this->config = new GameConf;
+  this->stageOffset = 0;
 }
 
 Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlayersControllers) {
@@ -41,6 +43,7 @@ Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlay
   this->configComplete = false;
   this->reset = false;
   this->config = new GameConf;
+  this->stageOffset = 0;
 }
 
 Client::~Client() {}
@@ -296,6 +299,14 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					this->config->sprites = this->sprites;
 					this->configComplete = true;
 				}
+			} else if ( dataID == "SQ" ) {
+				this->sendStageData();
+			} else if ( dataID == "SD" ) {
+				StageData* data = new StageData;
+				if (received = tmt->receiveData( data, numBytesRead )) {
+				  cout << "Current stage offset: " << data->offset << endl;
+				  this->stageOffset = data->offset; 
+				}
 			}
 		  if ( numBytesRead == -1 ) {
 		    close( socketFD );
@@ -331,6 +342,21 @@ bool Client::sendDataPosicion( PlayerData* data) {
   this->received = false;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   return tmt->sendDataDisconnect(data);
+}
+
+bool Client::sendStageData() {
+  this->received = false;
+  bool sent;
+  StageData* data = new StageData;
+  data->offset = this->stageOffset;
+
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  sent = tmt->sendData( data, "SD" );
+
+  delete tmt;
+  delete data;
+
+  return sent;
 }
 
 bool Client::sendPlayerDisconnection() {
@@ -421,4 +447,12 @@ void Client::resetConfig(){
 		this->sprites.pop_back();
 		//cout<<"elimino sprite"<<endl;
 	}
+}
+
+void Client::setStageOffset( int offset ) {
+  this->stageOffset = offset;
+}
+
+int Client::getStageOffset() {
+  return this->stageOffset;
 }

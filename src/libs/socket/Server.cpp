@@ -1,4 +1,3 @@
-
 #include "Server.h"
 #include "../transmitter/Transmitter.h"
 #include "../socket/sock_dep.h" /* socket dependencies */
@@ -27,6 +26,8 @@ Server::Server( const char* configFileName ) {
   this->allowConnections = false;
   this->eventQueue = new queue<map<int, Evento*>*>;
   this->logger = Logger::instance();
+  this->running = false;
+  this->stageData = NULL;
 
   this->posicionInicialX = 0;
   this->posicionInicialY = 100;
@@ -224,15 +225,54 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	if (this->players.size() == this->maxClientCount) {
 		cout << "send players" << endl;
 		this->createPlayers();
+		if( !( this->running ) ) this->running = true;
 	}
 	theMutex.unlock();
+}
+
+void Server::queryCurrentStageOffset() {
+  if( this->stageData != NULL ) {  
+    delete this->stageData;
+    this->stageData = NULL;
+  }
+
+  for( map<int, Player*>::iterator it = this->players.begin();
+       it != this->players.end(); ++it ) {
+    if( it->second->isActive() ) {
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendDataID( "SQ" );
+      delete tmt;
+      break;
+    }
+  }
+}
+
+void Server::sendCurrentStageOffset( int clientFD ) {
+  while( this->stageData == NULL );
+  Transmitter* tmt = new Transmitter( clientFD, this->logger );
+  tmt->sendData( this->stageData, "SD" );
+  delete tmt;
 }
 
 void Server::createPlayers() {
 	map<int, Player*>::iterator it2 = this->players.begin();
 
 	for (int i = 0; i < this->players.size(); i++) {
-	    this->sendConf(it2->first);
+	    // if player not active
+	    if( !( it2->second->isActive() ) ) {
+		// send stage config
+		this->sendConf(it2->first);
+
+		// if game already started
+		if( this->running ) {
+		  // get stage offset
+		  this->queryCurrentStageOffset();
+
+		  // send stage offset to player
+		  this->sendCurrentStageOffset( it2->first );
+		}
+
+		// send other players data
 		for (map<int, Player*>::iterator it = this->players.begin();
 				it != this->players.end(); ++it) {
 			Transmitter* tmt = new Transmitter(it2->first, this->logger);
@@ -248,7 +288,9 @@ void Server::createPlayers() {
 			delete player;
 			delete tmt;
 		}
-
+	    }	
+		// activate player
+		it2->second->activate();
 		it2++;
 	}
 }
@@ -431,6 +473,14 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if(dataID == "CO" ){
 		cout<<"Reset cliente "<<cfd<<endl;
 		this->sendConf(cfd);
+	} else if( dataID == "SD" ) {
+	  StageData* data = new StageData;
+
+	  if( received = tmt->receiveData( data, numBytes ) ) {
+	    // Process received data
+	    cout << "Current stage offset: " << data->offset << endl;
+	    this->stageData = data;
+	  }
 	}
 
       }
