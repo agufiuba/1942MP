@@ -73,6 +73,22 @@ bool Transmitter::sendData( PlayerData* data ) {
   return true;
 }
 
+bool Transmitter::sendData( StageData* data ) {
+  // Send data id
+  if( !( this->sendDataID( "SD" ) ) ) {
+    return false;
+  }
+
+  // Send data
+  if( send( this->peerFD, data, sizeof( StageData ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+    return false;
+  }
+
+  return true;
+}
+
 bool Transmitter::sendDataDisconnect( PlayerData* data ) {
   // Send data id
   if( !( this->sendDataID( "DP" ) ) ) {
@@ -152,6 +168,13 @@ bool Transmitter::receiveData( char id[3], int size , int & b) {
 bool Transmitter::receiveData( PlayerData* data, int & b ) {
   // Read data
   b = recv( this->peerFD, data, sizeof( PlayerData ), 0 ) ;
+
+  return ( b > 0 );
+}
+
+bool Transmitter::receiveData( StageData* data, int & b ) {
+  // Read data
+  b = recv( this->peerFD, data, sizeof( StageData ), 0 ) ;
 
   return ( b > 0 );
 }
