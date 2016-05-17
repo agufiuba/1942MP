@@ -40,6 +40,7 @@ public:
 	void inicializoVueltereta();
 	bool aunVive();
 	void setPosicion(Posicion* posicion);
+	Posicion* getPosicion();
 
 };
 

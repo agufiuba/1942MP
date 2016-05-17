@@ -415,10 +415,10 @@ void Client::resetConfig(){
 	this->config = new GameConf;
 	while(this->elementos.size() > 0){
 		this->elementos.pop_back();
-		cout<<"elimino elemento"<<endl;
+		//cout<<"elimino elemento"<<endl;
 	}
 	while(this->sprites.size() > 0){
 		this->sprites.pop_back();
-		cout<<"elimino sprite"<<endl;
+		//cout<<"elimino sprite"<<endl;
 	}
 }

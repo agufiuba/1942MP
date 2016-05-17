@@ -31,7 +31,12 @@ void Isla::setPosicion(Posicion* posicion) {
 }
 
 void Isla::vivir(int x, int y) {
-	posicion->mover(0, -3);
+
+	if (x <= 0 && y <= 0) {
+		posicion->mover(0, -3);
+	} else {
+		posicion->mover(x,y);
+	}
 	islaTxt->render( posicion->getX(), posicion->getYsdl() );
 }
 
@@ -46,3 +51,7 @@ int Isla::getY(){return 0;}
 void Isla::inicializoVueltereta(){}
 
 bool Isla::aunVive() {return true;}
+
+Posicion* Isla::getPosicion() {
+	return posicion;
+}

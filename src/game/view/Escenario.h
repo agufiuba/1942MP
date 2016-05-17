@@ -68,7 +68,7 @@ private:
 	void printErrorSDL(string error);
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
-//	void setFondosVivibles();
+	void setFondosVivibles(int x, int y);
 	void limpiarMemoria();
 	void limpiarFondosVivibles();
 	void configurarFondosVivibles();

@@ -133,6 +133,12 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir(0, 0);
+		// TODO: Dejar comentado
+		/*
+		if (i == 1) {
+			fondosVivibles[i]->getPosicion()->print();
+		}
+		*/
 	}
 	myControl->hacerVivir();
 	controllers->hacerVivir();
@@ -192,9 +198,16 @@ void Escenario::configurarAvionAmigo(PlayerData* playerData){
 }
 
 void Escenario::configurarMiAvion(PlayerData* playerData){
-	cout<<"Avion Config: "<<gc->avion->avionSpriteID<<endl;
   Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
   myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
+}
+
+void Escenario::setFondosVivibles(int x, int y) {
+
+	for (int i = 0; i < fondosVivibles.size(); i++) {
+		fondosVivibles[i]->vivir(x,y);
+	}
+
 }
 
 SDL_Event* Escenario::run() {
@@ -240,10 +253,17 @@ SDL_Event* Escenario::run() {
 				//cout << p->x << "        "<< p->y<<endl;
 
 				while (!this->unCliente->sendDataPosicion(p));
-   			usleep(100);
+				usleep(100);
 
 				break;
 			}
+
+			//TODO: Si toco la letra k, se mueve el fondo a esa posicion.
+			//Refactorizar para que cuando se conecte, tome el y correspondiente
+			if (evento.key.keysym.sym == SDLK_k) {
+				setFondosVivibles(0,100);
+			}
+
 		}
 
 		isFinNivel = screensRecorridos >= CANTIDAD_SCREEN_TOTAL;

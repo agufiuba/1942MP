@@ -45,7 +45,7 @@ void Game::crearGameConfHardcodeada() {
 }
 
 void Game::recorroConfig(GameConf* game){
-
+/*
 	cout<<"CONFIGURACION"<<endl;
 	cout<<"AVION"<<endl;
 	cout<<game->avion->avionSpriteID<<endl;
@@ -66,6 +66,7 @@ void Game::recorroConfig(GameConf* game){
 		cout<<game->sprites[var]->id<<endl;
 		cout<<game->sprites[var]->path<<endl;
 	}
+	*/
 }
 
 void Game::cargarEscenario() {
@@ -99,7 +100,6 @@ void Game::cargarEscenario() {
     exitEven = escenario->run();
     delete escenario;
     this->unCliente->resetConfig();
-    cout << "****** Se inicia todo ***************** " <<endl;
     inicia = false;
   }
   // Notify server of player disconnection
