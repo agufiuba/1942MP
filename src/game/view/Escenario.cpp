@@ -144,6 +144,8 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	controllers->hacerVivir();
 
 	SDL_RenderPresent(gRenderer);
+	// set new offset on client
+	this->unCliente->setStageOffset( pos->getY() );
 }
 
 void Escenario::aplicarFPS(Uint32 start) {
@@ -221,6 +223,7 @@ SDL_Event* Escenario::run() {
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	actualizarEscenario(posicionEscenario);
+	setFondosVivibles(0, this->unCliente->getStageOffset() );
 
 	Uint32 start;
 	bool quit = false;
@@ -261,7 +264,7 @@ SDL_Event* Escenario::run() {
 			//TODO: Si toco la letra k, se mueve el fondo a esa posicion.
 			//Refactorizar para que cuando se conecte, tome el y correspondiente
 			if (evento.key.keysym.sym == SDLK_k) {
-				setFondosVivibles(0,100);
+				setFondosVivibles(0, 100);
 			}
 
 		}
