@@ -132,20 +132,20 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	fondoDePantalla->render(pos->getX(), pos->getYsdl());
 
 	for (int i = 0; i < fondosVivibles.size(); i++) {
-		fondosVivibles[i]->vivir(0, 0);
+		fondosVivibles[i]->vivir();
 		// TODO: Dejar comentado
-		/*
+/*
 		if (i == 1) {
 			fondosVivibles[i]->getPosicion()->print();
 		}
-		*/
+*/
 	}
 	myControl->hacerVivir();
 	controllers->hacerVivir();
 
 	SDL_RenderPresent(gRenderer);
 	// set new offset on client
-	this->unCliente->setStageOffset( pos->getY() );
+	this->unCliente->setStageOffset(pixelesRecorridos);
 }
 
 void Escenario::aplicarFPS(Uint32 start) {
@@ -206,8 +206,11 @@ void Escenario::configurarMiAvion(PlayerData* playerData){
 
 void Escenario::setFondosVivibles(int x, int y) {
 
+	//Mas desfasaje, mas abajo se ponen las islas
+	y = y + desfasajeConexion;
+
 	for (int i = 0; i < fondosVivibles.size(); i++) {
-		fondosVivibles[i]->vivir(x,y);
+		fondosVivibles[i]->vivir(x, y);
 	}
 
 }
@@ -220,9 +223,13 @@ SDL_Event* Escenario::run() {
 
 	int screensRecorridos = 0;
 	configurarFondosVivibles();
+	Posicion* posicionEscenario = new Posicion(0, 0);
 
-	Posicion* posicionEscenario = new Posicion(0, this->unCliente->getStageOffset());
-	setFondosVivibles(0, this->unCliente->getStageOffset() );
+	int offset = this->unCliente->getStageOffset();
+	if (offset != 0){
+		setFondosVivibles(0, offset);
+	}
+
 	actualizarEscenario(posicionEscenario);
 
 	Uint32 start;
@@ -253,18 +260,10 @@ SDL_Event* Escenario::run() {
 				p->x = myControl->getVivible()->getX();
 				p->y = myControl->getVivible()->getY();
 
-				//cout << p->x << "        "<< p->y<<endl;
-
 				while (!this->unCliente->sendDataPosicion(p));
 				usleep(100);
 
 				break;
-			}
-
-			//TODO: Si toco la letra k, se mueve el fondo a esa posicion.
-			//Refactorizar para que cuando se conecte, tome el y correspondiente
-			if (evento.key.keysym.sym == SDLK_k) {
-				setFondosVivibles(0, 100);
 			}
 
 		}
@@ -273,6 +272,7 @@ SDL_Event* Escenario::run() {
 
 		if (!isFinNivel) {
 
+			pixelesRecorridos -= VELOCIDAD_SCREEN;
 			if (posicionEscenario->getY() > SCREEN_HEIGHT) {
 				posicionEscenario->mover(0, VELOCIDAD_SCREEN);
 			} else {

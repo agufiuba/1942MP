@@ -30,13 +30,13 @@ void Isla::setPosicion(Posicion* posicion) {
 	this->posicion = posicion;
 }
 
-void Isla::vivir(int x, int y) {
+void Isla::vivir() {
+	posicion->mover(0, -3);
+	islaTxt->render( posicion->getX(), posicion->getYsdl() );
+}
 
-	if (x <= 0 && y <= 0) {
-		posicion->mover(0, -3);
-	} else {
-		posicion->mover(x,y);
-	}
+void Isla::vivir(int x, int y) {
+	posicion->mover(x,-y);
 	islaTxt->render( posicion->getX(), posicion->getYsdl() );
 }
 

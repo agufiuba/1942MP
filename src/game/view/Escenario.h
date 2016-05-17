@@ -48,6 +48,8 @@ private:
 	int CANTIDAD_SCREEN_TOTAL = 90;
 	int VELOCIDAD_SCREEN = -3;
 	int pixelesArecorrer = 4000;
+	int pixelesRecorridos = 0;
+	int desfasajeConexion = 70;
 
 	string rojo = "rojo";
 	string azul = "azul";

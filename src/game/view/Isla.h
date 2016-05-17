@@ -28,6 +28,7 @@ private:
 public:
 	Isla(SDL_Renderer* render, Posicion* posicion, SpriteConf* id);
 	virtual ~Isla();
+	void vivir();
 	void vivir(int x, int y);
 
 	string getId();
