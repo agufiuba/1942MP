@@ -197,6 +197,17 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	theMutex.unlock();
 
 	if (createPlayer) {
+	  // if reached max clients, release a deactivated client
+	  if( this->players.size() == this->maxClientCount ) {
+	    for ( map<int, Player*>::iterator it = this->players.begin();
+		  it != this->players.end(); ++it) {
+	      if( !( it->second->isActive() ) ) {
+		delete it->second;
+		this->players.erase( it );
+		break;
+	      }
+	    }
+	  }
 		// Add new player
 		Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY);
 		theMutex.lock();
