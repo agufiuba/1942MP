@@ -271,7 +271,7 @@ void Server::createPlayers() {
 		  // send stage offset to player
 		  this->sendCurrentStageOffset( it2->first );
 		}
-
+	    }
 		// send other players data
 		for (map<int, Player*>::iterator it = this->players.begin();
 				it != this->players.end(); ++it) {
@@ -288,7 +288,6 @@ void Server::createPlayers() {
 			delete player;
 			delete tmt;
 		}
-	    }	
 		// activate player
 		it2->second->activate();
 		it2++;

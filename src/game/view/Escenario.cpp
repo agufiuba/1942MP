@@ -221,9 +221,9 @@ SDL_Event* Escenario::run() {
 	int screensRecorridos = 0;
 	configurarFondosVivibles();
 
-	Posicion* posicionEscenario = new Posicion(0, 0);
-	actualizarEscenario(posicionEscenario);
+	Posicion* posicionEscenario = new Posicion(0, this->unCliente->getStageOffset());
 	setFondosVivibles(0, this->unCliente->getStageOffset() );
+	actualizarEscenario(posicionEscenario);
 
 	Uint32 start;
 	bool quit = false;
