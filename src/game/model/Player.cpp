@@ -5,7 +5,7 @@ Player::Player( string name, string color, int x, int y ) {
   this->color = color;
   this->x = x;
   this->y = y;
-  this->active = true;
+  this->active = false;
 }
 
 Player::~Player() {}
@@ -36,6 +36,10 @@ void Player::setY(int y){
 
 bool Player::isActive() {
   return this->active;
+}
+
+void Player::activate() {
+  this->active = true;
 }
 
 void Player::deactivate() {

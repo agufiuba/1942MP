@@ -23,6 +23,7 @@ class Client {
     bool received;
     bool playerOk;
     Logger* logger;
+    int stageOffset;
     PlanesActives* planes;
 	vector<ElementoConf*> elementos;
 	vector<SpriteConf*> sprites;
@@ -46,6 +47,7 @@ class Client {
     //  vector<Evento*> getEventos();
     void sendCycle();
     bool sendData( PlayerData* data );
+    bool sendStageData();
     bool sendDataPosicion( PlayerData* data);
     PlanesActives* getPlanesActives();
     bool isPlayerOk();
@@ -60,5 +62,7 @@ class Client {
     bool reset;
     bool sendGetConfig();
     void resetConfig();
+    void setStageOffset( int offset );
+    int getStageOffset();
 };
 #endif
