@@ -207,6 +207,7 @@ void Escenario::configurarMiAvion(PlayerData* playerData){
 void Escenario::setFondosVivibles(int x, int y) {
 
 	//Mas desfasaje, mas abajo se ponen las islas
+	//TODO: Comentar esta linea
 	y = y + desfasajeConexion;
 
 	for (int i = 0; i < fondosVivibles.size(); i++) {
@@ -227,7 +228,11 @@ SDL_Event* Escenario::run() {
 
 	int offset = this->unCliente->getStageOffset();
 	if (offset != 0){
+		//TODO: comentar esta linea
 		setFondosVivibles(0, offset);
+		//TODO: descomentar estas lineas
+		//pixelesRecorridos = offset + desfasajeConexion;
+		//setFondosVivibles(0, pixelesRecorridos);
 	}
 
 	actualizarEscenario(posicionEscenario);
