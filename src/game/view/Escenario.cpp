@@ -208,7 +208,7 @@ void Escenario::setFondosVivibles(int x, int y) {
 
 	//Mas desfasaje, mas abajo se ponen las islas
 	//TODO: Comentar esta linea
-	y = y + desfasajeConexion;
+//	y = y + desfasajeConexion;
 
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir(x, y);
@@ -225,16 +225,21 @@ SDL_Event* Escenario::run() {
 	int screensRecorridos = 0;
 	configurarFondosVivibles();
 	Posicion* posicionEscenario = new Posicion(0, 0);
-
-	int offset = this->unCliente->getStageOffset();
-	if (offset != 0){
-		//TODO: comentar esta linea
-		setFondosVivibles(0, offset);
-		//TODO: descomentar estas lineas
-		//pixelesRecorridos = offset + desfasajeConexion;
-		//setFondosVivibles(0, pixelesRecorridos);
+	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
+	if(!this->unCliente->reinicia){
+		int offset = this->unCliente->getStageOffset();
+		cout<<"offset: "<<offset<<endl;
+		if (offset != 0){
+			cout<<""<<endl;
+			//TODO: comentar esta linea
+	//		setFondosVivibles(0, offset);
+			//TODO: descomentar estas lineas
+			pixelesRecorridos = offset + desfasajeConexion;
+			setFondosVivibles(0, pixelesRecorridos);
+		}
+	}else{
+		usleep(700000);
 	}
-
 	actualizarEscenario(posicionEscenario);
 
 	Uint32 start;
@@ -250,6 +255,7 @@ SDL_Event* Escenario::run() {
 		if (this->unCliente->reset) {
 			SDL_Event* eventReset = new SDL_Event();
 			eventReset->key.keysym.sym = SDLK_r;
+			this->unCliente->setStageOffset(0);
 			return eventReset;
 		}
 

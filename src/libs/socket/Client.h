@@ -60,6 +60,7 @@ class Client {
     bool isConfigComplete();
     void setConfigComplete(bool);
     bool reset;
+    bool reinicia;
     bool sendGetConfig();
     void resetConfig();
     void setStageOffset( int offset );

@@ -75,6 +75,7 @@ void Game::cargarEscenario() {
   bool inicia =true;
   while (exitEven->key.keysym.sym == SDLK_r || this->unCliente->reset) {
 	if (!inicia){
+		this->unCliente->reinicia = true;
 		cout<<"Se reinicio"<<endl;
 	    this->unCliente->setConfigComplete(false);
 		this->unCliente->sendGetConfig();
