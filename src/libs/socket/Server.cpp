@@ -174,8 +174,8 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 		if (selectedName == it->second->getName()) {
 			createPlayer = false;
 			validName = "N";
-			// if player with such name is not active
-			if (!(it->second->isActive())) {
+			// if running game and player with such name is not active
+			if ( this->running && !(it->second->isActive())) {
 				// resume player game
 				selectedColor = it->second->getColor();
 				posicionInicialX = it->second->getX();
@@ -316,6 +316,8 @@ void Server::sendPlanesActives(int cfd){
   mutex theMutex;
   theMutex.lock();
   for( map<int, Player*>::iterator it = this->players.begin(); it != this->players.end();  ++it ) {
+    // if game is running and player is inactive, skip 
+    if( this->running && !( it->second->isActive() ) ) continue;
     // if already a player with that color
     if( it->second->getColor() == "azul" ) {
       planes->blue = false;
