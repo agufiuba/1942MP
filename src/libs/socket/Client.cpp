@@ -455,3 +455,7 @@ void Client::setStageOffset( int offset ) {
 int Client::getStageOffset() {
   return this->stageOffset;
 }
+
+bool Client::isConnected() {
+  return this->connected;
+}
