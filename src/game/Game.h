@@ -36,7 +36,6 @@ class Game {
 
     void loadConnectionScreen();
     void loadValidationScreen();
-    void loadselectionPlane();
     void loadTimeoutScreen();
     void loadWaitingGame();
     void sendDataPlayer();

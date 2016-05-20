@@ -399,7 +399,7 @@ void Game::loadValidationScreen() {
 	    this->yellowPlaneActive = planes->yellow;
 	    this->clientId = "";
 	    this->planeId = "";
-	    this->loadselectionPlane();
+	    this->loadselectionPlane(this->unCliente->isPlayerOk());
 	    endSelectingPlane = this->unCliente->isPlayerOk();
 	  }
 	  this->loadWaitingGame();
@@ -496,7 +496,7 @@ void Game::setPlanesActives(bool blue,bool red,bool green,bool yellow){
   this->yellowPlaneActive = yellow;
 }
 
-void Game::loadselectionPlane() {
+void Game::loadselectionPlane(bool selectedOk) {
   SDL_Event e;
   Timer timer;
 
@@ -507,6 +507,8 @@ void Game::loadselectionPlane() {
   initialScreen->loadText("clientText", "  Jugador: ", { 0, 255, 100 });
   initialScreen->loadText("planeText", " Avion: ", { 0, 255, 100 });
   initialScreen->loadText("accept", "CONTINUAR");
+
+  initialScreen->loadText("rechazo", " Rechazado por maximo clientes", { 255, 0, 0 });
 
   if (bluePlaneActive){
     initialScreen->loadTexture("bluePlane", "avionAzul.bmp");
@@ -693,6 +695,9 @@ void Game::loadselectionPlane() {
     }
     if (yellowPlaneActive){
       initialScreen->renderTexture("yellowPlane", inputYellowPlaneIdPosX, inputPlaneIdPosY);
+    }
+    if (!selectedOk){
+      initialScreen->renderTexture("rechazo", logoCenter, 900);
     }
 
     // Set prompt color

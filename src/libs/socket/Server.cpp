@@ -161,84 +161,90 @@ void Server::updatePlayerStatus( PlayerStatus* data, int cfd ) {
 }
 
 void Server::addPlayer(PlayerData* data, int cfd) {
-  string validName = "Y", validColor = "Y";
-  mutex theMutex;
-  string selectedName(data->name);
-  string selectedColor(data->color);
-  bool createPlayer = true;
+	string validName = "Y", validColor = "Y";
+	mutex theMutex;
+	string selectedName(data->name);
+	string selectedColor(data->color);
+	bool createPlayer = true;
+	bool encontrePlayer = false;
+	theMutex.lock();
 
-  theMutex.lock();
-  for (map<int, Player*>::iterator it = this->players.begin();
-      it != this->players.end(); ++it) {
-    // if already a player with that name
-    if (selectedName == it->second->getName()) {
-      createPlayer = false;
-      validName = "N";
-      // if running game and player with such name is not active
-      if ( this->running && !(it->second->isActive())) {
-	// resume player game
-	selectedColor = it->second->getColor();
-	posicionInicialX = it->second->getX();
-	posicionInicialY = it->second->getY();
-	delete it->second;
-	this->players.erase(it);
-	createPlayer = true;
-	validName = "R";
-	validColor = "R";
-	break;
-      }
-    }
-    // if already a player with that color
-    if (selectedColor == it->second->getColor()) {
-      createPlayer = false;
-      validColor = "N";
-    }
-  }
-  theMutex.unlock();
+	for (map<int, Player*>::iterator it = this->players.begin() ; it != this->players.end() ; ++it) {
+		// if already a player with that name
+		if (selectedName == it->second->getName()) {
+			createPlayer = false;
+			validName = "N";
+			// if running game and player with such name is not active
+			if ( this->running && !(it->second->isActive())) {
+				// resume player game
+				selectedColor = it->second->getColor();
+				posicionInicialX = it->second->getX();
+				posicionInicialY = it->second->getY();
+				delete it->second;
+				this->players.erase(it);
+				createPlayer = true;
+				validName = "R";
+				validColor = "R";
+				break;
+			}
+		}
 
-  if (createPlayer) {
-    // if reached max clients, release a deactivated client
-    /*  if( this->players.size() == this->maxClientCount ) {
-	for ( map<int, Player*>::iterator it = this->players.begin();
-	it != this->players.end(); ++it) {
-	if( !( it->second->isActive() ) ) {
-	delete it->second;
-	this->players.erase( it );
-	break;
+		// if already a player with that color
+		if (selectedColor == it->second->getColor()) {
+			createPlayer = false;
+			validColor = "N";
+		}
 	}
+	theMutex.unlock();
+
+
+	if (createPlayer && (this->players.size() < this->maxClientCount) ) {
+	  // if reached max clients, release a deactivated client
+	/*  if( this->players.size() == this->maxClientCount ) {
+	    for ( map<int, Player*>::iterator it = this->players.begin();
+		  it != this->players.end(); ++it) {
+	      if( !( it->second->isActive() ) ) {
+		delete it->second;
+		this->players.erase( it );
+		break;
+	      }
+	    }
+	  }*/
+		// Add new player
+		cout<<"Creo Jugador"<<endl;
+		Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY);
+		theMutex.lock();
+		this->players[cfd] = p;
+		posicionInicialX += 100;
+		theMutex.unlock();
+	} else {
+		cout<<"No creo jugador"<<endl;
+		createPlayer = false;
+			validName = "N";
+			validColor = "N";
 	}
-	}*/
-    // Add new player
-    Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY);
-    theMutex.lock();
-    this->players[cfd] = p;
-    theMutex.unlock();
-    posicionInicialX += 100;
-  }
+	// Create response
+	PlayerData* response = new PlayerData;
+	// Fill response struct
+	strcpy(response->name, validName.c_str());
+	strcpy(response->color, validColor.c_str());
 
-  // Create response
-  PlayerData* response = new PlayerData;
-  // Fill response struct
-  strcpy(response->name, validName.c_str());
-  strcpy(response->color, validColor.c_str());
+	cout<<"name :"<<validName<<"  .Color: "<<validColor<<endl;
+	Transmitter* tmt = new Transmitter(cfd, this->logger);
+	if (!(tmt->sendData(response))) {
+		DEBUG_WARN("No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
+		this->logger->error("No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
+	}
+	delete response;
+	delete tmt;
 
-  Transmitter* tmt = new Transmitter(cfd, this->logger);
-  if (!(tmt->sendData(response))) {
-    DEBUG_WARN("No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
-    this->logger->error(
-	"No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
-  }
-
-  delete response;
-  delete tmt;
-
-  theMutex.lock();
-  if (this->players.size() == this->maxClientCount) {
-    cout << "send players" << endl;
-    this->createPlayers();
-    if( !( this->running ) ) this->running = true;
-  }
-  theMutex.unlock();
+	theMutex.lock();
+	if (createPlayer && this->players.size() == this->maxClientCount) {
+		cout << "send players" << endl;
+		this->createPlayers();
+		if( !( this->running ) ) this->running = true;
+	}
+	theMutex.unlock();
 }
 
 void Server::queryCurrentStageOffset() {
