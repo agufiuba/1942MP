@@ -100,6 +100,10 @@ void Game::cargarEscenario() {
     unCliente->setHandler(escenario->getHandler());
     exitEven = escenario->run();
     delete escenario;
+    if( !( this->unCliente->isConnected() ) ) {
+      this->loadTimeoutScreen();
+      break;
+    }
     this->unCliente->resetConfig();
     inicia = false;
   }
@@ -111,7 +115,7 @@ void Game::start() {
   if( this->sdlHandler->createWindow( this->windowTitle.c_str(), this->windowWidth, this->windowHeight ) ) {
     this->running = true;
     this->loadConnectionScreen();
-    cargarEscenario();
+    this->cargarEscenario();
   }
 }
 
@@ -429,20 +433,60 @@ void Game::loadValidationScreen() {
     }
 
     if (!connected) {
-      connectionFailed = !this->unCliente->connectToServer(); //TODO: Revisar la devolucion en false, devuelve true
+      connectionFailed = !this->unCliente->connectToServer();
       connected = true;
     }
-
-    /*
-       if (connectionFailed) {
-       cout << "failed" << endl;
-       } else {
-       cout << "connected" << endl;
-       } */
-
   }
 }
 
+void Game::loadTimeoutScreen() {
+  if( !( this->running ) ) return;
+  bool runningScreen = true;
+  SDL_Event e;
+  Timer timer;
+  string timeoutText = "Se ha perdido la conexion con el servidor...";
+
+  Screen* timeoutScreen = new Screen( this->sdlHandler );
+  timeoutScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
+  timeoutScreen->loadText( "timeout", timeoutText, { 255, 0, 0, 255 } );
+
+  int logoCenter = ( this->windowWidth - timeoutScreen->getTextureWidth( "logo" ) ) / 2;
+  int textCenter = logoCenter - 20;
+
+  // Enable text input
+  SDL_StartTextInput();
+
+  while( runningScreen ) {
+    timer.correr();
+    // Get events
+    while( this->sdlHandler->nextEvent( &e ) ) {
+      if( e.type == SDL_QUIT ) {
+	runningScreen = false;
+	this->running = false;
+	break;
+      }
+    }
+    // Set window background
+    this->sdlHandler->setWindowBG(0, 0, 0);
+
+    // Render logo
+    timeoutScreen->renderTexture( "logo", logoCenter, 90 );
+
+    // Render text textures
+    timeoutScreen->renderTexture( "timeout", textCenter, 305 );
+
+    //Update screen
+    this->sdlHandler->updateWindow();
+
+    if( timer.tiempoActual() < 1000 / this->fps ){
+      SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
+    }
+  }
+
+  //Disable text input
+  SDL_StopTextInput();
+  delete timeoutScreen;
+}
 
 void Game::setPlanesActives(bool blue,bool red,bool green,bool yellow){
   this->bluePlaneActive = blue;
