@@ -99,11 +99,12 @@ void Game::cargarEscenario() {
 
     unCliente->setHandler(escenario->getHandler());
     exitEven = escenario->run();
-    delete escenario;
     if( !( this->unCliente->isConnected() ) ) {
       this->loadTimeoutScreen();
+      delete escenario;
       break;
     }
+    delete escenario;
     this->unCliente->resetConfig();
     inicia = false;
   }
@@ -444,14 +445,14 @@ void Game::loadTimeoutScreen() {
   bool runningScreen = true;
   SDL_Event e;
   Timer timer;
-  string timeoutText = "Se ha perdido la conexion con el servidor...";
+  string timeoutText = "Se ha perdido la conexion con el servidor";
 
   Screen* timeoutScreen = new Screen( this->sdlHandler );
   timeoutScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   timeoutScreen->loadText( "timeout", timeoutText, { 255, 0, 0, 255 } );
 
   int logoCenter = ( this->windowWidth - timeoutScreen->getTextureWidth( "logo" ) ) / 2;
-  int textCenter = logoCenter - 20;
+  int textCenter = logoCenter - 150;
 
   // Enable text input
   SDL_StartTextInput();
