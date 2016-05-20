@@ -34,7 +34,7 @@ Client::Client( string ip, string puerto ) {
 }
 
 Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlayersControllers) {
-	this->pc = handlerPlayersControllers;
+  this->pc = handlerPlayersControllers;
   this->socketFD = 0;
   this->connected = false;
   this->logger = Logger::instance();
@@ -49,14 +49,14 @@ Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlay
 Client::~Client() {}
 
 void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers){
-	this->pc = handlerPlayersControllers;
+  this->pc = handlerPlayersControllers;
 }
 
 bool Client::allPlayersReady(){
-	if (this->configComplete){
-		return (allPlayers.size() == this->config->maxClients);
-	}
-	return false;
+  if (this->configComplete){
+    return (allPlayers.size() == this->config->maxClients);
+  }
+  return false;
 }
 
 bool Client::connectToServer() {
@@ -182,148 +182,147 @@ void Client::checkAliveSend() {
 }
 
 void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
-	timeval timeout;
-	timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
-	timeout.tv_usec = 0;
-	bool received;
-	char id[3];
+  timeval timeout;
+  timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
+  timeout.tv_usec = 0;
+  char id[3];
+  int bytesReceived;
 
-	int numBytesRead;
+  // Create transmitter
+  Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
 
-	// Create transmitter
-	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
+  while (this->connected) {
+    // seteo el timeout de recepcion de mensajes
+    if (setsockopt(this->socketFD, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,
+	  sizeof(timeout)) < 0) {
+      cout << "Error sockopt" << endl;
+      exit(1);
+    }
 
-	while (this->connected) {
-		// seteo el timeout de recepcion de mensajes
-		if (setsockopt(this->socketFD, SOL_SOCKET, SO_RCVTIMEO, (char*) &timeout,
-				sizeof(timeout)) < 0) {
-			cout << "Error sockopt" << endl;
-			exit(1);
-		}
+    // Get id of next data to receive
+    bytesReceived = tmt->receiveData(id, sizeof(id));
 
-		// Get id of next data to receive
-		received = tmt->receiveData(id, sizeof(id), numBytesRead);
+    if( bytesReceived > 0 ) {
+      string dataID(id);
+      // Receive data type based on fetched dataID
+      if (dataID == "PD") {
+	PlayerData* data = new PlayerData;
 
-		if (received) {
-			string dataID(id);
-			// Receive data type based on fetched dataID
-			if (dataID == "PD") {
-				PlayerData* data = new PlayerData;
+	if ((bytesReceived = tmt->receiveData(data)) > 0) {
+	  // Process received data
+	  cout << "Nombre del jugador: " << string(data->name) << endl;
+	  cout << "Color del jugador: " << string(data->color) << endl;
+	  string name(data->name);
+	  string color(data->color);
+	  bool newPlayer = ( name == "Y" && color == "Y" );
+	  bool resumePlayer = ( name == "R" && color == "R" );
+	  if ( newPlayer || resumePlayer ) {
+	    this->playerOk = true;
+	  } else {
+	    this->playerOk = false;
+	  }
+	}
+	delete data;
 
-				if (received = tmt->receiveData(data, numBytesRead)) {
-					// Process received data
-					cout << "Nombre del jugador: " << string(data->name) << endl;
-					cout << "Color del jugador: " << string(data->color) << endl;
-					string name(data->name);
-					string color(data->color);
-					bool newPlayer = ( name == "Y" && color == "Y" );
-					bool resumePlayer = ( name == "R" && color == "R" );
-					if ( newPlayer || resumePlayer ) {
-						this->playerOk = true;
-					} else {
-						this->playerOk = false;
-					}
-				}
-				delete data;
+      } else if (dataID == "PA") {
 
-			} else if (dataID == "PA") {
-
-				PlanesActives* data = new PlanesActives;
-				if (received = tmt->receiveData(data, numBytesRead)) {
-					this->planes = data;
-				}
-
-			} else if (dataID == "EV") {
-				Evento* e = new Evento();
-
-				if (received = tmt->receiveData(e, numBytesRead)) {
-					cout << "Evento: " << e->value << endl;
-					cout << "PlayerName: " << e->name << endl;
-					if (e->value == 'T'){
-						this->reset =true;
-					}else {
-						this->pc->mover(e->name, e->value);
-					}
-
-				}
-			} else if (dataID == "PR") {
-				PlayerData* data = new PlayerData;
-				if (received = tmt->receiveData(data, numBytesRead)) {
-					// Process received data
-					cout << "READY -->Nombre del jugador: " << string(data->name) << endl;
-					cout << "READY -->Color del jugador: " << string(data->color) << endl;
-					cout << "READY -->Posicion X del jugador: " << data->x << endl;
-					cout << "READY -->Posicion Y del jugador: " << data->y << endl;
-					this->allPlayers.push_back(data);
-				}
-			} else if (dataID == "AV") {
-				AvionConf* data = new AvionConf;
-				if (received = tmt->receiveData(data)) {
-					this->config->avion = data;
-//					cout<<data->avionSpriteID<<endl;
-//					cout<<data->disparosSpriteID<<endl;
-//					cout<<data->velocidadDesplazamiento<<endl;
-				}
-			} else if (dataID == "EL") {
-				ElementoConf* data = new ElementoConf;
-				if (received = tmt->receiveData(data)) {
-					this->elementos.push_back(data);
-//					cout<<data->spriteID <<endl;
-//					cout<<data->x <<endl;
-//					cout<<data->y <<endl;
-				}
-			} else if (dataID == "ES") {
-				EscenarioConf* data = new EscenarioConf;
-				if (received = tmt->receiveData(data)) {
-					this->config->escenario = data;
-//					cout<<data->alto <<endl;
-//					cout<<data->ancho <<endl;
-//					cout<<data->fondo <<endl;
-				}
-			} else if (dataID == "SC") {
-				SpriteConf* data = new SpriteConf;
-				if (received = tmt->receiveData(data)) {
-					this->sprites.push_back(data);
-//					cout<<data->path <<endl;
-//					cout<<data->id <<endl;
-//					cout<<data->alto <<endl;
-//					cout<<data->ancho <<endl;
-				}
-			} else if (dataID == "FN") {
-				char data[1];
-				if (received = tmt->receiveData(data)) {
-					int cant = atoi(data);
-//					cout<<cant<<endl;
-					this->config->maxClients = cant;
-					this->config->elementos = this->elementos;
-					this->config->sprites = this->sprites;
-					this->configComplete = true;
-				}
-			} else if ( dataID == "SQ" ) {
-				this->sendStageData();
-			} else if ( dataID == "SD" ) {
-				StageData* data = new StageData;
-				if (received = tmt->receiveData( data, numBytesRead )) {
-				  cout << "Current stage offset: " << data->offset << endl;
-				  this->stageOffset = data->offset; 
-				}
-			}
-		  if ( numBytesRead == -1 ) {
-		    close( socketFD );
-		    this->logger->warn( CONNECTION_TIMEOUT );
-		    DEBUG_WARN( CONNECTION_TIMEOUT );
-		  }
-		}
-
-		if (!(received)) {
-			this->logger->warn( CONNECTION_LOST);
-			DEBUG_WARN(CONNECTION_LOST);
-			this->connected = false;
-			close(this->socketFD);
-		}
+	PlanesActives* data = new PlanesActives;
+	if ((bytesReceived = tmt->receiveData(data)) > 0) {
+	  this->planes = data;
 	}
 
-	delete tmt;
+      } else if (dataID == "EV") {
+	Evento* e = new Evento();
+
+	if ((bytesReceived = tmt->receiveData(e)) > 0) {
+	  cout << "Evento: " << e->value << endl;
+	  cout << "PlayerName: " << e->name << endl;
+	  if (e->value == 'T'){
+	    this->reset =true;
+	  }else {
+	    this->pc->mover(e->name, e->value);
+	  }
+
+	}
+      } else if (dataID == "PR") {
+	PlayerData* data = new PlayerData;
+	if ((bytesReceived = tmt->receiveData(data)) > 0) {
+	  // Process received data
+	  cout << "READY -->Nombre del jugador: " << string(data->name) << endl;
+	  cout << "READY -->Color del jugador: " << string(data->color) << endl;
+	  cout << "READY -->Posicion X del jugador: " << data->x << endl;
+	  cout << "READY -->Posicion Y del jugador: " << data->y << endl;
+	  this->allPlayers.push_back(data);
+	}
+      } else if (dataID == "AV") {
+	AvionConf* data = new AvionConf;
+	if ((bytesReceived = tmt->receiveData(data)) > 0) {
+	  this->config->avion = data;
+	  //					cout<<data->avionSpriteID<<endl;
+	  //					cout<<data->disparosSpriteID<<endl;
+	  //					cout<<data->velocidadDesplazamiento<<endl;
+	}
+      } else if (dataID == "EL") {
+	ElementoConf* data = new ElementoConf;
+	if ((bytesReceived = tmt->receiveData(data)) > 0) {
+	  this->elementos.push_back(data);
+	  //					cout<<data->spriteID <<endl;
+	  //					cout<<data->x <<endl;
+	  //					cout<<data->y <<endl;
+	}
+      } else if (dataID == "ES") {
+	EscenarioConf* data = new EscenarioConf;
+	if ((bytesReceived = tmt->receiveData(data)) > 0) {
+	  this->config->escenario = data;
+	  //					cout<<data->alto <<endl;
+	  //					cout<<data->ancho <<endl;
+	  //					cout<<data->fondo <<endl;
+	}
+      } else if (dataID == "SC") {
+	SpriteConf* data = new SpriteConf;
+	if ((bytesReceived = tmt->receiveData(data)) > 0) {
+	  this->sprites.push_back(data);
+	  //					cout<<data->path <<endl;
+	  //					cout<<data->id <<endl;
+	  //					cout<<data->alto <<endl;
+	  //					cout<<data->ancho <<endl;
+	}
+      } else if (dataID == "FN") {
+	char data[1];
+	if ((bytesReceived = tmt->receiveData(data)) > 0) {
+	  int cant = atoi(data);
+	  //					cout<<cant<<endl;
+	  this->config->maxClients = cant;
+	  this->config->elementos = this->elementos;
+	  this->config->sprites = this->sprites;
+	  this->configComplete = true;
+	}
+      } else if ( dataID == "SQ" ) {
+	this->sendStageData();
+      } else if ( dataID == "SD" ) {
+	StageData* data = new StageData;
+	if ((bytesReceived = tmt->receiveData( data )) > 0) {
+	  cout << "Current stage offset: " << data->offset << endl;
+	  this->stageOffset = data->offset; 
+	}
+      }
+    }
+
+    // Check peer disconnection or timeout
+    if ( bytesReceived <= 0 ) {
+      this->connected = false;
+      close(this->socketFD);
+      if( bytesReceived == 0 ) {
+	this->logger->warn( CONNECTION_LOST);
+	DEBUG_WARN(CONNECTION_LOST);
+      } else {
+	this->logger->warn( CONNECTION_TIMEOUT );
+	DEBUG_WARN( CONNECTION_TIMEOUT );
+      }
+    }
+  }
+
+  delete tmt;
 }
 
 bool Client::sendData( Evento* e ) {
@@ -407,11 +406,11 @@ void Client::closeConnection() {
 }
 
 PlanesActives* Client::getPlanesActives(){
-	return this->planes;
+  return this->planes;
 }
 
 bool Client::isPlayerOk(){
-	return this->playerOk;
+  return this->playerOk;
 }
 
 vector<PlayerData*> Client::getPlayers() {
@@ -419,34 +418,34 @@ vector<PlayerData*> Client::getPlayers() {
 }
 
 GameConf* Client::getConfig(){
-	return this->config;
+  return this->config;
 }
 
 bool Client::isConfigComplete(){
-	return this->configComplete;
+  return this->configComplete;
 }
 
 void Client::setConfigComplete(bool config){
-	this->configComplete = config;
+  this->configComplete = config;
 }
 
 bool Client::sendGetConfig(){
-	  this->received = false;
-	  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
-	  return tmt->sendGetConfig();
+  this->received = false;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  return tmt->sendGetConfig();
 }
 
 void Client::resetConfig(){
-	//delete this->config;
-	this->config = new GameConf;
-	while(this->elementos.size() > 0){
-		this->elementos.pop_back();
-		//cout<<"elimino elemento"<<endl;
-	}
-	while(this->sprites.size() > 0){
-		this->sprites.pop_back();
-		//cout<<"elimino sprite"<<endl;
-	}
+  //delete this->config;
+  this->config = new GameConf;
+  while(this->elementos.size() > 0){
+    this->elementos.pop_back();
+    //cout<<"elimino elemento"<<endl;
+  }
+  while(this->sprites.size() > 0){
+    this->sprites.pop_back();
+    //cout<<"elimino sprite"<<endl;
+  }
 }
 
 void Client::setStageOffset( int offset ) {
@@ -455,4 +454,8 @@ void Client::setStageOffset( int offset ) {
 
 int Client::getStageOffset() {
   return this->stageOffset;
+}
+
+bool Client::isConnected() {
+  return this->connected;
 }

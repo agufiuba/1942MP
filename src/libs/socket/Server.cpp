@@ -161,84 +161,84 @@ void Server::updatePlayerStatus( PlayerStatus* data, int cfd ) {
 }
 
 void Server::addPlayer(PlayerData* data, int cfd) {
-	string validName = "Y", validColor = "Y";
-	mutex theMutex;
-	string selectedName(data->name);
-	string selectedColor(data->color);
-	bool createPlayer = true;
+  string validName = "Y", validColor = "Y";
+  mutex theMutex;
+  string selectedName(data->name);
+  string selectedColor(data->color);
+  bool createPlayer = true;
 
-	theMutex.lock();
-	for (map<int, Player*>::iterator it = this->players.begin();
-			it != this->players.end(); ++it) {
-		// if already a player with that name
-		if (selectedName == it->second->getName()) {
-			createPlayer = false;
-			validName = "N";
-			// if running game and player with such name is not active
-			if ( this->running && !(it->second->isActive())) {
-				// resume player game
-				selectedColor = it->second->getColor();
-				posicionInicialX = it->second->getX();
-				posicionInicialY = it->second->getY();
-				delete it->second;
-				this->players.erase(it);
-				createPlayer = true;
-				validName = "R";
-				validColor = "R";
-				break;
-			}
-		}
-		// if already a player with that color
-		if (selectedColor == it->second->getColor()) {
-			createPlayer = false;
-			validColor = "N";
-		}
+  theMutex.lock();
+  for (map<int, Player*>::iterator it = this->players.begin();
+      it != this->players.end(); ++it) {
+    // if already a player with that name
+    if (selectedName == it->second->getName()) {
+      createPlayer = false;
+      validName = "N";
+      // if running game and player with such name is not active
+      if ( this->running && !(it->second->isActive())) {
+	// resume player game
+	selectedColor = it->second->getColor();
+	posicionInicialX = it->second->getX();
+	posicionInicialY = it->second->getY();
+	delete it->second;
+	this->players.erase(it);
+	createPlayer = true;
+	validName = "R";
+	validColor = "R";
+	break;
+      }
+    }
+    // if already a player with that color
+    if (selectedColor == it->second->getColor()) {
+      createPlayer = false;
+      validColor = "N";
+    }
+  }
+  theMutex.unlock();
+
+  if (createPlayer) {
+    // if reached max clients, release a deactivated client
+    /*  if( this->players.size() == this->maxClientCount ) {
+	for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end(); ++it) {
+	if( !( it->second->isActive() ) ) {
+	delete it->second;
+	this->players.erase( it );
+	break;
 	}
-	theMutex.unlock();
-
-	if (createPlayer) {
-	  // if reached max clients, release a deactivated client
-	/*  if( this->players.size() == this->maxClientCount ) {
-	    for ( map<int, Player*>::iterator it = this->players.begin();
-		  it != this->players.end(); ++it) {
-	      if( !( it->second->isActive() ) ) {
-		delete it->second;
-		this->players.erase( it );
-		break;
-	      }
-	    }
-	  }*/
-		// Add new player
-		Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY);
-		theMutex.lock();
-		this->players[cfd] = p;
-		theMutex.unlock();
-		posicionInicialX += 100;
 	}
+	}*/
+    // Add new player
+    Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY);
+    theMutex.lock();
+    this->players[cfd] = p;
+    theMutex.unlock();
+    posicionInicialX += 100;
+  }
 
-	// Create response
-	PlayerData* response = new PlayerData;
-	// Fill response struct
-	strcpy(response->name, validName.c_str());
-	strcpy(response->color, validColor.c_str());
+  // Create response
+  PlayerData* response = new PlayerData;
+  // Fill response struct
+  strcpy(response->name, validName.c_str());
+  strcpy(response->color, validColor.c_str());
 
-	Transmitter* tmt = new Transmitter(cfd, this->logger);
-	if (!(tmt->sendData(response))) {
-		DEBUG_WARN("No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
-		this->logger->error(
-				"No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
-	}
+  Transmitter* tmt = new Transmitter(cfd, this->logger);
+  if (!(tmt->sendData(response))) {
+    DEBUG_WARN("No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
+    this->logger->error(
+	"No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
+  }
 
-	delete response;
-	delete tmt;
+  delete response;
+  delete tmt;
 
-	theMutex.lock();
-	if (this->players.size() == this->maxClientCount) {
-		cout << "send players" << endl;
-		this->createPlayers();
-		if( !( this->running ) ) this->running = true;
-	}
-	theMutex.unlock();
+  theMutex.lock();
+  if (this->players.size() == this->maxClientCount) {
+    cout << "send players" << endl;
+    this->createPlayers();
+    if( !( this->running ) ) this->running = true;
+  }
+  theMutex.unlock();
 }
 
 void Server::queryCurrentStageOffset() {
@@ -248,7 +248,7 @@ void Server::queryCurrentStageOffset() {
   }
 
   for( map<int, Player*>::iterator it = this->players.begin();
-       it != this->players.end(); ++it ) {
+      it != this->players.end(); ++it ) {
     if( it->second->isActive() ) {
       Transmitter* tmt = new Transmitter( it->first, this->logger );
       tmt->sendDataID( "SQ" );
@@ -266,43 +266,43 @@ void Server::sendCurrentStageOffset( int clientFD ) {
 }
 
 void Server::createPlayers() {
-	map<int, Player*>::iterator it2 = this->players.begin();
+  map<int, Player*>::iterator it2 = this->players.begin();
 
-	for (int i = 0; i < this->players.size(); i++) {
-	    // if player not active
-	    if( !( it2->second->isActive() ) ) {
-		// send stage config
-		this->sendConf(it2->first);
+  for (int i = 0; i < this->players.size(); i++) {
+    // if player not active
+    if( !( it2->second->isActive() ) ) {
+      // send stage config
+      this->sendConf(it2->first);
 
-		// if game already started
-		if( this->running ) {
-		  // get stage offset
-		  this->queryCurrentStageOffset();
+      // if game already started
+      if( this->running ) {
+	// get stage offset
+	this->queryCurrentStageOffset();
 
-		  // send stage offset to player
-		  this->sendCurrentStageOffset( it2->first );
-		}
-	    }
-		// send other players data
-		for (map<int, Player*>::iterator it = this->players.begin();
-				it != this->players.end(); ++it) {
-			Transmitter* tmt = new Transmitter(it2->first, this->logger);
+	// send stage offset to player
+	this->sendCurrentStageOffset( it2->first );
+      }
+    }
+    // send other players data
+    for (map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end(); ++it) {
+      Transmitter* tmt = new Transmitter(it2->first, this->logger);
 
-			PlayerData* player = new PlayerData;
-			strcpy(player->name, it->second->getName().c_str());
-			strcpy(player->color, it->second->getColor().c_str());
-			player->x = it->second->getX();
-			player->y = it->second->getY();
+      PlayerData* player = new PlayerData;
+      strcpy(player->name, it->second->getName().c_str());
+      strcpy(player->color, it->second->getColor().c_str());
+      player->x = it->second->getX();
+      player->y = it->second->getY();
 
-			while (!tmt->sendData(player, "PR"));
+      while (!tmt->sendData(player, "PR"));
 
-			delete player;
-			delete tmt;
-		}
-		// activate player
-		it2->second->activate();
-		it2++;
-	}
+      delete player;
+      delete tmt;
+    }
+    // activate player
+    it2->second->activate();
+    it2++;
+  }
 }
 
 void Server::sendPlanesActives(int cfd){
@@ -347,20 +347,20 @@ void Server::sendConf(int cfd){
 
   AvionConf* avion = this->config->avion;
   if( !( tmt->sendData( avion ) ) ) {
-     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send avion" );
-     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send avion" );
-   }
+    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send avion" );
+    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send avion" );
+  }
 
   EscenarioConf* escenario = this->config->escenario;
   if( !( tmt->sendData( escenario ) ) ) {
-     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send escenario" );
-     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send escenario" );
-   }
+    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send escenario" );
+    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send escenario" );
+  }
 
   vector<ElementoConf*> elementos = this->config->elementos;
   for (int var = 0; var < elementos.size(); ++var) {
-	  ElementoConf* elemento = elementos[var];
-	  if( !( tmt->sendData( elemento ) ) ) {
+    ElementoConf* elemento = elementos[var];
+    if( !( tmt->sendData( elemento ) ) ) {
       DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send elementos" );
       this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send elementos" );
     }
@@ -368,17 +368,17 @@ void Server::sendConf(int cfd){
 
   vector<SpriteConf* > sprites = this->config->sprites;
   for (int var = 0; var < sprites.size(); ++var) {
-	  SpriteConf* sprite = sprites[var];
-	  if( !( tmt->sendData( sprite ) ) ) {
-	     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send Sprites" );
-	     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send Sprites" );
-	   }
+    SpriteConf* sprite = sprites[var];
+    if( !( tmt->sendData( sprite ) ) ) {
+      DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send Sprites" );
+      this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send Sprites" );
+    }
   }
 
   if( !( tmt->sendEndDataConf(this->clientCount)) ) {
-   DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
-   this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
- }
+    DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+    this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
+  }
   cout<<"Envio toda la Configuracion"<<endl;
   delete tmt;
 }
@@ -388,7 +388,6 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
   char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
   Evento* msgToRecv = new Evento;
   mutex theMutex;
-  int numBytes;
 
   // get connected host IP in presentation format
   inet_ntop( client_addr.ss_family,
@@ -406,13 +405,13 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
     }
 
     usleep(1);
-    this->sendPlanesActives( cfd);
+    this->sendPlanesActives( cfd );
 
     timeval timeout;
     timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
     timeout.tv_usec = 0;
     bool receiving = true;
-    bool received;
+    int bytesReceived;
     char id[3];
     // Create transmitter for this client
     Transmitter* tmt = new Transmitter( cfd, this->logger );
@@ -425,15 +424,15 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       }
 
       // Get id of next data to receive
-      received = tmt->receiveData( id, sizeof( id ), numBytes );
+      bytesReceived = tmt->receiveData( id, sizeof( id ));
 
-      if( received ) {
+      if( bytesReceived > 0 ) {
 	string dataID( id );
 	// Receive data type based on fetched dataID 
 	if( dataID == "PD" ) {
 	  PlayerData* data = new PlayerData;
 
-	  if( received = tmt->receiveData( data, numBytes ) ) {
+	  if( ( bytesReceived = tmt->receiveData( data )) > 0 ) {
 	    // Process received data
 	    cout << "Nombre del jugador: " << string( data->name ) << endl;
 	    cout << "Color del jugador: " << string( data->color ) << endl;
@@ -444,7 +443,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "PS" ) {
 	  PlayerStatus* data = new PlayerStatus;
 
-	  if( received = tmt->receiveData( data, numBytes ) ) {
+	  if( ( bytesReceived = tmt->receiveData( data )) > 0 ) {
 	    // Process received data
 	    cout << "Player status: " << data->status << endl;
 	    this->updatePlayerStatus( data, cfd );
@@ -454,7 +453,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if (dataID == "EV") {
 	  Evento* e = new Evento();
 
-	  if (received = tmt->receiveData(e, numBytes)) {
+	  if (( bytesReceived = tmt->receiveData(e)) > 0 ) {
 	    cout << "Evento: " << e->value << endl;
 
 	    theMutex.lock();
@@ -467,28 +466,28 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	  }
 
 	} else if (dataID == "DP") {
-		PlayerData* data = new PlayerData;
+	  PlayerData* data = new PlayerData;
 
-			  if( received = tmt->receiveData( data, numBytes ) ) {
-			  	for (map<int, Player*>::iterator it = this->players.begin(); it != this->players.end(); ++it) {
-			  			if ( data->name == (it->second)->getName() ){
-			  				Player* p = it->second;
-			  					p->setX(data->x);
-			  					p->setY(data->y);
-			  			  //cout<< "Jugador: " << p->getName() << endl<< "Color: " << p->getColor() << endl<<"Posiciones :" << p->getX() << "    "<< p->getY()<<endl;
-			  			  break;
-			  			}
-			  	}
-			  }
+	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
+	    for (map<int, Player*>::iterator it = this->players.begin(); it != this->players.end(); ++it) {
+	      if ( data->name == (it->second)->getName() ){
+		Player* p = it->second;
+		p->setX(data->x);
+		p->setY(data->y);
+		//cout<< "Jugador: " << p->getName() << endl<< "Color: " << p->getColor() << endl<<"Posiciones :" << p->getX() << "    "<< p->getY()<<endl;
+		break;
+	      }
+	    }
+	  }
 
-		delete data;
+	  delete data;
 	} else if(dataID == "CO" ){
-		cout<<"Reset cliente "<<cfd<<endl;
-		this->sendConf(cfd);
+	  cout<<"Reset cliente "<<cfd<<endl;
+	  this->sendConf(cfd);
 	} else if( dataID == "SD" ) {
 	  StageData* data = new StageData;
 
-	  if( received = tmt->receiveData( data, numBytes ) ) {
+	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
 	    // Process received data
 	    cout << "Current stage offset: " << data->offset << endl;
 	    this->stageData = data;
@@ -497,41 +496,20 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 
       }
 
-      if( !( received ) ) {
+      // Check peer disconnection or timeout
+      if ( bytesReceived <= 0 ) {
 	receiving = false;
-	cout << endl << warning( "El cliente " ) << clientIP
-	  << warning( " se desconecto" ) << endl;
-	this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
 	this->closeClient( cfd );
-				this->avisarDesconexionDeAvion(cfd);
-      }
-
-      // Read data
-      /*if( ( numBytesRead = recv( cfd, msgToRecv, sizeof( Mensaje ), 0 ) ) == -1 ) {
-	close( cfd );
-	this->logger->warn( CONNECTION_TIMEOUT );
-	DEBUG_WARN( CONNECTION_TIMEOUT );
-	}
-
-	if( numBytesRead > 0 ) {
-	if( numBytesRead != 1 ) {
-	theMutex.lock();
-	cout << endl << "FD cliente: " << notice( to_string( cfd ) ) << endl;
-	cout << "Evento recibido: " << notice( to_string(msgToRecv->value) ) << endl;
-	cout << "Jugador que envio el evento: " << notice( to_string(msgToRecv->playerID) ) << endl;
-
-	map<int,Evento*>* clientMsgFD = new map<int,Evento*>();
-	clientMsgFD->insert( pair<int,Evento*>( cfd, msgToRecv ) );
-	this->eventQueue->push( clientMsgFD );
-	theMutex.unlock();
-	}
+	this->avisarDesconexionDeAvion(cfd);
+	if( bytesReceived == 0 ) {
+	  cout << endl << warning( "El cliente " ) << clientIP
+	    << warning( " se desconecto" ) << endl;
+	  this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
 	} else {
-	receiving = false;
-	cout << endl << warning( "El cliente " ) << clientIP
-	<< warning( " se desconecto" ) << endl;
-	this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
-	this->closeClient( cfd );
-	}*/
+	  DEBUG_WARN( CONNECTION_TIMEOUT );
+	  this->logger->warn( CONNECTION_TIMEOUT );
+	}
+      }
     }
 
     delete tmt;
@@ -544,17 +522,17 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 }
 
 void Server::avisarDesconexionDeAvion(int cfd) {
-	CompanionEvent* ce = new CompanionEvent();
-	string disconnectedPlayerName = this->players[cfd]->getName();
+  CompanionEvent* ce = new CompanionEvent();
+  string disconnectedPlayerName = this->players[cfd]->getName();
 
-	if (!(this->players.empty())) {
-		for (map<int, Player*>::iterator itP = this->players.begin(); itP != this->players.end(); ++itP) {
-			if ((itP->first) != cfd) {
-				sendData(itP->first, ce->quit(disconnectedPlayerName));
-			}
-		}
-	}
-	delete ce;
+  if (!(this->players.empty())) {
+    for (map<int, Player*>::iterator itP = this->players.begin(); itP != this->players.end(); ++itP) {
+      if ((itP->first) != cfd) {
+	sendData(itP->first, ce->quit(disconnectedPlayerName));
+      }
+    }
+  }
+  delete ce;
 }
 
 void Server::checkAliveSend( int cfd ) {
@@ -569,61 +547,61 @@ void Server::checkAliveSend( int cfd ) {
 }
 
 void Server::processQueue() {
-	bool msgIsValid;
-	Evento* respuesta = new Evento;
-	mutex theMutex;
+  bool msgIsValid;
+  Evento* respuesta = new Evento;
+  mutex theMutex;
 
-	while (this->processing) {
-		if (!(this->eventQueue->empty())) {
-			theMutex.lock();
-			//cout << "Saco Msj de la cola" << endl;
-			map<int, Evento*>* data = this->eventQueue->front();
-			this->eventQueue->pop();
+  while (this->processing) {
+    if (!(this->eventQueue->empty())) {
+      theMutex.lock();
+      //cout << "Saco Msj de la cola" << endl;
+      map<int, Evento*>* data = this->eventQueue->front();
+      this->eventQueue->pop();
 
-			map<int, Evento*>::iterator it = data->begin();
-			cout << "FD cliente: " << it->first << " --  Mensaje: "
-					<< (it->second)->value << endl;
+      map<int, Evento*>::iterator it = data->begin();
+      cout << "FD cliente: " << it->first << " --  Mensaje: "
+	<< (it->second)->value << endl;
 
-			this->logger->info("Msj de cliente: " + to_string(it->second->value));
+      this->logger->info("Msj de cliente: " + to_string(it->second->value));
 
-			//      msgIsValid = this->processMsg( string((it->second)->tipo), string(((it->second)->valor)) );
-			//      if( msgIsValid ) {
-			respuesta->value = MENSAJE_CORRECTO;
-			this->logger->info(to_string(respuesta->value));
-			//      } else {
-			//	respuesta->value = MENSAJE_INCORRECTO;
-			//	this->logger->warn( respuesta->value );
-			//      }
-			//thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
-			//tSending.detach();
+      //      msgIsValid = this->processMsg( string((it->second)->tipo), string(((it->second)->valor)) );
+      //      if( msgIsValid ) {
+      respuesta->value = MENSAJE_CORRECTO;
+      this->logger->info(to_string(respuesta->value));
+      //      } else {
+      //	respuesta->value = MENSAJE_INCORRECTO;
+      //	this->logger->warn( respuesta->value );
+      //      }
+      //thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
+      //tSending.detach();
 
-			if (!(this->players.empty())) {
-				for (map<int, Player*>::iterator itP = this->players.begin();
-						itP != this->players.end(); ++itP) {
-					if ((itP->first) != it->first) {
-						sendData(itP->first, it->second);
-					}
-				}
-			}
-
-			//TODO: Esto despues hay que cambiarlo por lo de arriba
-			/*
-			 if (players2.size() > 0) {
-			 for (int i = 0 ; i < players2.size(); i++) {
-			 if (players2[i] != it->first) {
-			 sendData(players2[i],it->second);
-			 }
-			 }
-			 }
-			 */
-
-			delete data;
-
-			theMutex.unlock();
-		}
+      if (!(this->players.empty())) {
+	for (map<int, Player*>::iterator itP = this->players.begin();
+	    itP != this->players.end(); ++itP) {
+	  if ((itP->first) != it->first) {
+	    sendData(itP->first, it->second);
+	  }
 	}
-	//cout<<"Corto processor"<<endl;
-	delete respuesta;
+      }
+
+      //TODO: Esto despues hay que cambiarlo por lo de arriba
+      /*
+	 if (players2.size() > 0) {
+	 for (int i = 0 ; i < players2.size(); i++) {
+	 if (players2[i] != it->first) {
+	 sendData(players2[i],it->second);
+	 }
+	 }
+	 }
+       */
+
+      delete data;
+
+      theMutex.unlock();
+    }
+  }
+  //cout<<"Corto processor"<<endl;
+  delete respuesta;
 }
 
 //bool Server::processMsg( string tipo, string valor ){

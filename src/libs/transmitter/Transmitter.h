@@ -28,28 +28,26 @@ class Transmitter {
     bool sendData( PlanesActives* data );
     bool sendData( PlayerStatus* data );
     bool sendData( PlayerData* data, string s );
-    bool receiveData( char id[2], int size , int & b);
-    bool receiveData( PlayerData* data , int & b);
-    bool receiveData( StageData* data , int & b);
-    bool receiveData( PlayerStatus* data , int & b);
-    bool receiveData( PlanesActives* data , int & b);
-	
-	bool sendData( Evento* e );
-    bool receiveData( Evento* e , int & b);
-	bool sendData( AvionConf* e );
-	bool sendData( ElementoConf* e );
-	bool sendData( EscenarioConf* e );
-	bool sendData( SpriteConf* e );
-	bool sendData( StageData* data, string id );
-	bool receiveData( AvionConf* data );
-	bool receiveData( ElementoConf* data );
-	bool receiveData( EscenarioConf* data );
-	bool receiveData( SpriteConf* data );
+    bool sendData( Evento* e );
+    bool sendData( AvionConf* e );
+    bool sendData( ElementoConf* e );
+    bool sendData( EscenarioConf* e );
+    bool sendData( SpriteConf* e );
+    bool sendData( StageData* data, string id );
+    bool sendEndDataConf( int cantidad );
+    bool sendDataDisconnect( PlayerData* data );
+    bool sendGetConfig();
 
-	bool sendEndDataConf(int cantidad);
-	bool receiveData( char data[1] );
-	bool sendDataDisconnect( PlayerData* data );
-	bool sendGetConfig();
-
+    int receiveData( char id[2], int size);
+    int receiveData( PlayerData* data );
+    int receiveData( StageData* data );
+    int receiveData( PlayerStatus* data );
+    int receiveData( PlanesActives* data );
+    int receiveData( AvionConf* data );
+    int receiveData( ElementoConf* data );
+    int receiveData( EscenarioConf* data );
+    int receiveData( SpriteConf* data );
+    int receiveData( Evento* e );
+    int receiveData( char data[1] );
 };
 #endif

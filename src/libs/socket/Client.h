@@ -65,5 +65,6 @@ class Client {
     void resetConfig();
     void setStageOffset( int offset );
     int getStageOffset();
+    bool isConnected();
 };
 #endif
