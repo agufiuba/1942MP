@@ -166,17 +166,19 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	string selectedName(data->name);
 	string selectedColor(data->color);
 	bool createPlayer = true;
-
+	bool encontrePlayer = false;
 	theMutex.lock();
-	for (map<int, Player*>::iterator it = this->players.begin();
-			it != this->players.end(); ++it) {
+
+	for (map<int, Player*>::iterator it = this->players.begin() ; it != this->players.end() ; ++it) {
 		// if already a player with that name
 		if (selectedName == it->second->getName()) {
 			createPlayer = false;
 			validName = "N";
+			cout<<"Encuentro Player"<<endl;
 			// if running game and player with such name is not active
 			if ( this->running && !(it->second->isActive())) {
 				// resume player game
+				cout<<"Resume Game"<<endl;
 				selectedColor = it->second->getColor();
 				posicionInicialX = it->second->getX();
 				posicionInicialY = it->second->getY();
@@ -188,6 +190,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 				break;
 			}
 		}
+
 		// if already a player with that color
 		if (selectedColor == it->second->getColor()) {
 			createPlayer = false;
@@ -196,7 +199,10 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	}
 	theMutex.unlock();
 
-	if (createPlayer) {
+
+	cout<<this->players.size() <<" -  "<<this->maxClientCount  <<endl;
+	cout<<(this->players.size() < this->maxClientCount)<<endl;
+	if (createPlayer && (this->players.size() < this->maxClientCount) ) {
 	  // if reached max clients, release a deactivated client
 	/*  if( this->players.size() == this->maxClientCount ) {
 	    for ( map<int, Player*>::iterator it = this->players.begin();
@@ -209,11 +215,17 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	    }
 	  }*/
 		// Add new player
+		cout<<"Creo Jugador"<<endl;
 		Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY);
 		theMutex.lock();
 		this->players[cfd] = p;
-		theMutex.unlock();
 		posicionInicialX += 100;
+		theMutex.unlock();
+	} else {
+		cout<<"No creo jugador"<<endl;
+		createPlayer = false;
+			validName = "N";
+			validColor = "N";
 	}
 
 	// Create response
@@ -222,18 +234,18 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	strcpy(response->name, validName.c_str());
 	strcpy(response->color, validColor.c_str());
 
+	cout<<"name :"<<validName<<"  .Color: "<<validColor<<endl;
 	Transmitter* tmt = new Transmitter(cfd, this->logger);
 	if (!(tmt->sendData(response))) {
 		DEBUG_WARN("No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
-		this->logger->error(
-				"No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
+		this->logger->error("No se pude enviar respuesta a cliente. JOB: Server::addPlayer");
 	}
 
 	delete response;
 	delete tmt;
 
 	theMutex.lock();
-	if (this->players.size() == this->maxClientCount) {
+	if (createPlayer && this->players.size() == this->maxClientCount) {
 		cout << "send players" << endl;
 		this->createPlayers();
 		if( !( this->running ) ) this->running = true;
