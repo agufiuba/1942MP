@@ -174,9 +174,11 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 		if (selectedName == it->second->getName()) {
 			createPlayer = false;
 			validName = "N";
+			cout<<"Encuentro Player"<<endl;
 			// if running game and player with such name is not active
 			if ( this->running && !(it->second->isActive())) {
 				// resume player game
+				cout<<"Resume Game"<<endl;
 				selectedColor = it->second->getColor();
 				posicionInicialX = it->second->getX();
 				posicionInicialY = it->second->getY();
@@ -197,19 +199,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	}
 	theMutex.unlock();
 
-
 	if (createPlayer && (this->players.size() < this->maxClientCount) ) {
-	  // if reached max clients, release a deactivated client
-	/*  if( this->players.size() == this->maxClientCount ) {
-	    for ( map<int, Player*>::iterator it = this->players.begin();
-		  it != this->players.end(); ++it) {
-	      if( !( it->second->isActive() ) ) {
-		delete it->second;
-		this->players.erase( it );
-		break;
-	      }
-	    }
-	  }*/
 		// Add new player
 		cout<<"Creo Jugador"<<endl;
 		Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY);
