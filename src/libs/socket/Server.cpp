@@ -417,7 +417,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       this->logger->error( "Error al enviar que se acepto la conexion" );
     }
 
-    usleep(1);
+    usleep(10);
     this->sendPlanesActives( cfd);
 
     timeval timeout;

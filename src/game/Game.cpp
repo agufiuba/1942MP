@@ -386,6 +386,7 @@ void Game::loadValidationScreen() {
 	  this->loadConnectionScreen();
 	} else {
 	  bool endSelectingPlane = false;
+	  bool primerIntento = true;
 	  while(!endSelectingPlane){
 	    PlanesActives* planes = this->unCliente->getPlanesActives();
 	    this->bluePlaneActive = planes->blue;
@@ -394,7 +395,12 @@ void Game::loadValidationScreen() {
 	    this->yellowPlaneActive = planes->yellow;
 	    this->clientId = "";
 	    this->planeId = "";
-	    this->loadselectionPlane(this->unCliente->isPlayerOk());
+	    if (primerIntento){
+	    	this->loadselectionPlane(true);
+	    }else{
+	    	this->loadselectionPlane(this->unCliente->isPlayerOk());
+	    }
+	    primerIntento = false;
 	    endSelectingPlane = this->unCliente->isPlayerOk();
 	  }
 	  this->loadWaitingGame();
@@ -462,7 +468,6 @@ void Game::loadselectionPlane(bool selectedOk) {
   initialScreen->loadText("clientText", "  Jugador: ", { 0, 255, 100 });
   initialScreen->loadText("planeText", " Avion: ", { 0, 255, 100 });
   initialScreen->loadText("accept", "CONTINUAR");
-
   initialScreen->loadText("rechazo", " Rechazado por maximo clientes", { 255, 0, 0 });
 
   if (bluePlaneActive){
@@ -501,7 +506,6 @@ void Game::loadselectionPlane(bool selectedOk) {
   bool greenPromptSelected = false;
   bool yellowPromptSelected = false;
   bool clicked = false;
-  bool error = false;
 
   // Create prompts
   initialScreen->loadRectangle("promptClientId", promptCenter,inputClientIdPosY, 260, 50);
@@ -651,9 +655,6 @@ void Game::loadselectionPlane(bool selectedOk) {
     if (yellowPlaneActive){
       initialScreen->renderTexture("yellowPlane", inputYellowPlaneIdPosX, inputPlaneIdPosY);
     }
-    if (!selectedOk){
-      initialScreen->renderTexture("rechazo", logoCenter, 900);
-    }
 
     // Set prompt color
     initialScreen->setRenderDrawColor(255, 255, 255, 255);
@@ -745,19 +746,13 @@ void Game::loadselectionPlane(bool selectedOk) {
     if (this->clientId != ""){
       initialScreen->renderTexture("clientId", textCenter, inputClientIdPosY);
     }
-    if (error){
-      initialScreen->renderTexture("msgError", textCenter+100, inputClientIdPosY);
-    }
 
     initialScreen->renderTexture("accept", buttonTextCenter, 475);
     initialScreen->renderTexture("clientText", textoIzquierda,	inputClientIdPosY);
     initialScreen->renderTexture("planeText", textoIzquierda, inputPlaneIdPosY);
-
-    if(error){
-      initialScreen->renderTexture("msgError", textCenter+50, inputClientIdPosY);
-      error = false;
+    if (!selectedOk){
+    	initialScreen->renderTexture("rechazo", 0, inputClientIdPosY+160 );
     }
-
     //Update screen
     sdlHandler->updateWindow();
 
