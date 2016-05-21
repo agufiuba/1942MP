@@ -410,8 +410,8 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       this->logger->error( "Error al enviar que se acepto la conexion" );
     }
 
-    usleep(1);
-    this->sendPlanesActives( cfd );
+    usleep(10);
+    this->sendPlanesActives( cfd);
 
     timeval timeout;
     timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
