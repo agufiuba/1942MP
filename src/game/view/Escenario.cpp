@@ -158,11 +158,11 @@ SDL_Event* Escenario::run() {
 			return eventReset;
 		}
 
-		while (SDL_PollEvent(&evento) != 0 && evento.type != SDL_MOUSEMOTION) {
-
+		while (this->sdl->nextEvent(&evento) && evento.type != SDL_MOUSEMOTION) {
 			//TODO: Para borrar eventos
 //			eventosList.push_back(&evento);
 			myControl->press(&evento);
+			if( evento.type == SDL_KEYDOWN ) {
 			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
 				quit = true;
 
@@ -177,6 +177,7 @@ SDL_Event* Escenario::run() {
 				usleep(100);
 
 				break;
+			}
 			}
 
 		}
