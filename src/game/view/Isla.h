@@ -16,6 +16,8 @@
 #include "Texture.h"
 #include "../../xml/conf/SpriteConf.h"
 #include <string>
+#include "../view/Screen.h"
+#include "../../libs/xm_sdl/XM_SDL.h"
 
 class Isla : public Vivible {
 private:
@@ -24,9 +26,11 @@ private:
 	void inicializar();
 	string mapearIsla(string);
 	string id;
+	Screen* screenIsla;
+	XM_SDL* sdl;
 
 public:
-	Isla(SDL_Renderer* render, Posicion* posicion, SpriteConf* id);
+	Isla(XM_SDL* sdl, Posicion* posicion, SpriteConf* id);
 	virtual ~Isla();
 	void vivir();
 	void vivir(int x, int y);

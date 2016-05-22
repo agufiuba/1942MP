@@ -8,32 +8,9 @@
 #include "Escenario.h"
 using namespace std;
 
-Escenario::Escenario() {
-	setResolucion();
-	inicializar();
-}
-
-Escenario::Escenario(int fps) {
-	this->FRAMES_PER_SECOND = fps;
-	setResolucion();
-	inicializar();
-}
-
-Escenario::Escenario(bool isFullScreen) {
-	this->isFullScreen = isFullScreen;
-	setResolucion();
-	inicializar();
-}
-
-Escenario::Escenario(int width, int height) {
-	this->SCREEN_WIDTH = width;
-	this->SCREEN_HEIGHT = height;
-	resolucion = Resolucion::INSTANCE(width, height);
-	inicializar();
-}
-
-Escenario::Escenario(GameConf* configuracion) {
+Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	this->gc = configuracion;
+	this->sdl = sdl;
 
 	if (gc->escenario->alto != 0 && gc->escenario->ancho != 0) {
 		this->SCREEN_WIDTH = gc->escenario->ancho;
@@ -44,76 +21,26 @@ Escenario::Escenario(GameConf* configuracion) {
 	}
 
 	int spriteN = GameParser::findSprite(gc->sprites, gc->escenario->fondo);
-	if (spriteN != -1)
+	if (spriteN != -1) {
+
 		DIR_FONDO_PANTALLA = gc->sprites[spriteN]->path;
+	}
 
-	inicializar();
+	gRenderer = sdl->getRenderer();
+	escenarioScreen = new Screen(this->sdl);
+	escenarioScreen->loadTexture("agua", "fondos/" + DIR_FONDO_PANTALLA);
+
 	controllers = new HandlerPlayersControllers(gRenderer, resolucion);
-}
-
-Escenario::Escenario(int width, int height, bool isFullScreen) {
-	this->SCREEN_WIDTH = width;
-	this->SCREEN_HEIGHT = height;
-	this->isFullScreen = isFullScreen;
-	resolucion = Resolucion::INSTANCE(width, height);
-	inicializar();
-}
-
-Escenario::Escenario(int fps, int width, int height) {
-	this->FRAMES_PER_SECOND = fps;
-	this->SCREEN_WIDTH = width;
-	this->SCREEN_HEIGHT = height;
-	resolucion = Resolucion::INSTANCE(width, height);
-	inicializar();
-}
-
-void Escenario::inicializar() {
-  window = NULL;
-  inicioCorrectamente = true;
-
-  // Inicializar SDL
-  if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-    printErrorSDL("SDL");
-    inicioCorrectamente = false;
-  }
-
-  // Inicializar window
-  window = SDL_CreateWindow(WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-  if(window == NULL) {
-    printErrorSDL("window");
-    inicioCorrectamente = false;
-  }
-
-  // Inicializar window FullScreen
-  if (isFullScreen && SDL_SetWindowFullscreen(window, SDL_TRUE) < 0) {
-    printErrorSDL("Full Screen");
-    inicioCorrectamente = false;
-  }
-
-  // Inicializar Renderer
-  gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-  if (gRenderer == NULL) {
-    printErrorSDL("Renderer");
-    inicioCorrectamente = false;
-  }
-
-  // Load fondo de pantalla
-  fondoDePantalla = new Texture( gRenderer );
-  if (!fondoDePantalla->loadFromFile( "fondos/"+DIR_FONDO_PANTALLA )) {
-    printErrorSDL("Fondo de Pantalla");
-    inicioCorrectamente = false;
-  }
 }
 
 Escenario::~Escenario() {
 	resolucion->~Resolucion();
-	fondoDePantalla->free();
-	limpiarMemoria();
-	SDL_DestroyRenderer(gRenderer);
-	SDL_DestroyWindow(window);
-	gRenderer = NULL;
-	window = NULL;
-	SDL_Quit();
+	delete escenarioScreen;
+	delete myControl;
+	delete controllers;
+	limpiarFondosVivibles();
+	limpiarEventos();
+//	SDL_DestroyRenderer(gRenderer);
 }
 
 void Escenario::setResolucion() {
@@ -122,24 +49,14 @@ void Escenario::setResolucion() {
 	SCREEN_WIDTH = resolucion->getWidthScreen();
 }
 
-void Escenario::printErrorSDL(string error) {
-	cout << "No se puede iniciarlizar " << error << endl;
-	cout << "SDL Error: " << SDL_GetError() << endl;
-}
-
 void Escenario::actualizarEscenario(Posicion* pos) {
-	SDL_RenderClear(gRenderer);
-	fondoDePantalla->render(pos->getX(), pos->getYsdl());
+
+	escenarioScreen->renderTexture("agua", pos->getX(), pos->getYsdl());
 
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir();
-		// TODO: Dejar comentado
-/*
-		if (i == 1) {
-			fondosVivibles[i]->getPosicion()->print();
-		}
-*/
 	}
+
 	myControl->hacerVivir();
 	controllers->hacerVivir();
 
@@ -156,8 +73,8 @@ void Escenario::aplicarFPS(Uint32 start) {
 	}
 }
 
-void Escenario::setClient(Client* cliente){
-  this->unCliente = cliente;
+void Escenario::setClient(Client* cliente) {
+	this->unCliente = cliente;
 }
 
 void Escenario::configurarFondosVivibles() {
@@ -174,8 +91,8 @@ void Escenario::configurarFondosVivibles() {
 			for (int j = 0; j < cantRepeticiones; j++) {
 				int x = x_gc;
 				int y = y_gc + (pixelesArecorrer * j);
-				Posicion* p = new Posicion(x,y);
-				Isla* isla = new Isla(gRenderer, p, gc->sprites[index]);
+				Posicion* p = new Posicion(x, y);
+				Isla* isla = new Isla(this->sdl, p, gc->sprites[index]);
 				fondosVivibles.push_back(isla);
 			}
 		}
@@ -187,30 +104,20 @@ HandlerPlayersControllers* Escenario::getHandler() {
 	return this->controllers;
 }
 
-//TODO no se usa mas al parecer
-void Escenario::configurarJugador(PlayerData* jugador) {
-
-	Vivible* unAvion = new Avion(jugador, gRenderer, resolucion, new Posicion(SCREEN_WIDTH / 2, 100), gc->avion);
-	myControl = new Controller(unAvion, gRenderer, resolucion, this->unCliente);
+void Escenario::configurarAvionAmigo(PlayerData* playerData) {
+	Vivible* avionAmigo = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
+	controllers->setPlayer((Avion*) avionAmigo);
 }
 
-void Escenario::configurarAvionAmigo(PlayerData* playerData){
-  Vivible* avionAmigo = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
-  controllers->setPlayer((Avion*)avionAmigo);
-}
-
-void Escenario::configurarMiAvion(PlayerData* playerData){
-  Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
-  myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
+void Escenario::configurarMiAvion(PlayerData* playerData) {
+	Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
+	myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
 }
 
 void Escenario::setFondosVivibles(int x, int y) {
 
-	//Mas desfasaje, mas abajo se ponen las islas
-	//TODO: Comentar esta linea
-//	y = y + desfasajeConexion;
-
 	for (int i = 0; i < fondosVivibles.size(); i++) {
+		string path = fondosVivibles[i]->get
 		fondosVivibles[i]->vivir(x, y);
 	}
 
@@ -218,37 +125,30 @@ void Escenario::setFondosVivibles(int x, int y) {
 
 SDL_Event* Escenario::run() {
 
-	if (!inicioCorrectamente) {
-		return NULL;
-	}
-
 	int screensRecorridos = 0;
 	configurarFondosVivibles();
 	Posicion* posicionEscenario = new Posicion(0, 0);
+
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
-	if(!this->unCliente->reinicia){
+	if (!this->unCliente->reinicia) {
+
 		int offset = this->unCliente->getStageOffset();
-		cout<<"offset: "<<offset<<endl;
-		if (offset != 0){
-			cout<<""<<endl;
-			//TODO: comentar esta linea
-	//		setFondosVivibles(0, offset);
-			//TODO: descomentar estas lineas
+		if (offset != 0) {
 			pixelesRecorridos = offset + desfasajeConexion;
 			setFondosVivibles(0, pixelesRecorridos);
 		}
-	}else{
+	} else {
 		usleep(700000);
 	}
-	actualizarEscenario(posicionEscenario);
 
+	actualizarEscenario(posicionEscenario);
 	Uint32 start;
 	bool quit = false;
 	int i = 0;
 
 	bool isFinNivel = false;
 
-	while ( !quit && this->unCliente->isConnected() ) {
+	while (!quit) {
 
 		start = SDL_GetTicks();
 
@@ -261,8 +161,12 @@ SDL_Event* Escenario::run() {
 
 		while (SDL_PollEvent(&evento) != 0 && evento.type != SDL_MOUSEMOTION) {
 
+			//TODO: Para borrar eventos
+			//eventosList.push_back(&evento);
 			myControl->press(&evento);
-			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
+			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q
+					|| evento.key.keysym.sym == SDLK_r
+					|| this->unCliente->reset) {
 				quit = true;
 
 				PlayerData* p = new PlayerData();
@@ -271,7 +175,8 @@ SDL_Event* Escenario::run() {
 				p->x = myControl->getVivible()->getX();
 				p->y = myControl->getVivible()->getY();
 
-				while (!this->unCliente->sendDataPosicion(p));
+				while (!this->unCliente->sendDataPosicion(p))
+					;
 				usleep(100);
 
 				break;
@@ -300,18 +205,22 @@ SDL_Event* Escenario::run() {
 	return &evento;
 }
 
-void Escenario::limpiarMemoria() {
-	delete myControl;
-	delete controllers;
-	limpiarFondosVivibles();
-//	delete resolucion;
-}
-
 void Escenario::limpiarFondosVivibles() {
 	if (fondosVivibles.size() > 0) {
 		for (int i = 0; i < fondosVivibles.size(); i++) {
 			delete fondosVivibles[i];
 		}
 	}
-	fondosVivibles.clear();
+	//fondosVivibles.clear();
+	cout << "Los fondos vivibles son " << fondosVivibles.size() << endl;
+}
+
+void Escenario::limpiarEventos() {
+//	if (eventosList.size() > 1) {
+//		for (int i = 0; i < (eventosList.size() - 1); i++) {
+//			cout << "Borrando evento" << endl;
+//			delete eventosList[i];
+//		}
+//	}
+//	eventosList.clear();
 }
