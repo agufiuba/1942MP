@@ -34,7 +34,6 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 }
 
 Escenario::~Escenario() {
-	cout << "BORRANDO ESCENARIO" << endl;
 	resolucion->~Resolucion();
 	delete escenarioScreen;
 	delete myControl;
@@ -124,8 +123,6 @@ void Escenario::setFondosVivibles(int x, int y) {
 
 SDL_Event* Escenario::run() {
 
-	cout << "INICIO RUN ESCENARIO" << endl;
-
 	int screensRecorridos = 0;
 	configurarFondosVivibles();
 	Posicion* posicionEscenario = new Posicion(0, 0);
@@ -163,21 +160,21 @@ SDL_Event* Escenario::run() {
 //			eventosList.push_back(&evento);
 			myControl->press(&evento);
 			if( evento.type == SDL_KEYDOWN ) {
-			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
-				quit = true;
+				if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
+					quit = true;
 
-				PlayerData* p = new PlayerData();
+					PlayerData* p = new PlayerData();
 
-				strcpy(p->name, (myControl->getVivible())->getId().c_str());
-				p->x = myControl->getVivible()->getX();
-				p->y = myControl->getVivible()->getY();
+					strcpy(p->name, (myControl->getVivible())->getId().c_str());
+					p->x = myControl->getVivible()->getX();
+					p->y = myControl->getVivible()->getY();
 
-				while (!this->unCliente->sendDataPosicion(p))
-					;
-				usleep(100);
+					while (!this->unCliente->sendDataPosicion(p))
+						;
+					usleep(100);
 
-				break;
-			}
+					break;
+				}
 			}
 
 		}
@@ -200,7 +197,6 @@ SDL_Event* Escenario::run() {
 	}
 
 	delete posicionEscenario;
-	cout << "FIN RUN ESCENARIO" << endl;
 	return &evento;
 }
 

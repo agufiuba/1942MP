@@ -75,18 +75,14 @@ void Game::cargarEscenario() {
 	bool inicia = true;
 	while (exitEven->key.keysym.sym == SDLK_r || this->unCliente->reset) {
 		if (!inicia) {
-			cout << "INICIA ES FALSE" << endl;
 			this->unCliente->reinicia = true;
-			//cout << "Se reinicio" << endl;
 			this->unCliente->setConfigComplete(false);
 			this->unCliente->sendGetConfig();
 			while (!unCliente->isConfigComplete()) {
 			}
 		}
-		this->unCliente->reset = false;
-//    crearGameConfHardcodeada();
-//    escenario = new Escenario(gc);
 
+		this->unCliente->reset = false;
 		recorroConfig(this->unCliente->getConfig());
 		escenario = new Escenario(this->unCliente->getConfig(), sdlHandler);
 		escenario->setClient(unCliente);
