@@ -34,13 +34,13 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 }
 
 Escenario::~Escenario() {
+	cout << "BORRANDO ESCENARIO" << endl;
 	resolucion->~Resolucion();
 	delete escenarioScreen;
 	delete myControl;
 	delete controllers;
 	limpiarFondosVivibles();
 	limpiarEventos();
-//	SDL_DestroyRenderer(gRenderer);
 }
 
 void Escenario::setResolucion() {
@@ -92,12 +92,12 @@ void Escenario::configurarFondosVivibles() {
 				int x = x_gc;
 				int y = y_gc + (pixelesArecorrer * j);
 				Posicion* p = new Posicion(x, y);
-				Isla* isla = new Isla(this->sdl, p, gc->sprites[index]);
+				string jString  = to_string(j);
+				Isla* isla = new Isla(jString, p, gc->sprites[index], this->sdl);
 				fondosVivibles.push_back(isla);
 			}
 		}
 	}
-
 }
 
 HandlerPlayersControllers* Escenario::getHandler() {
@@ -117,13 +117,14 @@ void Escenario::configurarMiAvion(PlayerData* playerData) {
 void Escenario::setFondosVivibles(int x, int y) {
 
 	for (int i = 0; i < fondosVivibles.size(); i++) {
-		string path = fondosVivibles[i]->get
 		fondosVivibles[i]->vivir(x, y);
 	}
 
 }
 
 SDL_Event* Escenario::run() {
+
+	cout << "INICIO RUN ESCENARIO" << endl;
 
 	int screensRecorridos = 0;
 	configurarFondosVivibles();
@@ -137,8 +138,6 @@ SDL_Event* Escenario::run() {
 			pixelesRecorridos = offset + desfasajeConexion;
 			setFondosVivibles(0, pixelesRecorridos);
 		}
-	} else {
-		usleep(700000);
 	}
 
 	actualizarEscenario(posicionEscenario);
@@ -164,9 +163,7 @@ SDL_Event* Escenario::run() {
 			//TODO: Para borrar eventos
 			//eventosList.push_back(&evento);
 			myControl->press(&evento);
-			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q
-					|| evento.key.keysym.sym == SDLK_r
-					|| this->unCliente->reset) {
+			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
 				quit = true;
 
 				PlayerData* p = new PlayerData();
@@ -202,6 +199,7 @@ SDL_Event* Escenario::run() {
 	}
 
 	delete posicionEscenario;
+	cout << "FIN RUN ESCENARIO" << endl;
 	return &evento;
 }
 
@@ -211,8 +209,7 @@ void Escenario::limpiarFondosVivibles() {
 			delete fondosVivibles[i];
 		}
 	}
-	//fondosVivibles.clear();
-	cout << "Los fondos vivibles son " << fondosVivibles.size() << endl;
+	fondosVivibles.clear();
 }
 
 void Escenario::limpiarEventos() {

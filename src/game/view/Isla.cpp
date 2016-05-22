@@ -9,27 +9,24 @@
 
 using namespace std;
 
-Isla::Isla(XM_SDL* sdl, Posicion* posicion, SpriteConf* sprite) {
+Isla::Isla(string index, Posicion* posicion, SpriteConf* sprite, XM_SDL* sdl) {
 
-	this->id = sprite->path;
+	this->id = sprite->path + index;
 	this->posicion = posicion;
-//	islaTxt = new Texture( render );
 	string str(sprite->path);
 	string path = "islas/"+str;
-//	islaTxt->loadFromFile(path);
+	islaTxt = new Texture( sdl->getRenderer() );
+	islaTxt->loadFromFile(path);
 //	islaTxt->render( posicion->getX(), posicion->getYsdl() );
-	cout <<""
-	screenIsla = new Screen(this->sdl);
-	screenIsla->loadTexture(path, path);
-	screenIsla->renderTexture(path, posicion->getX(), posicion->getYsdl());
-
-
+//	screenIsla = new Screen(this->sdl);
+//	screenIsla->loadTexture(index, path);
+//	screenIsla->renderTexture(index, posicion->getX(), posicion->getYsdl());
 }
 
 Isla::~Isla() {
 	delete posicion;
-//	delete islaTxt;
-	delete screenIsla;
+	delete islaTxt;
+//	delete screenIsla;
 }
 
 void Isla::setPosicion(Posicion* posicion) {
@@ -39,14 +36,14 @@ void Isla::setPosicion(Posicion* posicion) {
 
 void Isla::vivir() {
 	posicion->mover(0, -3);
-	//islaTxt->render( posicion->getX(), posicion->getYsdl() );
-	screenIsla->renderTexture(path, posicion->getX(), posicion->getYsdl());
+	islaTxt->render( posicion->getX(), posicion->getYsdl() );
+//	screenIsla->renderTexture(id, posicion->getX(), posicion->getYsdl());
 }
 
 void Isla::vivir(int x, int y) {
 	posicion->mover(x,-y);
-	//islaTxt->render( posicion->getX(), posicion->getYsdl() );
-	screenIsla->renderTexture(path, posicion->getX(), posicion->getYsdl());
+	islaTxt->render( posicion->getX(), posicion->getYsdl() );
+//	screenIsla->renderTexture(id, posicion->getX(), posicion->getYsdl());
 }
 
 string Isla::getId() {return this->id;}
