@@ -21,14 +21,12 @@
 
 class Isla : public Vivible {
 private:
-	Texture* islaTxt;
-	Posicion* posicion;
 	string id;
 	Screen* screenIsla;
-	XM_SDL* sdl;
+	Posicion* posicion;
 
 public:
-	Isla(string index, Posicion* posicion, SpriteConf* id, XM_SDL* sdl);
+	Isla(string index, Posicion* posicion, SpriteConf* id, Screen* screenIsla);
 	virtual ~Isla();
 	void vivir();
 	void vivir(int x, int y);

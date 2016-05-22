@@ -93,7 +93,7 @@ void Escenario::configurarFondosVivibles() {
 				int y = y_gc + (pixelesArecorrer * j);
 				Posicion* p = new Posicion(x, y);
 				string jString  = to_string(j);
-				Isla* isla = new Isla(jString, p, gc->sprites[index], this->sdl);
+				Isla* isla = new Isla(jString, p, gc->sprites[index], escenarioScreen);
 				fondosVivibles.push_back(isla);
 			}
 		}
@@ -161,7 +161,7 @@ SDL_Event* Escenario::run() {
 		while (SDL_PollEvent(&evento) != 0 && evento.type != SDL_MOUSEMOTION) {
 
 			//TODO: Para borrar eventos
-			//eventosList.push_back(&evento);
+//			eventosList.push_back(&evento);
 			myControl->press(&evento);
 			if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
 				quit = true;
@@ -213,8 +213,8 @@ void Escenario::limpiarFondosVivibles() {
 }
 
 void Escenario::limpiarEventos() {
-//	if (eventosList.size() > 1) {
-//		for (int i = 0; i < (eventosList.size() - 1); i++) {
+//	if (eventosList.size() > 0) {
+//		for (int i = 0; i < eventosList.size(); i++) {
 //			cout << "Borrando evento" << endl;
 //			delete eventosList[i];
 //		}

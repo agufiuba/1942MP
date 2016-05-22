@@ -64,7 +64,7 @@ private:
 	IController* myControl;
 	HandlerPlayersControllers* controllers;
 	vector<Isla*> fondosVivibles;
-	//vector<SDL_Event*> eventosList;
+//	vector<SDL_Event*> eventosList;
 
 	GameConf* gc;
 	Client* unCliente;
