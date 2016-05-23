@@ -144,7 +144,7 @@ SDL_Event* Escenario::run() {
 
 	bool isFinNivel = false;
 
-	while (!quit) {
+	while (!quit && this->unCliente->isConnected()) {
 
 		start = SDL_GetTicks();
 
