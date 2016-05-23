@@ -11,22 +11,22 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <vector>
+#include <string>
+#include "Texture.h"
 #include "../model/Vivible.h"
 #include "../model/Posicion.h"
-#include "Texture.h"
+#include "../view/Screen.h"
 #include "../../xml/conf/SpriteConf.h"
-#include <string>
+#include "../../libs/xm_sdl/XM_SDL.h"
 
 class Isla : public Vivible {
 private:
-	Texture* islaTxt;
-	Posicion* posicion;
-	void inicializar();
-	string mapearIsla(string);
 	string id;
+	Screen* screenIsla;
+	Posicion* posicion;
 
 public:
-	Isla(SDL_Renderer* render, Posicion* posicion, SpriteConf* id);
+	Isla(string index, Posicion* posicion, SpriteConf* id, Screen* screenIsla);
 	virtual ~Isla();
 	void vivir();
 	void vivir(int x, int y);

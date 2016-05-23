@@ -27,18 +27,18 @@
 #include "../../xml/parser/GameParser.h"
 #include "../../xml/conf/EscenarioConf.h"
 #include "../../libs/socket/Client.h"
+#include "../../libs/xm_sdl/XM_SDL.h"
+#include "../view/Screen.h"
 
 class Escenario {
 
 private:
-	SDL_Window* window = NULL;
-	Texture* fondoDePantalla = NULL;
+	XM_SDL* sdl;
+	Screen* escenarioScreen;
 	SDL_Renderer* gRenderer = NULL;
-	SDL_Rect posicion;
 	SDL_Event evento;
 	Resolucion* resolucion;
 
-	bool inicioCorrectamente;
 	bool isFullScreen = false;
 
 	int SCREEN_WIDTH;
@@ -49,6 +49,8 @@ private:
 	int VELOCIDAD_SCREEN = -3;
 	int pixelesArecorrer = 4000;
 	int pixelesRecorridos = 0;
+
+	//Mas desfasaje, mas abajo se ponen las islas
 	int desfasajeConexion = 70;
 
 	string rojo = "rojo";
@@ -62,31 +64,23 @@ private:
 	IController* myControl;
 	HandlerPlayersControllers* controllers;
 	vector<Isla*> fondosVivibles;
+//	vector<SDL_Event*> eventosList;
 
+	GameConf* gc;
 	Client* unCliente;
 
-	void inicializar();
 	void setResolucion();
-	void printErrorSDL(string error);
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
 	void setFondosVivibles(int x, int y);
-	void limpiarMemoria();
-	void limpiarFondosVivibles();
 	void configurarFondosVivibles();
-	GameConf* gc;
+	void limpiarFondosVivibles();
+	void limpiarEventos();
 
 public:
-	Escenario();
-	Escenario(int fps);
-	Escenario(bool isFullScreen);
-	Escenario(int width, int height);
-	Escenario(GameConf* configuracion);
-	Escenario(int width, int height, bool isFullScreen);
-	Escenario(int fps, int width, int height);
+	Escenario(GameConf* configuracion, XM_SDL* sdl);
 	~Escenario();
 	SDL_Event* run();
-	void configurarJugador(PlayerData* jugador);
 	HandlerPlayersControllers* getHandler();
 	void setClient(Client* cliente);
 	void configurarAvionAmigo(PlayerData* playerData);

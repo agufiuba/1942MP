@@ -87,4 +87,4 @@
 	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
 	<disparosSpriteID>bala</disparosSpriteID>
 </avion>
-<maxClients>2</maxClients>
+<maxClients>1</maxClients>

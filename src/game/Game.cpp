@@ -86,7 +86,7 @@ void Game::cargarEscenario() {
 //    escenario = new Escenario(gc);
 
 	recorroConfig(this->unCliente->getConfig());
-    escenario = new Escenario(this->unCliente->getConfig());
+    escenario = new Escenario(this->unCliente->getConfig(), sdlHandler);
     escenario->setClient(unCliente);
 
     for( int i = 0; i < this->unCliente->getPlayers().size(); i++) {

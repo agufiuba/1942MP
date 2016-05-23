@@ -222,7 +222,7 @@ bool Transmitter::sendEndDataConf(int cantidad){
 
 bool Transmitter::sendGetConfig(){
  // Send data id
-  cout<<" Send CO "<<endl;
+  //cout<<" Send CO "<<endl;
   if( !( this->sendDataID( "CO" ) ) ) {
 	return false;
   }

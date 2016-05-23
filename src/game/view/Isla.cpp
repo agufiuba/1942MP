@@ -9,20 +9,18 @@
 
 using namespace std;
 
-Isla::Isla(SDL_Renderer* render, Posicion* posicion, SpriteConf* sprite) {
+Isla::Isla(string index, Posicion* posicion, SpriteConf* sprite, Screen* screenIsla) {
 
-	this->id = sprite->path;
+	this->id = sprite->path + index;
 	this->posicion = posicion;
-	islaTxt = new Texture( render );
 	string str(sprite->path);
 	string path = "islas/"+str;
-	islaTxt->loadFromFile(path);
-	islaTxt->render( posicion->getX(), posicion->getYsdl() );
+	this->screenIsla = screenIsla;
+	this->screenIsla->loadTexture(id, path);
 }
 
 Isla::~Isla() {
 	delete posicion;
-	delete islaTxt;
 }
 
 void Isla::setPosicion(Posicion* posicion) {
@@ -32,12 +30,12 @@ void Isla::setPosicion(Posicion* posicion) {
 
 void Isla::vivir() {
 	posicion->mover(0, -3);
-	islaTxt->render( posicion->getX(), posicion->getYsdl() );
+	screenIsla->renderTexture(id, posicion->getX(), posicion->getYsdl());
 }
 
 void Isla::vivir(int x, int y) {
 	posicion->mover(x,-y);
-	islaTxt->render( posicion->getX(), posicion->getYsdl() );
+	screenIsla->renderTexture(id, posicion->getX(), posicion->getYsdl());
 }
 
 string Isla::getId() {return this->id;}
