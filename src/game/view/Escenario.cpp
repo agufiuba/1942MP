@@ -15,7 +15,10 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	if (gc->escenario->alto != 0 && gc->escenario->ancho != 0) {
 		this->SCREEN_WIDTH = gc->escenario->ancho;
 		this->SCREEN_HEIGHT = gc->escenario->alto;
+		this->LONGITUD_NIVEL = gc->escenario->longitudNivel;
+		this->CANTIDAD_NIVELES = gc->escenario->cantidadNiveles;
 		resolucion = Resolucion::INSTANCE(SCREEN_WIDTH, SCREEN_HEIGHT);
+
 	} else {
 		setResolucion();
 	}
@@ -78,7 +81,7 @@ void Escenario::setClient(Client* cliente) {
 
 void Escenario::configurarFondosVivibles() {
 
-	int cantRepeticiones = CANTIDAD_SCREEN_TOTAL / CANTIDAD_SCREEN;
+	int cantRepeticiones = CANTIDAD_NIVELES;
 
 	for (int i = 0; i < gc->elementos.size(); i++) {
 		int x_gc = gc->elementos[i]->x;
@@ -89,7 +92,7 @@ void Escenario::configurarFondosVivibles() {
 
 			for (int j = 0; j < cantRepeticiones; j++) {
 				int x = x_gc;
-				int y = y_gc + (pixelesArecorrer * j);
+				int y = y_gc + (LIMITE_IMAGEN * j);
 				Posicion* p = new Posicion(x, y);
 				string jString  = to_string(j);
 				Isla* isla = new Isla(jString, p, gc->sprites[index], escenarioScreen);
@@ -123,7 +126,7 @@ void Escenario::setFondosVivibles(int x, int y) {
 
 SDL_Event* Escenario::run() {
 
-	int screensRecorridos = 0;
+	pixelesRecorridos = 0;
 	configurarFondosVivibles();
 	Posicion* posicionEscenario = new Posicion(0, 0);
 
@@ -179,16 +182,15 @@ SDL_Event* Escenario::run() {
 
 		}
 
-		isFinNivel = screensRecorridos >= CANTIDAD_SCREEN_TOTAL;
+		isFinNivel = pixelesRecorridos >= LONGITUD_NIVEL;
+		cout << "pixRecorridos - condicion " << pixelesRecorridos << " " << LONGITUD_NIVEL << endl;
 
 		if (!isFinNivel) {
-
 			pixelesRecorridos -= VELOCIDAD_SCREEN;
 			if (posicionEscenario->getY() > SCREEN_HEIGHT) {
 				posicionEscenario->mover(0, VELOCIDAD_SCREEN);
 			} else {
-				screensRecorridos += CANTIDAD_SCREEN;
-				posicionEscenario->setPosicion(0, pixelesArecorrer);
+				posicionEscenario->setPosicion(0, LIMITE_IMAGEN);
 			}
 
 			actualizarEscenario(posicionEscenario);

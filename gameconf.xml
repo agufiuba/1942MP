@@ -35,13 +35,23 @@
 		<ancho>4000</ancho>
 		<alto>4000</alto>
     </sprite>
+    <sprite>
+		<id>aguaMarcado</id>
+		<path>"fondo4000x4000Marcado.bmp"</path>
+		<ancho>4000</ancho>
+		<alto>4000</alto>
+    </sprite>
 </sprites>
 <escenario>
 	<ancho>800</ancho>
 	<alto>600</alto>
 	<fondo>
-		<spriteID>agua</spriteID>
+		<spriteID>aguaMarcado</spriteID>
 	</fondo>
+	<nivel>
+		<longitudNivel>4000</longitudNivel>
+		<cantidadNiveles>2</cantidadNiveles>
+	</nivel>
 	<elementos>
 		<elemento>
 			<spriteID>isla1</spriteID>

@@ -6,8 +6,10 @@
 Game::Game( uint32_t sdlFlags ) {
   this->sdlHandler = new XM_SDL( sdlFlags );
   this->running = false;
-  this->windowWidth = 800;
-  this->windowHeight = 600;
+  gc = GameParser::parse("gameconf.xml");
+  Resolucion::INSTANCE(gc->escenario->ancho, gc->escenario->alto);
+  this->windowWidth = Resolucion::INSTANCE()->getWidthScreen();
+  this->windowHeight = Resolucion::INSTANCE()->getHeightScreen();
   this->windowTitle = "1942MP Arcade";
   this->fps = 10;
   this->serverIP = "127.0.0.1";
@@ -18,55 +20,6 @@ Game::Game( uint32_t sdlFlags ) {
 
 Game::~Game() {
   delete sdlHandler;
-}
-
-void Game::crearGameConfHardcodeada() {
-  gc = GameParser::parse("gameconf.xml");
-  //	EscenarioConf* escenarioConf = new EscenarioConf();
-  //	escenarioConf->ancho = 800;
-  //	escenarioConf->alto = 600;
-  //	escenarioConf->fondo = "agua";
-
-  //TODO: esto comentado se puede probar. si se quiere probar, descomentarlo
-  //	ElementoConf* el1 = new ElementoConf();
-  //	el1->spriteID = "isla1";
-  //	el1->x = 200;
-  //	el1->y = 200;
-  //
-  //	ElementoConf* el2 = new ElementoConf();
-  //	el2->spriteID = "portaavionGFEDGS";
-  //	el2->x = 600;
-  //	el2->y = 600;
-  //
-  //	escenarioConf->elementos.push_back(el1);
-  //	escenarioConf->elementos.push_back(el2);
-
-  //	gc->escenario = escenarioConf;
-}
-
-void Game::recorroConfig(GameConf* game){
-/*
-	cout<<"CONFIGURACION"<<endl;
-	cout<<"AVION"<<endl;
-	cout<<game->avion->avionSpriteID<<endl;
-	cout<<game->avion->disparosSpriteID<<endl;
-	cout<<game->avion->velocidadDesplazamiento<<endl;
-	cout<<game->avion->velocidadDisparos<<endl;
-//	cout<<game->avion->vueltaSpriteID<<endl;
-	cout<<"Escenario"<<endl;
-	cout<<game->escenario->fondo<<endl;
-	cout<<"MAX CLIENTE"<<endl;
-	cout<<game->maxClients<<endl;
-	cout<<"ELEMENTOS"<<endl;
-	for (int var = 0; var < game->elementos.size(); ++var) {
-		cout<<game->elementos[var]->spriteID<<endl;
-	}
-	cout<<"SPRITES"<<endl;
-	for (int var = 0; var < game->sprites.size(); ++var) {
-		cout<<game->sprites[var]->id<<endl;
-		cout<<game->sprites[var]->path<<endl;
-	}
-	*/
 }
 
 void Game::cargarEscenario() {
@@ -81,11 +34,8 @@ void Game::cargarEscenario() {
 		this->unCliente->sendGetConfig();
 		while(!unCliente->isConfigComplete()){}
 	}
-    this->unCliente->reset =false;
-//    crearGameConfHardcodeada();
-//    escenario = new Escenario(gc);
 
-	recorroConfig(this->unCliente->getConfig());
+    this->unCliente->reset =false;
     escenario = new Escenario(this->unCliente->getConfig(), sdlHandler);
     escenario->setClient(unCliente);
 

@@ -44,14 +44,14 @@ private:
 	int SCREEN_WIDTH;
 	int SCREEN_HEIGHT;
 	int FRAMES_PER_SECOND = 30;
-	int CANTIDAD_SCREEN = 5;
-	int CANTIDAD_SCREEN_TOTAL = 90;
+//	int CANTIDAD_SCREEN = 5;
+//	int CANTIDAD_SCREEN_TOTAL = 90;
 	int VELOCIDAD_SCREEN = -3;
-	int pixelesArecorrer = 4000;
+	int LONGITUD_NIVEL; //pixeles a recorrer
+	int CANTIDAD_NIVELES;
+	int LIMITE_IMAGEN = 4000;
 	int pixelesRecorridos = 0;
-
-	//Mas desfasaje, mas abajo se ponen las islas
-	int desfasajeConexion = 70;
+	int desfasajeConexion = 70; //Mas desfasaje, mas abajo se ponen las islas
 
 	string rojo = "rojo";
 	string azul = "azul";

@@ -8,6 +8,7 @@
 #include "../libs/socket/Client.h"
 #include "../libs/data/player_data.h"
 #include "../xml/conf/GameConf.h"
+#include "../game/model/Resolucion.h"
 #include "view/Escenario.h"
 #include <SDL2/SDL.h>
 
@@ -43,8 +44,6 @@ class Game {
     void setPlanesActives(bool blue,bool red,bool green,bool yellow);
 
     void cargarEscenario();
-    void recorroConfig(GameConf*);
-    void crearGameConfHardcodeada();
 
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
