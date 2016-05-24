@@ -56,8 +56,8 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 		fondosVivibles[i]->vivir();
 	}
 
-	myControl->hacerVivir();
 	controllers->hacerVivir();
+	myControl->hacerVivir();
 
 	SDL_RenderPresent(gRenderer);
 	// set new offset on client
