@@ -8,6 +8,13 @@
 #ifndef SRC_GAME_MODEL_POWERUP_H_
 #define SRC_GAME_MODEL_POWERUP_H_
 
+#include "../view/PowerUpView.h"
+#include "Vivible.h"
+#include "Resolucion.h"
+#include "../model/Posicion.h"
+
+//#include "../../xml/conf/PowerUpConf.h"
+
 #include <string>
 
 class PowerUp: public Vivible {

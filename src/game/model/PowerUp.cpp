@@ -72,7 +72,7 @@ void PowerUp::mover(int velX, int velY) {
 }
 
 void PowerUp::mostrar(int velX){
-	vistaPowerUp->mostrar(posicion->getX(),posicion->getYsdl(),velX);
+	vistaPowerUp->mostrar(posicion->getX(),posicion->getYsdl());
 }
 
 void PowerUp::vivir(int velX, int velY){
