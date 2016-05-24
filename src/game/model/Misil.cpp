@@ -1,0 +1,57 @@
+/*
+ * Misil.cpp
+ *
+ *  Created on: 30 de abr. de 2016
+ *      Author: ramon
+ */
+
+#include "Misil.h"
+using namespace std;
+
+Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config) {
+	vistaMisil = new MisilView(renderer, config);
+
+	viviendo = true;
+
+	this->posicion = posicion;
+
+	anchoFondo = resolucion->getWidthScreen();
+	largoFondo = resolucion->getHeightScreen();
+
+	t = new Timer();
+
+}
+
+Misil::~Misil() {
+	delete vistaMisil;
+}
+
+void Misil::vivir(int x,int velY){
+	this->moverEjeY(velY);
+	this->mostrar();
+}
+
+void Misil::mostrar(){
+	vistaMisil->mostrar(this->posicion->getX(), this->posicion->getYsdl());
+}
+
+void Misil::moverEjeY(int velY){
+	posicion->mover(0, velY);
+	int y = posicion->getY();
+	if (y + getLargo() > getLargoFondo()) {
+		viviendo = false;
+	}
+}
+
+int Misil::getAnchoFondo() {
+	return anchoFondo;
+}
+
+int Misil::getLargoFondo() {
+	return largoFondo;
+}
+
+
+bool Misil::aunVive(){
+	return viviendo;
+}

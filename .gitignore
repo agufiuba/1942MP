@@ -4,6 +4,8 @@
 *.lo
 *.o
 *.obj
+/src/server/server
+/src/client/client
 
 # Precompiled Headers
 *.gch
@@ -23,14 +25,18 @@
 *.a
 *.lib
 
+# XML
+*.xml
+
 # Executables
 *.exe
 *.out
 *.app
 
+# Logs
+logs/
 
 ### Eclipse ###
-
 .metadata
 bin/
 tmp/
