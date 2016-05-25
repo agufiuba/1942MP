@@ -9,9 +9,10 @@ class Player {
     int x;
     int y;
     bool active;
+    int health;
 
   public:
-    Player( string name, string color, int x, int y );
+    Player( string name, string color, int x, int y, int health = 3 );
     ~Player();
     string getName();
     string getColor();
@@ -25,6 +26,9 @@ class Player {
     bool isActive();
     void activate();
     void deactivate();
+    int getHealth();
+    void takeHit();
+    bool isAlive();
 };
 #endif
 

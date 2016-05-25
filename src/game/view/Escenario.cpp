@@ -33,6 +33,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
   hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600)));
+	this->healthView = NULL;
 }
 
 Escenario::~Escenario() {
@@ -54,8 +55,10 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	controllers->hacerVivir();
 	myControl->hacerVivir();
 	hPowerUp->hacerVivir();
+	this->healthView->update( this->player->getHealth() );
+	this->healthView->render();
 
-	SDL_RenderPresent(gRenderer);
+	this->sdl->updateWindow();
 	// set new offset on client
 	this->unCliente->setStageOffset(pixelesRecorridos);
 }
@@ -70,6 +73,11 @@ void Escenario::aplicarFPS(Uint32 start) {
 
 void Escenario::setClient(Client* cliente) {
 	this->unCliente = cliente;
+}
+
+void Escenario::setPlayer( Player* player ) {
+  this->player = player;
+  this->healthView = new HealthView( this->escenarioScreen, this->player->getHealth() );
 }
 
 void Escenario::configurarFondosVivibles() {
