@@ -22,6 +22,8 @@ private:
 	bool viviendo;
 
 	bool realizandoVueltereta;
+
+	bool llegoPuntoDeEstacionamiento;
 	bool estacionando;
 	Timer* t;
 
@@ -66,6 +68,8 @@ public:
 
 	void recibirMisil(Misil* misil);
 	bool tieneHP();
+
+	void inicializoEstacionar();
 
 	void mostrarEstacionar(int frame);
 	void estacionar();

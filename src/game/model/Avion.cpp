@@ -18,7 +18,7 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	this->posicion = posicionInicial;
 
-	posicionAEstacionar = new Posicion(500,100);
+	posicionAEstacionar = new Posicion(500,200); //TODO: hay que cargar desde el XML la posicion a estacionar?
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
@@ -156,15 +156,41 @@ void Avion::realizoVueltereta() {
 	mostrarVueltereta(frame);
 }
 
+void Avion::inicializoEstacionar() {
+	estacionando = true;
+	llegoPuntoDeEstacionamiento = false;
+}
+
 void Avion::mostrarEstacionar(int frame){
 	vistaAvion->mostrarEstacionar(posicion->getX(),posicion->getYsdl(),frame); //estacionar
 }
 
 void Avion::estacionar() {
+	int velocidadEstacionado = 1; //TODO: habra que sacarlo del XML??
 	int frame = 0;
 
 	//Funcion para automaticar el estacionamiento
 
+	if (!llegoPuntoDeEstacionamiento){
+		if (posicion->getX() != posicionAEstacionar->getX()) {
+			if (posicion->getX() > posicionAEstacionar->getX()) {
+				mover(-velocidadEstacionado, 0);
+			} else {
+				mover(velocidadEstacionado, 0);
+			}
+		}
+		if (posicion->getY() != posicionAEstacionar->getY()) {
+			if (posicion->getY() > posicionAEstacionar->getY()) {
+				mover(0, -velocidadEstacionado);
+			} else {
+				mover(0, velocidadEstacionado);
+			}
+		}
+		llegoPuntoDeEstacionamiento = (posicion->getX() == posicionAEstacionar->getX() && posicion->getY() == posicionAEstacionar->getY());
+
+	} else {
+		mover(0, velocidadEstacionado);
+	}
 
 	mostrarEstacionar(frame);
 }
