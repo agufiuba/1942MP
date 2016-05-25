@@ -9,12 +9,14 @@
 #include "../../libs/data/player_data.h"
 #include "../../xml/conf/AvionConf.h"
 #include <string>
+#include "Misil.h"
 
 class Avion: public Vivible {
 private:
 	string id;
 	int anchoFondo, largoFondo;
 	int velocidadStandard;
+	int vida;
 	bool viviendo;
 
 	bool realizandoVueltereta;
@@ -44,6 +46,8 @@ public:
 	int getLargo();
 	int getX();
 	int getY();
+	int getVida();
+
 	AvionConf* getConfiguracion();
 
 	void setVelocidadStandard(int vel);
@@ -52,8 +56,8 @@ public:
 
 	void vivir(int velX, int velY);
 	bool aunVive();
-
 	void desconectar();
+	void recibirMisil(Misil* misil);
 };
 
 #endif /* SRC_MODEL_AVION_H_ */

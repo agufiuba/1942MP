@@ -9,6 +9,7 @@ Avion::Avion(PlayerData* playerData, SDL_Renderer * renderer, Resolucion* &resol
 
 	this->id = id;
 	this->configuracion = conf;
+	this->vida = 100;
 
 	vistaAvion = new AvionView(renderer, color, conf->avionSpriteID);
 	viviendo = true;
@@ -177,4 +178,12 @@ bool Avion::aunVive(){
 void Avion::desconectar(){
 	this->viviendo = false;
 	vistaAvion->desconectar();
+}
+
+void Avion::recibirMisil(Misil* misil) {
+	this->vida -= misil->getDano();
+	cout << "La vida actual es " << this->vida << endl;
+	if (this->vida < 0) {
+//		TODO: Mostrar PUM
+	}
 }
