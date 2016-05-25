@@ -23,7 +23,7 @@ private:
 	int largoVista;
 
 public:
-	PowerUpView(SDL_Renderer* renderer);
+	PowerUpView(SDL_Renderer* renderer, string type);
 	~PowerUpView();
 
 	bool cargarImagenDelPowerUp( string filename );

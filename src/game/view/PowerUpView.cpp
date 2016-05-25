@@ -7,15 +7,18 @@
 
 #include "PowerUpView.h"
 
-PowerUpView::PowerUpView(SDL_Renderer * unRenderer) {
-	anchoVista = 70;
-	largoVista = 60;
+PowerUpView::PowerUpView(SDL_Renderer * unRenderer, string type) {
+	anchoVista = 50;
+	largoVista = 33;
 
 	rendererPowerUp = unRenderer;
 
-	if (!cargarImagenDelPowerUp("powerup.bmp")) {
+	string filename = "powerUp"+type+".bmp"; //TODO: se deberia sacar del XML
+
+	if (!cargarImagenDelPowerUp(filename)) {
 		cout << "Vista del powerUp no ha sido cargada correctamente.." << endl;
 	}
+
 }
 
 PowerUpView::~PowerUpView(){

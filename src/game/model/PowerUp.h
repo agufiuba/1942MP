@@ -19,7 +19,7 @@
 
 class PowerUp: public Vivible {
 private:
-	//string id;
+	string id;
 
 	int anchoFondo, largoFondo;
 	int velocidadStandard;
@@ -31,7 +31,7 @@ private:
 
 //	AvionConf* configuracion;
 
-	void mostrar(int velX);
+	void mostrar();
 	void mover(int velX, int velY);
 	void moverEjeX(int velX);
 	void moverEjeY(int velY);
@@ -40,7 +40,7 @@ public:
 	PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial);
 	~PowerUp();
 
-	//string getId();
+	string getId();
 
 	int getAnchoFondo();
 	int getLargoFondo();
@@ -53,7 +53,7 @@ public:
 
 	void setVelocidadStandard(int vel);
 
-	void vivir(int velX, int velY);
+	void vivir();
 	bool aunVive();
 };
 

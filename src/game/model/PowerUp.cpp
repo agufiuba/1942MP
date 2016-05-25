@@ -13,8 +13,10 @@ PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* pos
 
 	//this->configuracion = conf; //TODO: hay que agregar que guarde su configuracion de XML
 
-	vistaPowerUp = new PowerUpView(renderer);
+	vistaPowerUp = new PowerUpView(renderer, "Shot");
 	viviendo = true;
+
+	this->id = 1; //TODO:hay que hacer que cada powerUp tenga una ID??
 
 	this->posicion = posicionInicial;
 
@@ -48,6 +50,10 @@ int PowerUp::getLargo() {
 	return vistaPowerUp->getLargoVista();
 }
 
+string PowerUp::getId() {
+	return this->id;
+}
+
 void PowerUp::moverEjeX(int velX) {
 	posicion->mover(velX,0);
 //	cout << "El ancho PowerUp es: " << getAncho() << endl;
@@ -67,24 +73,23 @@ void PowerUp::moverEjeY(int velY) {
 }
 
 void PowerUp::mover(int velX, int velY) {
+	//El powerUp se mueve siempre para abajo
 	moverEjeX(velX);
 	moverEjeY(velY);
 }
 
-void PowerUp::mostrar(int velX){
+void PowerUp::mostrar(){
 	vistaPowerUp->mostrar(posicion->getX(),posicion->getYsdl());
 }
 
-void PowerUp::vivir(int velX, int velY){
-		mover(velX, velY);
-		mostrar(velX);
-
+void PowerUp::vivir(){
+		mover(0, -velocidadStandard);
+		mostrar();
 }
 
 int PowerUp::getX(){
 	return posicion->getX();
 }
-
 
 int PowerUp::getY(){
 	return posicion->getY();
