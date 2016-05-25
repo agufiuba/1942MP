@@ -377,6 +377,7 @@ void Client::disconnectFromServer() {
   mutex theMutex;
   if( this->connected ) {
     this->closeConnection();
+    cout<<"close connection"<<endl;
   } else {
     this->logger->warn( CONNECTION_NOT_ACTIVE );
     theMutex.lock();

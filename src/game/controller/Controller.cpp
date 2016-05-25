@@ -42,6 +42,10 @@ void Controller::press(SDL_Event *event){
 
             case SDLK_r: cout<<"Se Reinicia la partida"<<endl;cliente->sendData(ce->restart(obj->getId()));break;
 
+            case SDLK_s: cout<<"Modo Practica"<<endl;break;
+            //TODO cuando tengamos los enemigos se implementa el bool
+            //Enviarlo por server-cliente al resto, validarlo
+
 			case SDLK_SPACE:
 				if (!obj->haciendoVueltereta())
 					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla, misilConf);

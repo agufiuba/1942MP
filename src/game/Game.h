@@ -28,7 +28,10 @@ class Game {
     PlayerData* jugador;
     string clientId;
     string planeId;
-  
+    bool practiceMode;
+    bool cooperativeMode;
+	bool teamMode;
+
     bool bluePlaneActive;
     bool redPlaneActive;
     bool greenPlaneActive;
@@ -45,6 +48,9 @@ class Game {
     void cargarEscenario();
     void recorroConfig(GameConf*);
     void crearGameConfHardcodeada();
+    //Modos Tp3
+    void loadModeGameScreen();
+    void loadTeamModeGameScreen();
 
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
