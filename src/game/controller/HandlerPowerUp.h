@@ -22,6 +22,7 @@ public:
 	HandlerPowerUp(SDL_Renderer* renderer, Resolucion* resolucion);
 	virtual ~HandlerPowerUp();
 
+	void activar(string id, char evento);
 	void setPowerUp(PowerUp* powerUp);
 	void hacerVivir();
 };

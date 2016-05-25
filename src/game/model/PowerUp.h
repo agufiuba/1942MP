@@ -11,6 +11,7 @@
 #include "../view/PowerUpView.h"
 #include "Vivible.h"
 #include "Resolucion.h"
+#include "../model/Avion.h"
 #include "../model/Posicion.h"
 
 //#include "../../xml/conf/PowerUpConf.h"
