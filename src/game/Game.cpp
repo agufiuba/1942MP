@@ -16,6 +16,7 @@ Game::Game( uint32_t sdlFlags ) {
   this->serverPort = "8000";
   this->clientId = "";
   this->planeId = "";
+  this->player = NULL;
 }
 
 Game::~Game() {
@@ -40,10 +41,12 @@ void Game::cargarEscenario() {
     escenario->setClient(unCliente);
 
     for( int i = 0; i < this->unCliente->getPlayers().size(); i++) {
-      if( this->clientId == this->unCliente->getPlayers()[i]->name ) {
-    	  escenario->configurarMiAvion(this->unCliente->getPlayers()[i]);
+      PlayerData* pData = this->unCliente->getPlayers()[i];
+      if( this->clientId == pData->name ) {
+	  this->player = new Player( pData->name, pData->color, pData->x, pData->y );
+    	  escenario->configurarMiAvion( pData );
       } else {
-    	  escenario->configurarAvionAmigo(this->unCliente->getPlayers()[i]);
+    	  escenario->configurarAvionAmigo( pData );
       }
     }
 
@@ -796,8 +799,6 @@ void Game::loadWaitingGame() {
 	exit(1);
       } //Special key input
     }
-
-
   }
 
   //Disable text input

@@ -10,6 +10,7 @@
 #include "../xml/conf/GameConf.h"
 #include "../game/model/Resolucion.h"
 #include "view/Escenario.h"
+#include "model/Player.h"
 #include <SDL2/SDL.h>
 
 using namespace std;
@@ -29,6 +30,7 @@ class Game {
     PlayerData* jugador;
     string clientId;
     string planeId;
+    Player* player;
   
     bool bluePlaneActive;
     bool redPlaneActive;
