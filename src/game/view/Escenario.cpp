@@ -170,6 +170,13 @@ SDL_Event* Escenario::run() {
 
 						break;
 					}
+
+//					TODO: Esto fue agregado para probar cuando me disparan
+					if (evento.key.keysym.sym == SDLK_d) {
+						Avion* avion = (Avion*)myControl->getVivible();
+						Misil* disparoEnemigo = new Misil(gRenderer, new Posicion(0,0), resolucion, NULL);
+						avion->recibirMisil(disparoEnemigo);
+					}
 				}
 
 			}
