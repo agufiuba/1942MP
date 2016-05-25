@@ -28,6 +28,7 @@ class Screen {
     void renderTexture( string id, int x, int y );
     void renderRectangle( string id, bool outline = false );
     int getTextureWidth( string id );
+    int getTextWidth( string text );
     void setRenderDrawColor( int r, int g, int b, int a );
 };
 #endif

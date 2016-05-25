@@ -84,6 +84,12 @@ int Screen::getTextureWidth( string id ) {
   return it->second->getWidth();
 }
 
+int Screen::getTextWidth( string text ) {
+  int width;
+  TTF_SizeText( this->fontFamily, text.c_str(), &width, NULL );
+  return width;
+}
+
 void Screen::setRenderDrawColor( int r, int g, int b, int a ) {
   SDL_SetRenderDrawColor( this->renderer, r, g, b, a );
 }
