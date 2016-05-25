@@ -9,14 +9,15 @@
 
 using namespace std;
 
-PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial) {
+PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, string type, string id) {
 
 	//this->configuracion = conf; //TODO: hay que agregar que guarde su configuracion de XML
 
-	vistaPowerUp = new PowerUpView(renderer, "Shot");
+	vistaPowerUp = new PowerUpView(renderer, type);
 	viviendo = true;
 
-	this->id = 1; //TODO:hay que hacer que cada powerUp tenga una ID??
+	this->id = id; //TODO:hay que hacer que cada powerUp tenga una ID??
+	this->type = type;
 
 	this->posicion = posicionInicial;
 
@@ -97,4 +98,18 @@ int PowerUp::getY(){
 
 bool PowerUp::aunVive(){
 	return viviendo;
+}
+
+void PowerUp::activarPowerUp() {
+	if( this->type == "Shot") {
+			cout << "PowerUp Shot" << endl;
+	}
+
+	if( this->type == "Bonus") {
+			cout << "PowerUp Bonus" << endl;
+	}
+
+	if( this->type == "Destroy") {
+			cout << "PowerUp Destroy" << endl;
+	}
 }
