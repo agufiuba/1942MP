@@ -55,7 +55,7 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	myControl->hacerVivir();
 	hPowerUp->hacerVivir();
 
-	SDL_RenderPresent(gRenderer);
+	this->sdl->updateWindow();
 	// set new offset on client
 	this->unCliente->setStageOffset(pixelesRecorridos);
 }
