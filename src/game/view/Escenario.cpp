@@ -29,10 +29,6 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	escenarioScreen->loadTexture("agua", "fondos/" + DIR_FONDO_PANTALLA);
 
 	controllers = new HandlerPlayersControllers(gRenderer, resolucion);
-
-	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
-	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
-  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600)));
 }
 
 Escenario::~Escenario() {
