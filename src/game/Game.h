@@ -32,7 +32,11 @@ class Game {
     string planeId;
     Player* player;
   
-    bool bluePlaneActive;
+    bool practiceMode;
+    bool cooperativeMode;
+	bool teamMode;
+
+	bool bluePlaneActive;
     bool redPlaneActive;
     bool greenPlaneActive;
     bool yellowPlaneActive;
@@ -47,6 +51,11 @@ class Game {
     void setPlanesActives(bool blue,bool red,bool green,bool yellow);
 
     void cargarEscenario();
+    void recorroConfig(GameConf*);
+    void crearGameConfHardcodeada();
+    //Modos Tp3
+    void loadModeGameScreen();
+    void loadTeamModeGameScreen();
 
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
