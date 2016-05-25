@@ -98,10 +98,12 @@ void Game::loadConnectionScreen() {
   initialScreen->loadText( "accept", "ACEPTAR" );
 
   int logoCenter = ( this->windowWidth - initialScreen->getTextureWidth( "logo" ) ) / 2;
-  int promptCenter = logoCenter - 20;
-  int buttonCenter = promptCenter + 15;
+  int promptWidth = initialScreen->getTextWidth( "999.999.999.999" ) + 40;
+  int promptCenter = ( this->windowWidth - promptWidth ) / 2;
+  int buttonWidth = 250;
+  int buttonCenter = ( this->windowWidth - buttonWidth ) / 2;
   int textCenter = promptCenter + 20;
-  int buttonTextCenter = buttonCenter + ( ( 230 - initialScreen->getTextureWidth( "accept" ) ) / 2 );
+  int buttonTextCenter = ( this->windowWidth - initialScreen->getTextWidth( acceptButtonText ) ) / 2; 
   int IPPromptOutline = 300, IPPromptOutline2 = 301, IPPromptOutline3 = 302;
   int portPromptOutline = 375, portPromptOutline2 = 376, portPromptOutline3 = 377;
   int mouseX, mouseY;
@@ -111,9 +113,9 @@ void Game::loadConnectionScreen() {
   bool clicked = false;
 
   // Create prompts
-  initialScreen->loadRectangle( "promptIP", promptCenter, 300, 260, 50 );
-  initialScreen->loadRectangle( "promptPort", promptCenter, 375, 260, 50 );
-  initialScreen->loadRectangle( "button", promptCenter + 15, 475, 230, 50 );
+  initialScreen->loadRectangle( "promptIP", promptCenter, 300, promptWidth, 50 );
+  initialScreen->loadRectangle( "promptPort", promptCenter, 375, promptWidth, 50 );
+  initialScreen->loadRectangle( "button", buttonCenter, 475, buttonWidth, 50 );
 
   // Enable text input
   SDL_StartTextInput();
@@ -127,6 +129,7 @@ void Game::loadConnectionScreen() {
       if( e.type == SDL_QUIT ) {
 	runningScreen = false;
 	this->running = false;
+	break;
       } //Special key input
       else if( e.type == SDL_KEYDOWN ) {
 	// Handle Tab
@@ -241,13 +244,13 @@ void Game::loadConnectionScreen() {
     initialScreen->setRenderDrawColor( 19, 144, 27, 255 );
 
     if( firstPromptSelected ) {
-      initialScreen->loadRectangle( "outline", promptCenter, IPPromptOutline, 260, 50 );
-      initialScreen->loadRectangle( "outline2", promptCenter + 1, IPPromptOutline2, 258, 48 );
-      initialScreen->loadRectangle( "outline3", promptCenter + 2, IPPromptOutline3, 256, 46 );
+      initialScreen->loadRectangle( "outline", promptCenter, IPPromptOutline, promptWidth, 50 );
+      initialScreen->loadRectangle( "outline2", promptCenter + 1, IPPromptOutline2, promptWidth - 2, 48 );
+      initialScreen->loadRectangle( "outline3", promptCenter + 2, IPPromptOutline3, promptWidth - 4, 46 );
     } else {
-      initialScreen->loadRectangle( "outline", promptCenter, portPromptOutline, 260, 50 );
-      initialScreen->loadRectangle( "outline2", promptCenter + 1, portPromptOutline2, 258, 48 );
-      initialScreen->loadRectangle( "outline3", promptCenter + 2, portPromptOutline3, 256, 46 );
+      initialScreen->loadRectangle( "outline", promptCenter, portPromptOutline, promptWidth, 50 );
+      initialScreen->loadRectangle( "outline2", promptCenter + 1, portPromptOutline2, promptWidth - 2, 48 );
+      initialScreen->loadRectangle( "outline3", promptCenter + 2, portPromptOutline3, promptWidth - 4, 46 );
     }
 
     // Render outlines
@@ -267,6 +270,10 @@ void Game::loadConnectionScreen() {
       SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
     }
   }
+
+  //Disable text input
+  SDL_StopTextInput();
+  delete initialScreen;
 }
 
 void Game::loadValidationScreen() {

@@ -4,7 +4,7 @@
 Screen::Screen( XM_SDL* sdlHandler ) {
   this->sdlHandler = sdlHandler;
   this->renderer = this->sdlHandler->getRenderer();
-  this->loadFont( "src/initialWindow/fonts/open_sans/OpenSans-Regular.ttf" );
+  this->loadFont( "src/initialWindow/fonts/arcadeclassic/arcade_classic.ttf" );
   this->fontColor = { 0, 0, 0, 255 };
 }
 
