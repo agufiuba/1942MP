@@ -30,7 +30,7 @@
 #include "../../libs/xm_sdl/XM_SDL.h"
 #include "Screen.h"
 #include "HealthView.h"
-
+#include "../model/Player.h"
 #include "../model/PowerUp.h"
 #include "../controller/HandlerPowerUp.h"
 
@@ -40,6 +40,7 @@ private:
 	XM_SDL* sdl;
 	Screen* escenarioScreen;
 	HealthView* healthView;
+	Player* player;
 	SDL_Renderer* gRenderer = NULL;
 	SDL_Event evento;
 	Resolucion* resolucion;
@@ -85,6 +86,7 @@ public:
 	SDL_Event* run();
 	HandlerPlayersControllers* getHandler();
 	void setClient(Client* cliente);
+	void setPlayer(Player* player);
 	void configurarAvionAmigo(PlayerData* playerData);
 	void configurarMiAvion(PlayerData* playerData);
 

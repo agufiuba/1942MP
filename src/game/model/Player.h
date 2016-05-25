@@ -12,7 +12,7 @@ class Player {
     int health;
 
   public:
-    Player( string name, string color, int x, int y, int health = 4 );
+    Player( string name, string color, int x, int y, int health = 3 );
     ~Player();
     string getName();
     string getColor();

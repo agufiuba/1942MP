@@ -50,6 +50,7 @@ void Game::cargarEscenario() {
       }
     }
 
+    escenario->setPlayer( this->player );
     unCliente->setHandler(escenario->getHandler());
     exitEven = escenario->run();
     if( !( this->unCliente->isConnected() ) ) {
