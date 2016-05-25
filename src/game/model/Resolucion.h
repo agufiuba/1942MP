@@ -8,6 +8,8 @@
 #ifndef RESOLUCION_H_
 #define RESOLUCION_H_
 
+#include <iostream>
+
 class Resolucion {
 
 private:
@@ -22,6 +24,7 @@ public:
 	~Resolucion();
 	int getWidthScreen();
 	int getHeightScreen();
+	bool isFullScreen();
 
 };
 
