@@ -58,13 +58,20 @@ XM_SDL::~XM_SDL() {
   SDL_Quit();
 }
 
-bool XM_SDL::createWindow( const char* TITLE, const int WIDTH, const int HEIGHT ) {
-  // Create window
-  this->window = SDL_CreateWindow( TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
-				   WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+bool XM_SDL::createWindow( const char* TITLE, int WIDTH, int HEIGHT ) {
+
+	Resolucion* resolucion = Resolucion::INSTANCE(WIDTH, HEIGHT);
+
+	// Create window
+  this->window = SDL_CreateWindow( TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
   if( this->window == NULL ) {
     cout << endl << "Unable to create window: " << SDL_GetError() << endl;
     return false;
+  }
+
+  if (resolucion->isFullScreen() && SDL_SetWindowFullscreen(window, SDL_TRUE) < 0) {
+	  cout << endl << "Unable to create window full screen: " << SDL_GetError() << endl;
+	  return false;
   }
 
   // Create renderer for window

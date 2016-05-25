@@ -11,11 +11,13 @@
 using namespace std;
 
 typedef struct GameConf {
+
+	int maxClients;
     vector<SpriteConf *> sprites;
+    vector<ElementoConf *> elementos;
     EscenarioConf *escenario;
     AvionConf *avion;
-    int maxClients;
-    vector<ElementoConf *> elementos;
+
 } GameConf;
 
 #endif

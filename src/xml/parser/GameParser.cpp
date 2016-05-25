@@ -61,14 +61,25 @@ EscenarioConf *GameParser::escenario(XMLDocument *doc, GameConf *gc) {
     XMLElement *escenarioE = doc->FirstChildElement("escenario");
     XMLElement *altoE = escenarioE->FirstChildElement("alto");
     XMLElement *anchoE = escenarioE->FirstChildElement("ancho");
-    int ancho, alto;
+    XMLElement* nivelE = escenarioE->FirstChildElement("nivel");
+    XMLElement* longitudNivelE = nivelE->FirstChildElement("longitudNivel");
+    XMLElement* cantidadNivelesE = nivelE->FirstChildElement("cantidadNiveles");
+
+    int ancho, alto, longitudNivel, cantidadNiveles;
     altoE->QueryIntText(&alto);
     anchoE->QueryIntText(&ancho);
+    longitudNivelE->QueryIntText(&longitudNivel);
+    cantidadNivelesE->QueryIntText(&cantidadNiveles);
+
     string fondoSpriteID = escenarioE->FirstChildElement("fondo")->FirstChildElement("spriteID")->GetText();
     strcpy(ec->fondo, fondoSpriteID.c_str());
+
     ec->alto = alto;
     ec->ancho = ancho;
+    ec->longitudNivel = longitudNivel;
+    ec->cantidadNiveles = cantidadNiveles;
     gc->elementos = elementos(escenarioE);
+
     return ec;
 }
 

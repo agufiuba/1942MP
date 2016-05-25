@@ -5,6 +5,8 @@ typedef struct EscenarioConf {
     int ancho;
     int alto;
     char fondo[30];
+    int longitudNivel;
+	int cantidadNiveles;
 } EscenarioConf;
 
 #endif

@@ -12,13 +12,11 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	this->gc = configuracion;
 	this->sdl = sdl;
 
-	if (gc->escenario->alto != 0 && gc->escenario->ancho != 0) {
-		this->SCREEN_WIDTH = gc->escenario->ancho;
-		this->SCREEN_HEIGHT = gc->escenario->alto;
-		resolucion = Resolucion::INSTANCE(SCREEN_WIDTH, SCREEN_HEIGHT);
-	} else {
-		setResolucion();
-	}
+	this->SCREEN_WIDTH = gc->escenario->ancho;
+	this->SCREEN_HEIGHT = gc->escenario->alto;
+	this->LONGITUD_NIVEL = gc->escenario->longitudNivel;
+	this->CANTIDAD_NIVELES = gc->escenario->cantidadNiveles;
+	resolucion = Resolucion::INSTANCE(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	int spriteN = GameParser::findSprite(gc->sprites, gc->escenario->fondo);
 	if (spriteN != -1) {
@@ -39,13 +37,6 @@ Escenario::~Escenario() {
 	delete myControl;
 	delete controllers;
 	limpiarFondosVivibles();
-	limpiarEventos();
-}
-
-void Escenario::setResolucion() {
-	resolucion = Resolucion::INSTANCE();
-	SCREEN_HEIGHT = resolucion->getHeightScreen();
-	SCREEN_WIDTH = resolucion->getWidthScreen();
 }
 
 void Escenario::actualizarEscenario(Posicion* pos) {
@@ -78,7 +69,12 @@ void Escenario::setClient(Client* cliente) {
 
 void Escenario::configurarFondosVivibles() {
 
-	int cantRepeticiones = CANTIDAD_SCREEN_TOTAL / CANTIDAD_SCREEN;
+	int cantidadRepeticionesPorNivel = 1;
+	if (LONGITUD_NIVEL > LIMITE_IMAGEN) {
+		cantidadRepeticionesPorNivel = LONGITUD_NIVEL / LIMITE_IMAGEN;
+	}
+
+	int cantRepeticiones = (CANTIDAD_NIVELES * cantidadRepeticionesPorNivel) + 1;
 
 	for (int i = 0; i < gc->elementos.size(); i++) {
 		int x_gc = gc->elementos[i]->x;
@@ -89,7 +85,7 @@ void Escenario::configurarFondosVivibles() {
 
 			for (int j = 0; j < cantRepeticiones; j++) {
 				int x = x_gc;
-				int y = y_gc + (pixelesArecorrer * j);
+				int y = y_gc + (LIMITE_IMAGEN * j);
 				Posicion* p = new Posicion(x, y);
 				string jString  = to_string(j);
 				Isla* isla = new Isla(jString, p, gc->sprites[index], escenarioScreen);
@@ -123,7 +119,7 @@ void Escenario::setFondosVivibles(int x, int y) {
 
 SDL_Event* Escenario::run() {
 
-	int screensRecorridos = 0;
+	pixelesRecorridos = 0;
 	configurarFondosVivibles();
 	Posicion* posicionEscenario = new Posicion(0, 0);
 
@@ -140,67 +136,78 @@ SDL_Event* Escenario::run() {
 	actualizarEscenario(posicionEscenario);
 	Uint32 start;
 	bool quit = false;
-	int i = 0;
 
-	bool isFinNivel = false;
+	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
-	while (!quit && this->unCliente->isConnected()) {
+		while (!quit && this->unCliente->isConnected()) {
 
-		start = SDL_GetTicks();
+			start = SDL_GetTicks();
 
-		if (this->unCliente->reset) {
-			SDL_Event* eventReset = new SDL_Event();
-			eventReset->key.keysym.sym = SDLK_r;
-			this->unCliente->setStageOffset(0);
-			return eventReset;
-		}
+			if (this->unCliente->reset) {
+				SDL_Event* eventReset = new SDL_Event();
+				eventReset->key.keysym.sym = SDLK_r;
+				this->unCliente->setStageOffset(0);
+				return eventReset;
+			}
 
-		while (this->sdl->nextEvent(&evento) && evento.type != SDL_MOUSEMOTION) {
-			//TODO: Para borrar eventos
-//			eventosList.push_back(&evento);
-			myControl->press(&evento);
-			if( evento.type == SDL_KEYDOWN ) {
-				if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
-					quit = true;
+			while (this->sdl->nextEvent(&evento) && evento.type != SDL_MOUSEMOTION) {
 
-					PlayerData* p = new PlayerData();
+				myControl->press(&evento);
 
-					strcpy(p->name, (myControl->getVivible())->getId().c_str());
-					p->x = myControl->getVivible()->getX();
-					p->y = myControl->getVivible()->getY();
+				if( evento.type == SDL_KEYDOWN ) {
+					if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
+						quit = true;
 
-					while (!this->unCliente->sendDataPosicion(p))
-						;
-					usleep(100);
+						PlayerData* p = new PlayerData();
 
-					break;
+						strcpy(p->name, (myControl->getVivible())->getId().c_str());
+						p->x = myControl->getVivible()->getX();
+						p->y = myControl->getVivible()->getY();
+
+						while (!this->unCliente->sendDataPosicion(p))
+							;
+						usleep(100);
+
+						break;
+					}
 				}
+
 			}
 
-		}
+//			isFinNivel = pixelesRecorridos >= LONGITUD_NIVEL * numeroNivel;
 
-		isFinNivel = screensRecorridos >= CANTIDAD_SCREEN_TOTAL;
+			if (isFinNivel(numeroNivel)) {
 
-		if (!isFinNivel) {
-
-			pixelesRecorridos -= VELOCIDAD_SCREEN;
-			if (posicionEscenario->getY() > SCREEN_HEIGHT) {
-				posicionEscenario->mover(0, VELOCIDAD_SCREEN);
+//				TODO: Aca deberia ir la inscripcion de fin de nivel
+				cout << "SE TERMINO EL NIVEL " << numeroNivel << endl;
+				usleep(5000000);
+				break;
 			} else {
-				screensRecorridos += CANTIDAD_SCREEN;
-				posicionEscenario->setPosicion(0, pixelesArecorrer);
-			}
 
-			actualizarEscenario(posicionEscenario);
-			aplicarFPS(start);
+				pixelesRecorridos -= VELOCIDAD_SCREEN;
+				if (posicionEscenario->getY() > SCREEN_HEIGHT) {
+					posicionEscenario->mover(0, VELOCIDAD_SCREEN);
+				} else {
+					posicionEscenario->setPosicion(0, LIMITE_IMAGEN);
+				}
+
+				actualizarEscenario(posicionEscenario);
+				aplicarFPS(start);
+			}
 		}
+
 	}
 
 	delete posicionEscenario;
 	return &evento;
 }
 
+bool Escenario::isFinNivel(int numeroNivel) {
+	return pixelesRecorridos >= LONGITUD_NIVEL * numeroNivel;
+}
+
 void Escenario::limpiarFondosVivibles() {
+
 	if (fondosVivibles.size() > 0) {
 		for (int i = 0; i < fondosVivibles.size(); i++) {
 			delete fondosVivibles[i];
@@ -209,12 +216,3 @@ void Escenario::limpiarFondosVivibles() {
 	fondosVivibles.clear();
 }
 
-void Escenario::limpiarEventos() {
-//	if (eventosList.size() > 0) {
-//		for (int i = 0; i < eventosList.size(); i++) {
-//			cout << "Borrando evento" << endl;
-//			delete eventosList[i];
-//		}
-//	}
-//	eventosList.clear();
-}

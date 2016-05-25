@@ -9,6 +9,7 @@
 #include <X11/Xlib.h>
 
 Resolucion* instancia = NULL;
+bool fullScreen = false;
 
 Resolucion* Resolucion::INSTANCE() {
 	if (!instancia)
@@ -17,11 +18,20 @@ Resolucion* Resolucion::INSTANCE() {
 }
 
 Resolucion* Resolucion::INSTANCE(int x, int y) {
-	if (!instancia)
-		instancia = new Resolucion(x, y);
+	if (!instancia) {
+		fullScreen = (x == 0 && y == 0);
+		if (fullScreen) {
+			instancia = new Resolucion();
+		} else {
+			instancia = new Resolucion(x, y);
+		}
+	}
 	return instancia;
 }
 
+/**
+ * Devuelve la resolucion del monitor
+ */
 Resolucion::Resolucion() {
 	Display* disp = XOpenDisplay(NULL);
 	Screen*  screen = DefaultScreenOfDisplay(disp);
@@ -40,6 +50,10 @@ int Resolucion::getWidthScreen() {
 
 int Resolucion::getHeightScreen() {
 	return SCREEN_HEIGHT;
+}
+
+bool Resolucion::isFullScreen() {
+	return fullScreen;
 }
 
 Resolucion::~Resolucion() {}

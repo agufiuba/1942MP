@@ -44,38 +44,33 @@ private:
 	int SCREEN_WIDTH;
 	int SCREEN_HEIGHT;
 	int FRAMES_PER_SECOND = 30;
-	int CANTIDAD_SCREEN = 5;
-	int CANTIDAD_SCREEN_TOTAL = 90;
 	int VELOCIDAD_SCREEN = -3;
-	int pixelesArecorrer = 4000;
+	int LONGITUD_NIVEL;
+	int CANTIDAD_NIVELES;
+	int LIMITE_IMAGEN = 4000;
 	int pixelesRecorridos = 0;
-
-	//Mas desfasaje, mas abajo se ponen las islas
-	int desfasajeConexion = 70;
+	int desfasajeConexion = 70; //Mas desfasaje, mas abajo se ponen las islas
 
 	string rojo = "rojo";
 	string azul = "azul";
 	string verde = "verde";
 	string amarillo = "amarillo";
-	const char* WINDOW_TITLE = "1942 MultiPlayer";
 
 	string DIR_FONDO_PANTALLA;
 
 	IController* myControl;
 	HandlerPlayersControllers* controllers;
 	vector<Isla*> fondosVivibles;
-//	vector<SDL_Event*> eventosList;
 
 	GameConf* gc;
 	Client* unCliente;
 
-	void setResolucion();
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
 	void setFondosVivibles(int x, int y);
 	void configurarFondosVivibles();
 	void limpiarFondosVivibles();
-	void limpiarEventos();
+	bool isFinNivel(int numeroNivel);
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl);
