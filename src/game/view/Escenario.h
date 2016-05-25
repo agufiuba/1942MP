@@ -30,6 +30,9 @@
 #include "../../libs/xm_sdl/XM_SDL.h"
 #include "../view/Screen.h"
 
+#include "../model/PowerUp.h"
+#include "../controller/HandlerPowerUp.h"
+
 class Escenario {
 
 private:
@@ -60,6 +63,8 @@ private:
 
 	IController* myControl;
 	HandlerPlayersControllers* controllers;
+	HandlerPowerUp* hPowerUp;
+
 	vector<Isla*> fondosVivibles;
 
 	GameConf* gc;
