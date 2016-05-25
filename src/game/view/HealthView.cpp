@@ -18,7 +18,7 @@ void HealthView::loadView() {
 
 void HealthView::render() {
   string id = "heart";
-  int posX = 0, posY = 10;
+  int posX = 10, posY = 10;
   int spacing = 10;
   int imageWidth = this->screen->getTextureWidth( id );
   for ( int i = 0; i < this->heartCount; i++ ) {

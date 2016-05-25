@@ -28,7 +28,8 @@
 #include "../../xml/conf/EscenarioConf.h"
 #include "../../libs/socket/Client.h"
 #include "../../libs/xm_sdl/XM_SDL.h"
-#include "../view/Screen.h"
+#include "Screen.h"
+#include "HealthView.h"
 
 #include "../model/PowerUp.h"
 #include "../controller/HandlerPowerUp.h"
@@ -38,6 +39,7 @@ class Escenario {
 private:
 	XM_SDL* sdl;
 	Screen* escenarioScreen;
+	HealthView* healthView;
 	SDL_Renderer* gRenderer = NULL;
 	SDL_Event evento;
 	Resolucion* resolucion;
