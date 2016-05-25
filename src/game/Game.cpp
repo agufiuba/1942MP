@@ -805,4 +805,59 @@ void Game::loadWaitingGame() {
   //Disable text input
   SDL_StopTextInput();
   delete waitingScreen;
+
+  this->loadSinglePlayerScoreScreen( 4 );
+}
+
+void Game::loadSinglePlayerScoreScreen( int stage ) {
+  if( !( this->running ) ) return;
+  bool runningScreen = true;
+  SDL_Event e;
+  Timer timer;
+  string stageCompleteText = "Nivel " + to_string( stage ) + " Completado !!";
+  string scoreText = "Puntaje";
+
+  Screen* scoreScreen= new Screen( this->sdlHandler );
+  scoreScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
+  scoreScreen->loadText( "stageComplete", stageCompleteText, { 53, 167, 84, 255 } );
+  scoreScreen->loadText( "scoreText", scoreText, { 255, 0, 0, 255 } );
+
+  int logoCenter = ( this->windowWidth - scoreScreen->getTextureWidth( "logo" ) ) / 2;
+  int stageCompleteTextCenter = ( this->windowWidth - scoreScreen->getTextWidth( stageCompleteText ) ) / 2;
+  int scoreTextCenter = ( this->windowWidth - scoreScreen->getTextWidth( scoreText ) ) / 2;
+
+  // Enable text input
+  SDL_StartTextInput();
+
+  while( runningScreen ) {
+    timer.correr();
+    // Get events
+    while( this->sdlHandler->nextEvent( &e ) ) {
+      if( e.type == SDL_QUIT ) {
+	runningScreen = false;
+	this->running = false;
+	break;
+      }
+    }
+    // Set window background
+    this->sdlHandler->setWindowBG(0, 0, 0);
+
+    // Render logo
+    scoreScreen->renderTexture( "logo", logoCenter, 90 );
+
+    // Render text textures
+    scoreScreen->renderTexture( "stageComplete", stageCompleteTextCenter, 305 );
+    scoreScreen->renderTexture( "scoreText", scoreTextCenter, 355 );
+
+    //Update screen
+    this->sdlHandler->updateWindow();
+
+    if( timer.tiempoActual() < 1000 / this->fps ){
+      SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
+    }
+  }
+
+  //Disable text input
+  SDL_StopTextInput();
+  delete scoreScreen;
 }
