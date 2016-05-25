@@ -89,21 +89,29 @@ void Game::setWindowTitle( string title ) {
 void Game::loadConnectionScreen() {
   SDL_Event e;
   Timer timer;
-  string acceptButtonText = "ACEPTAR";
 
   Screen* initialScreen = new Screen( this->sdlHandler );
+  initialScreen->setCanvasWidth( this->windowWidth );
+
+  // Load logo and text
   initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   initialScreen->loadText( "serverIP", this->serverIP );
   initialScreen->loadText( "serverPort", this->serverPort );
   initialScreen->loadText( "accept", "ACEPTAR" );
 
-  int logoCenter = ( this->windowWidth - initialScreen->getTextureWidth( "logo" ) ) / 2;
   int promptWidth = initialScreen->getTextWidth( "999.999.999.999" ) + 40;
-  int promptCenter = ( this->windowWidth - promptWidth ) / 2;
+  int promptCenter = initialScreen->getRectCenter( promptWidth ); 
   int buttonWidth = 250;
-  int buttonCenter = ( this->windowWidth - buttonWidth ) / 2;
+  int buttonCenter = initialScreen->getRectCenter( buttonWidth ); 
+
+  // Load prompts
+  initialScreen->loadRectangle( "promptIP", promptCenter, 300, promptWidth, 50 );
+  initialScreen->loadRectangle( "promptPort", promptCenter, 375, promptWidth, 50 );
+  initialScreen->loadRectangle( "button", buttonCenter, 475, buttonWidth, 50 );
+
+  int logoCenter = initialScreen->getTextureCenter( "logo" ); 
   int textCenter = promptCenter + 20;
-  int buttonTextCenter = ( this->windowWidth - initialScreen->getTextWidth( acceptButtonText ) ) / 2; 
+  int buttonTextCenter = initialScreen->getTextCenter( "accept" ); 
   int IPPromptOutline = 300, IPPromptOutline2 = 301, IPPromptOutline3 = 302;
   int portPromptOutline = 375, portPromptOutline2 = 376, portPromptOutline3 = 377;
   int mouseX, mouseY;
@@ -111,11 +119,6 @@ void Game::loadConnectionScreen() {
   bool runningScreen = true;
   bool firstPromptSelected = true;
   bool clicked = false;
-
-  // Create prompts
-  initialScreen->loadRectangle( "promptIP", promptCenter, 300, promptWidth, 50 );
-  initialScreen->loadRectangle( "promptPort", promptCenter, 375, promptWidth, 50 );
-  initialScreen->loadRectangle( "button", buttonCenter, 475, buttonWidth, 50 );
 
   // Enable text input
   SDL_StartTextInput();

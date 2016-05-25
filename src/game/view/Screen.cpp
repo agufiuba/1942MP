@@ -93,3 +93,19 @@ int Screen::getTextWidth( string text ) {
 void Screen::setRenderDrawColor( int r, int g, int b, int a ) {
   SDL_SetRenderDrawColor( this->renderer, r, g, b, a );
 }
+
+void Screen::setCanvasWidth( int canvasWidth ) {
+  this->canvasWidth = canvasWidth;
+}
+
+int Screen::getTextureCenter( string textureID ) {
+  return ( this->canvasWidth - this->getTextureWidth( textureID ) ) / 2;
+}
+
+int Screen::getTextCenter( string text ) {
+  return ( this->canvasWidth - this->getTextWidth( text ) ) / 2;
+}
+
+int Screen::getRectCenter( int rectWidth ) {
+  return ( this->canvasWidth - rectWidth ) / 2;
+}
