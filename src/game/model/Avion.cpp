@@ -18,10 +18,14 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	this->posicion = posicionInicial;
 
+	posicionAEstacionar = new Posicion(500,100);
+
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
 
 	t = new Timer();
+
+	estacionando = false;
 
 /*	inicializoVueltereta();*/
 }
@@ -152,6 +156,18 @@ void Avion::realizoVueltereta() {
 	mostrarVueltereta(frame);
 }
 
+void Avion::mostrarEstacionar(int frame){
+	vistaAvion->mostrarEstacionar(posicion->getX(),posicion->getYsdl(),frame); //estacionar
+}
+
+void Avion::estacionar() {
+	int frame = 0;
+
+	//Funcion para automaticar el estacionamiento
+
+
+	mostrarEstacionar(frame);
+}
 
 void Avion::vivir(int velX, int velY){
 
@@ -160,12 +176,15 @@ void Avion::vivir(int velX, int velY){
 			this->viviendo = true;
 			vistaAvion->conectar();
 		}
-
-		if (!realizandoVueltereta){
-			mover(velX, velY);
-			mostrar(velX);
+		if (estacionando) {
+			estacionar();
 		} else {
-			realizoVueltereta();
+			if (!realizandoVueltereta) {
+				mover(velX, velY);
+				mostrar(velX);
+			} else {
+				realizoVueltereta();
+			}
 		}
 	} else {
 		if (!explosion->exploto()) {

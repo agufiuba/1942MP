@@ -22,6 +22,7 @@ private:
 	bool viviendo;
 
 	bool realizandoVueltereta;
+	bool estacionando;
 	Timer* t;
 
 	Screen* screen;
@@ -30,6 +31,7 @@ private:
 	Posicion* posicion;
 	AvionConf* configuracion;
 
+	Posicion* posicionAEstacionar;
 
 	void realizoVueltereta();
 	void mostrarVueltereta(int frame);
@@ -61,8 +63,12 @@ public:
 	void vivir(int velX, int velY);
 	bool aunVive();
 	void desconectar();
+
 	void recibirMisil(Misil* misil);
 	bool tieneHP();
+
+	void mostrarEstacionar(int frame);
+	void estacionar();
 };
 
 #endif /* SRC_MODEL_AVION_H_ */
