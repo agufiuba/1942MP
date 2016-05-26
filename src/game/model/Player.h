@@ -18,7 +18,7 @@ class Player {
     string getName();
     string getColor();
     int getScore();
-
+    void addScore( int score );
     int getX();
     int getY();
 

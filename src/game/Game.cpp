@@ -231,7 +231,7 @@ void Game::loadConnectionScreen() {
     initialScreen->setRenderDrawColor( 160, 160, 160, 255 );
     if( clicked ) {
       clicked = false;
-      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) )
+      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
 	  && ( mouseY > 475 ) && ( mouseY < ( 475 + 50 ) ) ) {
 	runningScreen = false;
 	//Disable text input
@@ -347,7 +347,7 @@ void Game::loadValidationScreen() {
 
     if (clicked) {
       clicked = false;
-      if ((mouseX > buttonCenter) && (mouseX < (buttonCenter + 230))
+      if ((mouseX > buttonCenter) && (mouseX < (buttonCenter + 250))
 	  && (mouseY > 475) && (mouseY < (475 + 50))) {
 	runningScreen = false;
 	//Disable text input
@@ -833,7 +833,14 @@ void Game::loadSinglePlayerScoreScreen( int stage ) {
   scoreScreen->setCanvasWidth( this->windowWidth );
 
   // TODO: REMOVE, only for test purpouses
-  this->player = new Player( "sousuke", "azul", 20, 200 );
+  this->player = new Player( "sousuke", "rojo", 20, 200 );
+  Player* player2 = new Player( "kaname", "azul", 20, 200 );
+  Player* player3 = new Player( "tessa", "amarillo", 20, 200 );
+  Player* player4 = new Player( "melissa", "verde", 20, 200 );
+
+  this->player->addScore( 17816229 );
+  player3->addScore( 5287 );
+  player4->addScore( 98723 );
 
   // Load text
   scoreScreen->loadText( "stageComplete", stageCompleteText, { 53, 167, 84, 255 } );
@@ -842,6 +849,26 @@ void Game::loadSinglePlayerScoreScreen( int stage ) {
   scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
   scoreScreen->loadText( player->getName(), player->getName(), { 255, 255, 255, 255 } );
   scoreScreen->loadText( player->getName() + "score", to_string( player->getScore() ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player2->getName(), player2->getName(), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player2->getName() + "score", to_string( player2->getScore() ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player3->getName(), player3->getName(), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player3->getName() + "score", to_string( player3->getScore() ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player4->getName(), player4->getName(), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player4->getName() + "score", to_string( player4->getScore() ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( "continueText", "Continue", { 0, 0, 0, 255 } );
+
+  int buttonWidth = 250;
+  int buttonCenter = scoreScreen->getRectCenter( buttonWidth ); 
+  int continueTextCenter = scoreScreen->getTextCenter( "continue" );
+
+  // Load prompts
+  scoreScreen->loadRectangle( "continue", buttonCenter, 600, buttonWidth, 50 );
+
+  // Load planes
+  scoreScreen->loadTexture( player->getColor(), "score/avion_" + player->getColor() + ".bmp" );
+  scoreScreen->loadTexture( player2->getColor(), "score/avion_" + player2->getColor() + ".bmp" );
+  scoreScreen->loadTexture( player3->getColor(), "score/avion_" + player3->getColor() + ".bmp" );
+  scoreScreen->loadTexture( player4->getColor(), "score/avion_" + player4->getColor() + ".bmp" );
 
   int gap = scoreScreen->getTextHeight( scoreText );
   int rowPadding = 200;
@@ -850,6 +877,12 @@ void Game::loadSinglePlayerScoreScreen( int stage ) {
   int stageCompleteTextCenter = scoreScreen->getTextCenter( stageCompleteText ); 
   int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
   int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
+  int scoreHeaderCenter = stageCompleteTextCenter + nameHeaderSpace;
+  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
+  int imageCenter = stageCompleteTextCenter - 65;
+
+  bool clicked = false;
+  int mouseX, mouseY;
 
   HealthView* remainingHealth = new HealthView( scoreScreen, this->player->getHealth() );
 
@@ -865,6 +898,14 @@ void Game::loadSinglePlayerScoreScreen( int stage ) {
 	this->running = false;
 	break;
       }
+      if (e.button.type == SDL_MOUSEBUTTONDOWN) {
+	if (e.button.button == SDL_BUTTON_LEFT) {
+	  clicked = true;
+	  // Get the mouse offsets
+	  mouseX = e.button.x;
+	  mouseY = e.button.y;
+	}
+      }
     }
     // Set window background
     this->sdlHandler->setWindowBG(0, 0, 0);
@@ -874,9 +915,37 @@ void Game::loadSinglePlayerScoreScreen( int stage ) {
     scoreScreen->renderTexture( "stageComplete", stageCompleteTextCenter, topPadding );
     scoreScreen->renderTexture( "scoreText", scoreTextCenter, topPadding + gap * 2 );
     scoreScreen->renderTexture( "nameHeader", stageCompleteTextCenter, topPadding + gap * 4 );
-    scoreScreen->renderTexture( "scoreHeader", stageCompleteTextCenter + nameHeaderSpace, topPadding + gap * 4 );
+    scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
     scoreScreen->renderTexture( player->getName(), stageCompleteTextCenter, topPadding + gap * 5.5 );
-    scoreScreen->renderTexture( player->getName() + "score", stageCompleteTextCenter + nameHeaderSpace, topPadding + gap * 5.5 );
+    scoreScreen->renderTexture( player->getName() + "score", 
+				scoreRightLimit - scoreScreen->getTextWidth( to_string( player->getScore() ) ), topPadding + gap * 5.5 );
+    scoreScreen->renderTexture( player->getColor(), imageCenter, topPadding + gap * 5.5 );
+    scoreScreen->renderTexture( player2->getName(), stageCompleteTextCenter, topPadding + gap * 7 );
+    scoreScreen->renderTexture( player2->getName() + "score", 
+				scoreRightLimit - scoreScreen->getTextWidth( to_string(
+				player2->getScore() ) ), topPadding + gap * 7 );
+    scoreScreen->renderTexture( player2->getColor(), imageCenter, topPadding + gap * 7 );
+    scoreScreen->renderTexture( player3->getName(), stageCompleteTextCenter, topPadding + gap * 8.5 );
+    scoreScreen->renderTexture( player3->getName() + "score", 
+				scoreRightLimit - scoreScreen->getTextWidth( to_string( player3->getScore() ) ), topPadding + gap * 8.5 );
+    scoreScreen->renderTexture( player3->getColor(), imageCenter, topPadding + gap * 8.5 );
+    scoreScreen->renderTexture( player4->getName(), stageCompleteTextCenter, topPadding + gap * 10 );
+    scoreScreen->renderTexture( player4->getName() + "score", 
+				scoreRightLimit - scoreScreen->getTextWidth( to_string(
+				player4->getScore() ) ), topPadding + gap * 10 );
+    scoreScreen->renderTexture( player4->getColor(), imageCenter, topPadding + gap * 10 );
+    scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
+    scoreScreen->renderRectangle( "continue" );
+    scoreScreen->renderTexture( "continueText", continueTextCenter, 605 );
+
+    if( clicked ) {
+      clicked = false;
+      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
+	  && ( mouseY > 600 ) && ( mouseY < ( 600 + 50 ) ) ) {
+	runningScreen = false;
+	break;
+      }
+    }
 
     //Update screen
     this->sdlHandler->updateWindow();
