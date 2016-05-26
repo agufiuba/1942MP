@@ -4,7 +4,7 @@
 Screen::Screen( XM_SDL* sdlHandler ) {
   this->sdlHandler = sdlHandler;
   this->renderer = this->sdlHandler->getRenderer();
-  this->loadFont( "src/initialWindow/fonts/open_sans/OpenSans-Regular.ttf" );
+  this->loadFont( "src/initialWindow/fonts/arcadeclassic/arcade_classic.ttf" );
   this->fontColor = { 0, 0, 0, 255 };
 }
 
@@ -84,6 +84,34 @@ int Screen::getTextureWidth( string id ) {
   return it->second->getWidth();
 }
 
+int Screen::getTextWidth( string text ) {
+  int width;
+  TTF_SizeText( this->fontFamily, text.c_str(), &width, NULL );
+  return width;
+}
+
+int Screen::getTextHeight( string text ) {
+  int height;
+  TTF_SizeText( this->fontFamily, text.c_str(), NULL, &height);
+  return height;
+}
+
 void Screen::setRenderDrawColor( int r, int g, int b, int a ) {
   SDL_SetRenderDrawColor( this->renderer, r, g, b, a );
+}
+
+void Screen::setCanvasWidth( int canvasWidth ) {
+  this->canvasWidth = canvasWidth;
+}
+
+int Screen::getTextureCenter( string textureID ) {
+  return ( this->canvasWidth - this->getTextureWidth( textureID ) ) / 2;
+}
+
+int Screen::getTextCenter( string text ) {
+  return ( this->canvasWidth - this->getTextWidth( text ) ) / 2;
+}
+
+int Screen::getRectCenter( int rectWidth ) {
+  return ( this->canvasWidth - rectWidth ) / 2;
 }

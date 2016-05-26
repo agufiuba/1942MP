@@ -16,6 +16,7 @@ Game::Game( uint32_t sdlFlags ) {
   this->serverPort = "8000";
   this->clientId = "";
   this->planeId = "";
+  this->player = NULL;
 }
 
 Game::~Game() {
@@ -40,13 +41,16 @@ void Game::cargarEscenario() {
     escenario->setClient(unCliente);
 
     for( int i = 0; i < this->unCliente->getPlayers().size(); i++) {
-      if( this->clientId == this->unCliente->getPlayers()[i]->name ) {
-    	  escenario->configurarMiAvion(this->unCliente->getPlayers()[i]);
+      PlayerData* pData = this->unCliente->getPlayers()[i];
+      if( this->clientId == pData->name ) {
+	  this->player = new Player( pData->name, pData->color, pData->x, pData->y );
+    	  escenario->configurarMiAvion( pData );
       } else {
-    	  escenario->configurarAvionAmigo(this->unCliente->getPlayers()[i]);
+    	  escenario->configurarAvionAmigo( pData );
       }
     }
 
+    escenario->setPlayer( this->player );
     unCliente->setHandler(escenario->getHandler());
     exitEven = escenario->run();
     if( !( this->unCliente->isConnected() ) ) {
@@ -85,19 +89,29 @@ void Game::setWindowTitle( string title ) {
 void Game::loadConnectionScreen() {
   SDL_Event e;
   Timer timer;
-  string acceptButtonText = "ACEPTAR";
 
   Screen* initialScreen = new Screen( this->sdlHandler );
+  initialScreen->setCanvasWidth( this->windowWidth );
+
+  // Load logo and text
   initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   initialScreen->loadText( "serverIP", this->serverIP );
   initialScreen->loadText( "serverPort", this->serverPort );
   initialScreen->loadText( "accept", "ACEPTAR" );
 
-  int logoCenter = ( this->windowWidth - initialScreen->getTextureWidth( "logo" ) ) / 2;
-  int promptCenter = logoCenter - 20;
-  int buttonCenter = promptCenter + 15;
+  int promptWidth = initialScreen->getTextWidth( "999.999.999.999" ) + 40;
+  int promptCenter = initialScreen->getRectCenter( promptWidth ); 
+  int buttonWidth = 250;
+  int buttonCenter = initialScreen->getRectCenter( buttonWidth ); 
+
+  // Load prompts
+  initialScreen->loadRectangle( "promptIP", promptCenter, 300, promptWidth, 50 );
+  initialScreen->loadRectangle( "promptPort", promptCenter, 375, promptWidth, 50 );
+  initialScreen->loadRectangle( "button", buttonCenter, 475, buttonWidth, 50 );
+
+  int logoCenter = initialScreen->getTextureCenter( "logo" ); 
   int textCenter = promptCenter + 20;
-  int buttonTextCenter = buttonCenter + ( ( 230 - initialScreen->getTextureWidth( "accept" ) ) / 2 );
+  int buttonTextCenter = initialScreen->getTextCenter( "ACEPTAR" ); 
   int IPPromptOutline = 300, IPPromptOutline2 = 301, IPPromptOutline3 = 302;
   int portPromptOutline = 375, portPromptOutline2 = 376, portPromptOutline3 = 377;
   int mouseX, mouseY;
@@ -105,11 +119,6 @@ void Game::loadConnectionScreen() {
   bool runningScreen = true;
   bool firstPromptSelected = true;
   bool clicked = false;
-
-  // Create prompts
-  initialScreen->loadRectangle( "promptIP", promptCenter, 300, 260, 50 );
-  initialScreen->loadRectangle( "promptPort", promptCenter, 375, 260, 50 );
-  initialScreen->loadRectangle( "button", promptCenter + 15, 475, 230, 50 );
 
   // Enable text input
   SDL_StartTextInput();
@@ -221,7 +230,7 @@ void Game::loadConnectionScreen() {
     initialScreen->setRenderDrawColor( 160, 160, 160, 255 );
     if( clicked ) {
       clicked = false;
-      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) )
+      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
 	  && ( mouseY > 475 ) && ( mouseY < ( 475 + 50 ) ) ) {
 	runningScreen = false;
 	//Disable text input
@@ -237,13 +246,13 @@ void Game::loadConnectionScreen() {
     initialScreen->setRenderDrawColor( 19, 144, 27, 255 );
 
     if( firstPromptSelected ) {
-      initialScreen->loadRectangle( "outline", promptCenter, IPPromptOutline, 260, 50 );
-      initialScreen->loadRectangle( "outline2", promptCenter + 1, IPPromptOutline2, 258, 48 );
-      initialScreen->loadRectangle( "outline3", promptCenter + 2, IPPromptOutline3, 256, 46 );
+      initialScreen->loadRectangle( "outline", promptCenter, IPPromptOutline, promptWidth, 50 );
+      initialScreen->loadRectangle( "outline2", promptCenter + 1, IPPromptOutline2, promptWidth - 2, 48 );
+      initialScreen->loadRectangle( "outline3", promptCenter + 2, IPPromptOutline3, promptWidth - 4, 46 );
     } else {
-      initialScreen->loadRectangle( "outline", promptCenter, portPromptOutline, 260, 50 );
-      initialScreen->loadRectangle( "outline2", promptCenter + 1, portPromptOutline2, 258, 48 );
-      initialScreen->loadRectangle( "outline3", promptCenter + 2, portPromptOutline3, 256, 46 );
+      initialScreen->loadRectangle( "outline", promptCenter, portPromptOutline, promptWidth, 50 );
+      initialScreen->loadRectangle( "outline2", promptCenter + 1, portPromptOutline2, promptWidth - 2, 48 );
+      initialScreen->loadRectangle( "outline3", promptCenter + 2, portPromptOutline3, promptWidth - 4, 46 );
     }
 
     // Render outlines
@@ -273,25 +282,31 @@ void Game::loadValidationScreen() {
   string connectingText = "Conectando al servidor...";
   string connectedText = "Se ha conectado al servidor";
   string failureText = "No se pudo conectar al servidor";
+  string continueButtonText = "CONTINUAR";
+  string backButtonText = "VOLVER";
 
   Screen* validationScreen = new Screen( this->sdlHandler );
+  validationScreen->setCanvasWidth( this->windowWidth );
+
+  // Load logo and text
   validationScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   validationScreen->loadText( "connecting", connectingText, { 255, 255, 255, 255 } );
   validationScreen->loadText( "connected", connectedText, { 255, 255, 255, 255 } );
   validationScreen->loadText( "failure", failureText, { 255, 255, 255, 255 } );
-
-  int logoCenter = ( this->windowWidth - validationScreen->getTextureWidth( "logo" ) ) / 2;
-  int promptCenter = logoCenter - 20;
-  int textCenter = promptCenter;
-
-  string continueButtonText = "CONTINUAR";
   validationScreen->loadText( "continue", continueButtonText, {255,255,255,255} );
-  string backButtonText = "VOLVER";
   validationScreen->loadText( "back", backButtonText, {255,255,255,255} );
-  validationScreen->loadRectangle( "button", promptCenter + 15, 475, 230, 50 );
-  int buttonCenter = promptCenter + 15;
-  int continueTextCenter = buttonCenter + ( ( 230 - validationScreen->getTextureWidth( "continue" ) ) / 2 );
-  int backTextCenter = buttonCenter + ( ( 230 - validationScreen->getTextureWidth( "back" ) ) / 2 );
+
+  int buttonWidth = 250;
+  int buttonCenter = validationScreen->getRectCenter( buttonWidth );
+  validationScreen->loadRectangle( "button", buttonCenter, 475, buttonWidth, 50 );
+
+  // Get center positions
+  int logoCenter = validationScreen->getTextureCenter( "logo" ); 
+  int connectingTextCenter = validationScreen->getTextCenter( connectingText );
+  int connectedTextCenter = validationScreen->getTextCenter( connectedText );
+  int failureTextCenter = validationScreen->getTextCenter( failureText );
+  int continueTextCenter = validationScreen->getTextCenter( continueButtonText ); 
+  int backTextCenter = validationScreen->getTextCenter( backButtonText ); 
 
   // Enable text input
   SDL_StartTextInput();
@@ -331,7 +346,7 @@ void Game::loadValidationScreen() {
 
     if (clicked) {
       clicked = false;
-      if ((mouseX > buttonCenter) && (mouseX < (buttonCenter + 230))
+      if ((mouseX > buttonCenter) && (mouseX < (buttonCenter + 250))
 	  && (mouseY > 475) && (mouseY < (475 + 50))) {
 	runningScreen = false;
 	//Disable text input
@@ -366,15 +381,15 @@ void Game::loadValidationScreen() {
 
     // Render text textures
     if (!connected){
-      validationScreen->renderTexture( "connecting", textCenter, 305 );
+      validationScreen->renderTexture( "connecting", connectingTextCenter, 305 );
     } else {
       if (connectionFailed) {
-	validationScreen->renderTexture( "failure", textCenter, 305 );
+	validationScreen->renderTexture( "failure", failureTextCenter, 305 );
 	validationScreen->setRenderDrawColor( 234, 25 ,25 , 255 );
 	validationScreen->renderRectangle( "button" );
 	validationScreen->renderTexture( "back", backTextCenter, 480 );
       } else {
-	validationScreen->renderTexture( "connected", textCenter, 305 );
+	validationScreen->renderTexture( "connected", connectedTextCenter, 305 );
 	validationScreen->setRenderDrawColor( 19, 144, 27, 255 );
 	validationScreen->renderRectangle( "button" );
 	validationScreen->renderTexture( "continue", continueTextCenter, 480 );
@@ -796,11 +811,150 @@ void Game::loadWaitingGame() {
 	exit(1);
       } //Special key input
     }
-
-
   }
 
   //Disable text input
   SDL_StopTextInput();
   delete waitingScreen;
+}
+
+void Game::loadSinglePlayerScoreScreen( int stage ) {
+  if( !( this->running ) ) return;
+  bool runningScreen = true;
+  SDL_Event e;
+  Timer timer;
+  string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
+  string scoreHeaderText = "Score Ranking";
+  string nameText = "Name";
+  string scoreText = "Score";
+
+  Screen* scoreScreen= new Screen( this->sdlHandler );
+  scoreScreen->setCanvasWidth( this->windowWidth );
+
+  // TODO: REMOVE, only for test purpouses
+  this->player = new Player( "sousuke", "rojo", 20, 200 );
+  Player* player2 = new Player( "kaname", "azul", 20, 200 );
+  Player* player3 = new Player( "tessa", "amarillo", 20, 200 );
+  Player* player4 = new Player( "melissa", "verde", 20, 200 );
+
+  this->player->addScore( 17816229 );
+  player3->addScore( 5287 );
+  player4->addScore( 98723 );
+
+  // Load text
+  scoreScreen->loadText( "stageComplete", stageCompleteText, { 53, 167, 84, 255 } );
+  scoreScreen->loadText( "scoreText", scoreHeaderText, { 255, 0, 0, 255 } );
+  scoreScreen->loadText( "nameHeader", nameText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( player->getName(), player->getName(), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player->getName() + "score", to_string( player->getScore() ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player2->getName(), player2->getName(), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player2->getName() + "score", to_string( player2->getScore() ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player3->getName(), player3->getName(), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player3->getName() + "score", to_string( player3->getScore() ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player4->getName(), player4->getName(), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( player4->getName() + "score", to_string( player4->getScore() ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( "continueText", "Continue", { 0, 0, 0, 255 } );
+
+  int buttonWidth = 250;
+  int buttonCenter = scoreScreen->getRectCenter( buttonWidth ); 
+  int continueTextCenter = scoreScreen->getTextCenter( "continue" );
+
+  // Load prompts
+  scoreScreen->loadRectangle( "continue", buttonCenter, 600, buttonWidth, 50 );
+
+  // Load planes
+  scoreScreen->loadTexture( player->getColor(), "score/avion_" + player->getColor() + ".bmp" );
+  scoreScreen->loadTexture( player2->getColor(), "score/avion_" + player2->getColor() + ".bmp" );
+  scoreScreen->loadTexture( player3->getColor(), "score/avion_" + player3->getColor() + ".bmp" );
+  scoreScreen->loadTexture( player4->getColor(), "score/avion_" + player4->getColor() + ".bmp" );
+
+  int gap = scoreScreen->getTextHeight( scoreText );
+  int rowPadding = 200;
+  int topPadding = 60;
+  // Get center positions
+  int stageCompleteTextCenter = scoreScreen->getTextCenter( stageCompleteText ); 
+  int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
+  int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
+  int scoreHeaderCenter = stageCompleteTextCenter + nameHeaderSpace;
+  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
+  int imageCenter = stageCompleteTextCenter - 65;
+
+  bool clicked = false;
+  int mouseX, mouseY;
+
+  HealthView* remainingHealth = new HealthView( scoreScreen, this->player->getHealth() );
+
+  // Enable text input
+  SDL_StartTextInput();
+
+  while( runningScreen ) {
+    timer.correr();
+    // Get events
+    while( this->sdlHandler->nextEvent( &e ) ) {
+      if( e.type == SDL_QUIT ) {
+	runningScreen = false;
+	this->running = false;
+	break;
+      }
+      if (e.button.type == SDL_MOUSEBUTTONDOWN) {
+	if (e.button.button == SDL_BUTTON_LEFT) {
+	  clicked = true;
+	  // Get the mouse offsets
+	  mouseX = e.button.x;
+	  mouseY = e.button.y;
+	}
+      }
+    }
+    // Set window background
+    this->sdlHandler->setWindowBG(0, 0, 0);
+
+    remainingHealth->render();
+    // Render text textures
+    scoreScreen->renderTexture( "stageComplete", stageCompleteTextCenter, topPadding );
+    scoreScreen->renderTexture( "scoreText", scoreTextCenter, topPadding + gap * 2 );
+    scoreScreen->renderTexture( "nameHeader", stageCompleteTextCenter, topPadding + gap * 4 );
+    scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
+    scoreScreen->renderTexture( player->getName(), stageCompleteTextCenter, topPadding + gap * 5.5 );
+    scoreScreen->renderTexture( player->getName() + "score", 
+				scoreRightLimit - scoreScreen->getTextWidth( to_string( player->getScore() ) ), topPadding + gap * 5.5 );
+    scoreScreen->renderTexture( player->getColor(), imageCenter, topPadding + gap * 5.5 );
+    scoreScreen->renderTexture( player2->getName(), stageCompleteTextCenter, topPadding + gap * 7 );
+    scoreScreen->renderTexture( player2->getName() + "score", 
+				scoreRightLimit - scoreScreen->getTextWidth( to_string(
+				player2->getScore() ) ), topPadding + gap * 7 );
+    scoreScreen->renderTexture( player2->getColor(), imageCenter, topPadding + gap * 7 );
+    scoreScreen->renderTexture( player3->getName(), stageCompleteTextCenter, topPadding + gap * 8.5 );
+    scoreScreen->renderTexture( player3->getName() + "score", 
+				scoreRightLimit - scoreScreen->getTextWidth( to_string( player3->getScore() ) ), topPadding + gap * 8.5 );
+    scoreScreen->renderTexture( player3->getColor(), imageCenter, topPadding + gap * 8.5 );
+    scoreScreen->renderTexture( player4->getName(), stageCompleteTextCenter, topPadding + gap * 10 );
+    scoreScreen->renderTexture( player4->getName() + "score", 
+				scoreRightLimit - scoreScreen->getTextWidth( to_string(
+				player4->getScore() ) ), topPadding + gap * 10 );
+    scoreScreen->renderTexture( player4->getColor(), imageCenter, topPadding + gap * 10 );
+    scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
+    scoreScreen->renderRectangle( "continue" );
+    scoreScreen->renderTexture( "continueText", continueTextCenter, 605 );
+
+    if( clicked ) {
+      clicked = false;
+      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
+	  && ( mouseY > 600 ) && ( mouseY < ( 600 + 50 ) ) ) {
+	runningScreen = false;
+	break;
+      }
+    }
+
+    //Update screen
+    this->sdlHandler->updateWindow();
+
+    if( timer.tiempoActual() < 1000 / this->fps ){
+      SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
+    }
+  }
+
+  //Disable text input
+  SDL_StopTextInput();
+  delete scoreScreen;
 }

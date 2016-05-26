@@ -29,6 +29,11 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	escenarioScreen->loadTexture("agua", "fondos/" + DIR_FONDO_PANTALLA);
 
 	controllers = new HandlerPlayersControllers(gRenderer, resolucion);
+
+	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
+	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
+  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600)));
+	this->healthView = NULL;
 }
 
 Escenario::~Escenario() {
@@ -49,8 +54,11 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 
 	controllers->hacerVivir();
 	myControl->hacerVivir();
+	hPowerUp->hacerVivir();
+	this->healthView->update( this->player->getHealth() );
+	this->healthView->render();
 
-	SDL_RenderPresent(gRenderer);
+	this->sdl->updateWindow();
 	// set new offset on client
 	this->unCliente->setStageOffset(pixelesRecorridos);
 }
@@ -65,6 +73,11 @@ void Escenario::aplicarFPS(Uint32 start) {
 
 void Escenario::setClient(Client* cliente) {
 	this->unCliente = cliente;
+}
+
+void Escenario::setPlayer( Player* player ) {
+  this->player = player;
+  this->healthView = new HealthView( this->escenarioScreen, this->player->getHealth() );
 }
 
 void Escenario::configurarFondosVivibles() {
@@ -185,7 +198,21 @@ SDL_Event* Escenario::run() {
 
 //				TODO: Aca deberia ir la inscripcion de fin de nivel
 				cout << "SE TERMINO EL NIVEL " << numeroNivel << endl;
-				usleep(5000000);
+
+				// Send player score
+				PlayerScore* playerScore = new PlayerScore;
+				strcpy( playerScore->name, this->player->getName().c_str() );
+				strcpy( playerScore->color, this->player->getColor().c_str() );
+				playerScore->score = this->player->getScore();
+
+				this->unCliente->sendScore( playerScore );
+				delete playerScore;
+
+				// TODO: change hardcoded 1 for actual number of connected players 
+				// wait for player score data
+				while ( this->unCliente->getPlayersScoreData().size() != 1 );
+				this->loadSinglePlayerScoreScreen( numeroNivel );
+
 				break;
 			} else {
 
@@ -221,3 +248,128 @@ void Escenario::limpiarFondosVivibles() {
 	fondosVivibles.clear();
 }
 
+void Escenario::loadSinglePlayerScoreScreen( int stage ) {
+  bool runningScreen = true;
+  SDL_Event e;
+  Timer timer;
+  int fps = 10;
+  string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
+  string scoreHeaderText = "Score Ranking";
+  string nameText = "Name";
+  string scoreText = "Score";
+
+  Screen* scoreScreen= new Screen( this->sdl );
+  scoreScreen->setCanvasWidth( this->sdl->getWindowWidth() );
+
+  // Load text
+  scoreScreen->loadText( "stageComplete", stageCompleteText, { 53, 167, 84, 255 } );
+  scoreScreen->loadText( "scoreText", scoreHeaderText, { 255, 0, 0, 255 } );
+  scoreScreen->loadText( "nameHeader", nameText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "continueText", "Continue", { 0, 0, 0, 255 } );
+
+  // Load ranking score table data 
+  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+    PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+    scoreScreen->loadText( string( ps->name ), string( ps->name ), { 255, 255, 255, 255 } );
+    scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 255, 255, 255, 255 } );
+    // Load plane
+    scoreScreen->loadTexture( string( ps->color ), "score/avion_" + string( ps->color ) + ".bmp" );
+  }
+
+  int buttonWidth = 250;
+  int buttonCenter = scoreScreen->getRectCenter( buttonWidth ); 
+  int continueTextCenter = scoreScreen->getTextCenter( "continue" );
+
+  // Load prompts
+  scoreScreen->loadRectangle( "continue", buttonCenter, 600, buttonWidth, 50 );
+
+  int gap = scoreScreen->getTextHeight( scoreText );
+  int rowPadding = 200;
+  int topPadding = 60;
+  // Get center positions
+  int stageCompleteTextCenter = scoreScreen->getTextCenter( stageCompleteText ); 
+  int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
+  int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
+  int scoreHeaderCenter = stageCompleteTextCenter + nameHeaderSpace;
+  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
+  int imageCenter = stageCompleteTextCenter - 65;
+
+  bool clicked = false;
+  int mouseX, mouseY;
+  int gapMult = 5.5;
+  int gapStep = 1.5;
+
+  HealthView* remainingHealth = new HealthView( scoreScreen, this->player->getHealth() );
+
+  // Enable text input
+  SDL_StartTextInput();
+
+  while( runningScreen ) {
+    timer.correr();
+    // Get events
+    while( this->sdl->nextEvent( &e ) ) {
+      if( e.type == SDL_QUIT ) {
+	runningScreen = false;
+	break;
+      }
+      if (e.button.type == SDL_MOUSEBUTTONDOWN) {
+	if (e.button.button == SDL_BUTTON_LEFT) {
+	  clicked = true;
+	  // Get the mouse offsets
+	  mouseX = e.button.x;
+	  mouseY = e.button.y;
+	}
+      }
+    }
+    // Set window background
+    this->sdl->setWindowBG(0, 0, 0);
+
+    remainingHealth->render();
+
+    // Render text textures
+    scoreScreen->renderTexture( "stageComplete", stageCompleteTextCenter, topPadding );
+    scoreScreen->renderTexture( "scoreText", scoreTextCenter, topPadding + gap * 2 );
+    scoreScreen->renderTexture( "nameHeader", stageCompleteTextCenter, topPadding + gap * 4 );
+    scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
+
+    // Render players score and data
+    for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+      PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+      scoreScreen->renderTexture( string( ps->name ), 
+				  stageCompleteTextCenter, 
+				  topPadding + gap * ( gapMult + ( ( i + 1 ) * gapStep ) ) );
+      scoreScreen->renderTexture( string( ps->name ) + "score", 
+				  scoreRightLimit - scoreScreen->getTextWidth( to_string( ps->score ) ), 
+				  topPadding + gap * ( gapMult + ( ( i + 1 ) * gapStep ) ) );
+      scoreScreen->renderTexture( string( ps->color ), 
+				  imageCenter, 
+				  topPadding + gap * ( gapMult + ( ( i + 1 ) * gapStep ) ) );
+    }
+
+    scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
+    scoreScreen->renderRectangle( "continue" );
+    scoreScreen->renderTexture( "continueText", continueTextCenter, 605 );
+
+    if( clicked ) {
+      clicked = false;
+      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
+	  && ( mouseY > 600 ) && ( mouseY < ( 600 + 50 ) ) ) {
+	runningScreen = false;
+	break;
+      }
+    }
+
+    //Update screen
+    this->sdl->updateWindow();
+
+    if( timer.tiempoActual() < 1000 / fps ){
+      SDL_Delay( ( 1000 / fps ) - timer.tiempoActual() );
+    }
+  }
+
+  this->unCliente->resetScores();
+  //Disable text input
+  SDL_StopTextInput();
+  delete scoreScreen;
+}

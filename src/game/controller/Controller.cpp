@@ -68,6 +68,7 @@ void Controller::press(SDL_Event *event){
 void Controller::hacerVivir(){
 	obj->vivir(velX, velY);
 	controlDeMisiles->hacerVivir();
+
 	this->actualizarPosicionAvionEnServer();
 }
 

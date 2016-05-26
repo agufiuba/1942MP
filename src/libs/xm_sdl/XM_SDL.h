@@ -24,5 +24,6 @@ class XM_SDL {
     SDL_Renderer* getRenderer();
     bool nextEvent( SDL_Event* e );
     void updateWindow();
+    int getWindowWidth();
 };
 #endif

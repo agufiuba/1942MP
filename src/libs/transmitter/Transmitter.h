@@ -2,6 +2,7 @@
 #define TRANSMITTER_H
 #include "../data/player_data.h"
 #include "../data/player_status.h"
+#include "../data/player_score.h"
 #include "../data/planes_actives.h"
 #include "../data/stage_data.h"
 #include "../logger/Logger.h"
@@ -25,6 +26,7 @@ class Transmitter {
     ~Transmitter();
     bool sendDataID( string id );
     bool sendData( PlayerData* data );
+    bool sendData( PlayerScore* data );
     bool sendData( PlanesActives* data );
     bool sendData( PlayerStatus* data );
     bool sendData( PlayerData* data, string s );
@@ -40,6 +42,7 @@ class Transmitter {
 
     int receiveData( char id[2], int size);
     int receiveData( PlayerData* data );
+    int receiveData( PlayerScore* data );
     int receiveData( StageData* data );
     int receiveData( PlayerStatus* data );
     int receiveData( PlanesActives* data );
