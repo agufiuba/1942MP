@@ -68,7 +68,7 @@ void PowerUp::moverEjeX(int velX) {
 void PowerUp::moverEjeY(int velY) {
 	posicion->mover(0,velY);
 	//cout << "El largo fondo es: " << getLargoFondo() << endl;
-	if ((posicion->getY() - getLargo() < 0) || (posicion->getY() > getLargoFondo())) {
+	if ((posicion->getY() < 0) || (posicion->getY() > getLargoFondo())) {
 		posicion->mover(0,-velY);
 	}
 }
