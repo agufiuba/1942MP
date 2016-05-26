@@ -112,12 +112,12 @@ HandlerPlayersControllers* Escenario::getHandler() {
 }
 
 void Escenario::configurarAvionAmigo(PlayerData* playerData) {
-	Vivible* avionAmigo = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
+	Vivible* avionAmigo = new Avion(playerData, escenarioScreen, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
 	controllers->setPlayer((Avion*) avionAmigo);
 }
 
 void Escenario::configurarMiAvion(PlayerData* playerData) {
-	Vivible* avion = new Avion(playerData, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
+	Vivible* avion = new Avion(playerData, escenarioScreen, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
 	myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
 }
 
@@ -192,8 +192,6 @@ SDL_Event* Escenario::run() {
 				}
 
 			}
-
-//			isFinNivel = pixelesRecorridos >= LONGITUD_NIVEL * numeroNivel;
 
 			if (isFinNivel(numeroNivel)) {
 

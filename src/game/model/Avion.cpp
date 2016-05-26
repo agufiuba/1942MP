@@ -2,16 +2,18 @@
 
 using namespace std;
 
-Avion::Avion(PlayerData* playerData, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf) {
+Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf) {
 
 	string id(playerData->name);
 	string color (playerData->color);
 
 	this->id = id;
 	this->configuracion = conf;
-	this->vida = 100;
+	this->vida = 3;
 
+	this->screen = screen;
 	vistaAvion = new AvionView(renderer, color, conf->avionSpriteID);
+	explocion = NULL;
 	viviendo = true;
 
 	this->posicion = posicionInicial;
@@ -34,7 +36,9 @@ bool Avion::haciendoVueltereta(){
 }
 
 Avion::~Avion(){
-	delete vistaAvion;
+
+	if (vistaAvion != NULL) delete vistaAvion;
+	if (explocion != NULL) delete explocion;
 	delete t;
 	delete posicion;
 }
@@ -91,6 +95,7 @@ void Avion::mover(int velX, int velY) {
 }
 
 void Avion::mostrar(int velX){
+	if (vistaAvion != NULL)
 	vistaAvion->mostrar(posicion->getX(),posicion->getYsdl(),velX);
 }
 
@@ -149,17 +154,26 @@ void Avion::realizoVueltereta() {
 
 
 void Avion::vivir(int velX, int velY){
-	if ((velX != 0 || velY != 0) && !viviendo) {
-		this->viviendo = true;
-		vistaAvion->conectar();
+
+	if (tieneHP()) {
+		if ((velX != 0 || velY != 0) && !viviendo) {
+			this->viviendo = true;
+			vistaAvion->conectar();
+		}
+
+		if (!realizandoVueltereta){
+			mover(velX, velY);
+			mostrar(velX);
+		} else {
+			realizoVueltereta();
+		}
+	} else {
+		if (!explocion->exploto()) {
+			posicion->mover(-1, -3);
+			explocion->explotar(posicion);
+		}
 	}
 
-	if (!realizandoVueltereta){
-		mover(velX, velY);
-		mostrar(velX);
-	} else {
-		realizoVueltereta();
-	}
 }
 
 int Avion::getX(){
@@ -177,13 +191,23 @@ bool Avion::aunVive(){
 
 void Avion::desconectar(){
 	this->viviendo = false;
+	if (vistaAvion != NULL)
 	vistaAvion->desconectar();
 }
 
 void Avion::recibirMisil(Misil* misil) {
-	this->vida -= misil->getDano();
-	cout << "La vida actual es " << this->vida << endl;
-	if (this->vida < 0) {
-//		TODO: Mostrar PUM
+	if (tieneHP()) {
+		this->vida -= misil->getDano();
+		cout << "La vida actual es " << this->vida << endl;
+		if (!tieneHP() && explocion == NULL) {
+
+			delete vistaAvion;
+			vistaAvion = NULL;
+			explocion = new ExplocionView("idExplocion", screen, posicion);
+		}
 	}
+}
+
+bool Avion::tieneHP() {
+	return (this->vida > 0);
 }

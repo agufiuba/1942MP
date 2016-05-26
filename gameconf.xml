@@ -43,7 +43,7 @@
     </sprite>
 </sprites>
 <escenario>
-	<ancho>700</ancho>
+	<ancho>1024</ancho>
 	<alto>700</alto>
 	<fondo>
 		<spriteID>agua</spriteID>
@@ -139,4 +139,4 @@
 	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
 	<disparosSpriteID>bala</disparosSpriteID>
 </avion>
-<maxClients>1</maxClients>
+<maxClients>2</maxClients>
