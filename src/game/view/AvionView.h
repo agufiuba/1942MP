@@ -31,6 +31,7 @@ public:
 	int getLargoVista();
 	void mostrar(int x, int y, int velX);
 	void mostrarVueltereta(int x, int y, int frame);
+	void mostrarEstacionar(int x, int y, int frame);
 	void cargarClips();
 	void desconectar();
 	void conectar();

@@ -30,7 +30,10 @@ class Vivible{
 	   virtual void setVelocidadStandard(int vel){};
 	   virtual void inicializoVueltereta(){};
 	   virtual bool haciendoVueltereta(){return true;};
+
 	   virtual bool tieneHP(){return true;};
+
+	   virtual void inicializoEstacionar(){};
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */

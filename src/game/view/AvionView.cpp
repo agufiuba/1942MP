@@ -142,3 +142,9 @@ void AvionView::mostrarVueltereta(int x, int y, int frame){
   vistaAvionTexture->render( x, y, currentClip );
 }
 
+void AvionView::mostrarEstacionar(int x, int y, int frame){
+  SDL_Rect* currentClip;
+  currentClip = &clipsVueltereta[ frame ];
+
+  vistaAvionTexture->render( x, y, currentClip );
+}

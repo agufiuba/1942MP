@@ -18,10 +18,14 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	this->posicion = posicionInicial;
 
+	posicionAEstacionar = new Posicion(500,200); //TODO: hay que cargar desde el XML la posicion a estacionar?
+
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
 
 	t = new Timer();
+
+	estacionando = false;
 
 /*	inicializoVueltereta();*/
 }
@@ -152,6 +156,48 @@ void Avion::realizoVueltereta() {
 	mostrarVueltereta(frame);
 }
 
+void Avion::inicializoEstacionar() {
+	estacionando = true;
+	llegoPuntoDeEstacionamiento = false;
+}
+
+void Avion::mostrarEstacionar(int frame){
+	vistaAvion->mostrarEstacionar(posicion->getX(),posicion->getYsdl(),frame); //estacionar
+}
+
+void Avion::estacionar() {
+	int velocidadEstacionado = 1; //TODO: habra que sacarlo del XML??
+	int frame = 0;
+
+	//Funcion para automaticar el estacionamiento
+
+	if (!llegoPuntoDeEstacionamiento){
+		if (posicion->getX() != posicionAEstacionar->getX()) {
+			if (posicion->getX() > posicionAEstacionar->getX()) {
+				mover(-velocidadEstacionado, 0);
+			} else {
+				mover(velocidadEstacionado, 0);
+			}
+		}
+		if (posicion->getY() != posicionAEstacionar->getY()) {
+			if (posicion->getY() > posicionAEstacionar->getY()) {
+				mover(0, -velocidadEstacionado);
+			} else {
+				mover(0, velocidadEstacionado);
+			}
+		}
+		llegoPuntoDeEstacionamiento = (posicion->getX() == posicionAEstacionar->getX() && posicion->getY() == posicionAEstacionar->getY());
+
+	} else {
+		if (!realizandoVueltereta){ //Esto porque la idea es que cuando empieza otro nivel haga la vueltereta
+			mover(0, velocidadEstacionado);
+		} else {
+			estacionando = false;
+		}
+	}
+
+	mostrarEstacionar(frame);
+}
 
 void Avion::vivir(int velX, int velY){
 
@@ -160,12 +206,15 @@ void Avion::vivir(int velX, int velY){
 			this->viviendo = true;
 			vistaAvion->conectar();
 		}
-
-		if (!realizandoVueltereta){
-			mover(velX, velY);
-			mostrar(velX);
+		if (estacionando) {
+			estacionar();
 		} else {
-			realizoVueltereta();
+			if (!realizandoVueltereta) {
+				mover(velX, velY);
+				mostrar(velX);
+			} else {
+				realizoVueltereta();
+			}
 		}
 	} else {
 		if (!explosion->exploto()) {
