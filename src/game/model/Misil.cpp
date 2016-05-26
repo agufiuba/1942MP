@@ -22,7 +22,7 @@ Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion,
 	largoFondo = resolucion->getHeightScreen();
 
 	t = new Timer();
-	dano = 50;
+	dano = 1;
 
 }
 
