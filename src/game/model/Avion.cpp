@@ -189,7 +189,11 @@ void Avion::estacionar() {
 		llegoPuntoDeEstacionamiento = (posicion->getX() == posicionAEstacionar->getX() && posicion->getY() == posicionAEstacionar->getY());
 
 	} else {
-		mover(0, velocidadEstacionado);
+		if (!realizandoVueltereta){ //Esto porque la idea es que cuando empieza otro nivel haga la vueltereta
+			mover(0, velocidadEstacionado);
+		} else {
+			estacionando = false;
+		}
 	}
 
 	mostrarEstacionar(frame);
