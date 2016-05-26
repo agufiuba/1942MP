@@ -193,6 +193,15 @@ SDL_Event* Escenario::run() {
 
 //				TODO: Aca deberia ir la inscripcion de fin de nivel
 				cout << "SE TERMINO EL NIVEL " << numeroNivel << endl;
+
+				// Send player score
+				PlayerScore* playerScore = new PlayerScore;
+				strcpy( playerScore->name, this->player->getName() );
+				strcpy( playerScore->color, this->player->getColor() );
+				playerScore->score = this->player->getScore();
+
+				this->unCliente->sendScore( playerScore );
+				delete playerScore;
 				usleep(5000000);
 				break;
 			} else {
