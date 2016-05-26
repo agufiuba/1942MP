@@ -10,7 +10,7 @@
 #include "../../xml/conf/AvionConf.h"
 #include <string>
 #include "Misil.h"
-#include "../view/ExplocionView.h"
+#include "../view/ExplosionView.h"
 #include "../view/Screen.h"
 
 class Avion: public Vivible {
@@ -26,7 +26,7 @@ private:
 
 	Screen* screen;
 	AvionView* vistaAvion;
-	ExplocionView* explocion;
+	ExplosionView* explosion;
 	Posicion* posicion;
 	AvionConf* configuracion;
 

@@ -1,32 +1,32 @@
 /*
- * ExplocionView.cpp
+ * ExplosionView.cpp
  *
  *  Created on: 25/05/2016
  *      Author: gonzalo
  */
 
-#include "ExplocionView.h"
+#include "ExplosionView.h"
 
-ExplocionView::ExplocionView(string id, Screen* screen, Posicion* posicion) {
+ExplosionView::ExplosionView(string id, Screen* screen, Posicion* posicion) {
 
 	this->id = id;
 	this->screen = screen;
-	string explocion = "explociones/explocion";
+	string explosion = "explosiones/explosion";
 	string bmp = ".bmp";
 
 	for (int i = 0; i < cantidadScreen; i++) {
 		string pos = to_string(i/cantidadRepeticiones);
-		string dir = explocion + pos + bmp;
+		string dir = explosion + pos + bmp;
 		screens.push_back(dir);
 	}
 
 }
 
-ExplocionView::~ExplocionView() {
+ExplosionView::~ExplosionView() {
 //	TODO ver de borrar el texture
 }
 
-void ExplocionView::explotar(Posicion* posicion) {
+void ExplosionView::explotar(Posicion* posicion) {
 
 	if (!exploto()) {
 		string dir = screens[screenActual];
@@ -36,6 +36,6 @@ void ExplocionView::explotar(Posicion* posicion) {
 	}
 }
 
-bool ExplocionView::exploto() {
+bool ExplosionView::exploto() {
 	return screenActual >= cantidadScreen;
 }

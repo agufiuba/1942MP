@@ -13,7 +13,7 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	this->screen = screen;
 	vistaAvion = new AvionView(renderer, color, conf->avionSpriteID);
-	explocion = NULL;
+	explosion = NULL;
 	viviendo = true;
 
 	this->posicion = posicionInicial;
@@ -38,7 +38,7 @@ bool Avion::haciendoVueltereta(){
 Avion::~Avion(){
 
 	if (vistaAvion != NULL) delete vistaAvion;
-	if (explocion != NULL) delete explocion;
+	if (explosion != NULL) delete explosion;
 	delete t;
 	delete posicion;
 }
@@ -168,9 +168,9 @@ void Avion::vivir(int velX, int velY){
 			realizoVueltereta();
 		}
 	} else {
-		if (!explocion->exploto()) {
+		if (!explosion->exploto()) {
 			posicion->mover(-1, -3);
-			explocion->explotar(posicion);
+			explosion->explotar(posicion);
 		}
 	}
 
@@ -199,11 +199,11 @@ void Avion::recibirMisil(Misil* misil) {
 	if (tieneHP()) {
 		this->vida -= misil->getDano();
 		cout << "La vida actual es " << this->vida << endl;
-		if (!tieneHP() && explocion == NULL) {
+		if (!tieneHP() && explosion == NULL) {
 
 			delete vistaAvion;
 			vistaAvion = NULL;
-			explocion = new ExplocionView("idExplocion", screen, posicion);
+			explosion = new ExplosionView("idExplosion", screen, posicion);
 		}
 	}
 }
