@@ -342,7 +342,7 @@ bool Client::sendData( PlayerData* data ) {
   return tmt->sendData( data );
 }
 
-bool Client::sendScore( PlayerScore* score ) {
+bool Client::sendScore( PlayerScore* data ) {
   this->received = false;
   bool sent;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
@@ -477,4 +477,8 @@ int Client::getStageOffset() {
 
 bool Client::isConnected() {
   return this->connected;
+}
+
+void Client::resetScores() {
+  this->playersScoreData.clear();
 }

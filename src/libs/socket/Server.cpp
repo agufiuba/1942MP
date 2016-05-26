@@ -488,6 +488,12 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	    cout << "Current stage offset: " << data->offset << endl;
 	    this->stageData = data;
 	  }
+	} else if( dataID == "SP" ) {
+	  PlayerScore* data = new PlayerScore;
+	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
+	    // Process received data
+	    this->sendScoreData( data );
+	  }
 	}
 
       }
@@ -679,4 +685,14 @@ void Server::closeConnection() {
   this->processing = false;
   this->logger->warn( SERVER_DISCONNECT );
   DEBUG_WARN( SERVER_DISCONNECT );
+}
+
+void Server::sendScoreData( PlayerScore* data ) {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    Transmitter* tmt = new Transmitter( it->first, this->logger ); 
+    tmt->sendData( data );
+    delete tmt;
+  }
 }

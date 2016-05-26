@@ -50,8 +50,8 @@ class Client {
     void sendCycle();
     bool sendData( PlayerData* data );
     bool sendStageData();
-    bool sendScore( PlayerScore* score );
-    bool sendDataPosicion( PlayerData* data);
+    bool sendScore( PlayerScore* data );
+    bool sendDataPosicion( PlayerData* data );
     PlanesActives* getPlanesActives();
     bool isPlayerOk();
     bool sendData( Evento* e );
@@ -70,5 +70,6 @@ class Client {
     void setStageOffset( int offset );
     int getStageOffset();
     bool isConnected();
+    void resetScores();
 };
 #endif
