@@ -60,6 +60,22 @@ bool Transmitter::sendData( PlayerData* data ) {
   return true;
 }
 
+bool Transmitter::sendData( PlayerScore* data ) {
+  // Send data id
+  if( !( this->sendDataID( "SD" ) ) ) {
+    return false;
+  }
+
+  // Send data
+  if( send( this->peerFD, data, sizeof( PlayerScore ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+    return false;
+  }
+
+  return true;
+}
+
 bool Transmitter::sendData( StageData* data, string id ) {
   // Send data id
   if( !( this->sendDataID( id ) ) ) {
@@ -239,6 +255,10 @@ int Transmitter::receiveData( Evento* e ) {
 
 int Transmitter::receiveData( PlayerData* data ) {
   return recv( this->peerFD, data, sizeof( PlayerData ), 0 ) ;
+}
+
+int Transmitter::receiveData( PlayerScore* data ) {
+  return recv( this->peerFD, data, sizeof( PlayerScore ), 0 ) ;
 }
 
 int Transmitter::receiveData( StageData* data ) {
