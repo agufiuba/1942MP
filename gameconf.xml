@@ -43,8 +43,8 @@
     </sprite>
 </sprites>
 <escenario>
-	<ancho>800</ancho>
-	<alto>600</alto>
+	<ancho>700</ancho>
+	<alto>700</alto>
 	<fondo>
 		<spriteID>agua</spriteID>
 	</fondo>

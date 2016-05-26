@@ -10,13 +10,15 @@ class Player {
     int y;
     bool active;
     int health;
+    int score;
 
   public:
     Player( string name, string color, int x, int y, int health = 3 );
     ~Player();
     string getName();
     string getColor();
-
+    int getScore();
+    void addScore( int score );
     int getX();
     int getY();
 

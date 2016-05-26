@@ -7,6 +7,7 @@ Player::Player( string name, string color, int x, int y, int health ) {
   this->y = y;
   this->active = false;
   this->health = health;
+  this->score = 0;
 }
 
 Player::~Player() {}
@@ -17,6 +18,14 @@ string Player::getName() {
 
 string Player::getColor() {
   return this->color;
+}
+
+int Player::getScore() {
+  return this->score;
+}
+
+void Player::addScore( int score ) {
+  this->score += score;
 }
 
 int Player::getX() {

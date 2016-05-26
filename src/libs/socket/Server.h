@@ -5,6 +5,7 @@
 #include "../../game/events/Events.cpp"
 #include "../../libs/data/player_data.h"
 #include "../../libs/data/player_status.h"
+#include "../../libs/data/player_score.h"
 #include "../../libs/data/planes_actives.h"
 #include "../../libs/data/stage_data.h"
 #include "../../game/model/Player.h"
@@ -52,6 +53,7 @@ class Server {
     void updatePlayerStatus( PlayerStatus* data, int clientFD );
     void sendPlanesActives(int cfd);
     void sendConf(int);
+    void sendScoreData( PlayerScore* data );
     void createPlayers();
     void queryCurrentStageOffset();
     void sendCurrentStageOffset( int clientFD );

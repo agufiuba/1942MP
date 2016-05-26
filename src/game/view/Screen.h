@@ -16,6 +16,7 @@ class Screen {
     map<string, SDL_Rect> rectangles;
     TTF_Font* fontFamily;
     SDL_Color fontColor;
+    int canvasWidth;
     void addTexture( string id, Texture* texture );
 
   public:
@@ -28,6 +29,12 @@ class Screen {
     void renderTexture( string id, int x, int y );
     void renderRectangle( string id, bool outline = false );
     int getTextureWidth( string id );
+    int getTextWidth( string text );
+    int getTextHeight( string text );
     void setRenderDrawColor( int r, int g, int b, int a );
+    void setCanvasWidth( int canvasWidth );
+    int getTextureCenter( string textureID );
+    int getTextCenter( string text );
+    int getRectCenter( int rectWidth );
 };
 #endif

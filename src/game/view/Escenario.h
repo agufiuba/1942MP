@@ -79,6 +79,7 @@ private:
 	void configurarFondosVivibles();
 	void limpiarFondosVivibles();
 	bool isFinNivel(int numeroNivel);
+	void loadSinglePlayerScoreScreen( int stage );
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl);
