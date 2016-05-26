@@ -9,7 +9,10 @@
 using namespace std;
 
 Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config) {
-	vistaMisil = new MisilView(renderer, config);
+
+	if (config != NULL) {
+		vistaMisil = new MisilView(renderer, config);
+	}
 
 	viviendo = true;
 
@@ -19,6 +22,7 @@ Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion,
 	largoFondo = resolucion->getHeightScreen();
 
 	t = new Timer();
+	dano = 1;
 
 }
 
@@ -54,4 +58,8 @@ int Misil::getLargoFondo() {
 
 bool Misil::aunVive(){
 	return viviendo;
+}
+
+int Misil::getDano() {
+	return this->dano;
 }

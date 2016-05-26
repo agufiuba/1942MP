@@ -25,8 +25,11 @@ Controller::~Controller(){
 }
 
 void Controller::press(SDL_Event *event){
-  Evento* e;
-  CompanionEvent* ce = new CompanionEvent();
+
+	if (!obj->tieneHP()) return;
+
+	Evento* e;
+	CompanionEvent* ce = new CompanionEvent();
 
     if( event->type == SDL_KEYDOWN && event->key.repeat == 0){
         switch( event->key.keysym.sym ){
@@ -74,6 +77,9 @@ Vivible* Controller::getVivible(){
 }
 
 void Controller::actualizarPosicionAvionEnServer(){
+
+	if (!obj->tieneHP()) return;
+
 	PlayerData* p = new PlayerData();
 
 	strcpy(p->name, obj->getId().c_str());

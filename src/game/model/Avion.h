@@ -9,18 +9,24 @@
 #include "../../libs/data/player_data.h"
 #include "../../xml/conf/AvionConf.h"
 #include <string>
+#include "Misil.h"
+#include "../view/ExplosionView.h"
+#include "../view/Screen.h"
 
 class Avion: public Vivible {
 private:
 	string id;
 	int anchoFondo, largoFondo;
 	int velocidadStandard;
+	int vida;
 	bool viviendo;
 
 	bool realizandoVueltereta;
 	Timer* t;
 
+	Screen* screen;
 	AvionView* vistaAvion;
+	ExplosionView* explosion;
 	Posicion* posicion;
 	AvionConf* configuracion;
 
@@ -34,7 +40,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	Avion(PlayerData* playerData, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf);
+	Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf);
 	~Avion();
 
 	string getId();
@@ -44,6 +50,8 @@ public:
 	int getLargo();
 	int getX();
 	int getY();
+	int getVida();
+
 	AvionConf* getConfiguracion();
 
 	void setVelocidadStandard(int vel);
@@ -52,8 +60,9 @@ public:
 
 	void vivir(int velX, int velY);
 	bool aunVive();
-
 	void desconectar();
+	void recibirMisil(Misil* misil);
+	bool tieneHP();
 };
 
 #endif /* SRC_MODEL_AVION_H_ */

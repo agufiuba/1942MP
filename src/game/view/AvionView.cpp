@@ -99,8 +99,6 @@ AvionView::AvionView(SDL_Renderer * unRenderer, string color, string filename){
 
 	if (!cargarImagenDelAvion(filename+"_"+color+".bmp")) {
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
-		//filename = dir + filenameDefault;
-//		cargarImagenDelAvion(filename);
 	}
 
 }
@@ -143,3 +141,4 @@ void AvionView::mostrarVueltereta(int x, int y, int frame){
 
   vistaAvionTexture->render( x, y, currentClip );
 }
+
