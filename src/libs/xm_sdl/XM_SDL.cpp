@@ -161,3 +161,8 @@ bool XM_SDL::nextEvent( SDL_Event* e ) {
   return SDL_PollEvent( e );
 }
 
+int XM_SDL::getWindowWidth() {
+  int width;
+  SDL_GetWindowSize( this->window, &width, NULL );
+  return width;
+}
