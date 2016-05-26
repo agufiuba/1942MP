@@ -18,6 +18,9 @@ CONTROLLER_DIR = $(GAME_DIR)/controller
 
 WINDOWINITIAL = $(GAME_DIR)/Game.cpp
 
+# colision
+COLISION = ./src/colision/Colision.cpp
+
 # xml
 XML = ./src/libs/tinyxml2.cpp
 
@@ -120,7 +123,7 @@ ifeq ($(p), server)
 endif
 
 
-OBJS = $(COMPILE) $(MODEL) $(VIEW) $(CONTROLLER) $(WINDOWINITIAL) $(XM_SDL) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(TMT) $(RED) $(EVENT) $(UTILS)
+OBJS = $(COMPILE) $(MODEL) $(VIEW) $(CONTROLLER) $(WINDOWINITIAL) $(XM_SDL) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(TMT) $(RED) $(EVENT) $(UTILS) $(COLISION)
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)

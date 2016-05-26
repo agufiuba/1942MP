@@ -9,7 +9,7 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <string>
-
+#include <thread>
 #include <vector>
 #include "Texture.h"
 #include "Isla.h"
@@ -85,6 +85,9 @@ private:
 	bool isFinNivel(int numeroNivel);
 	void loadSinglePlayerScoreScreen( int stage );
 	void verificarEstacionamiento(int numeroNivel);
+	void getPowerUp();
+
+	bool escenarioCreado;
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl);

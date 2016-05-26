@@ -14,14 +14,13 @@
 
 class HandlerPowerUp {
 private:
-	map<string, PowerUp*> mapaPowerUp;
 	SDL_Renderer* renderer;
 	Resolucion* resolucion;
 
 public:
+	map<string, PowerUp*> mapaPowerUp;
 	HandlerPowerUp(SDL_Renderer* renderer, Resolucion* resolucion);
 	virtual ~HandlerPowerUp();
-
 	void activar(string id);
 	void setPowerUp(PowerUp* powerUp);
 	void hacerVivir();

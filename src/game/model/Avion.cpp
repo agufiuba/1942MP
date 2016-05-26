@@ -284,3 +284,10 @@ Posicion* Avion::getPosicion() {
 void Avion::despegar() {
 	estacionando = false;
 }
+
+bool Avion::hit(int x, int y) {
+	return (x >= posicion->getX()) &&
+	       (x <= posicion->getX() + vistaAvion->getAnchoVista()) &&
+	       (y >= posicion->getY()) &&
+	       (y <= posicion->getY() + vistaAvion->getLargoVista());
+}

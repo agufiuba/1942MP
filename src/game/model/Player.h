@@ -35,4 +35,3 @@ class Player {
     bool isAlive();
 };
 #endif
-

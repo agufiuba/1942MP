@@ -52,5 +52,3 @@ void HandlerPlayersControllers::hacerVivir() {
 		it->second->hacerVivir();
 	}
 }
-
-

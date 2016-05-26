@@ -6,6 +6,9 @@
  */
 
 #include "Escenario.h"
+
+#include "../../colision/Colision.h"
+
 using namespace std;
 
 Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
@@ -37,6 +40,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 
 Escenario::~Escenario() {
 	resolucion->~Resolucion();
+	escenarioCreado = false;
 	delete escenarioScreen;
 	delete myControl;
 	delete controllers;
@@ -137,13 +141,14 @@ void Escenario::setFondosVivibles(int x, int y) {
 SDL_Event* Escenario::run() {
 	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
-  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente, myControl, "Shot", "1"));
-  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), this->unCliente, myControl, "Destroy", "2"));
-  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), this->unCliente, myControl, "Bonus", "3"));
+  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente, myControl, "Shot", "1"));
+  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), this->unCliente, myControl, "Destroy", "2"));
+  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), this->unCliente, myControl, "Bonus", "3"));
 
 	pixelesRecorridos = 0;
 	configurarFondosVivibles();
 	Posicion* posicionEscenario = new Posicion(0, 0);
+	escenarioCreado = true;
 
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
 	if (!this->unCliente->reinicia) {
@@ -160,6 +165,9 @@ SDL_Event* Escenario::run() {
 	bool quit = false;
 
 	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
+
+		thread tPowerUps(&Escenario::getPowerUp, this);
+		tPowerUps.detach();
 
 		while (!quit && this->unCliente->isConnected()) {
 
@@ -428,4 +436,29 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
   //Disable text input
   SDL_StopTextInput();
   delete scoreScreen;
+}
+
+void Escenario::getPowerUp() {
+	while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
+		Vivible* avion = myControl->getVivible();
+		if (avion->tieneHP()) {
+			int x = avion->getX();
+			int y = avion->getY();
+			int xp = x + avion->getAncho();
+			int yp = y + avion->getLargo();
+			for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
+				bool touched = false;
+				int x2 = it->second->getX();
+				int xp2 = x2 + it->second->getAncho();
+				int y2 = it->second->getY();
+				int yp2 = y2 + it->second->getLargo();
+				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
+				if (touched) {
+					player->addScore(10);
+					delete it->second;
+					hPowerUp->mapaPowerUp.erase(it);
+				}
+			}
+		}
+	}
 }
