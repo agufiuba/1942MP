@@ -305,6 +305,11 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 	  cout << "Current stage offset: " << data->offset << endl;
 	  this->stageOffset = data->offset; 
 	}
+      } else if ( dataID == "SP" ) {
+	PlayerScore* data = new PlayerScore;
+	if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
+	  this->playersScoreData.push_back( data );
+	}
       }
     }
 
@@ -335,6 +340,16 @@ bool Client::sendData( PlayerData* data ) {
   this->received = false;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   return tmt->sendData( data );
+}
+
+bool Client::sendScore( PlayerScore* score ) {
+  this->received = false;
+  bool sent;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  sent = tmt->sendData( data );
+
+  delete tmt;
+  return sent;
 }
 
 bool Client::sendDataPosicion( PlayerData* data) {
@@ -415,6 +430,10 @@ bool Client::isPlayerOk(){
 
 vector<PlayerData*> Client::getPlayers() {
   return this->allPlayers;
+}
+
+vector<PlayerScore*> Client::getPlayersScoreData() {
+  return this->playersScoreData;
 }
 
 GameConf* Client::getConfig(){

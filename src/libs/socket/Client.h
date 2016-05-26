@@ -2,6 +2,7 @@
 #define CLIENT_H
 #include "../data/player_data.h"
 #include "../data/player_status.h"
+#include "../data/player_score.h"
 #include "../data/planes_actives.h"
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
@@ -28,6 +29,7 @@ class Client {
 	vector<ElementoConf*> elementos;
 	vector<SpriteConf*> sprites;
     vector<PlayerData*> allPlayers;
+    vector<PlayerScore*> playersScoreData;
 
     static const int MAX_UNREACHABLE_TIME = 5;
     void checkAliveSend();
@@ -48,6 +50,7 @@ class Client {
     void sendCycle();
     bool sendData( PlayerData* data );
     bool sendStageData();
+    bool sendScore( PlayerScore* score );
     bool sendDataPosicion( PlayerData* data);
     PlanesActives* getPlanesActives();
     bool isPlayerOk();
@@ -56,6 +59,7 @@ class Client {
     bool sendPlayerDisconnection();
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
     vector<PlayerData*> getPlayers();
+    vector<PlayerScore*> getPlayersScoreData();
     GameConf* getConfig();
     bool isConfigComplete();
     void setConfigComplete(bool);
