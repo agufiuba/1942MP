@@ -1,12 +1,12 @@
 /*
- * ExplocionView.h
+ * ExplosionView.h
  *
  *  Created on: 25/05/2016
  *      Author: gonzalo
  */
 
-#ifndef EXPLOCIONVIEW_H_
-#define EXPLOCIONVIEW_H_
+#ifndef EXPLOSIONVIEW_H_
+#define EXPLOSIONVIEW_H_
 
 #include <iostream>
 #include <string>
@@ -17,7 +17,7 @@
 
 using namespace std;
 
-class ExplocionView {
+class ExplosionView {
 
 private:
 	string id;
@@ -28,10 +28,10 @@ private:
 	int cantidadScreen = (6 * cantidadRepeticiones);
 
 public:
-	ExplocionView(string id, Screen* screen, Posicion* posicion);
-	virtual ~ExplocionView();
+	ExplosionView(string id, Screen* screen, Posicion* posicion);
+	virtual ~ExplosionView();
 	void explotar(Posicion* posicion);
 	bool exploto();
 };
 
-#endif /* EXPLOCIONVIEW_H_ */
+#endif /* EXPLOSIONVIEW_H_ */
