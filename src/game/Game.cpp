@@ -69,7 +69,6 @@ void Game::cargarEscenario() {
 void Game::start() {
   if( this->sdlHandler->createWindow( this->windowTitle.c_str(), this->windowWidth, this->windowHeight ) ) {
     this->running = true;
-    this->loadSinglePlayerScoreScreen( 2 );
     this->loadConnectionScreen();
     this->cargarEscenario();
   }
