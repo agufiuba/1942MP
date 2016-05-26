@@ -90,6 +90,12 @@ int Screen::getTextWidth( string text ) {
   return width;
 }
 
+int Screen::getTextHeight( string text ) {
+  int height;
+  TTF_SizeText( this->fontFamily, text.c_str(), NULL, &height);
+  return height;
+}
+
 void Screen::setRenderDrawColor( int r, int g, int b, int a ) {
   SDL_SetRenderDrawColor( this->renderer, r, g, b, a );
 }
