@@ -93,3 +93,12 @@ void Controller::actualizarPosicionAvionEnServer(){
 
 	delete p;
 }
+
+void Controller::setAmetralladora(){
+	controlDeMisiles->setAmetralladora();
+}
+
+void Controller::setBalaNormal(){
+	controlDeMisiles->setBalaNormal();
+}
+

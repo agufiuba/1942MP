@@ -63,3 +63,7 @@ bool Misil::aunVive(){
 int Misil::getDano() {
 	return this->dano;
 }
+
+void Misil::setAmetralladora() {
+	vistaMisil->cargarImagenDelMisil("balaAmetralladora.bmp");
+}

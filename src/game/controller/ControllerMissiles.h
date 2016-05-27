@@ -26,11 +26,15 @@ class ControllerMissiles{
 		void press(SDL_Event *event);
 		void hacerVivir();
 		void crearNuevoMisilEnPosicion(int x, int y, Resolucion* resolucion, MisilConf* config);
+
+		void setAmetralladora();
+		void setBalaNormal();
 	private:
 		CompositeVivibles* vivibles;
 		SDL_Renderer* rendererMisil;
 		int distanciaDeDesplazamiento = 25;//Todo sacarlo del hardcodeo
 
+		bool ametralladora;
 };
 
 #endif /* SRC_GAME_CONTROL_CONTROLLERMISSILES_H_ */

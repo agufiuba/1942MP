@@ -34,6 +34,8 @@ class Vivible{
 	   virtual bool tieneHP(){return true;};
 
 	   virtual void inicializoEstacionar(){};
+
+	   virtual void setAmetralladora() {};
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */
