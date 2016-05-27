@@ -97,3 +97,5 @@ void Controller::actualizarPosicionAvionEnServer(){
 void Controller::setAmetralladora(){
 	controlDeMisiles->setAmetralladora();
 }
+
+

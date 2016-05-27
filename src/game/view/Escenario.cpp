@@ -186,6 +186,11 @@ SDL_Event* Escenario::run() {
 						break;
 					}
 
+					//TODO: Este fue agregado para probar el cambio a ametralladora
+					if (evento.key.keysym.sym == SDLK_t) {
+						hPowerUp->activar("1");
+					}
+
 //					TODO: Esto fue agregado para probar cuando me disparan
 					if (evento.key.keysym.sym == SDLK_d) {
 						Avion* avion = (Avion*)myControl->getVivible();

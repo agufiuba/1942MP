@@ -23,7 +23,7 @@ void HandlerPowerUp::setPowerUp(PowerUp* powerUp) {
 	this->mapaPowerUp[powerUp->getId()] = powerUp;
 }
 
-void HandlerPowerUp::activar(string id, char evento) {
+void HandlerPowerUp::activar(string id) {
 	this->mapaPowerUp[id]->activarPowerUp();
 }
 
