@@ -28,6 +28,7 @@ class ControllerMissiles{
 		void crearNuevoMisilEnPosicion(int x, int y, Resolucion* resolucion, MisilConf* config);
 
 		void setAmetralladora();
+		void setBalaNormal();
 	private:
 		CompositeVivibles* vivibles;
 		SDL_Renderer* rendererMisil;

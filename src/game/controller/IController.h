@@ -17,6 +17,7 @@ public:
 	virtual void hacerVivir() {};
 	virtual Vivible* getVivible(){return 0;};
 	virtual void setAmetralladora() {};
+	virtual void setBalaNormal() {};
 };
 
 

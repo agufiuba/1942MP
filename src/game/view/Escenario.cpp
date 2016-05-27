@@ -186,7 +186,8 @@ SDL_Event* Escenario::run() {
 						break;
 					}
 
-					//TODO: Este fue agregado para probar el cambio a ametralladora
+					//TODO: Este fue agregado para PROBAR el cambio a ametralladora
+					// Si tocas t cuando el powerUp salio de la pantalla obviamente va a tirar segmentation fault
 					if (evento.key.keysym.sym == SDLK_t) {
 						hPowerUp->activar("1");
 					}

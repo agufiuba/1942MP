@@ -42,6 +42,7 @@ public:
 	void actualizarPosicionAvionEnServer();
 
 	void setAmetralladora();
+	void setBalaNormal();
 };
 
 #endif /* SRC_CONTROL_CONTROLLER_H_ */

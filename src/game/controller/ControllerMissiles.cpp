@@ -39,3 +39,7 @@ void ControllerMissiles::hacerVivir(){
 void ControllerMissiles::setAmetralladora(){
 	ametralladora = true;
 }
+
+void ControllerMissiles::setBalaNormal(){
+	ametralladora = false;
+}
