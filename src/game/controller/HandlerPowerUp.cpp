@@ -23,8 +23,17 @@ void HandlerPowerUp::setPowerUp(PowerUp* powerUp) {
 	this->mapaPowerUp[powerUp->getId()] = powerUp;
 }
 
+void HandlerPowerUp::activar(string id, char evento) {
+	this->mapaPowerUp[id]->activarPowerUp();
+}
+
 void HandlerPowerUp::hacerVivir() {
 	for (map<string, PowerUp*>::iterator it = this->mapaPowerUp.begin(); it != this->mapaPowerUp.end(); ++it) {
-		it->second->vivir();
+		if(it->second->aunVive()){
+			it->second->vivir();
+		} else {
+			delete it->second;
+			this->mapaPowerUp.erase(it);
+		}
 	}
 }

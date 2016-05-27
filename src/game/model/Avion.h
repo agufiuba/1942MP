@@ -66,6 +66,8 @@ public:
 	bool aunVive();
 	void desconectar();
 
+	void setAmetralladora();
+
 	void recibirMisil(Misil* misil);
 	bool tieneHP();
 

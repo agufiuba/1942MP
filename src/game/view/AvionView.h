@@ -35,6 +35,7 @@ public:
 	void cargarClips();
 	void desconectar();
 	void conectar();
+	void ametralladora();
 };
 
 #endif /* SRC_VIEW_AVIONVIEW_H_ */
