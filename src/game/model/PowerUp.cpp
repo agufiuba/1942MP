@@ -9,12 +9,15 @@
 
 using namespace std;
 
-PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, string type, string id) {
+PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente,Avion* avion, string type, string id) {
 
 	//this->configuracion = conf; //TODO: hay que agregar que guarde su configuracion de XML
 
 	vistaPowerUp = new PowerUpView(renderer, type);
 	viviendo = true;
+
+	this->avion = avion;
+	this->cliente = cliente;
 
 	this->id = id; //TODO:hay que hacer que cada powerUp tenga una ID??
 	this->type = type;
@@ -103,13 +106,18 @@ bool PowerUp::aunVive(){
 void PowerUp::activarPowerUp() {
 	if( this->type == "Shot") {
 			cout << "PowerUp Shot" << endl;
+			//Cuando el avion toca este Power Up, este hace que el avion mejore el disparo
+			this->avion->setAmetralladora();
 	}
 
 	if( this->type == "Bonus") {
 			cout << "PowerUp Bonus" << endl;
+			//Aca deberia venir algo como: this->avion->sumarScore(1000);
 	}
 
 	if( this->type == "Destroy") {
 			cout << "PowerUp Destroy" << endl;
+			//Aca deberia venir algo como: this->cliente->sendData() para que el servidor destruya todos los aviones
+			//que tenga en la cola
 	}
 }

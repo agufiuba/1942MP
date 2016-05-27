@@ -13,6 +13,7 @@
 #include "Resolucion.h"
 #include "../model/Avion.h"
 #include "../model/Posicion.h"
+#include "../../libs/socket/Client.h"
 
 //#include "../../xml/conf/PowerUpConf.h"
 
@@ -27,6 +28,9 @@ private:
 	int velocidadStandard;
 	bool viviendo;
 
+	Avion* avion;
+	Client* cliente;
+
 	PowerUpView* vistaPowerUp;
 
 	Posicion* posicion;
@@ -39,7 +43,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, string type, string id);
+	PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente, Avion* avion, string type, string id);
 	~PowerUp();
 
 	string getId();

@@ -2,6 +2,9 @@
 
 using namespace std;
 
+void AvionView::ametralladora(){
+	string filename = "ametralladora.bmp";
+}
 
 void AvionView::desconectar(){
 	string filename = "AvionSprites_gris.bmp";

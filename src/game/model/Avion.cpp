@@ -244,6 +244,11 @@ void Avion::desconectar(){
 	vistaAvion->desconectar();
 }
 
+void Avion::setAmetralladora(){
+	if (vistaAvion != NULL)
+	vistaAvion->ametralladora();
+}
+
 void Avion::recibirMisil(Misil* misil) {
 	if (tieneHP()) {
 		this->vida -= misil->getDano();
