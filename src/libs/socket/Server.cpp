@@ -501,8 +501,8 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       // Check peer disconnection or timeout
       if ( bytesReceived <= 0 ) {
 	receiving = false;
-	this->closeClient( cfd );
 	this->avisarDesconexionDeAvion(cfd);
+	this->closeClient( cfd );
 	if( bytesReceived == 0 ) {
 	  cout << endl << warning( "El cliente " ) << clientIP
 	    << warning( " se desconecto" ) << endl;
@@ -664,9 +664,24 @@ void Server::closeClient( int cfd ) {
   close( cfd );
   theMutex.lock();
   this->clientCount--;
+  // if no more players connected
+  if ( this->clientCount == 0 ) {
+    // clear players hash
+    this->removeAllPlayers();
+    this->running = false;
+  }
   cout << " cantidad " << this->clientCount << endl;
   this->logger->info( "Cantidad de Clientes Conectados: " + to_string( this->clientCount ) );
   theMutex.unlock();
+}
+
+void Server::removeAllPlayers() {
+  for( map<int, Player*>::iterator it = this->players.begin();
+       it != this->players.end();
+       ++it ) {
+      delete it->second;
+  }
+  this->players.clear();
 }
 
 void Server::shutdown() {
