@@ -91,7 +91,6 @@ void Game::loadConnectionScreen() {
   Timer timer;
 
   Screen* initialScreen = new Screen( this->sdlHandler );
-  initialScreen->setCanvasWidth( this->windowWidth );
 
   // Load logo and text
   initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
@@ -286,7 +285,6 @@ void Game::loadValidationScreen() {
   string backButtonText = "VOLVER";
 
   Screen* validationScreen = new Screen( this->sdlHandler );
-  validationScreen->setCanvasWidth( this->windowWidth );
 
   // Load logo and text
   validationScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
@@ -829,7 +827,6 @@ void Game::loadSinglePlayerScoreScreen( int stage ) {
   string scoreText = "Score";
 
   Screen* scoreScreen= new Screen( this->sdlHandler );
-  scoreScreen->setCanvasWidth( this->windowWidth );
 
   // TODO: REMOVE, only for test purpouses
   this->player = new Player( "sousuke", "rojo", 20, 200 );

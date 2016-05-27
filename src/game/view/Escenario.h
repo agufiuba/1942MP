@@ -30,6 +30,7 @@
 #include "../../libs/xm_sdl/XM_SDL.h"
 #include "Screen.h"
 #include "HealthView.h"
+#include "ScoreView.h"
 #include "../model/Player.h"
 #include "../model/PowerUp.h"
 #include "../controller/HandlerPowerUp.h"
@@ -40,6 +41,7 @@ private:
 	XM_SDL* sdl;
 	Screen* escenarioScreen;
 	HealthView* healthView;
+	ScoreView* scoreView;
 	Player* player;
 	SDL_Renderer* gRenderer = NULL;
 	SDL_Event evento;

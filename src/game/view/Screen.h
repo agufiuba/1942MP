@@ -32,7 +32,6 @@ class Screen {
     int getTextWidth( string text );
     int getTextHeight( string text );
     void setRenderDrawColor( int r, int g, int b, int a );
-    void setCanvasWidth( int canvasWidth );
     int getTextureCenter( string textureID );
     int getTextCenter( string text );
     int getRectCenter( int rectWidth );

@@ -30,6 +30,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	controllers = new HandlerPlayersControllers(gRenderer, resolucion);
 
 	this->healthView = NULL;
+	this->scoreView = NULL;
 }
 
 Escenario::~Escenario() {
@@ -51,8 +52,12 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	controllers->hacerVivir();
 	myControl->hacerVivir();
 	hPowerUp->hacerVivir();
+	// Render health
 	this->healthView->update( this->player->getHealth() );
 	this->healthView->render();
+	// Render score
+	this->scoreView->update( this->player->getScore() );
+	this->scoreView->render();
 
 	this->sdl->updateWindow();
 	// set new offset on client
@@ -74,6 +79,7 @@ void Escenario::setClient(Client* cliente) {
 void Escenario::setPlayer( Player* player ) {
   this->player = player;
   this->healthView = new HealthView( this->escenarioScreen, this->player->getHealth() );
+  this->scoreView = new ScoreView( this->escenarioScreen, this->player->getScore() );
 }
 
 void Escenario::configurarFondosVivibles() {
@@ -206,6 +212,7 @@ SDL_Event* Escenario::run() {
 
 //				TODO: Aca deberia ir la inscripcion de fin de nivel
 				cout << "SE TERMINO EL NIVEL " << numeroNivel << endl;
+				this->player->addScore( 6781 );
 
 				// Send player score
 				PlayerScore* playerScore = new PlayerScore;
@@ -267,7 +274,6 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
   string scoreText = "Score";
 
   Screen* scoreScreen= new Screen( this->sdl );
-  scoreScreen->setCanvasWidth( this->sdl->getWindowWidth() );
 
   // Load text
   scoreScreen->loadText( "stageComplete", stageCompleteText, { 53, 167, 84, 255 } );
