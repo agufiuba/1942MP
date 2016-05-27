@@ -212,7 +212,6 @@ SDL_Event* Escenario::run() {
 
 //				TODO: Aca deberia ir la inscripcion de fin de nivel
 				cout << "SE TERMINO EL NIVEL " << numeroNivel << endl;
-				this->player->addScore( 6781 );
 
 				// Send player score
 				PlayerScore* playerScore = new PlayerScore;
