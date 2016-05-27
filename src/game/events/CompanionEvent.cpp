@@ -62,3 +62,24 @@ Evento* CompanionEvent::quit(string n) {
     strcpy(e->name, n.c_str());
     return e;
 }
+
+Evento* CompanionEvent::ametralladora(string n) {
+		Evento* e = new Evento();
+    e->value = AMETRALLADORA;
+    strcpy(e->name, n.c_str());
+    return e;
+}
+
+Evento* CompanionEvent::destroy(string n) {
+		Evento* e = new Evento();
+    e->value = DESTROY;
+    strcpy(e->name, n.c_str());
+    return e;
+}
+
+Evento* CompanionEvent::estaciono(string n) {
+		Evento* e = new Evento();
+    e->value = ESTACIONO;
+    strcpy(e->name, n.c_str());
+    return e;
+}

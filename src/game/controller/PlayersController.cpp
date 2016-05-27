@@ -38,7 +38,11 @@ void PlayersController::press(SDL_Event *event){
 					crearMisil = true;
 				}
 				break;
+            case SDLK_CLEAR: controlDeMisiles->setAmetralladora(); break;
+            case SDLK_HASH: obj->inicializoEstacionar(); break;
+
         }
+
 }
 
 void PlayersController::hacerVivir(){

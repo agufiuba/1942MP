@@ -104,10 +104,15 @@ bool PowerUp::aunVive(){
 }
 
 void PowerUp::activarPowerUp() {
+	Evento* e;
+	CompanionEvent* ce = new CompanionEvent();
+	Vivible* obj = control->getVivible();
+
 	if( this->type == "Shot") {
 			cout << "PowerUp Shot" << endl;
 			//Cuando el avion toca este Power Up, este hace que el avion mejore el disparo
 			this->control->setAmetralladora();
+			cliente->sendData(ce->ametralladora(obj->getId()));
 	}
 
 	if( this->type == "Bonus") {
@@ -117,7 +122,7 @@ void PowerUp::activarPowerUp() {
 
 	if( this->type == "Destroy") {
 			cout << "PowerUp Destroy" << endl;
-			//Aca deberia venir algo como: this->cliente->sendData() para que el servidor destruya todos los aviones
-			//que tenga en la cola
+			//Envio al servidor un evento Destroy para que este elimine todos los enemigos que tenga en la Queue
+			cliente->sendData(ce->destroy(obj->getId()));
 	}
 }

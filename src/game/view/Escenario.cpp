@@ -198,6 +198,12 @@ SDL_Event* Escenario::run() {
 						hPowerUp->activar("1");
 					}
 
+					//TODO: Este fue agregado para PROBAR el destroy que lo debe hacer el server
+					// Si tocas t cuando el powerUp salio de la pantalla obviamente va a tirar segmentation fault
+					if (evento.key.keysym.sym == SDLK_x) {
+						hPowerUp->activar("2");
+					}
+
 //					TODO: Esto fue agregado para probar cuando me disparan
 					if (evento.key.keysym.sym == SDLK_d) {
 						Avion* avion = (Avion*)myControl->getVivible();

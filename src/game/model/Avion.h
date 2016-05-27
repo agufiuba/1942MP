@@ -72,7 +72,7 @@ public:
 	bool tieneHP();
 
 	void inicializoEstacionar();
-
+	bool estaEstacionando();
 	void mostrarEstacionar(int frame);
 	void estacionar();
 };
