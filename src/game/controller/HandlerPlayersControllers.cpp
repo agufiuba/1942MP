@@ -38,6 +38,7 @@ void HandlerPlayersControllers::mover(string id, char evento) {
 		case 'E': code = SDLK_KP_ENTER	; break;
 		case 'S': code = SDLK_SPACE		; break;
 		case 'A': code = SDLK_CLEAR		; break;
+		case 'P': code = SDLK_HASH		; break;
 	}
 
 	eventoSdl->key.keysym.sym = code;

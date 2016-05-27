@@ -36,6 +36,8 @@ class Vivible{
 	   virtual void inicializoEstacionar(){};
 
 	   virtual void setAmetralladora() {};
+
+	   virtual bool estaEstacionando(){return true;};
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */

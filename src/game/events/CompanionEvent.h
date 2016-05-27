@@ -18,6 +18,7 @@ public:
     static Evento* quit(string n);
     static Evento* ametralladora(string n);
     static Evento* destroy(string n);
+    static Evento* estaciono(string n);
 };
 
 #endif

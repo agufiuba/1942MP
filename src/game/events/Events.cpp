@@ -14,6 +14,7 @@
 #define MENSAJE_INCORRECTO 'I'
 #define AMETRALLADORA 'A'
 #define DESTROY 'X'
+#define ESTACIONO 'P'
 
 #include <iostream>
 

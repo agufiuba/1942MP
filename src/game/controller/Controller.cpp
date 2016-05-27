@@ -41,17 +41,18 @@ void Controller::press(SDL_Event *event){
 
             case SDLK_KP_ENTER: obj->inicializoVueltereta(); cliente->sendData(ce->roll(obj->getId())); break;
 
-            case SDLK_p: obj->inicializoEstacionar(); break;
+            case SDLK_p: obj->inicializoEstacionar(); cliente->sendData(ce->estaciono(obj->getId())); break;
 
             case SDLK_i: obj->desconectar(); break;
 
             case SDLK_r: cout<<"Se Reinicia la partida"<<endl;cliente->sendData(ce->restart(obj->getId()));break;
 
-			case SDLK_SPACE:
-				if (!obj->haciendoVueltereta())
-					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+12, obj->getY(), resolucionPantalla, misilConf);
-					cliente->sendData(ce->shot(obj->getId()));
-				break;
+						case SDLK_SPACE:
+							if (!obj->haciendoVueltereta() && !obj->estaEstacionando()) {
+								controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX() + 12,obj->getY(), resolucionPantalla, misilConf);
+								cliente->sendData(ce->shot(obj->getId()));
+								break;
+							}
         }
     }
     else if( event->type == SDL_KEYUP && event->key.repeat == 0){

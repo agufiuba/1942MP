@@ -156,6 +156,10 @@ void Avion::realizoVueltereta() {
 	mostrarVueltereta(frame);
 }
 
+bool Avion::estaEstacionando() {
+	return estacionando;
+}
+
 void Avion::inicializoEstacionar() {
 	estacionando = true;
 	llegoPuntoDeEstacionamiento = false;
