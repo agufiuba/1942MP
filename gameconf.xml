@@ -137,6 +137,6 @@
 	<velocidadDisparos>6</velocidadDisparos>
 	<avionSpriteID>AvionSprites</avionSpriteID>
 	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
-	<disparosSpriteID>bala</disparosSpriteID>
+	<disparosSpriteID>balaNormal</disparosSpriteID>
 </avion>
 <maxClients>1</maxClients>
