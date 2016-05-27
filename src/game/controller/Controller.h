@@ -40,6 +40,8 @@ public:
 	Vivible* getVivible();
 
 	void actualizarPosicionAvionEnServer();
+
+	void setAmetralladora();
 };
 
 #endif /* SRC_CONTROL_CONTROLLER_H_ */

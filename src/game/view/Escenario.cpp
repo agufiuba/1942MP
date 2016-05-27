@@ -130,9 +130,9 @@ SDL_Event* Escenario::run() {
 
 	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
-  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente,(Avion*)myControl->getVivible(), "Shot", "1"));
-  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), this->unCliente,(Avion*)myControl->getVivible(), "Destroy", "2"));
-  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), this->unCliente,(Avion*)myControl->getVivible(), "Bonus", "3"));
+  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente, myControl, "Shot", "1"));
+  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), this->unCliente, myControl, "Destroy", "2"));
+  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), this->unCliente, myControl, "Bonus", "3"));
 
 	pixelesRecorridos = 0;
 	configurarFondosVivibles();

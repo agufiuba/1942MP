@@ -16,6 +16,7 @@ public:
 	virtual void press(SDL_Event *event) {};
 	virtual void hacerVivir() {};
 	virtual Vivible* getVivible(){return 0;};
+	virtual void setAmetralladora() {};
 };
 
 

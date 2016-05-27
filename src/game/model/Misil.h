@@ -43,6 +43,7 @@ public:
 	bool aunVive();
 	int getDano();
 
+	void setAmetralladora();
 };
 
 #endif /* SRC_GAME_MODEL_MISIL_H_ */

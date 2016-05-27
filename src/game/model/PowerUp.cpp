@@ -9,14 +9,14 @@
 
 using namespace std;
 
-PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente,Avion* avion, string type, string id) {
+PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente, IController* control, string type, string id) {
 
 	//this->configuracion = conf; //TODO: hay que agregar que guarde su configuracion de XML
 
 	vistaPowerUp = new PowerUpView(renderer, type);
 	viviendo = true;
 
-	this->avion = avion;
+	this->control = control;
 	this->cliente = cliente;
 
 	this->id = id; //TODO:hay que hacer que cada powerUp tenga una ID??
@@ -107,7 +107,7 @@ void PowerUp::activarPowerUp() {
 	if( this->type == "Shot") {
 			cout << "PowerUp Shot" << endl;
 			//Cuando el avion toca este Power Up, este hace que el avion mejore el disparo
-			this->avion->setAmetralladora();
+			this->control->setAmetralladora();
 	}
 
 	if( this->type == "Bonus") {
