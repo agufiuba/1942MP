@@ -15,6 +15,7 @@
 #include "../model/Posicion.h"
 #include "../../libs/socket/Client.h"
 #include "../controller/IController.h"
+#include "../events/CompanionEvent.h"
 
 
 //#include "../../xml/conf/PowerUpConf.h"

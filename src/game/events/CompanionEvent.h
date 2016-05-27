@@ -16,6 +16,9 @@ public:
     static Evento* restart(string n);
     static Evento* ready(string n);
     static Evento* quit(string n);
+    static Evento* ametralladora(string n);
+    static Evento* destroy(string n);
 };
 
 #endif
+

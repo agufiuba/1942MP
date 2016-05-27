@@ -12,6 +12,8 @@
 #define SALIR 'Q'
 #define MENSAJE_CORRECTO 'C'
 #define MENSAJE_INCORRECTO 'I'
+#define AMETRALLADORA 'A'
+#define DESTROY 'X'
 
 #include <iostream>
 

@@ -38,7 +38,10 @@ void PlayersController::press(SDL_Event *event){
 					crearMisil = true;
 				}
 				break;
+            case SDLK_CLEAR: controlDeMisiles->setAmetralladora(); break;
+
         }
+
 }
 
 void PlayersController::hacerVivir(){
