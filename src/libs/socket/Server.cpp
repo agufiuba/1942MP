@@ -577,25 +577,20 @@ void Server::processQueue() {
       //thread tSending( &Server::sendData, this, it->first, respuesta , sizeof(Evento) );
       //tSending.detach();
 
-      if (!(this->players.empty())) {
-	for (map<int, Player*>::iterator itP = this->players.begin();
-	    itP != this->players.end(); ++itP) {
-	  if ((itP->first) != it->first) {
-	    sendData(itP->first, it->second);
-	  }
-	}
-      }
 
-      //TODO: Esto despues hay que cambiarlo por lo de arriba
-      /*
-	 if (players2.size() > 0) {
-	 for (int i = 0 ; i < players2.size(); i++) {
-	 if (players2[i] != it->first) {
-	 sendData(players2[i],it->second);
-	 }
-	 }
-	 }
-       */
+      //TODO: Aqui vendria el codigo para eliminar todos los aviones enemigos
+      if (it->second->value == 'X') {
+      	cout << "Destruyo todos los aviones enemigos en la Queue, avisando a todos los clientes de este suceso " <<endl;
+      } else {
+  			if (!(this->players.empty())) {
+  				for (map<int, Player*>::iterator itP = this->players.begin();
+  						itP != this->players.end(); ++itP) {
+  					if ((itP->first) != it->first) {
+  						sendData(itP->first, it->second);
+  					}
+  				}
+  			}
+      }
 
       delete data;
 
