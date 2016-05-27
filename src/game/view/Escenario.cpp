@@ -133,7 +133,6 @@ void Escenario::setFondosVivibles(int x, int y) {
 }
 
 SDL_Event* Escenario::run() {
-
 	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
   hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente, myControl, "Shot", "1"));
@@ -171,7 +170,7 @@ SDL_Event* Escenario::run() {
 				return eventReset;
 			}
 
-			while (this->sdl->nextEvent(&evento) && evento.type != SDL_MOUSEMOTION) {
+			while (this->sdl->nextEvent(&evento)) {
 
 				myControl->press(&evento);
 
@@ -280,6 +279,9 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
 
   Screen* scoreScreen= new Screen( this->sdl );
 
+  // Load max score ribbon
+  scoreScreen->loadTexture( "topScore", "topScore.bmp" );
+
   // Load text
   scoreScreen->loadText( "stageComplete", stageCompleteText, { 53, 167, 84, 255 } );
   scoreScreen->loadText( "scoreText", scoreHeaderText, { 255, 0, 0, 255 } );
@@ -287,11 +289,27 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
   scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
   scoreScreen->loadText( "continueText", "Continue", { 0, 0, 0, 255 } );
 
+  // Get max score player ID
+  string maxScoreID;
+  int maxScore = 0;
+  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+    PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+    if ( ps->score > maxScore ) {
+      maxScoreID = ps->name;
+      maxScore = ps->score;
+    }
+  }
+
   // Load ranking score table data 
   for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
-    scoreScreen->loadText( string( ps->name ), string( ps->name ), { 255, 255, 255, 255 } );
-    scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 255, 255, 255, 255 } );
+    if ( string( ps->name ) == maxScoreID ) {
+      scoreScreen->loadText( string( ps->name ), string( ps->name ), { 12, 246, 246, 255 } );
+      scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 12, 246, 246, 255 } );
+    } else {
+      scoreScreen->loadText( string( ps->name ), string( ps->name ), { 255, 255, 255, 255 } );
+      scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 255, 255, 255, 255 } );
+    }
     // Load plane
     scoreScreen->loadTexture( string( ps->color ), "score/avion_" + string( ps->color ) + ".bmp" );
   }
@@ -364,6 +382,9 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
       scoreScreen->renderTexture( string( ps->color ), 
 				  imageCenter, 
 				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      if( string( ps->name ) == maxScoreID ) {
+	scoreScreen->renderTexture( "topScore", scoreRightLimit + 15, topPadding - 15 + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      }
     }
 
     scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
