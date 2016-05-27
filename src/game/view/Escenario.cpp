@@ -310,8 +310,8 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
 
   bool clicked = false;
   int mouseX, mouseY;
-  int gapMult = 5.5;
-  int gapStep = 1.5;
+  double gapMult = 5.5;
+  double gapStep = 1.5;
 
   HealthView* remainingHealth = new HealthView( scoreScreen, this->player->getHealth() );
 
@@ -351,13 +351,13 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
       PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
       scoreScreen->renderTexture( string( ps->name ), 
 				  stageCompleteTextCenter, 
-				  topPadding + gap * ( gapMult + ( ( i + 1 ) * gapStep ) ) );
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
       scoreScreen->renderTexture( string( ps->name ) + "score", 
 				  scoreRightLimit - scoreScreen->getTextWidth( to_string( ps->score ) ), 
-				  topPadding + gap * ( gapMult + ( ( i + 1 ) * gapStep ) ) );
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
       scoreScreen->renderTexture( string( ps->color ), 
 				  imageCenter, 
-				  topPadding + gap * ( gapMult + ( ( i + 1 ) * gapStep ) ) );
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
     }
 
     scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
