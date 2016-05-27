@@ -55,6 +55,7 @@ class Server {
     void createPlayers();
     void queryCurrentStageOffset();
     void sendCurrentStageOffset( int clientFD );
+    void removeAllPlayers();
 
   public:
     Server( const char* configFileName );
