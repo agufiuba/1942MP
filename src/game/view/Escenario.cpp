@@ -32,8 +32,8 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
   hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), "Shot", "1"));
-  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 600), "Destroy", "2"));
-  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 600), "Bonus", "3"));
+  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), "Destroy", "2"));
+  hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), "Bonus", "3"));
 	this->healthView = NULL;
 }
 
