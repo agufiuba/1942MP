@@ -14,6 +14,7 @@
 #include "SDL2/SDL.h"
 #include "Screen.h"
 #include "../model/Posicion.h"
+#include "../model/Sound.h"
 
 using namespace std;
 
