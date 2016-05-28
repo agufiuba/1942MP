@@ -18,7 +18,7 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	this->posicion = posicionInicial;
 
-	posicionAEstacionar = new Posicion(500,200); //TODO: hay que cargar desde el XML la posicion a estacionar?
+	posicionAEstacionar = new Posicion(posicionInicial->getX(),posicionInicial->getY());
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
@@ -180,21 +180,23 @@ void Avion::estacionar() {
 	if (!llegoPuntoDeEstacionamiento){
 		if (posicion->getX() != posicionAEstacionar->getX()) {
 			if (posicion->getX() > posicionAEstacionar->getX()) {
-				mover(-velocidadEstacionado, 0);
+				mover(-velocidadStandard, 0);
 			} else {
-				mover(velocidadEstacionado, 0);
+				mover(velocidadStandard, 0);
 			}
 		}
 		if (posicion->getY() != posicionAEstacionar->getY()) {
 			if (posicion->getY() > posicionAEstacionar->getY()) {
-				mover(0, -velocidadEstacionado);
+				mover(0, -velocidadStandard);
 			} else {
-				mover(0, velocidadEstacionado);
+				mover(0, velocidadStandard);
 			}
 		}
 		llegoPuntoDeEstacionamiento = (posicion->getX() == posicionAEstacionar->getX() && posicion->getY() == posicionAEstacionar->getY());
 
 	} else {
+		//TODO: Aqui deberia enviar al servidor de que el avion ha teriminado de estacionar
+
 		if (!realizandoVueltereta){ //Esto porque la idea es que cuando empieza otro nivel haga la vueltereta
 			mover(0, velocidadEstacionado);
 		} else {
