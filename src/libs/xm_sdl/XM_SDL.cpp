@@ -24,11 +24,11 @@ XM_SDL::XM_SDL( uint32_t flags ) {
     exit(1);
   }
 
-  //Inicialize sound
-    if (SDL_Init(SDL_INIT_AUDIO) < 0){
-        cout << endl << "Unable to initialize SDL sount: " << SDL_GetError() << endl;
-        exit(1);
-      }
+//  //Inicialize sound
+//    if (SDL_Init(SDL_INIT_AUDIO) < 0){
+//        cout << endl << "Unable to initialize SDL sount: " << SDL_GetError() << endl;
+//        exit(1);
+//      }
 
   //Initialize SDL_ttf
   if( TTF_Init() == -1 ) {

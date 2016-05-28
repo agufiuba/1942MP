@@ -20,8 +20,8 @@ ExplosionView::ExplosionView(string id, Screen* screen, Posicion* posicion) {
 		screens.push_back(dir);
 	}
 
-	Sound* sonido = new Sound();
-	sonido->play();
+	sonido = new Sound();
+	ejecutoSonido = false;
 }
 
 ExplosionView::~ExplosionView() {
@@ -31,6 +31,12 @@ ExplosionView::~ExplosionView() {
 void ExplosionView::explotar(Posicion* posicion) {
 
 	if (!exploto()) {
+
+		if (!ejecutoSonido) {
+			cout << "Ejecutando sonido" << endl;
+			sonido->play();
+			ejecutoSonido = true;
+		}
 		string dir = screens[screenActual];
 		this->screen->loadTexture(dir, dir);
 		screen->renderTexture(dir, posicion->getX(), posicion->getYsdl());
