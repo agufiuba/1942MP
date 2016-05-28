@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player( string name, string color, int x, int y, int health ) {
+Player::Player( string name, string color, int x, int y, int team, int health ) {
   this->name = name;
   this->color = color;
   this->x = x;
@@ -8,6 +8,7 @@ Player::Player( string name, string color, int x, int y, int health ) {
   this->active = false;
   this->health = health;
   this->score = 0;
+  this->team = team;
 }
 
 Player::~Player() {}
@@ -67,4 +68,8 @@ void Player::takeHit() {
 
 bool Player::isAlive() {
   return this->health > 0;
+}
+
+int Player::getTeam(){
+	return this->team;
 }

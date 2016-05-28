@@ -223,6 +223,7 @@ SDL_Event* Escenario::run() {
 				strcpy( playerScore->name, this->player->getName().c_str() );
 				strcpy( playerScore->color, this->player->getColor().c_str() );
 				playerScore->score = this->player->getScore();
+				playerScore->team = this->player->getTeam();
 
 				this->unCliente->sendScore( playerScore );
 				delete playerScore;

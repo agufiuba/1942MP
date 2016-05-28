@@ -165,6 +165,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	mutex theMutex;
 	string selectedName(data->name);
 	string selectedColor(data->color);
+	int selectedTeam = data->team;
 	bool createPlayer = true;
 	bool encontrePlayer = false;
 	theMutex.lock();
@@ -202,7 +203,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	if (createPlayer && (this->players.size() < this->maxClientCount) ) {
 		// Add new player
 		cout<<"Creo Jugador"<<endl;
-		Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY);
+		Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY, selectedTeam);
 		theMutex.lock();
 		this->players[cfd] = p;
 		posicionInicialX += 100;
@@ -289,6 +290,7 @@ void Server::createPlayers() {
       strcpy(player->color, it->second->getColor().c_str());
       player->x = it->second->getX();
       player->y = it->second->getY();
+      player->team = it->second->getTeam();
 
       while (!tmt->sendData(player, "PR"));
 
@@ -400,7 +402,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       this->logger->error( "Error al enviar que se acepto la conexion" );
     }
 
-    usleep(10);
+    usleep(100);
     this->sendPlanesActives( cfd);
 
     timeval timeout;
@@ -432,6 +434,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	    // Process received data
 	    cout << "Nombre del jugador: " << string( data->name ) << endl;
 	    cout << "Color del jugador: " << string( data->color ) << endl;
+	    cout << "Equipo del jugador: " << data->team << endl;
 	    this->addPlayer( data, cfd );
 	  }
 
