@@ -229,7 +229,7 @@ SDL_Event* Escenario::run() {
 
 				// TODO: change hardcoded 1 for actual number of connected players 
 				// wait for player score data
-				while ( this->unCliente->getPlayersScoreData().size() != 1 );
+				while ( this->unCliente->getPlayersScoreData().size() != 2 );
 				this->loadSinglePlayerScoreScreen( numeroNivel );
 
 				break;
