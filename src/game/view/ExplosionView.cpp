@@ -20,6 +20,8 @@ ExplosionView::ExplosionView(string id, Screen* screen, Posicion* posicion) {
 		screens.push_back(dir);
 	}
 
+	Sound* sonido = new Sound();
+	sonido->play();
 }
 
 ExplosionView::~ExplosionView() {
