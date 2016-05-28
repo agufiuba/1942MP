@@ -83,3 +83,10 @@ Evento* CompanionEvent::estaciono(string n) {
     strcpy(e->name, n.c_str());
     return e;
 }
+
+Evento* CompanionEvent::explosion(string n) {
+		Evento* e = new Evento();
+    e->value = EXPLOSION;
+    strcpy(e->name, n.c_str());
+    return e;
+}

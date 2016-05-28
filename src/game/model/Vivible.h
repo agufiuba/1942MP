@@ -32,6 +32,7 @@ class Vivible{
 	   virtual bool haciendoVueltereta(){return true;};
 
 	   virtual bool tieneHP(){return true;};
+	   virtual void setHP(int hp) {};
 
 	   virtual void inicializoEstacionar(){};
 
