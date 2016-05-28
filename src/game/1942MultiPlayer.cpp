@@ -12,7 +12,7 @@ using namespace std;
 
 
 void startupClient() {
-	Game* game = new Game();
+	Game* game = new Game(SDL_INIT_EVERYTHING);
 	game->start();
 	// Delete game
 }

@@ -23,10 +23,12 @@ class ExplosionView {
 private:
 	string id;
 	Screen* screen;
+	Sound* sonido;
 	vector<string> screens;
 	int screenActual = 0;
 	int cantidadRepeticiones = 5;
 	int cantidadScreen = (6 * cantidadRepeticiones);
+	bool ejecutoSonido;
 
 public:
 	ExplosionView(string id, Screen* screen, Posicion* posicion);
