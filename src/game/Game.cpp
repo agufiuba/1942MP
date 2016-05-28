@@ -27,6 +27,7 @@ Game::Game( uint32_t sdlFlags ) {
   this->clientId = "";
   this->planeId = "";
   this->player = NULL;
+  this->team = 0;
 }
 
 Game::~Game() {
@@ -53,7 +54,7 @@ void Game::cargarEscenario() {
     for( int i = 0; i < this->unCliente->getPlayers().size(); i++) {
       PlayerData* pData = this->unCliente->getPlayers()[i];
       if( this->clientId == pData->name ) {
-	  this->player = new Player( pData->name, pData->color, pData->x, pData->y );
+	  this->player = new Player( pData->name, pData->color, pData->x, pData->y, pData->team);
     	  escenario->configurarMiAvion( pData );
       } else {
     	  escenario->configurarAvionAmigo( pData );
@@ -772,6 +773,7 @@ void Game::sendDataPlayer(){
   this->jugador = new PlayerData;
   strcpy( jugador->name, this->clientId.c_str() );
   strcpy( jugador->color, this->planeId.c_str() );
+  jugador->team = this->team;
   this->unCliente->sendData(jugador);
 }
 
@@ -824,10 +826,10 @@ void Game::loadSinglePlayerScoreScreen( int stage ) {
   Screen* scoreScreen= new Screen( this->sdlHandler );
 
   // TODO: REMOVE, only for test purpouses
-  this->player = new Player( "sousuke", "rojo", 20, 200 );
-  Player* player2 = new Player( "kaname", "azul", 20, 200 );
-  Player* player3 = new Player( "tessa", "amarillo", 20, 200 );
-  Player* player4 = new Player( "melissa", "verde", 20, 200 );
+  this->player = new Player( "sousuke", "rojo", 20, 200, 1);
+  Player* player2 = new Player( "kaname", "azul", 20, 200, 1);
+  Player* player3 = new Player( "tessa", "amarillo", 20, 200, 2);
+  Player* player4 = new Player( "melissa", "verde", 20, 200, 2);
 
   this->player->addScore( 17816229 );
   player3->addScore( 5287 );
@@ -1032,7 +1034,7 @@ void Game::loadModeGameScreen(){
 			delete initialScreen;
 
 			if ( teamPromptSelected ){
-				this->loadTeamModeGameScreen();
+				this->loadTeamSelectedScreen();
 			}
 
 			bool endSelectingPlane = false;
@@ -1114,7 +1116,7 @@ void Game::loadModeGameScreen(){
 }
 
 
-void Game::loadTeamModeGameScreen(){
+void Game::loadTeamSelectedScreen(){
   SDL_Event e;
   Timer timer;
 
@@ -1137,8 +1139,8 @@ void Game::loadTeamModeGameScreen(){
   int mouseX, mouseY;
 
   bool runningScreen = true;
-  bool alphaTeamPromptSelected = true;
-  bool betaTeamPromptSelected = false;
+  bool alphaTeamSelected = true;
+  bool betaTeamSelected = false;
   bool clicked = false;
 
   // Create prompts
@@ -1184,16 +1186,21 @@ void Game::loadTeamModeGameScreen(){
 	  clicked = false;
 	  if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) && ( mouseY > 525 ) && ( mouseY < ( 525 + 50 ) ) ) {
 		runningScreen = false;
+		if ( alphaTeamSelected ){
+			this->team = 1;
+		} else if (betaTeamSelected ){
+			this->team = 2;
+		}
 		//Disable text input
 		SDL_StopTextInput();
 		delete initialScreen;
 		break;
 	  } else if( ( mouseX > promptCenter+150 ) && ( mouseX < ( promptCenter+150 + 230 ) ) && ( mouseY > 300 ) && ( mouseY < ( 300 + 50 ) ) ) {
-		  alphaTeamPromptSelected = true;
-		  betaTeamPromptSelected = false;
+		  alphaTeamSelected = true;
+		  betaTeamSelected = false;
 	  } else if( ( mouseX > promptCenter+150 ) && ( mouseX < ( promptCenter+150 + 230 ) ) && ( mouseY > 375 ) && ( mouseY < ( 375 + 50 ) ) ) {
-		  alphaTeamPromptSelected = false;
-  		  betaTeamPromptSelected = true;
+		  alphaTeamSelected = false;
+  		  betaTeamSelected = true;
 	  }
 	}
 
@@ -1202,11 +1209,11 @@ void Game::loadTeamModeGameScreen(){
 	// Set outline color
 	initialScreen->setRenderDrawColor( 19, 144, 27, 255 );
 
-	if( alphaTeamPromptSelected ) {
+	if( alphaTeamSelected ) {
 	  initialScreen->loadRectangle( "outline", promptCenter+150, alphaTeamPromptOutline, 260, 50 );
 	  initialScreen->loadRectangle( "outline2", promptCenter+150 + 1, alphaTeamPromptOutline2, 258, 48 );
 	  initialScreen->loadRectangle( "outline3", promptCenter+150 + 2, alphaTeamPromptOutline3, 256, 46 );
-	} else if( betaTeamPromptSelected ) {
+	} else if( betaTeamSelected ) {
 	  initialScreen->loadRectangle( "outline", promptCenter+150, betaTeamPromptOutline, 260, 50 );
 	  initialScreen->loadRectangle( "outline2", promptCenter+150 + 1, betaTeamPromptOutline2, 258, 48 );
 	  initialScreen->loadRectangle( "outline3", promptCenter+150 + 2, betaTeamPromptOutline3, 256, 46 );

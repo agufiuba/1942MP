@@ -252,6 +252,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 	  cout << "READY -->Color del jugador: " << string(data->color) << endl;
 	  cout << "READY -->Posicion X del jugador: " << data->x << endl;
 	  cout << "READY -->Posicion Y del jugador: " << data->y << endl;
+	  cout << "READY -->Equipo del jugador: " << data->team << endl;
 	  this->allPlayers.push_back(data);
 	}
       } else if (dataID == "AV") {
