@@ -70,6 +70,7 @@ public:
 
 	void recibirMisil(Misil* misil);
 	bool tieneHP();
+	void setHP(int hp);
 
 	void inicializoEstacionar();
 	bool estaEstacionando();

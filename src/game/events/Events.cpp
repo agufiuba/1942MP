@@ -15,6 +15,7 @@
 #define AMETRALLADORA 'A'
 #define DESTROY 'X'
 #define ESTACIONO 'P'
+#define EXPLOSION 'W'
 
 #include <iostream>
 

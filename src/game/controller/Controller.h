@@ -31,6 +31,7 @@ private:
 	int velocidadStandard;
 	Client* cliente;
 	MisilConf* misilConf;
+	bool envioExplosion;
 
 public:
 	Controller(Vivible* unObj, SDL_Renderer* renderer, Resolucion* resolucion, Client* client);

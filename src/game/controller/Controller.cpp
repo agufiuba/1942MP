@@ -12,6 +12,8 @@ Controller::Controller(Vivible * unObj,SDL_Renderer* renderer, Resolucion* resol
 	velY = 0;
 	resolucionPantalla = resolucion;
 
+	envioExplosion = false;
+
 	misilConf = new MisilConf();
 	strcpy(misilConf->disparosSpriteID,conf->disparosSpriteID);
 	misilConf->velocidadDisparos = conf->velocidadDisparos + conf->velocidadDesplazamiento;
@@ -69,6 +71,14 @@ void Controller::press(SDL_Event *event){
 }
 
 void Controller::hacerVivir(){
+	Evento* e;
+	CompanionEvent* ce = new CompanionEvent();
+
+	if (!obj->tieneHP() && !envioExplosion) {
+		cliente->sendData(ce->explosion(obj->getId()));
+		envioExplosion = true;
+	}
+
 	obj->vivir(velX, velY);
 	controlDeMisiles->hacerVivir();
 

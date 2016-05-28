@@ -18,7 +18,7 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	this->posicion = posicionInicial;
 
-	posicionAEstacionar = new Posicion(500,200); //TODO: hay que cargar desde el XML la posicion a estacionar?
+	posicionAEstacionar = new Posicion(posicionInicial->getX(),posicionInicial->getY());
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
@@ -26,6 +26,8 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 	t = new Timer();
 
 	estacionando = false;
+
+	explosion = new ExplosionView("idExplosion", screen, posicion);
 
 /*	inicializoVueltereta();*/
 }
@@ -178,21 +180,23 @@ void Avion::estacionar() {
 	if (!llegoPuntoDeEstacionamiento){
 		if (posicion->getX() != posicionAEstacionar->getX()) {
 			if (posicion->getX() > posicionAEstacionar->getX()) {
-				mover(-velocidadEstacionado, 0);
+				mover(-velocidadStandard, 0);
 			} else {
-				mover(velocidadEstacionado, 0);
+				mover(velocidadStandard, 0);
 			}
 		}
 		if (posicion->getY() != posicionAEstacionar->getY()) {
 			if (posicion->getY() > posicionAEstacionar->getY()) {
-				mover(0, -velocidadEstacionado);
+				mover(0, -velocidadStandard);
 			} else {
-				mover(0, velocidadEstacionado);
+				mover(0, velocidadStandard);
 			}
 		}
 		llegoPuntoDeEstacionamiento = (posicion->getX() == posicionAEstacionar->getX() && posicion->getY() == posicionAEstacionar->getY());
 
 	} else {
+		//TODO: Aqui deberia enviar al servidor de que el avion ha teriminado de estacionar
+
 		if (!realizandoVueltereta){ //Esto porque la idea es que cuando empieza otro nivel haga la vueltereta
 			mover(0, velocidadEstacionado);
 		} else {
@@ -221,6 +225,11 @@ void Avion::vivir(int velX, int velY){
 			}
 		}
 	} else {
+		if (vistaAvion != NULL) {
+			delete vistaAvion;
+			vistaAvion = NULL;
+		}
+
 		if (!explosion->exploto()) {
 			posicion->mover(-1, -3);
 			explosion->explotar(posicion);
@@ -257,15 +266,13 @@ void Avion::recibirMisil(Misil* misil) {
 	if (tieneHP()) {
 		this->vida -= misil->getDano();
 		cout << "La vida actual es " << this->vida << endl;
-		if (!tieneHP() && explosion == NULL) {
-
-			delete vistaAvion;
-			vistaAvion = NULL;
-			explosion = new ExplosionView("idExplosion", screen, posicion);
-		}
 	}
 }
 
 bool Avion::tieneHP() {
 	return (this->vida > 0);
+}
+
+void Avion::setHP(int hp) {
+	this->vida = hp;
 }

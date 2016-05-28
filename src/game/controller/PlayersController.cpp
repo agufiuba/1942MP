@@ -40,6 +40,7 @@ void PlayersController::press(SDL_Event *event){
 				break;
             case SDLK_CLEAR: controlDeMisiles->setAmetralladora(); break;
             case SDLK_HASH: obj->inicializoEstacionar(); break;
+            case SDLK_ASTERISK: obj->setHP(0); break;
 
         }
 
@@ -55,7 +56,7 @@ void PlayersController::hacerVivir(){
 	obj->vivir(velX, velY);
 
 	if (crearMisil) {
-		controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+25, obj->getY(), resolucionPantalla, misilConf);
+		controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX()+12, obj->getY(), resolucionPantalla, misilConf);
 		crearMisil = false;
 	}
 	controlDeMisiles->hacerVivir();
