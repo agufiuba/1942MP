@@ -261,6 +261,8 @@ void Escenario::verificarEstacionamiento(int numeroNivel) {
 	if (!avion->estaEstacionando() && (pixelesRecorridos + 200) >= LONGITUD_NIVEL * numeroNivel) {
 		cout << "verificar estacionamiento" << endl;
 		avion->inicializoEstacionar();
+	} else {
+		avion->despegar();
 	}
 }
 

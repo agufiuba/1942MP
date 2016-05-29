@@ -280,3 +280,7 @@ void Avion::setHP(int hp) {
 Posicion* Avion::getPosicion() {
 	return this->posicion;
 }
+
+void Avion::despegar() {
+	estacionando = false;
+}
