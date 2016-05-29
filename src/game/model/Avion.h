@@ -76,6 +76,9 @@ public:
 	bool estaEstacionando();
 	void mostrarEstacionar(int frame);
 	void estacionar();
+	void despegar();
+
+	Posicion* getPosicion();
 };
 
 #endif /* SRC_MODEL_AVION_H_ */

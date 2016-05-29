@@ -213,6 +213,8 @@ SDL_Event* Escenario::run() {
 
 			}
 
+			verificarEstacionamiento(numeroNivel);
+
 			if (isFinNivel(numeroNivel)) {
 
 //				TODO: Aca deberia ir la inscripcion de fin de nivel
@@ -252,6 +254,16 @@ SDL_Event* Escenario::run() {
 
 	delete posicionEscenario;
 	return &evento;
+}
+
+void Escenario::verificarEstacionamiento(int numeroNivel) {
+	Avion* avion = (Avion*)myControl->getVivible();
+	if (!avion->estaEstacionando() && (pixelesRecorridos + 200) >= LONGITUD_NIVEL * numeroNivel) {
+		cout << "verificar estacionamiento" << endl;
+		avion->inicializoEstacionar();
+	} else {
+		avion->despegar();
+	}
 }
 
 bool Escenario::isFinNivel(int numeroNivel) {

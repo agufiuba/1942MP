@@ -13,6 +13,7 @@ using namespace std;
 typedef struct GameConf {
 
 	int maxClients;
+	int jugadoresPorEquipo;
     vector<SpriteConf *> sprites;
     vector<ElementoConf *> elementos;
     EscenarioConf *escenario;
