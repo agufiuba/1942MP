@@ -140,3 +140,4 @@
 	<disparosSpriteID>balaNormal</disparosSpriteID>
 </avion>
 <maxClients>2</maxClients>
+<jugadoresPorEquipo>2</jugadoresPorEquipo>

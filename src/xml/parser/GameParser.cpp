@@ -10,9 +10,11 @@ GameConf *GameParser::parse(string fn) {
     gc->sprites = sprites(&doc);
     gc->escenario = escenario(&doc, gc);
     gc->avion = avion(&doc);
-    int mc;
+    int mc, jugadoresPorEquipo;
     doc.FirstChildElement("maxClients")->QueryIntText(&mc);
+    doc.FirstChildElement("jugadoresPorEquipo")->QueryIntText(&jugadoresPorEquipo);
     gc->maxClients = mc;
+    gc->jugadoresPorEquipo = jugadoresPorEquipo;
     return gc;
 }
 
