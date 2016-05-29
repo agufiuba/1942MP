@@ -21,6 +21,7 @@ ExplosionView::ExplosionView(string id, Screen* screen, Posicion* posicion) {
 	}
 
 	sonido = new Sound();
+	cout << "Creando sonido" << endl;
 	ejecutoSonido = false;
 }
 

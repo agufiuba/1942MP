@@ -9,23 +9,21 @@
 
 Sound::Sound() {
 
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+	if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
 //	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 ) {
 		cout << "Error al realizar open audio" << endl;
 		return;
 	}
 
 //	const char* dir = "src/game/sounds/explosion.wav";
-	const char* dir = "src/game/sounds/AEllosAtacar.wav";
+	const char* dir = "src/game/sounds/AEllosAtacar.mp3";
+//	const char* dir = "src/game/sounds/beat.wav";
 
 	wave = Mix_LoadWAV(dir);
 	if (wave == NULL) {
 		cout << "Error al crear wave" << endl;
 		return;
 	}
-
-	cout << "Longitud: " << wave->alen << endl;
-
 
 	// Load our music
 //	music = Mix_LoadMUS(dir);
@@ -34,22 +32,14 @@ Sound::Sound() {
 //		return;
 //	}
 
-//	if (Mix_PlayChannel(-1, wave, 0) == -1)
-//		return;
-
-//	if (Mix_PlayMusic(music, -1) == -1)
-//		return;
-
 }
 
 void Sound::play() {
+	std::cout << "Corriendo sonido in" << endl;
+//	Mix_PlayMusic( music, -1 );
 	int channel = Mix_PlayChannel( -1, wave, 0 );
-//	while ( Mix_Playing(channel) ){
-//		//std::cout << "Corriendo sonido" << endl;
-//	}
-//	Mix_Pause(channel);
-//	Mix_CloseAudio();
-//	Mix_PlayMusic(music, -1);
+	std::cout << "Corriendo sonido out" << endl;
+
 }
 
 Sound::~Sound() {
