@@ -276,3 +276,7 @@ bool Avion::tieneHP() {
 void Avion::setHP(int hp) {
 	this->vida = hp;
 }
+
+Posicion* Avion::getPosicion() {
+	return this->posicion;
+}

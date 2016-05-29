@@ -49,7 +49,7 @@
 		<spriteID>agua</spriteID>
 	</fondo>
 	<nivel>
-		<longitudNivel>8000</longitudNivel>
+		<longitudNivel>4000</longitudNivel>
 		<cantidadNiveles>4</cantidadNiveles>
 	</nivel>
 	<elementos>
