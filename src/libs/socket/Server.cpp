@@ -518,6 +518,10 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 }
 
 void Server::avisarDesconexionDeAvion(int cfd) {
+  // if player isn't playing yet, skip
+  map<int, Player*>::iterator it = this->players.find( cfd );
+  if( it == this->players.end() ) return;
+  
   CompanionEvent* ce = new CompanionEvent();
   string disconnectedPlayerName = this->players[cfd]->getName();
 
