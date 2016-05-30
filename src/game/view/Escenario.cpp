@@ -155,7 +155,7 @@ SDL_Event* Escenario::run() {
 			return eventReset;
 		}
 
-		while (this->sdl->nextEvent(&evento) && evento.type != SDL_MOUSEMOTION) {
+		while (this->sdl->nextEvent(&evento)) {
 			//TODO: Para borrar eventos
 //			eventosList.push_back(&evento);
 			myControl->press(&evento);
