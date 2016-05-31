@@ -19,6 +19,7 @@ Client::Client( const char* configFileName ) {
   this->reset = false;
   this->config = new GameConf;
   this->stageOffset = 0;
+  this->clientsPlaying = 0;
 }
 
 Client::Client( string ip, string puerto ) {
@@ -31,6 +32,7 @@ Client::Client( string ip, string puerto ) {
   this->reset = false;
   this->config = new GameConf;
   this->stageOffset = 0;
+  this->clientsPlaying = 0;
 }
 
 Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlayersControllers) {
@@ -44,6 +46,7 @@ Client::Client( string ip, string puerto ,HandlerPlayersControllers* handlerPlay
   this->reset = false;
   this->config = new GameConf;
   this->stageOffset = 0;
+  this->clientsPlaying = 0;
 }
 
 Client::~Client() {}
@@ -311,6 +314,12 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 	if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
 	  this->playersScoreData.push_back( data );
 	}
+      } else if ( dataID == "PQ" ) {
+	ActivePlayers* data = new ActivePlayers;
+	if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
+	  this->clientsPlaying = data->playerCount;
+	}
+	delete data;
       }
     }
 
@@ -372,6 +381,22 @@ bool Client::sendStageData() {
   delete data;
 
   return sent;
+}
+
+int Client::getClientsPlaying() {
+  return this->clientsPlaying;
+}
+
+void Client::resetClientsPlaying() {
+  this->clientsPlaying = 0;
+}
+
+void Client::requestClientsPlaying() {
+  this->received = false;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendDataID( "PQ" );
+
+  delete tmt;
 }
 
 bool Client::sendPlayerDisconnection() {
