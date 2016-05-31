@@ -497,6 +497,10 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	    // Process received data
 	    this->sendScoreData( data );
 	  }
+	  delete data;
+	} else if( dataID == "PQ" ) {
+	  // send active players count
+	  this->sendActivePlayers( cfd );
 	}
 
       }
@@ -516,8 +520,6 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	}
       }
     }
-
-    delete tmt;
   } else {
     cout << endl << warning( "El cliente " ) << clientIP << warning( " se rechazo" ) << endl;
     this->logger->warn( "El cliente " + string(clientIP) + " se rechazo" );
@@ -608,54 +610,6 @@ void Server::processQueue() {
   delete respuesta;
 }
 
-//bool Server::processMsg( string tipo, string valor ){
-//  const int MAX_INT = 2147483647;
-//  bool respuesta = false;
-//  regex r;
-//  const char* expr;
-//
-//  if( tipo == K::typeInt ){
-//    //expr = "^-?(2?1?[0-4]?|2?0?[0-9]?|[0-1]?[0-9]?[0-9]?)([0-9]){1,7}$";//menor que +-2148000000
-//    expr = "^-?[0-9]+$";
-//    r = regex(expr);
-//    if((regex_match(valor, r)) && (atoi(valor.c_str()) >= -MAX_INT) && (atoi(valor.c_str()) <= MAX_INT)) //ese casteo de char* a int no se si se puede
-//      respuesta = true;
-//
-//  } else {
-//
-//    if( tipo == K::typeDouble ){
-//      expr = "^-?([0-9]+e-?[//+]?[0-9]{1,3}|[0-2][//.][0-9]{0,2}e-?[//+]?[0-9]{1,3}|[0-9]+[//.][0-9]+)$";
-//      r = regex(expr);
-//      if (regex_match(valor, r)) respuesta = true;
-//
-//    } else {
-//
-//      if( tipo == K::typeString ){
-//	expr = "^.+$";
-//	r = regex(expr);
-//	if( regex_match( valor, r ) ) respuesta = true;
-//
-//      } else {
-//
-//	if( tipo == K::typeChar ){
-//	  expr = "^.$";
-//	  r = regex(expr);
-//	  if( regex_match( valor, r ) ) respuesta = true;
-//	}
-//      }
-//    }
-//  }
-//  return respuesta;
-//}
-
-/*
-   void Server::sendData( int cfd, Evento* data, int dataLength ){
-   if( send( cfd, data, dataLength, 0 ) == -1 ) {
-   this->logger->warn( SEND_FAIL );
-   DEBUG_WARN( SEND_FAIL );
-   }
-   }*/
-
 void Server::sendData( int cfd, Evento* data ) {
   Transmitter* tmt = new Transmitter( cfd, this->logger );
   tmt->sendData( data );
@@ -712,4 +666,15 @@ void Server::sendScoreData( PlayerScore* data ) {
     tmt->sendData( data );
     delete tmt;
   }
+}
+
+void Server::sendActivePlayers( int clientFD ) {
+  ActivePlayers* data = new ActivePlayers;
+  data->playerCount = this->clientCount;
+
+  Transmitter* tmt = new Transmitter( clientFD, this->logger );
+  tmt->sendData( data );
+
+  delete tmt;
+  delete data;
 }

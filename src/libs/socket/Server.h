@@ -6,6 +6,7 @@
 #include "../../libs/data/player_data.h"
 #include "../../libs/data/player_status.h"
 #include "../../libs/data/player_score.h"
+#include "../../libs/data/active_players.h"
 #include "../../libs/data/planes_actives.h"
 #include "../../libs/data/stage_data.h"
 #include "../../game/model/Player.h"
@@ -58,6 +59,7 @@ class Server {
     void queryCurrentStageOffset();
     void sendCurrentStageOffset( int clientFD );
     void removeAllPlayers();
+    void sendActivePlayers( int clientFD );
 
   public:
     Server( const char* configFileName );
