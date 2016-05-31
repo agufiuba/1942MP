@@ -245,6 +245,22 @@ bool Transmitter::sendGetConfig(){
   return true;
 }
 
+bool Transmitter::sendData( ActivePlayers* data ) {
+  // Send data id
+  if( !( this->sendDataID( "PQ" ) ) ) {
+    return false;
+  }
+
+  // Send data
+  if( send( this->peerFD, data, sizeof( ActivePlayers ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+    return false;
+  }
+
+  return true;
+}
+
 int Transmitter::receiveData( char id[3], int size ) {
   return recv( this->peerFD, id, size, 0 );
 }
@@ -291,4 +307,8 @@ int Transmitter::receiveData( SpriteConf* data ) {
 
 int Transmitter::receiveData( char data[1] ) {
   return recv( this->peerFD, data, 1, 0 ) ;
+}
+
+int Transmitter::receiveData( ActivePlayers* e ) {
+  return recv( this->peerFD, e, sizeof( ActivePlayers ), 0 );
 }
