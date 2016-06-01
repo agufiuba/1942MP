@@ -2,6 +2,7 @@
 #define XM_SDL_H
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_mixer.h>
 #include <vector>
 #include "../../game/model/Resolucion.h"
 

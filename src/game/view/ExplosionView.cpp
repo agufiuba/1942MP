@@ -20,8 +20,7 @@ ExplosionView::ExplosionView(string id, Screen* screen, Posicion* posicion) {
 		screens.push_back(dir);
 	}
 
-	sonido = new Sound();
-	cout << "Creando sonido" << endl;
+	sonido = new Sound("src/game/sounds/explosion.wav");
 	ejecutoSonido = false;
 }
 

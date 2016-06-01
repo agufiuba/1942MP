@@ -40,7 +40,7 @@ COMPILER = -std=c++11 -Wno-write-strings
 
 # libraries to link
 
-LINKER = -lSDL2 -lX11 -lSDL2_ttf -lSDL_mixer -pthread
+LINKER = -lSDL2 -lX11 -lSDL2_ttf -lSDL2_mixer -pthread
 
 # event
 EVENT = $(GAME_DIR)/events/Events.cpp $(GAME_DIR)/events/CompanionEvent.cpp
