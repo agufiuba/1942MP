@@ -18,6 +18,7 @@ Sound::Sound(const char* dir) {
 
 void Sound::play() {
 	Mix_PlayChannel( -1, wave, 0 );
+
 }
 
 Sound::~Sound() {
