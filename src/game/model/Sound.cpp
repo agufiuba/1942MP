@@ -15,8 +15,8 @@ Sound::Sound() {
 		return;
 	}
 
-//	const char* dir = "src/game/sounds/explosion.wav";
-	const char* dir = "src/game/sounds/AEllosAtacar.mp3";
+	const char* dir = "src/game/sounds/explosion.wav";
+//	const char* dir = "src/game/sounds/AEllosAtacar.mp3";
 //	const char* dir = "src/game/sounds/beat.wav";
 
 	wave = Mix_LoadWAV(dir);
