@@ -9,6 +9,8 @@
 using namespace std;
 
 Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
+	musica = new Music("musicaDeFondo.mp3");
+	musica->play();
 	this->gc = configuracion;
 	this->sdl = sdl;
 	this->SCREEN_WIDTH = gc->escenario->ancho;

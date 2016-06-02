@@ -17,10 +17,11 @@ using namespace std;
 
 class Sound {
 private:
+	string dirDefault = "src/game/sounds/";
 	Mix_Chunk *wave = NULL;
 
 public:
-	Sound(const char* dir);
+	Sound(string dir);
 	void play();
 	virtual ~Sound();
 };

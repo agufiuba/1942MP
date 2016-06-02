@@ -33,6 +33,7 @@
 #include "ScoreView.h"
 #include "../model/Player.h"
 #include "../model/PowerUp.h"
+#include "../model/Music.h"
 #include "../controller/HandlerPowerUp.h"
 
 class Escenario {
@@ -74,6 +75,7 @@ private:
 
 	GameConf* gc;
 	Client* unCliente;
+	Music* musica;
 
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);

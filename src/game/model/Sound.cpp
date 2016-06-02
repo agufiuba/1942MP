@@ -7,9 +7,11 @@
 
 #include "Sound.h"
 
-Sound::Sound(const char* dir) {
+Sound::Sound(string dir) {
 
-	wave = Mix_LoadWAV(dir);
+	string dirSound = dirDefault + dir;
+
+	wave = Mix_LoadWAV(dirSound.c_str());
 	if (wave == NULL) {
 		cout << "Error al crear wave" << endl;
 		return;

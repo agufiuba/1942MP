@@ -20,12 +20,12 @@ ExplosionView::ExplosionView(string id, Screen* screen, Posicion* posicion) {
 		screens.push_back(dir);
 	}
 
-	sonido = new Sound("src/game/sounds/explosion.wav");
+	sonido = new Sound("explosion.wav");
 	ejecutoSonido = false;
 }
 
 ExplosionView::~ExplosionView() {
-//	TODO ver de borrar el texture
+	delete sonido;
 }
 
 void ExplosionView::explotar(Posicion* posicion) {
@@ -33,7 +33,6 @@ void ExplosionView::explotar(Posicion* posicion) {
 	if (!exploto()) {
 
 		if (!ejecutoSonido) {
-			cout << "Ejecutando sonido" << endl;
 			sonido->play();
 			ejecutoSonido = true;
 		}

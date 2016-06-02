@@ -13,6 +13,7 @@
 #include "../view/MisilView.h"
 #include "../model/Resolucion.h"
 #include "../model/Posicion.h"
+#include "../model/Sound.h"
 #include "../../xml/conf/MisilConf.h"
 
 using namespace std;
@@ -20,11 +21,11 @@ using namespace std;
 class Misil: public Vivible {
 private:
 	int anchoFondo, largoFondo;
-
+	int dano;
 	MisilView* vistaMisil;
 	Posicion* posicion;
 	bool viviendo;
-	int dano;
+	Sound* sonido;
 
 	Timer* t;
 
