@@ -14,6 +14,9 @@ Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion,
 		vistaMisil = new MisilView(renderer, config);
 	}
 
+	sonido = new Sound("laser.wav");
+	sonido->play();
+
 	viviendo = true;
 
 	this->posicion = posicion;
@@ -27,6 +30,7 @@ Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion,
 }
 
 Misil::~Misil() {
+	delete sonido;
 	delete vistaMisil;
 }
 

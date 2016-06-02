@@ -20,15 +20,22 @@ ExplosionView::ExplosionView(string id, Screen* screen, Posicion* posicion) {
 		screens.push_back(dir);
 	}
 
+	sonido = new Sound("explosion.wav");
+	ejecutoSonido = false;
 }
 
 ExplosionView::~ExplosionView() {
-//	TODO ver de borrar el texture
+	delete sonido;
 }
 
 void ExplosionView::explotar(Posicion* posicion) {
 
 	if (!exploto()) {
+
+		if (!ejecutoSonido) {
+			sonido->play();
+			ejecutoSonido = true;
+		}
 		string dir = screens[screenActual];
 		this->screen->loadTexture(dir, dir);
 		screen->renderTexture(dir, posicion->getX(), posicion->getYsdl());

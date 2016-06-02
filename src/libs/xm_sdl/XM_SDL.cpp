@@ -24,6 +24,12 @@ XM_SDL::XM_SDL( uint32_t flags ) {
     exit(1);
   }
 
+//  Inicialize sound
+  if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+  		cout << "Error al realizar open audio" << endl;
+  		return;
+  	}
+
   //Initialize SDL_ttf
   if( TTF_Init() == -1 ) {
     cout << endl << "SDL_ttf could not initialize!: " << TTF_GetError() << endl;
@@ -53,6 +59,10 @@ XM_SDL::~XM_SDL() {
 
   // Quit TTF
   TTF_Quit();
+
+  // CLose Sound
+    SDL_CloseAudio();
+    Mix_CloseAudio();
 
   // Quit SDL subsystems
   SDL_Quit();
