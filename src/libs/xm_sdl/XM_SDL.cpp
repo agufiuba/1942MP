@@ -62,7 +62,7 @@ XM_SDL::~XM_SDL() {
 
   // CLose Sound
     SDL_CloseAudio();
-//    Mix_CloseAudio();
+    Mix_CloseAudio();
 
   // Quit SDL subsystems
   SDL_Quit();
