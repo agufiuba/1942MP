@@ -3,6 +3,7 @@
 #include "../data/player_data.h"
 #include "../data/player_status.h"
 #include "../data/player_score.h"
+#include "../data/active_players.h"
 #include "../data/planes_actives.h"
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
@@ -30,6 +31,7 @@ class Client {
 	vector<SpriteConf*> sprites;
     vector<PlayerData*> allPlayers;
     vector<PlayerScore*> playersScoreData;
+    int clientsPlaying;
 
     static const int MAX_UNREACHABLE_TIME = 5;
     void checkAliveSend();
@@ -71,5 +73,8 @@ class Client {
     int getStageOffset();
     bool isConnected();
     void resetScores();
+    void requestClientsPlaying();
+    int getClientsPlaying();
+    void resetClientsPlaying();
 };
 #endif

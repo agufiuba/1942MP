@@ -49,7 +49,7 @@
 		<spriteID>agua</spriteID>
 	</fondo>
 	<nivel>
-		<longitudNivel>8000</longitudNivel>
+		<longitudNivel>4000</longitudNivel>
 		<cantidadNiveles>4</cantidadNiveles>
 	</nivel>
 	<elementos>
@@ -139,4 +139,5 @@
 	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
 	<disparosSpriteID>balaNormal</disparosSpriteID>
 </avion>
-<maxClients>1</maxClients>
+<maxClients>2</maxClients>
+<jugadoresPorEquipo>2</jugadoresPorEquipo>

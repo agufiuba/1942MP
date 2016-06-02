@@ -1,4 +1,4 @@
-TALLER DE PROGRAMACIÓN I - 2016 - 1er CUATRIMESTRE - TP 1
+TALLER DE PROGRAMACIÓN I - 2016 - 1er CUATRIMESTRE - TP 2
 
 INTEGRANTES
 - CENTURIÓN, Ramón				94092
@@ -12,6 +12,8 @@ SISTEMA OPERATIVO
 
 BIBLIOTECAS UTILIZADAS
 - TinyXML-2	https://github.com/leethomason/tinyxml2
+- SDL2		sudo get-apt install libsdl2-dev
+- SDL_ttf	sudo get-apt install libsdl2-ttf-dev
 
 C++ 4.9
 - queue
@@ -29,14 +31,20 @@ COMPILACIÓN
 	.servidor: make p=server
 	
   Aclaracion: para la compilacion se necesita tener el compilador gcc 4.9 y se compila manualmente con: 
-	gcc -std=c++11 -pthread -Wno-write-strings
+	gcc -std=c++11 -lSDL2 -lX11 -lSDL2_ttf -pthread -Wno-write-strings
 
 EJECUCIÓN
 - Si no hubo errores en la compilación, se puede ejecutar el proyecto de la siguiente manera:
 	.cliente: make p=client run
 	.servidor: make p=server run
 	
-  En el caso que se desee ejecutar con los archivos de configuración xml, se debe realizar:
-	.cliente: make p=client arch=nombreXMLConfiguracionCliente run
-	.servidor: make p=server arch=nombreXMLConfiguracionServidor run
- 	
+- Ejecucion Server:
+	Se ingresa: 	opcion 1 - iniciar el servidor
+ 			opcion 2 - cierra el servidor
+
+- Ejecucion Cliente: 
+	Se ingresa la IP y el Puerto del servidor y se selecciona Conectar
+	Sale pantalla de Conectado o No se pudo conectar:	* Seleccionas continuar o volver depende el caso
+	Luego se ingresa en el Modo de Eleccion de Avion: 	* Se ingresa id del cliente y seleccionas un avion entre los 4
+								* Seleccionas Continuar y se inicia el juego cuando todos los clientes esten conectados
+	Ahora a Jugar!!

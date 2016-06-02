@@ -215,11 +215,9 @@ SDL_Event* Escenario::run() {
 
 			}
 
+			verificarEstacionamiento(numeroNivel);
+
 			if (isFinNivel(numeroNivel)) {
-
-//				TODO: Aca deberia ir la inscripcion de fin de nivel
-				cout << "SE TERMINO EL NIVEL " << numeroNivel << endl;
-
 				// Send player score
 				PlayerScore* playerScore = new PlayerScore;
 				strcpy( playerScore->name, this->player->getName().c_str() );
@@ -230,11 +228,16 @@ SDL_Event* Escenario::run() {
 				this->unCliente->sendScore( playerScore );
 				delete playerScore;
 
-				// TODO: change hardcoded 1 for actual number of connected players 
-				// wait for player score data
-				while ( this->unCliente->getPlayersScoreData().size() != 2 );
-				this->loadSinglePlayerScoreScreen( numeroNivel );
+				// Request clients playing
+				this->unCliente->requestClientsPlaying();
+				// wait for clients playing
+				while( this->unCliente->getClientsPlaying() == 0 );
 
+				// wait for player score data
+				while ( this->unCliente->getPlayersScoreData().size() != this->unCliente->getClientsPlaying() );
+				this->unCliente->resetClientsPlaying();
+
+				this->loadSinglePlayerScoreScreen( numeroNivel );
 				break;
 			} else {
 
@@ -254,6 +257,16 @@ SDL_Event* Escenario::run() {
 
 	delete posicionEscenario;
 	return &evento;
+}
+
+void Escenario::verificarEstacionamiento(int numeroNivel) {
+	Avion* avion = (Avion*)myControl->getVivible();
+	if (!avion->estaEstacionando() && (pixelesRecorridos + 200) >= LONGITUD_NIVEL * numeroNivel) {
+		cout << "verificar estacionamiento" << endl;
+		avion->inicializoEstacionar();
+	} else {
+		avion->despegar();
+	}
 }
 
 bool Escenario::isFinNivel(int numeroNivel) {

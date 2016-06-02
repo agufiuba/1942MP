@@ -84,6 +84,7 @@ private:
 	void limpiarFondosVivibles();
 	bool isFinNivel(int numeroNivel);
 	void loadSinglePlayerScoreScreen( int stage );
+	void verificarEstacionamiento(int numeroNivel);
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl);
