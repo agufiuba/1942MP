@@ -16,6 +16,7 @@
 #include "../../libs/socket/Client.h"
 #include "../controller/IController.h"
 #include "../events/CompanionEvent.h"
+#include "../model/Player.h"
 
 
 //#include "../../xml/conf/PowerUpConf.h"
@@ -33,6 +34,7 @@ private:
 
 	IController* control;
 	Client* cliente;
+	Player* player;
 
 	PowerUpView* vistaPowerUp;
 
@@ -46,7 +48,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente, IController* control, string type, string id);
+	PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente, Player* player, IController* control, string type, string id);
 	~PowerUp();
 
 	string getId();
