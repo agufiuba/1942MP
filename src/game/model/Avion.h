@@ -79,6 +79,8 @@ public:
 	void despegar();
 
 	Posicion* getPosicion();
+
+	bool hit(int, int);
 };
 
 #endif /* SRC_MODEL_AVION_H_ */
