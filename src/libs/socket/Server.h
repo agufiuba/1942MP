@@ -9,6 +9,7 @@
 #include "../../libs/data/active_players.h"
 #include "../../libs/data/planes_actives.h"
 #include "../../libs/data/stage_data.h"
+#include "../../libs/data/game_data.h"
 #include "../../game/model/Player.h"
 #include <queue>
 #include <map>
@@ -27,6 +28,7 @@ class Server {
     bool allowConnections;
     bool processing;
     bool running;
+    GameData* gameData;
     StageData* stageData;
     queue<map<int, Evento*>*>* eventQueue;
     map<int, Player*> players;
@@ -54,6 +56,7 @@ class Server {
     void addPlayer( PlayerData* data, int clientFD );
     void updatePlayerStatus( PlayerStatus* data, int clientFD );
     void sendPlanesActives(int cfd);
+    void sendGameData(int cfd);
     void sendConf(int);
     void addScoreToPlayer( PlayerScore* data );
     void sendScoreTable( int clientFD );
@@ -69,6 +72,7 @@ class Server {
   public:
     Server( const char* configFileName );
     ~Server();
+    void createGameData();
     void initialize();
     void shutdown();
     void avisarDesconexionDeAvion(int cfd);

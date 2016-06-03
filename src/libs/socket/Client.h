@@ -5,6 +5,7 @@
 #include "../data/player_score.h"
 #include "../data/active_players.h"
 #include "../data/planes_actives.h"
+#include "../data/game_data.h"
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
 #include "../../xml/conf/ClientConf.h"
@@ -42,6 +43,7 @@ class Client {
     void closeConnection();
     GameConf* config;
     bool configComplete;
+    GameData* gameData;
 
   public:
     Client( const char* configFileName );
@@ -86,5 +88,7 @@ class Client {
     void requestPlayerScore();
     void requestScoreReset();
     void setPlayer( Player* player );
+    GameData* getGameData();
+    void sendGameData();
 };
 #endif

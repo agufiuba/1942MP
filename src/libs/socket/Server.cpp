@@ -29,9 +29,9 @@ Server::Server( const char* configFileName ) {
   this->logger = Logger::instance();
   this->running = false;
   this->stageData = NULL;
-
   this->posicionInicialX = 0;
   this->posicionInicialY = 100;
+  this->createGameData();
   //  this->config = XMLParser::parseServerConf( configFileName );
 
 }
@@ -419,7 +419,8 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
     }
 
     usleep(100);
-    this->sendPlanesActives( cfd);
+    this->sendPlanesActives( cfd );
+    this->sendGameData( cfd );
 
     timeval timeout;
     timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
@@ -533,8 +534,17 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "GS" ) {
 	  // send score to client
 	  this->sendScore( cfd );
+	} else if( dataID == "GD" ) {
+	  GameData* data = new GameData;
+	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
+		// Process received data
+		this->gameData = data;
+		if(this->gameData->teamMode){
+			cout<<"es modo equipo"<<endl;
+		}
+		cout<<"cantidad team 1 "<<this->gameData->countPlayersTeam1<<endl;
+	  }
 	}
-
       }
 
       // Check peer disconnection or timeout
@@ -769,4 +779,21 @@ void Server::sendScore( int clientFD ) {
   tmt->sendData( ps, "GS" );
   delete tmt;
   delete ps;
+}
+
+void Server::sendGameData(int clientFD){
+  Transmitter* tmt = new Transmitter( clientFD, this->logger );
+  tmt->sendData( this->gameData );
+
+  delete tmt;
+}
+
+void Server::createGameData(){
+	  this->gameData = new GameData();
+	  this->gameData->cooperativeMode = false;
+	  this->gameData->countPlayersTeam1 = 0;
+	  this->gameData->countPlayersTeam2 = 0;
+	  this->gameData->practiceMode = false;
+	  this->gameData->teamMode = false;
+	  this->gameData->maxPlayersTeams = this->config->jugadoresPorEquipo;
 }

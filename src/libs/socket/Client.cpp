@@ -22,6 +22,7 @@ Client::Client(const char* configFileName) {
 	this->clientsPlaying = 0;
 	this->stageClearReady = false;
 	this->player = NULL;
+    this->gameData = new GameData;
 }
 
 Client::Client(string ip, string puerto) {
@@ -37,6 +38,7 @@ Client::Client(string ip, string puerto) {
 	this->clientsPlaying = 0;
 	this->stageClearReady = false;
 	this->player = NULL;
+    this->gameData = new GameData;
 }
 
 Client::Client(string ip, string puerto,
@@ -54,6 +56,7 @@ Client::Client(string ip, string puerto,
 	this->clientsPlaying = 0;
 	this->stageClearReady = false;
 	this->player = NULL;
+    this->gameData = new GameData;
 }
 
 Client::~Client() {
@@ -355,6 +358,11 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				  this->player->addScore( data->score );
 				}
 				delete data;
+			} else if ( dataID == "GD" ) {
+				GameData* data = new GameData;
+				if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
+					this->gameData = data;
+				}
 			}
 		}
 
@@ -371,7 +379,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			}
 		}
 	}
-
 	delete tmt;
 }
 
@@ -600,5 +607,20 @@ void Client::setPlayer( Player* player ) {
 void Client::requestPlayerScore() {
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendDataID( "GS" ); 
+  delete tmt;
+}
+
+GameData* Client::getGameData(){
+  cout<<"Aca mando el game data: "<<this->gameData->maxPlayersTeams<<endl;
+  return this->gameData;
+}
+
+void Client::sendGameData(){
+  this->received = false;
+
+  cout<<"cantidad team 1 "<<this->gameData->countPlayersTeam1<<endl;
+
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendData(this->gameData);
   delete tmt;
 }
