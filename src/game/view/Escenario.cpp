@@ -267,13 +267,15 @@ SDL_Event* Escenario::run() {
 	return &evento;
 }
 
+
 void Escenario::verificarEstacionamiento(int numeroNivel) {
 	Avion* avion = (Avion*)myControl->getVivible();
 	if (!avion->estaEstacionando() && (pixelesRecorridos + 200) >= LONGITUD_NIVEL * numeroNivel) {
 		cout << "verificar estacionamiento" << endl;
 		avion->inicializoEstacionar();
-	} else {
-		avion->despegar();
+		Evento* e;
+		CompanionEvent* ce = new CompanionEvent();
+		unCliente->sendData(ce->estaciono(avion->getId()));
 	}
 }
 

@@ -26,6 +26,7 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 	t = new Timer();
 
 	estacionando = false;
+	realizandoVueltereta = false;
 
 	explosion = new ExplosionView("idExplosion", screen, posicion);
 
@@ -197,9 +198,7 @@ void Avion::estacionar() {
 	} else {
 		//TODO: Aqui deberia enviar al servidor de que el avion ha teriminado de estacionar
 
-		if (!realizandoVueltereta){ //Esto porque la idea es que cuando empieza otro nivel haga la vueltereta
-			mover(0, velocidadEstacionado);
-		} else {
+		if (realizandoVueltereta){ //Esto porque la idea es que cuando empieza otro nivel haga la vueltereta
 			estacionando = false;
 		}
 	}
