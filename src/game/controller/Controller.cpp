@@ -41,7 +41,13 @@ void Controller::press(SDL_Event *event){
             case SDLK_UP: velY += velocidadStandard; cliente->sendData(ce->up(obj->getId())); break;
             case SDLK_DOWN: velY -= velocidadStandard; cliente->sendData(ce->down(obj->getId()));break;
 
-            case SDLK_KP_ENTER: obj->inicializoVueltereta(); cliente->sendData(ce->roll(obj->getId())); break;
+            case SDLK_KP_ENTER:
+            	if (!obj->haciendoVueltereta()) {
+            		obj->inicializoVueltereta();
+            		cliente->sendData(ce->roll(obj->getId()));
+            	}
+            	break;
+
 
             case SDLK_p: obj->inicializoEstacionar(); cliente->sendData(ce->estaciono(obj->getId())); break;
 
@@ -56,8 +62,9 @@ void Controller::press(SDL_Event *event){
 							if (!obj->haciendoVueltereta() && !obj->estaEstacionando()) {
 								controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX() + 12,obj->getY(), resolucionPantalla, misilConf);
 								cliente->sendData(ce->shot(obj->getId()));
-								break;
 							}
+							break;
+
         }
     }
     else if( event->type == SDL_KEYUP && event->key.repeat == 0){
