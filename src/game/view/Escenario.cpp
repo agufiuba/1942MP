@@ -141,9 +141,9 @@ void Escenario::setFondosVivibles(int x, int y) {
 SDL_Event* Escenario::run() {
 	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
-  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente, myControl, "Shot", "1"));
-  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), this->unCliente, myControl, "Destroy", "2"));
-  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), this->unCliente, myControl, "Bonus", "3"));
+  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente, player, myControl, "Shot", "1"));
+  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), this->unCliente, player, myControl, "Destroy", "2"));
+  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), this->unCliente, player, myControl, "Bonus", "3"));
 
 	pixelesRecorridos = 0;
 	configurarFondosVivibles();
@@ -456,7 +456,7 @@ void Escenario::getPowerUp() {
 				int yp2 = y2 + it->second->getLargo();
 				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
 				if (touched) {
-					player->addScore(10);
+					it->second->activarPowerUp();
 					delete it->second;
 					hPowerUp->mapaPowerUp.erase(it);
 				}

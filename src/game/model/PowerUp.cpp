@@ -9,7 +9,7 @@
 
 using namespace std;
 
-PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente, IController* control, string type, string id) {
+PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente, Player* player, IController* control, string type, string id) {
 
 	//this->configuracion = conf; //TODO: hay que agregar que guarde su configuracion de XML
 
@@ -18,6 +18,8 @@ PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* pos
 
 	this->control = control;
 	this->cliente = cliente;
+
+	this->player = player;
 
 	this->id = id; //TODO:hay que hacer que cada powerUp tenga una ID??
 	this->type = type;
@@ -117,7 +119,7 @@ void PowerUp::activarPowerUp() {
 
 	if( this->type == "Bonus") {
 			cout << "PowerUp Bonus" << endl;
-			//Aca deberia venir algo como: this->avion->sumarScore(1000);
+			this->player->addScore(10);
 	}
 
 	if( this->type == "Destroy") {
