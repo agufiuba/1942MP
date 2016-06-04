@@ -81,6 +81,7 @@ private:
 	void aplicarFPS(Uint32 start);
 	void setFondosVivibles(int x, int y);
 	void configurarFondosVivibles();
+	void configurarPowerUps();
 	void limpiarFondosVivibles();
 	bool isFinNivel(int numeroNivel);
 	void loadSinglePlayerScoreScreen( int stage );

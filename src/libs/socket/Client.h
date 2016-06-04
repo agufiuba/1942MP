@@ -28,6 +28,7 @@ class Client {
     int stageOffset;
     PlanesActives* planes;
 	vector<ElementoConf*> elementos;
+	vector<PowerUpConf*> powerUps;
 	vector<SpriteConf*> sprites;
     vector<PlayerData*> allPlayers;
     vector<PlayerScore*> playersScoreData;

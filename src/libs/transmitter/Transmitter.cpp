@@ -188,6 +188,22 @@ bool Transmitter::sendData( ElementoConf* data ){
   return true;
 }
 
+bool Transmitter::sendData(PowerUpConf* data ){
+ // Send data id
+  if( !( this->sendDataID( "PU" ) ) ) {
+	return false;
+  }
+
+  // Send data
+  if( send( this->peerFD, data, sizeof( PowerUpConf ), 0 ) == -1 ) {
+	this->logger->error( SEND_FAIL );
+	DEBUG_WARN( SEND_FAIL );
+	return false;
+  }
+
+  return true;
+}
+
 bool Transmitter::sendData( EscenarioConf* data ){
  // Send data id
   if( !( this->sendDataID( "ES" ) ) ) {
@@ -295,6 +311,10 @@ int Transmitter::receiveData( AvionConf* data ) {
 
 int Transmitter::receiveData( ElementoConf* data ) {
   return recv( this->peerFD, data, sizeof( ElementoConf ), 0 ) ;
+}
+
+int Transmitter::receiveData( PowerUpConf* data ) {
+  return recv( this->peerFD, data, sizeof( PowerUpConf ), 0 ) ;
 }
 
 int Transmitter::receiveData( EscenarioConf* data ) {

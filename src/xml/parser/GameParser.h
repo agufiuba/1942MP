@@ -6,6 +6,7 @@
 #include "../conf/SpriteConf.h"
 #include "../conf/EscenarioConf.h"
 #include "../conf/ElementoConf.h"
+#include "../conf/PowerUpConf.h"
 #include "../conf/AvionConf.h"
 
 using namespace tinyxml2;
@@ -27,6 +28,11 @@ private:
     static vector<ElementoConf *> elementos(XMLElement *);
 
     static ElementoConf *elemento(XMLElement *);
+
+    static vector<PowerUpConf*> powerUps(XMLElement *);
+
+    static PowerUpConf* powerUp(XMLElement *);
+
 
     static AvionConf *avion(XMLDocument *);
 };

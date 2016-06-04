@@ -364,6 +364,15 @@ void Server::sendConf(int cfd){
     }
   }
 
+  vector<PowerUpConf*> powerUps = this->config->powerUps;
+    for (int var = 0; var < powerUps.size(); ++var) {
+    	PowerUpConf* powerUp = powerUps[var];
+      if( !( tmt->sendData( powerUp ) ) ) {
+        DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send powerUps" );
+        this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send powerUps" );
+      }
+    }
+
   vector<SpriteConf* > sprites = this->config->sprites;
   for (int var = 0; var < sprites.size(); ++var) {
     SpriteConf* sprite = sprites[var];
