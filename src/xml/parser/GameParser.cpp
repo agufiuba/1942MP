@@ -15,6 +15,7 @@ GameConf *GameParser::parse(string fn) {
     doc.FirstChildElement("jugadoresPorEquipo")->QueryIntText(&jugadoresPorEquipo);
     gc->maxClients = mc;
     gc->jugadoresPorEquipo = jugadoresPorEquipo;
+
     return gc;
 }
 
@@ -81,6 +82,7 @@ EscenarioConf *GameParser::escenario(XMLDocument *doc, GameConf *gc) {
     ec->longitudNivel = longitudNivel;
     ec->cantidadNiveles = cantidadNiveles;
     gc->elementos = elementos(escenarioE);
+    gc->powerUps = powerUps(escenarioE);
 
     return ec;
 }
@@ -106,6 +108,29 @@ ElementoConf *GameParser::elemento(XMLElement *e) {
     elementoConf->x = x;
     elementoConf->y = y;
     return elementoConf;
+}
+
+vector<PowerUpConf*> GameParser::powerUps(XMLElement *e) {
+    vector<PowerUpConf*> powerUps;
+    XMLElement *powerUpsE = e->FirstChildElement("powerUps");
+    for (XMLElement *powerUpE = powerUpsE->FirstChildElement("powerUp");
+         powerUpE != NULL;
+         powerUpE = powerUpE->NextSiblingElement("powerUp")) {
+    	powerUps.push_back(powerUp(powerUpE));
+    }
+    return powerUps;
+}
+
+PowerUpConf* GameParser::powerUp(XMLElement *e) {
+    PowerUpConf* powerUpConf = new PowerUpConf;
+    string tipo = e->FirstChildElement("tipo")->GetText();
+    int x, y;
+    e->FirstChildElement("posicion")->FirstChildElement("x")->QueryIntText(&x);
+    e->FirstChildElement("posicion")->FirstChildElement("y")->QueryIntText(&y);
+    strcpy(powerUpConf->tipo, tipo.c_str());
+    powerUpConf->x = x;
+    powerUpConf->y = y;
+    return powerUpConf;
 }
 
 AvionConf *GameParser::avion(XMLDocument *doc) {

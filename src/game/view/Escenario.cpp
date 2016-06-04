@@ -116,6 +116,20 @@ void Escenario::configurarFondosVivibles() {
 	}
 }
 
+void Escenario::configurarPowerUps() {
+
+	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
+
+	if (gc->powerUps.size() <= 0) return;
+
+	for (int i = 0; i < gc->powerUps.size(); i++) {
+		string tipo = gc->powerUps[i]->tipo;
+		Posicion* posicion = new Posicion(gc->powerUps[i]->x, gc->powerUps[i]->y);
+		hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, posicion, this->unCliente, player, myControl, tipo, to_string(i)));
+	}
+
+}
+
 HandlerPlayersControllers* Escenario::getHandler() {
 	return this->controllers;
 }
@@ -139,14 +153,12 @@ void Escenario::setFondosVivibles(int x, int y) {
 }
 
 SDL_Event* Escenario::run() {
-	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
-	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
-  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente, player, myControl, "Shot", "1"));
-  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), this->unCliente, player, myControl, "Destroy", "2"));
-  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), this->unCliente, player, myControl, "Bonus", "3"));
 
 	pixelesRecorridos = 0;
+
 	configurarFondosVivibles();
+	configurarPowerUps();
+
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
 
