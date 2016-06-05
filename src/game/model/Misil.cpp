@@ -20,6 +20,8 @@ Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion,
 	viviendo = true;
 
 	this->posicion = posicion;
+	posX = posicion->getX();
+	posY = posicion->getY();
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
@@ -45,8 +47,8 @@ void Misil::mostrar(){
 
 void Misil::moverEjeY(int velY){
 	posicion->mover(0, velY);
-	int y = posicion->getY();
-	if (y + getLargo() > getLargoFondo()) {
+	posY = posicion->getY();
+	if (posY + getLargo() > getLargoFondo()) {
 		viviendo = false;
 	}
 }

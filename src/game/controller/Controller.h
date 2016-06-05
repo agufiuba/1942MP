@@ -27,7 +27,6 @@ private:
 	Vivible* obj;
 	int velX,velY;
 	Resolucion* resolucionPantalla;
-	ControllerMissiles* controlDeMisiles;
 	int velocidadStandard;
 	Client* cliente;
 	MisilConf* misilConf;
@@ -44,6 +43,8 @@ public:
 
 	void setAmetralladora();
 	void setBalaNormal();
+	
+	ControllerMissiles* controlDeMisiles;
 };
 
 #endif /* SRC_CONTROL_CONTROLLER_H_ */

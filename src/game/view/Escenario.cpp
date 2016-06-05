@@ -175,6 +175,9 @@ SDL_Event* Escenario::run() {
 		thread tPowerUps(&Escenario::getPowerUp, this);
 		tPowerUps.detach();
 
+		thread tShot(&Escenario::hitEnemy, this);
+		tShot.detach();
+
 		while (!quit && this->unCliente->isConnected()) {
 
 			start = SDL_GetTicks();
@@ -479,4 +482,31 @@ void Escenario::crearEnemigo() {
 	// string jString  = to_string(j);
 	Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
 	enemigos.push_back(e);
+}
+
+void Escenario::hitEnemy() {
+	while (escenarioCreado) {
+		vector<Vivible*> disparos = myControl->controlDeMisiles->vivibles->vectorObjetos;
+		for (vector<Vivible*>::iterator it = disparos.begin(); it != disparos.end(); it++) {
+			for (vector<Enemy*>::iterator jt = enemigos.begin(); jt != enemigos.end(); jt++) {
+				bool touched = false;
+				int x = (*it)->posX;
+				int xp = x + (*it)->getAncho();
+				int y = (*it)->posY;
+				int yp = y + (*it)->getLargo();
+
+				cout << x << " " << xp << " " << y << " " << yp << endl;
+
+				// if (y > resolucion->getHeightScreen())
+				// 	(*it)->viviendo = false;
+
+				int x2 = (*jt)->getX();
+				int x2p = x2 + (*jt)->getAncho();
+				int y2 = (*jt)->getY();
+				int y2p = y2p + (*jt)->getLargo();
+				// touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+				// if (touched) cout << "chocooo" << endl;
+			}
+		}
+	}
 }
