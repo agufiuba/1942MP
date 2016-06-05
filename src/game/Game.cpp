@@ -46,7 +46,7 @@ void Game::cargarEscenario() {
 		this->unCliente->sendGetConfig();
 		while(!unCliente->isConfigComplete()){}
 	}
-
+	cout<<"creo escenario"<<endl;
     this->unCliente->reset =false;
     escenario = new Escenario(this->unCliente->getConfig(), sdlHandler);
     escenario->setClient(unCliente);
@@ -367,12 +367,42 @@ void Game::loadValidationScreen() {
 	if (connectionFailed){
 	  this->loadConnectionScreen();
 	} else {
-		if (this->unCliente->getGameData()->cooperativeMode || this->unCliente->getGameData()->teamMode){
-			this->checkGameMode();
-		} else {
-			this->loadModeGameScreen();
+		//Cargo la pantalla de seleccion de aviones
+		bool endSelectingPlane = false;
+		bool primerIntento = true;
+		while(!endSelectingPlane){
+			PlanesActives* planes = this->unCliente->getPlanesActives();
+			this->bluePlaneActive = planes->blue;
+			this->redPlaneActive = planes->red;
+			this->greenPlaneActive = planes->green;
+			this->yellowPlaneActive = planes->yellow;
+			this->clientId = "";
+			this->planeId = "";
+			if (primerIntento){
+				this->loadselectionPlane(true);
+			}else{
+				this->loadselectionPlane(this->unCliente->isPlayerOk());
+			}
+			primerIntento = false;
+			endSelectingPlane = this->unCliente->isPlayerOk();
+		}
+		if(!this->unCliente->isPlayerResume()){
+			if ( this->unCliente->getGameData()->teamMode ){
+				//hay una partida de team, elige a que team entra
+				cout<<"Modo team true"<<endl;
+				this->loadTeamSelectedScreen();
+			} else if ( !this->unCliente->getGameData()->cooperativeMode ){
+				//no hay partida creada...elige tipo de partida
+				cout<<"no hay modo"<<endl;
+				this->loadModeGameScreen();
+			}
+			//envio que esta listo
+			this->unCliente->sendStatusReady();
+			//empieza la partida
+			this->loadWaitingGame();
 		}
 	}
+	cout<<"salgo de las pantallas"<<endl;
 	break;
       }
     }
@@ -686,6 +716,7 @@ void Game::loadselectionPlane(bool selectedOk) {
 	  this->planeId = "amarillo";
 	}
 	if(this->clientId != "" && this->planeId != ""){
+	  //envia el Player Data
 	  this->sendDataPlayer();
 	  runningScreen = false;
 	}
@@ -780,7 +811,6 @@ void Game::sendDataPlayer(){
   this->jugador = new PlayerData;
   strcpy( jugador->name, this->clientId.c_str() );
   strcpy( jugador->color, this->planeId.c_str() );
-  jugador->team = this->team;
   this->unCliente->sendData(jugador);
 }
 
@@ -963,7 +993,7 @@ void Game::loadSinglePlayerScoreScreen( int stage ) {
 void Game::loadModeGameScreen(){
   SDL_Event e;
   Timer timer;
-
+  cout<<"Seleccion Modo "<<endl;
   Screen* initialScreen = new Screen( this->sdlHandler );
   initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   initialScreen->loadText( "gameModeText", "Modo de Juego:", { 0, 200, 100 } );
@@ -1035,15 +1065,19 @@ void Game::loadModeGameScreen(){
 	if( clicked ) {
 	  clicked = false;
 	  if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) && ( mouseY > 525 ) && ( mouseY < ( 525 + 50 ) ) ) {
-			runningScreen = false;
-			//Disable text input
-			SDL_StopTextInput();
-			delete initialScreen;
+		//Si no hay ningun modo puesto toma los del cliente
+		if(!this->unCliente->getGameData()->teamMode && !this->unCliente->getGameData()->cooperativeMode){
 			this->unCliente->getGameData()->teamMode = teamPromptSelected;
 			this->unCliente->getGameData()->cooperativeMode = cooperativePromptSelected;
 			this->unCliente->getGameData()->practiceMode = practicePromptSelected;
-			this->checkGameMode();
-
+			cout<<"entro"<<endl;
+		}
+		this->checkGameMode();
+		runningScreen = false;
+		//Disable text input
+		SDL_StopTextInput();
+		delete initialScreen;
+		break;
 	  } else if( ( mouseX > promptCenter+150 ) && ( mouseX < ( promptCenter+150 + 230 ) ) && ( mouseY > 300 ) && ( mouseY < ( 300 + 50 ) ) ) {
 			  teamPromptSelected = true;
 			  cooperativePromptSelected = false;
@@ -1106,10 +1140,15 @@ void Game::loadModeGameScreen(){
 void Game::loadTeamSelectedScreen(){
   SDL_Event e;
   Timer timer;
+
   GameData* gameData = this->unCliente->getGameData();
 
   bool team1Complete = (gameData->maxPlayersTeams == gameData->countPlayersTeam1);
   bool team2Complete = (gameData->maxPlayersTeams == gameData->countPlayersTeam2);
+  bool alphaTeamSelected = true;
+  bool betaTeamSelected = false;
+  bool runningScreen = true;
+  bool clicked = false;
 
   Screen* initialScreen = new Screen( this->sdlHandler );
   initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
@@ -1128,11 +1167,6 @@ void Game::loadTeamSelectedScreen(){
   int alphaTeamPromptOutline = 300, alphaTeamPromptOutline2 = 301, alphaTeamPromptOutline3 = 302;
   int betaTeamPromptOutline = 375, betaTeamPromptOutline2 = 376, betaTeamPromptOutline3 = 377;
   int mouseX, mouseY;
-
-  bool runningScreen = true;
-  bool alphaTeamSelected = true;
-  bool betaTeamSelected = false;
-  bool clicked = false;
 
   // Create prompts
   initialScreen->loadRectangle( "promptAlphaTeam", promptCenter+150, 300, 260, 50 );
@@ -1180,18 +1214,29 @@ void Game::loadTeamSelectedScreen(){
 	if( clicked ) {
 	  clicked = false;
 	  if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) && ( mouseY > 525 ) && ( mouseY < ( 525 + 50 ) ) ) {
-		runningScreen = false;
-		if ( alphaTeamSelected ){
+		GameData* game = this->unCliente->getGameData();
+		cout<<"Aca llego el game data de team 1: "<<game->countPlayersTeam1<<endl;
+		cout<<"Aca llego el game data de team 2: "<<game->countPlayersTeam2<<endl;
+		if ( alphaTeamSelected && (game->countPlayersTeam1 < game->maxPlayersTeams)){
 			this->team = 1;
-			this->unCliente->getGameData()->countPlayersTeam1++;
-		} else if (betaTeamSelected ){
-			this->team = 2;
-			this->unCliente->getGameData()->countPlayersTeam2++;
+			//TODO enviar team
+			this->unCliente->sendMode("T1");
+			runningScreen = false;
+			//Disable text input
+			SDL_StopTextInput();
+			delete initialScreen;
+			break;
 		}
-		//Disable text input
-		SDL_StopTextInput();
-		delete initialScreen;
-		break;
+		if (betaTeamSelected && (game->countPlayersTeam2 < game->maxPlayersTeams)){
+			this->team = 2;
+			//TODO enviar team
+			this->unCliente->sendMode("T2");
+			runningScreen = false;
+			//Disable text input
+			SDL_StopTextInput();
+			delete initialScreen;
+			break;
+		}
 	  } else if( ( mouseX > promptCenter+150 ) && ( mouseX < ( promptCenter+150 + 230 ) ) && ( mouseY > 300 ) && ( mouseY < ( 300 + 50 ) ) ) {
 		  alphaTeamSelected = true;
 		  betaTeamSelected = false;
@@ -1216,11 +1261,14 @@ void Game::loadTeamSelectedScreen(){
 	  initialScreen->loadRectangle( "outline3", promptCenter+150 + 2, betaTeamPromptOutline3, 256, 46 );
 	}
 
-	// Render outlines
-	initialScreen->renderRectangle( "outline", true );
-	initialScreen->renderRectangle( "outline2", true );
-	initialScreen->renderRectangle( "outline3", true );
 
+	if( (alphaTeamSelected && !team1Complete) || (betaTeamSelected && !team2Complete) ) {
+	  // Render outlines
+	  initialScreen->renderRectangle( "outline", true );
+	  initialScreen->renderRectangle( "outline2", true );
+  	  initialScreen->renderRectangle( "outline3", true );
+
+	}
 	// Render text textures
 	initialScreen->renderTexture( "teamText", 120, alphaTeamPromptOutline );
 	if( !team1Complete ){
@@ -1242,30 +1290,12 @@ void Game::loadTeamSelectedScreen(){
 
 void Game::checkGameMode(){
 	if ( this->unCliente->getGameData()->teamMode ){
-		cout<<"Modo Team desde otro"<<endl;
+		this->unCliente->sendMode("MT");
 		this->loadTeamSelectedScreen();
 	}
-	cout<<"Envio el gameData al server"<<endl;
-	this->unCliente->sendGameData();
-
-	bool endSelectingPlane = false;
-	bool primerIntento = true;
-	while(!endSelectingPlane){
-		PlanesActives* planes = this->unCliente->getPlanesActives();
-		this->bluePlaneActive = planes->blue;
-		this->redPlaneActive = planes->red;
-		this->greenPlaneActive = planes->green;
-		this->yellowPlaneActive = planes->yellow;
-		this->clientId = "";
-		this->planeId = "";
-		if (primerIntento){
-			this->loadselectionPlane(true);
-		}else{
-			this->loadselectionPlane(this->unCliente->isPlayerOk());
-		}
-		primerIntento = false;
-		endSelectingPlane = this->unCliente->isPlayerOk();
+	if ( this->unCliente->getGameData()->cooperativeMode ){
+		cout<<"modo cooperativo"<<endl;
+		this->unCliente->sendMode("MC");
 	}
-	this->loadWaitingGame();
 }
 

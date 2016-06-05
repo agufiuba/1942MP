@@ -57,6 +57,7 @@ class Server {
     void updatePlayerStatus( PlayerStatus* data, int clientFD );
     void sendPlanesActives(int cfd);
     void sendGameData(int cfd);
+    void sendGameDataAll();
     void sendConf(int);
     void addScoreToPlayer( PlayerScore* data );
     void sendScoreTable( int clientFD );
@@ -68,6 +69,8 @@ class Server {
     void sendActivePlayers( int clientFD );
     int getActivePlayersCount();
     void sendStageReadySignal();
+    void sendPlayersReady();
+    void setTeamPlayer(int team, int cfd);
 
   public:
     Server( const char* configFileName );

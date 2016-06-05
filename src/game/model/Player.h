@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <string>
+#include <iostream>
 using namespace std;
 class Player {
   private:
@@ -12,6 +13,7 @@ class Player {
     int health;
     int score;
     int team;
+    bool ready;
 
   public:
     Player( string name, string color, int x, int y, int team, int health = 3 );
@@ -35,5 +37,8 @@ class Player {
     void takeHit();
     bool isAlive();
     void die();
+    void changeReady();
+    bool isReady();
+    void setTeam(int team);
 };
 #endif

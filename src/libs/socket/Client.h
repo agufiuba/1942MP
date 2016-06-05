@@ -43,7 +43,9 @@ class Client {
     void closeConnection();
     GameConf* config;
     bool configComplete;
+    bool ready;
     GameData* gameData;
+    bool playerResume;
 
   public:
     Client( const char* configFileName );
@@ -90,5 +92,8 @@ class Client {
     void setPlayer( Player* player );
     GameData* getGameData();
     void sendGameData();
+    void sendMode(string mode);
+    void sendStatusReady();
+    bool isPlayerResume();
 };
 #endif

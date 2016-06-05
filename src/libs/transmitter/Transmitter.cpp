@@ -47,9 +47,8 @@ bool Transmitter::sendData( Evento* e ) {
 bool Transmitter::sendData( PlayerData* data ) {
   // Send data id
   if( !( this->sendDataID( "PD" ) ) ) {
-    return false;
+	return false;
   }
-
   // Send data
   if( send( this->peerFD, data, sizeof( PlayerData ), 0 ) == -1 ) {
     this->logger->error( SEND_FAIL );
@@ -279,19 +278,19 @@ bool Transmitter::sendData( ActivePlayers* data ) {
 
 
 bool Transmitter::sendData( GameData* data ){
-	// Send data id
-	  if( !( this->sendDataID( "GD" ) ) ) {
-	    return false;
-	  }
+  // Send data id
+  if( !( this->sendDataID( "GD" ) ) ) {
+	return false;
+  }
 
-	  // Send data
-	  if( send( this->peerFD, data, sizeof( GameData ), 0 ) == -1 ) {
-	    this->logger->error( SEND_FAIL );
-	    DEBUG_WARN( SEND_FAIL );
-	    return false;
-	  }
+  // Send data
+  if( send( this->peerFD, data, sizeof( GameData ), 0 ) == -1 ) {
+	this->logger->error( SEND_FAIL );
+	DEBUG_WARN( SEND_FAIL );
+	return false;
+  }
 
-	  return true;
+  return true;
 }
 
 int Transmitter::receiveData( char id[3], int size ) {
