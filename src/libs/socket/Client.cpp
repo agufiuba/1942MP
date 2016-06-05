@@ -416,11 +416,13 @@ void Client::resetClientsPlaying() {
 	this->clientsPlaying = 0;
 }
 
-void Client::requestClientsPlaying() {
+void Client::requestScoreTable() {
 	this->received = false;
 	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
-	tmt->sendDataID("PQ");
-
+	// request score table
+	tmt->sendDataID( "ST" );
+	// request clients playing
+	tmt->sendDataID( "PQ" );
 	delete tmt;
 }
 

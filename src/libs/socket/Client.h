@@ -75,7 +75,7 @@ class Client {
     int getStageOffset();
     bool isConnected();
     void resetScores();
-    void requestClientsPlaying();
+    void requestScoreTable();
     int getClientsPlaying();
     void resetClientsPlaying();
     void sendStageClearReady();

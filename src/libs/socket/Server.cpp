@@ -518,6 +518,9 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	    this->sendStageReadySignal();
 	    this->readyPlayers = 0;
 	  }
+	} else if( dataID == "ST" ) {
+	  // send score table
+	  this->sendScoreTable( cfd );
 	}
 
       }
@@ -684,11 +687,11 @@ void Server::addScoreToPlayer( PlayerScore* data ) {
       break;
     }
   }
-
-  delete data;
 }
 
-void Server::sendScoreToPlayers() {
+void Server::sendScoreTable( int clientFD ) {
+  Transmitter* tmt = new Transmitter( clientFD, this->logger );
+
   for ( map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end();
 	++it ) {
@@ -700,19 +703,12 @@ void Server::sendScoreToPlayers() {
     ps->score = player->getScore();
     ps->team = player->getTeam();
 
-    // send player score data to all players
-    for ( map<int, Player*>::iterator it2 = this->players.begin();
-	  it2 != this->players.end();
-	  ++it2 ) {
-      // don't send data to inactive players
-      if ( !( it2->second->isActive() ) ) continue;
-
-      Transmitter* tmt = new Transmitter( it2->first, this->logger );
-      tmt->sendData( ps );
-      delete tmt;
-    }
+    // send score data
+    tmt->sendData( ps );
     delete ps;
   }
+
+  delete tmt;
 }
 
 void Server::sendActivePlayers( int clientFD ) {
