@@ -433,8 +433,8 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
       clicked = false;
       if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
 	  && ( mouseY > 600 ) && ( mouseY < ( 600 + 50 ) ) ) {
-	runningScreen = false;
-	this->loadWaitForPlayersScreen();
+	// send ready signal
+	this->unCliente->sendStageClearReady();
 	break;
       }
     }
@@ -450,7 +450,11 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
   this->unCliente->resetScores();
   //Disable text input
   SDL_StopTextInput();
+  delete remainingHealth;
   delete scoreScreen;
+
+  // load waiting screen
+  this->loadWaitForPlayersScreen();
 }
 
 void Escenario::loadWaitForPlayersScreen() {
@@ -469,7 +473,7 @@ void Escenario::loadWaitForPlayersScreen() {
   // Enable text input
   SDL_StartTextInput();
 
-  while( runningScreen ) {
+  while( runningScreen && !( this->unCliente->stageClearReady ) ) {
     timer.correr();
     while (this->sdl->nextEvent(&e)) {
       if (e.type == SDL_QUIT) {
