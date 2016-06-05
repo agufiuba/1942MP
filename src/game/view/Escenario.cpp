@@ -461,12 +461,13 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
 }
 
 void Escenario::getPowerUp() {
+	int offset = 25; //TODO: Hardcodeo para hacer mas preciso la toma de power ups
 	while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
 		usleep(1);
 		Vivible* avion = myControl->getVivible();
 		if (avion->tieneHP()) {
 			int x = avion->getX();
-			int y = avion->getY();
+			int y = avion->getY() - offset;
 			int xp = x + avion->getAncho();
 			int yp = y + avion->getLargo();
 			for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
