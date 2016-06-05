@@ -42,6 +42,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 }
 
 Escenario::~Escenario() {
+	delete this->player;
 	resolucion->~Resolucion();
 	delete musica;
 	escenarioCreado = false;
@@ -240,6 +241,10 @@ SDL_Event* Escenario::run() {
 						Avion* avion = (Avion*)myControl->getVivible();
 						Misil* disparoEnemigo = new Misil(gRenderer, new Posicion(0,0), resolucion, NULL);
 						avion->recibirMisil(disparoEnemigo);
+						this->player->takeHit();
+						if( !( this->player->isAlive() ) ) {
+						  this->loadGameOverScreen();
+						}
 					}
 				}
 
@@ -248,20 +253,11 @@ SDL_Event* Escenario::run() {
 			verificarEstacionamiento(numeroNivel);
 
 			if (isFinNivel(numeroNivel)) {
-				// Send player score
 				musica->fadeOut(4000);
 	    
-
-				// Request clients playing
-				this->unCliente->requestScoreTable();
-				// wait for clients playing
-				while( this->unCliente->getClientsPlaying() == 0 );
-
-				// wait for player score data
-				while ( this->unCliente->getPlayersScoreData().size() != this->unCliente->getClientsPlaying() );
-				this->unCliente->resetClientsPlaying();
-
+				// load score screen
 				this->loadSinglePlayerScoreScreen( numeroNivel );
+
 				delete musica;
 				musica = new Music("musicaDeFondo.mp3");
 				musica->play();
@@ -313,6 +309,9 @@ void Escenario::limpiarFondosVivibles() {
 }
 
 void Escenario::loadSinglePlayerScoreScreen( int stage ) {
+  // load score data
+  this->loadScoreData();
+
   bool runningScreen = true;
   SDL_Event e;
   Timer timer;
@@ -464,6 +463,158 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
   this->loadWaitForPlayersScreen();
 }
 
+void Escenario::loadGameOverScreen() {
+  // load score data
+  this->loadScoreData();
+
+  bool runningScreen = true;
+  SDL_Event e;
+  Timer timer;
+  int fps = 10;
+  string gameOverText = "Game Over";
+  string scoreHeaderText = "Score Ranking";
+  string nameText = "Name";
+  string scoreText = "Score";
+
+  Screen* scoreScreen = new Screen( this->sdl );
+
+  // Load max score ribbon
+  scoreScreen->loadTexture( "topScore", "topScore.bmp" );
+
+  // Load skull image
+  scoreScreen->loadTexture( "skull", "skull.bmp" );
+
+  // Load text
+  scoreScreen->loadText( "gameOver", gameOverText, { 53, 167, 84, 255 } );
+  scoreScreen->loadText( "scoreText", scoreHeaderText, { 255, 0, 0, 255 } );
+  scoreScreen->loadText( "nameHeader", nameText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "continueText", "Finish", { 0, 0, 0, 255 } );
+
+  // Get max score player ID
+  string maxScoreID;
+  int maxScore = 0;
+  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+    PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+    if ( ps->score > maxScore ) {
+      maxScoreID = ps->name;
+      maxScore = ps->score;
+    }
+  }
+
+  // Load ranking score table data 
+  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+    PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+    if ( string( ps->name ) == maxScoreID ) {
+      scoreScreen->loadText( string( ps->name ), string( ps->name ), { 12, 246, 246, 255 } );
+      scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 12, 246, 246, 255 } );
+    } else {
+      scoreScreen->loadText( string( ps->name ), string( ps->name ), { 255, 255, 255, 255 } );
+      scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 255, 255, 255, 255 } );
+    }
+    // Load plane
+    scoreScreen->loadTexture( string( ps->color ), "score/avion_" + string( ps->color ) + ".bmp" );
+  }
+
+  int buttonWidth = 250;
+  int buttonCenter = scoreScreen->getRectCenter( buttonWidth ); 
+  int continueTextCenter = scoreScreen->getTextCenter( "finish" );
+
+  // Load prompts
+  scoreScreen->loadRectangle( "continue", buttonCenter, 600, buttonWidth, 50 );
+
+  int gap = scoreScreen->getTextHeight( scoreText );
+  int rowPadding = 200;
+  int topPadding = 60;
+  int columnWidth = this->sdl->getWindowWidth() / 7;
+  // Get center positions
+  int gameOverTextCenter = scoreScreen->getTextCenter( gameOverText ); 
+  int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
+  int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
+  int nameHeaderCenter = columnWidth * 2;
+  int scoreHeaderCenter = nameHeaderCenter + nameHeaderSpace;
+  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
+  int imageCenter = nameHeaderCenter - 65;
+
+  bool clicked = false;
+  int mouseX, mouseY;
+  double gapMult = 5.5;
+  double gapStep = 1.5;
+
+  // Enable text input
+  SDL_StartTextInput();
+
+  while( runningScreen ) {
+    timer.correr();
+    // Get events
+    while( this->sdl->nextEvent( &e ) ) {
+      if( e.type == SDL_QUIT ) {
+	runningScreen = false;
+	break;
+      }
+      if (e.button.type == SDL_MOUSEBUTTONDOWN) {
+	if (e.button.button == SDL_BUTTON_LEFT) {
+	  clicked = true;
+	  // Get the mouse offsets
+	  mouseX = e.button.x;
+	  mouseY = e.button.y;
+	}
+      }
+    }
+    // Set window background
+    this->sdl->setWindowBG(0, 0, 0);
+
+    // Render text textures
+    scoreScreen->renderTexture( "gameOver", gameOverTextCenter, topPadding );
+    scoreScreen->renderTexture( "skull", gameOverTextCenter - scoreScreen->getTextureWidth( "skull" ) - 15, topPadding );
+    scoreScreen->renderTexture( "skull", gameOverTextCenter + scoreScreen->getTextWidth( gameOverText ) + 15, topPadding );
+    scoreScreen->renderTexture( "scoreText", scoreTextCenter, topPadding + gap * 2 );
+    scoreScreen->renderTexture( "nameHeader", nameHeaderCenter, topPadding + gap * 4 );
+    scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
+
+    // Render players score and data
+    for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+      PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+      scoreScreen->renderTexture( string( ps->name ), 
+				  nameHeaderCenter, 
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      scoreScreen->renderTexture( string( ps->name ) + "score", 
+				  scoreRightLimit - scoreScreen->getTextWidth( to_string( ps->score ) ), 
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      scoreScreen->renderTexture( string( ps->color ), 
+				  imageCenter, 
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      if( string( ps->name ) == maxScoreID ) {
+	scoreScreen->renderTexture( "topScore", scoreRightLimit + 15, topPadding - 15 + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      }
+    }
+
+    scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
+    scoreScreen->renderRectangle( "continue" );
+    scoreScreen->renderTexture( "continueText", continueTextCenter, 605 );
+
+    if( clicked ) {
+      clicked = false;
+      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
+	  && ( mouseY > 600 ) && ( mouseY < ( 600 + 50 ) ) ) {
+	// send ready signal
+	break;
+      }
+    }
+
+    //Update screen
+    this->sdl->updateWindow();
+
+    if( timer.tiempoActual() < 1000 / fps ){
+      SDL_Delay( ( 1000 / fps ) - timer.tiempoActual() );
+    }
+  }
+
+  //Disable text input
+  SDL_StopTextInput();
+  delete scoreScreen;
+}
+
 void Escenario::loadWaitForPlayersScreen() {
   bool runningScreen = true;
   SDL_Event e;
@@ -537,4 +688,15 @@ void Escenario::getPowerUp() {
 		}
 	}
 //	delete soundGetPowerUp;
+}
+
+void Escenario::loadScoreData() {
+  // Request clients playing
+  this->unCliente->requestScoreTable();
+  // wait for clients playing
+  while( this->unCliente->getClientsPlaying() == 0 );
+
+  // wait for player score data
+  while ( this->unCliente->getPlayersScoreData().size() != this->unCliente->getClientsPlaying() );
+  this->unCliente->resetClientsPlaying();
 }
