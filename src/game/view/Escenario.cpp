@@ -54,6 +54,9 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir();
 	}
+	for (int i=0; i < enemigos.size(); i++) {
+		enemigos[i]->vivir(1, 1);
+	}
 
 	controllers->hacerVivir();
 	myControl->hacerVivir();
@@ -116,6 +119,8 @@ void Escenario::configurarFondosVivibles() {
 	}
 }
 
+
+
 HandlerPlayersControllers* Escenario::getHandler() {
 	return this->controllers;
 }
@@ -149,6 +154,7 @@ SDL_Event* Escenario::run() {
 	configurarFondosVivibles();
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
+  	crearEnemigo();
 
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
 	if (!this->unCliente->reinicia) {
@@ -463,4 +469,14 @@ void Escenario::getPowerUp() {
 			}
 		}
 	}
+}
+
+void Escenario::crearEnemigo() {
+	// int x_gc = gc->elementos[i]->x;
+	// int y_gc = gc->elementos[i]->y;
+	int index = GameParser::findSprite(gc->sprites,"avionVerde.bmp");
+	Posicion* p = new Posicion(300, 400);
+	// string jString  = to_string(j);
+	Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
+	enemigos.push_back(e);
 }
