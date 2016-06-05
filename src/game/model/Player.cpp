@@ -74,6 +74,10 @@ bool Player::isAlive() {
   return this->health > 0;
 }
 
+void Player::die() {
+  this->health = 0;
+}
+
 int Player::getTeam(){
 	return this->team;
 }

@@ -34,5 +34,6 @@ class Player {
     int getHealth();
     void takeHit();
     bool isAlive();
+    void die();
 };
 #endif
