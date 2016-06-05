@@ -243,6 +243,7 @@ SDL_Event* Escenario::run() {
 						avion->recibirMisil(disparoEnemigo);
 						this->player->takeHit();
 						if( !( this->player->isAlive() ) ) {
+						  this->unCliente->sendPlayerDeath();
 						  this->loadGameOverScreen();
 						}
 					}
