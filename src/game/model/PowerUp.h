@@ -17,6 +17,7 @@
 #include "../controller/IController.h"
 #include "../events/CompanionEvent.h"
 #include "../model/Player.h"
+#include "../model/Sound.h"
 
 
 //#include "../../xml/conf/PowerUpConf.h"
@@ -39,6 +40,7 @@ private:
 	PowerUpView* vistaPowerUp;
 
 	Posicion* posicion;
+	Sound* soundGetPowerUp;
 
 //	AvionConf* configuracion;
 

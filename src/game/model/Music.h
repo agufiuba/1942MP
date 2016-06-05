@@ -27,6 +27,7 @@ public:
 	void play();
 	void play(int times);
 	static void stop();
+	static void fadeOut(int ms);
 	static bool playingMusic();
 
 };

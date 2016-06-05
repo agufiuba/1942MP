@@ -136,7 +136,7 @@
 			<tipo>Shot</tipo>
 			<posicion>
 				<x>350</x>
-				<y>600</y>
+				<y>800</y>
 			</posicion>
 		</powerUp>
 		<powerUp>
@@ -153,11 +153,46 @@
 				<y>100</y>
 			</posicion>
 		</powerUp>
+		<powerUp>
+			<tipo>Bonus</tipo>
+			<posicion>
+				<x>650</x>
+				<y>1000</y>
+			</posicion>
+		</powerUp>
+		<powerUp>
+			<tipo>Bonus</tipo>
+			<posicion>
+				<x>850</x>
+				<y>1200</y>
+			</posicion>
+		</powerUp>
+		<powerUp>
+			<tipo>Bonus</tipo>
+			<posicion>
+				<x>50</x>
+				<y>2000</y>
+			</posicion>
+		</powerUp>
+		<powerUp>
+			<tipo>Bonus</tipo>
+			<posicion>
+				<x>125</x>
+				<y>2300</y>
+			</posicion>
+		</powerUp>
+		<powerUp>
+			<tipo>Bonus</tipo>
+			<posicion>
+				<x>470</x>
+				<y>3900</y>
+			</posicion>
+		</powerUp>
 	</powerUps>
 </escenario>
 <avion>
 	<velocidadDesplazamiento>10</velocidadDesplazamiento>
-	<velocidadDisparos>6</velocidadDisparos>
+	<velocidadDisparos>10</velocidadDisparos>
 	<avionSpriteID>AvionSprites</avionSpriteID>
 	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
 	<disparosSpriteID>balaNormal</disparosSpriteID>

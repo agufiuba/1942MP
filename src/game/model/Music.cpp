@@ -23,6 +23,10 @@ void Music::stop() {
 	Mix_HaltMusic();
 }
 
+void Music::fadeOut(int ms) {
+	Mix_FadeOutMusic(ms);
+}
+
 void Music::play() {
 	Mix_PlayMusic(music, -1);
 }

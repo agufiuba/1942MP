@@ -12,8 +12,10 @@
 using namespace std;
 
 Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
+
 	musica = new Music("musicaDeFondo.mp3");
 	musica->play();
+
 	this->gc = configuracion;
 	this->sdl = sdl;
 	this->SCREEN_WIDTH = gc->escenario->ancho;
@@ -36,10 +38,12 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 
 	this->healthView = NULL;
 	this->scoreView = NULL;
+
 }
 
 Escenario::~Escenario() {
 	resolucion->~Resolucion();
+	delete musica;
 	escenarioCreado = false;
 	delete escenarioScreen;
 	delete myControl;
@@ -119,9 +123,8 @@ void Escenario::configurarFondosVivibles() {
 void Escenario::configurarPowerUps() {
 
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
-
 	if (gc->powerUps.size() <= 0) return;
-
+//	cout << gc->powerUps.size() << " power ups creados" << endl;
 	for (int i = 0; i < gc->powerUps.size(); i++) {
 		string tipo = gc->powerUps[i]->tipo;
 		Posicion* posicion = new Posicion(gc->powerUps[i]->x, gc->powerUps[i]->y);
@@ -176,10 +179,10 @@ SDL_Event* Escenario::run() {
 	Uint32 start;
 	bool quit = false;
 
-	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
+	thread tPowerUps(&Escenario::getPowerUp, this);
+	tPowerUps.detach();
 
-		thread tPowerUps(&Escenario::getPowerUp, this);
-		tPowerUps.detach();
+	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
 		while (!quit && this->unCliente->isConnected()) {
 
@@ -239,6 +242,8 @@ SDL_Event* Escenario::run() {
 
 			if (isFinNivel(numeroNivel)) {
 				// Send player score
+				musica->fadeOut(4000);
+
 				PlayerScore* playerScore = new PlayerScore;
 				strcpy( playerScore->name, this->player->getName().c_str() );
 				strcpy( playerScore->color, this->player->getColor().c_str() );
@@ -258,6 +263,9 @@ SDL_Event* Escenario::run() {
 				this->unCliente->resetClientsPlaying();
 
 				this->loadSinglePlayerScoreScreen( numeroNivel );
+				delete musica;
+				musica = new Music("musicaDeFondo.mp3");
+				musica->play();
 				break;
 			} else {
 
@@ -282,7 +290,7 @@ SDL_Event* Escenario::run() {
 
 void Escenario::verificarEstacionamiento(int numeroNivel) {
 	Avion* avion = (Avion*)myControl->getVivible();
-	if (!avion->estaEstacionando() && (pixelesRecorridos + 200) >= LONGITUD_NIVEL * numeroNivel) {
+	if (!avion->estaEstacionando() && (pixelesRecorridos + 400) >= LONGITUD_NIVEL * numeroNivel) {
 		cout << "verificar estacionamiento" << endl;
 		avion->inicializoEstacionar();
 		Evento* e;
@@ -502,11 +510,14 @@ void Escenario::loadWaitForPlayersScreen() {
 }
 
 void Escenario::getPowerUp() {
+	int offset = 25; //TODO: Hardcodeo para hacer mas preciso la toma de power ups
+//	Sound* soundGetPowerUp = new Sound("getPowerUp.wav");
 	while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
+		usleep(1);
 		Vivible* avion = myControl->getVivible();
 		if (avion->tieneHP()) {
 			int x = avion->getX();
-			int y = avion->getY();
+			int y = avion->getY() - offset;
 			int xp = x + avion->getAncho();
 			int yp = y + avion->getLargo();
 			for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
@@ -517,6 +528,8 @@ void Escenario::getPowerUp() {
 				int yp2 = y2 + it->second->getLargo();
 				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
 				if (touched) {
+//					soundGetPowerUp->play();
+					usleep(1000);
 					it->second->activarPowerUp();
 					delete it->second;
 					hPowerUp->mapaPowerUp.erase(it);
@@ -524,4 +537,5 @@ void Escenario::getPowerUp() {
 			}
 		}
 	}
+//	delete soundGetPowerUp;
 }
