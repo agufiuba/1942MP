@@ -204,6 +204,10 @@ SDL_Event* Escenario::run() {
 
 				if( evento.type == SDL_KEYDOWN ) {
 					if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
+					  // reset client score on game reset
+					  if( evento.key.keysym.sym == SDLK_r ) {
+					    this->unCliente->requestScoreReset();
+					  }
 						quit = true;
 
 						PlayerData* p = new PlayerData();
