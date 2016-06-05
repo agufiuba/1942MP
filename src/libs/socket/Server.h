@@ -55,7 +55,8 @@ class Server {
     void updatePlayerStatus( PlayerStatus* data, int clientFD );
     void sendPlanesActives(int cfd);
     void sendConf(int);
-    void sendScoreData( PlayerScore* data );
+    void addScoreToPlayer( PlayerScore* data );
+    void sendScoreToPlayers();
     void createPlayers();
     void queryCurrentStageOffset();
     void sendCurrentStageOffset( int clientFD );

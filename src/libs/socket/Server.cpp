@@ -504,8 +504,8 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "SP" ) {
 	  PlayerScore* data = new PlayerScore;
 	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
-	    // Process received data
-	    this->sendScoreData( data );
+	    // add score to corresponding player 
+	    this->addScoreToPlayer( data );
 	  }
 	  delete data;
 	} else if( dataID == "PQ" ) {
@@ -675,19 +675,49 @@ void Server::closeConnection() {
   DEBUG_WARN( SERVER_DISCONNECT );
 }
 
-void Server::sendScoreData( PlayerScore* data ) {
+void Server::addScoreToPlayer( PlayerScore* data ) {
   for ( map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end();
 	++it ) {
-    Transmitter* tmt = new Transmitter( it->first, this->logger ); 
-    tmt->sendData( data );
-    delete tmt;
+    if ( it->second->getName() == string( data->name ) ) {
+      it->second->addScore( data->score );
+      break;
+    }
+  }
+
+  delete data;
+}
+
+void Server::sendScoreToPlayers() {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    Player* player = it->second;
+    // create player score data
+    PlayerScore* ps = new PlayerScore;
+    strcpy( ps->name, ( player->getName() ).c_str() );
+    strcpy( ps->color, ( player->getColor() ).c_str() );
+    ps->score = player->getScore();
+    ps->team = player->getTeam();
+
+    // send player score data to all players
+    for ( map<int, Player*>::iterator it2 = this->players.begin();
+	  it2 != this->players.end();
+	  ++it2 ) {
+      // don't send data to inactive players
+      if ( !( it2->second->isActive() ) ) continue;
+
+      Transmitter* tmt = new Transmitter( it2->first, this->logger );
+      tmt->sendData( ps );
+      delete tmt;
+    }
+    delete ps;
   }
 }
 
 void Server::sendActivePlayers( int clientFD ) {
   ActivePlayers* data = new ActivePlayers;
-  data->playerCount = this->clientCount;
+  data->playerCount = this->players.size();
 
   Transmitter* tmt = new Transmitter( clientFD, this->logger );
   tmt->sendData( data );
