@@ -504,8 +504,8 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "SP" ) {
 	  PlayerScore* data = new PlayerScore;
 	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
-	    // Process received data
-	    this->sendScoreData( data );
+	    // add score to corresponding player 
+	    this->addScoreToPlayer( data );
 	  }
 	  delete data;
 	} else if( dataID == "PQ" ) {
@@ -518,6 +518,12 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	    this->sendStageReadySignal();
 	    this->readyPlayers = 0;
 	  }
+	} else if( dataID == "ST" ) {
+	  // send score table
+	  this->sendScoreTable( cfd );
+	} else if( dataID == "RS" ) {
+	  // reset score
+	  this->players[ cfd ]->resetScore();
 	}
 
       }
@@ -675,19 +681,42 @@ void Server::closeConnection() {
   DEBUG_WARN( SERVER_DISCONNECT );
 }
 
-void Server::sendScoreData( PlayerScore* data ) {
+void Server::addScoreToPlayer( PlayerScore* data ) {
   for ( map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end();
 	++it ) {
-    Transmitter* tmt = new Transmitter( it->first, this->logger ); 
-    tmt->sendData( data );
-    delete tmt;
+    if ( it->second->getName() == string( data->name ) ) {
+      it->second->addScore( data->score );
+      break;
+    }
   }
+}
+
+void Server::sendScoreTable( int clientFD ) {
+  Transmitter* tmt = new Transmitter( clientFD, this->logger );
+
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    Player* player = it->second;
+    // create player score data
+    PlayerScore* ps = new PlayerScore;
+    strcpy( ps->name, ( player->getName() ).c_str() );
+    strcpy( ps->color, ( player->getColor() ).c_str() );
+    ps->score = player->getScore();
+    ps->team = player->getTeam();
+
+    // send score data
+    tmt->sendData( ps );
+    delete ps;
+  }
+
+  delete tmt;
 }
 
 void Server::sendActivePlayers( int clientFD ) {
   ActivePlayers* data = new ActivePlayers;
-  data->playerCount = this->clientCount;
+  data->playerCount = this->players.size();
 
   Transmitter* tmt = new Transmitter( clientFD, this->logger );
   tmt->sendData( data );

@@ -377,11 +377,11 @@ bool Client::sendData(PlayerData* data) {
 	return tmt->sendData(data);
 }
 
-bool Client::sendScore(PlayerScore* data) {
+bool Client::sendScore( PlayerScore* data ) {
 	this->received = false;
 	bool sent;
 	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
-	sent = tmt->sendData(data);
+	sent = tmt->sendData( data );
 
 	delete tmt;
 	return sent;
@@ -416,11 +416,13 @@ void Client::resetClientsPlaying() {
 	this->clientsPlaying = 0;
 }
 
-void Client::requestClientsPlaying() {
+void Client::requestScoreTable() {
 	this->received = false;
 	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
-	tmt->sendDataID("PQ");
-
+	// request score table
+	tmt->sendDataID( "ST" );
+	// request clients playing
+	tmt->sendDataID( "PQ" );
 	delete tmt;
 }
 
@@ -543,5 +545,25 @@ void Client::sendStageClearReady() {
   this->stageClearReady = false;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendDataID( "RR" );
+  delete tmt;
+}
+
+void Client::addScoreToPlayer( Player* player, int score ) {
+  // add score to player
+  player->addScore( score );
+
+  // create score data
+  PlayerScore* ps = new PlayerScore;
+  strcpy( ps->name, ( player->getName() ).c_str() );
+  ps->score = score;
+
+  // send score data to server
+  this->sendScore( ps );
+  delete ps;
+}
+
+void Client::requestScoreReset() {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendDataID( "RS" );
   delete tmt;
 }

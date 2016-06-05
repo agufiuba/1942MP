@@ -20,6 +20,7 @@ class Player {
     string getColor();
     int getScore();
     void addScore( int score );
+    void resetScore();
     int getX();
     int getY();
     int getTeam();
