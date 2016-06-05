@@ -61,6 +61,7 @@ class Client {
     bool sendData( Evento* e );
     bool allPlayersReady();
     bool sendPlayerDisconnection();
+    bool sendPlayerDeath();
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
     vector<PlayerData*> getPlayers();
     vector<PlayerScore*> getPlayersScoreData();

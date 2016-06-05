@@ -243,6 +243,7 @@ SDL_Event* Escenario::run() {
 						avion->recibirMisil(disparoEnemigo);
 						this->player->takeHit();
 						if( !( this->player->isAlive() ) ) {
+						  this->unCliente->sendPlayerDeath();
 						  this->loadGameOverScreen();
 						}
 					}
@@ -636,7 +637,7 @@ void Escenario::loadWaitForPlayersScreen() {
     while (this->sdl->nextEvent(&e)) {
       if (e.type == SDL_QUIT) {
 	runningScreen = false;
-	break;
+	exit(0);
       } 
     }
     // Set window background

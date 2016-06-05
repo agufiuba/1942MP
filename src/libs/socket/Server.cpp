@@ -156,8 +156,10 @@ void* Server::getInAddr( struct sockaddr* sa ) {
 }
 
 void Server::updatePlayerStatus( PlayerStatus* data, int cfd ) {
-  if( data->status == 'D' ) {
+  if( data->status == 'I' ) {
     this->players[ cfd ]->deactivate();
+  } else if ( data->status == 'D' ) {
+    this->players[ cfd ]->die();
   }
 }
 
@@ -514,7 +516,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "RR" ) {
 	  // increment player ready count
 	  this->readyPlayers++; 
-	  if ( this->readyPlayers == this->clientCount ) {
+	  if ( this->readyPlayers == this->getActivePlayersCount() ) {
 	    this->sendStageReadySignal();
 	    this->readyPlayers = 0;
 	  }
@@ -733,4 +735,19 @@ void Server::sendStageReadySignal() {
     tmt->sendDataID( "RR" );
     delete tmt;
   }
+}
+
+int Server::getActivePlayersCount() {
+  int playerCount = 0; 
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    Player* player = it->second;
+    // if player is connected and alive
+    if ( player->isActive() && player->isAlive() ) {
+      playerCount++;
+    }
+  }
+
+  return playerCount;
 }
