@@ -480,6 +480,9 @@ void Escenario::loadGameOverScreen() {
   // Load max score ribbon
   scoreScreen->loadTexture( "topScore", "topScore.bmp" );
 
+  // Load skull image
+  scoreScreen->loadTexture( "skull", "skull.bmp" );
+
   // Load text
   scoreScreen->loadText( "gameOver", gameOverText, { 53, 167, 84, 255 } );
   scoreScreen->loadText( "scoreText", scoreHeaderText, { 255, 0, 0, 255 } );
@@ -562,6 +565,8 @@ void Escenario::loadGameOverScreen() {
 
     // Render text textures
     scoreScreen->renderTexture( "gameOver", gameOverTextCenter, topPadding );
+    scoreScreen->renderTexture( "skull", gameOverTextCenter - scoreScreen->getTextureWidth( "skull" ) - 15, topPadding );
+    scoreScreen->renderTexture( "skull", gameOverTextCenter + scoreScreen->getTextWidth( gameOverText ) + 15, topPadding );
     scoreScreen->renderTexture( "scoreText", scoreTextCenter, topPadding + gap * 2 );
     scoreScreen->renderTexture( "nameHeader", nameHeaderCenter, topPadding + gap * 4 );
     scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
