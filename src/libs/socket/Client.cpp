@@ -344,7 +344,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				}
 				delete data;
 			} else if ( dataID == "RR" ) {
-			  cout << "LLEGO STAGE READY SIGNAL";
 			  this->stageClearReady = true;
 			}
 		}
