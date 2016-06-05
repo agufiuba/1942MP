@@ -9,6 +9,7 @@
 #include "../../xml/conf/GameConf.h"
 #include "../../xml/conf/ClientConf.h"
 #include "../../game/events/Events.cpp"
+#include "../../game/model/Player.h"
 #include "../../game/controller/HandlerPlayersControllers.h"
 #include <vector>
 #include <stdio.h>
@@ -79,5 +80,6 @@ class Client {
     void resetClientsPlaying();
     void sendStageClearReady();
     bool stageClearReady;
+    void addScoreToPlayer( Player* player, int score );
 };
 #endif

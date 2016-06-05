@@ -377,11 +377,11 @@ bool Client::sendData(PlayerData* data) {
 	return tmt->sendData(data);
 }
 
-bool Client::sendScore(PlayerScore* data) {
+bool Client::sendScore( PlayerScore* data ) {
 	this->received = false;
 	bool sent;
 	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
-	sent = tmt->sendData(data);
+	sent = tmt->sendData( data );
 
 	delete tmt;
 	return sent;
@@ -544,4 +544,18 @@ void Client::sendStageClearReady() {
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendDataID( "RR" );
   delete tmt;
+}
+
+void Client::addScoreToPlayer( Player* player, int score ) {
+  // add score to player
+  player->addScore( score );
+
+  // create score data
+  PlayerScore* ps = new PlayerScore;
+  strcpy( ps->name, ( player->getName() ).c_str() );
+  ps->score = score;
+
+  // send score data to server
+  this->sendScore( ps );
+  delete ps;
 }
