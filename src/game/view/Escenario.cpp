@@ -119,9 +119,8 @@ void Escenario::configurarFondosVivibles() {
 void Escenario::configurarPowerUps() {
 
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
-
 	if (gc->powerUps.size() <= 0) return;
-
+	cout << gc->powerUps.size() << " power ups creados" << endl;
 	for (int i = 0; i < gc->powerUps.size(); i++) {
 		string tipo = gc->powerUps[i]->tipo;
 		Posicion* posicion = new Posicion(gc->powerUps[i]->x, gc->powerUps[i]->y);
@@ -176,10 +175,11 @@ SDL_Event* Escenario::run() {
 	Uint32 start;
 	bool quit = false;
 
+	thread tPowerUps(&Escenario::getPowerUp, this);
+	tPowerUps.detach();
+
 	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
-		thread tPowerUps(&Escenario::getPowerUp, this);
-		tPowerUps.detach();
 
 		while (!quit && this->unCliente->isConnected()) {
 
@@ -454,6 +454,7 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
 
 void Escenario::getPowerUp() {
 	while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
+		usleep(1);
 		Vivible* avion = myControl->getVivible();
 		if (avion->tieneHP()) {
 			int x = avion->getX();
