@@ -42,6 +42,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 }
 
 Escenario::~Escenario() {
+	delete this->player;
 	resolucion->~Resolucion();
 	delete musica;
 	escenarioCreado = false;
