@@ -434,6 +434,7 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
       if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
 	  && ( mouseY > 600 ) && ( mouseY < ( 600 + 50 ) ) ) {
 	runningScreen = false;
+	this->loadWaitForPlayersScreen();
 	break;
       }
     }
@@ -450,6 +451,50 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
   //Disable text input
   SDL_StopTextInput();
   delete scoreScreen;
+}
+
+void Escenario::loadWaitForPlayersScreen() {
+  bool runningScreen = true;
+  SDL_Event e;
+  Timer timer;
+  int fps = 10;
+  string waitingText = "Esperando Jugadores...";
+  Screen* waitingScreen = new Screen( this->sdl );
+  waitingScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
+  waitingScreen->loadText( "waiting", waitingText, { 255, 255, 255, 255 } );
+
+  int logoCenter = waitingScreen->getTextureCenter( "logo" );
+  int waitingCenter = waitingScreen->getTextCenter( waitingText );
+
+  // Enable text input
+  SDL_StartTextInput();
+
+  while( runningScreen ) {
+    timer.correr();
+    while (this->sdl->nextEvent(&e)) {
+      if (e.type == SDL_QUIT) {
+	runningScreen = false;
+	break;
+      } 
+    }
+    // Set window background
+    this->sdl->setWindowBG(0, 0, 0);
+  
+    // Render logo
+    waitingScreen->renderTexture( "logo", logoCenter, 90 );
+    waitingScreen->renderTexture( "waiting", waitingCenter, 300 );
+    
+    //Update screen
+    this->sdl->updateWindow();
+
+    if( timer.tiempoActual() < 1000 / fps ){
+      SDL_Delay( ( 1000 / fps ) - timer.tiempoActual() );
+    }
+  }
+
+  //Disable text input
+  SDL_StopTextInput();
+  delete waitingScreen;
 }
 
 void Escenario::getPowerUp() {

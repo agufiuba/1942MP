@@ -85,6 +85,7 @@ private:
 	void limpiarFondosVivibles();
 	bool isFinNivel(int numeroNivel);
 	void loadSinglePlayerScoreScreen( int stage );
+	void loadWaitForPlayersScreen();
 	void verificarEstacionamiento(int numeroNivel);
 	void getPowerUp();
 
