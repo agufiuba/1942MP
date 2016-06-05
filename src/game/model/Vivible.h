@@ -14,6 +14,7 @@ using namespace std;
 
 class Vivible{
 	public:
+	   bool viviendo;
 	   virtual ~Vivible(){};
 	   virtual void vivir(int x, int y){};
 	   virtual int getAncho(){return 0;};
@@ -39,6 +40,9 @@ class Vivible{
 	   virtual void setAmetralladora() {};
 
 	   virtual bool estaEstacionando(){return true;};
+
+	int posX;
+	int posY;
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */

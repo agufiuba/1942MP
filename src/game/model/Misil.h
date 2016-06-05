@@ -24,7 +24,6 @@ private:
 	int dano;
 	MisilView* vistaMisil;
 	Posicion* posicion;
-	bool viviendo;
 	Sound* sonido;
 
 	Timer* t;

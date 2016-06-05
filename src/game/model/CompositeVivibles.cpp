@@ -29,11 +29,11 @@ void CompositeVivibles::vivir(int x, int y){
 			eliminar = var;
 		}
 	}
-	if (eliminar >= 0 ){
-		Vivible* objEliminar = vectorObjetos[eliminar];
-		delete objEliminar;
-		vectorObjetos.erase(vectorObjetos.begin()+eliminar);
-	}
+	// if (eliminar >= 0 ){
+	// 	Vivible* objEliminar = vectorObjetos[eliminar];
+	// 	delete objEliminar;
+	// 	vectorObjetos.erase(vectorObjetos.begin()+eliminar);
+	// }
 }
 
 void CompositeVivibles::agregarObjetoVivible(Vivible* &unObj){

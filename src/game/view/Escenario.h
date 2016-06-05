@@ -71,7 +71,7 @@ private:
 
 	string DIR_FONDO_PANTALLA;
 
-	IController* myControl;
+	Controller* myControl;
 	HandlerPlayersControllers* controllers;
 	HandlerPowerUp* hPowerUp;
 
@@ -95,6 +95,7 @@ private:
 	void verificarEstacionamiento(int numeroNivel);
 	void getPowerUp();
 	void loadScoreData();
+	void hitEnemy();
 	bool escenarioCreado;
 
 public:
