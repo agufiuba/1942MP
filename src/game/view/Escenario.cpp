@@ -636,7 +636,7 @@ void Escenario::loadWaitForPlayersScreen() {
     while (this->sdl->nextEvent(&e)) {
       if (e.type == SDL_QUIT) {
 	runningScreen = false;
-	break;
+	exit(0);
       } 
     }
     // Set window background
