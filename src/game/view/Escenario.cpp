@@ -12,8 +12,10 @@
 using namespace std;
 
 Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
+
 	musica = new Music("musicaDeFondo.mp3");
 	musica->play();
+
 	this->gc = configuracion;
 	this->sdl = sdl;
 	this->SCREEN_WIDTH = gc->escenario->ancho;
@@ -36,10 +38,12 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 
 	this->healthView = NULL;
 	this->scoreView = NULL;
+
 }
 
 Escenario::~Escenario() {
 	resolucion->~Resolucion();
+	delete musica;
 	escenarioCreado = false;
 	delete escenarioScreen;
 	delete myControl;
@@ -120,7 +124,7 @@ void Escenario::configurarPowerUps() {
 
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
 	if (gc->powerUps.size() <= 0) return;
-	cout << gc->powerUps.size() << " power ups creados" << endl;
+//	cout << gc->powerUps.size() << " power ups creados" << endl;
 	for (int i = 0; i < gc->powerUps.size(); i++) {
 		string tipo = gc->powerUps[i]->tipo;
 		Posicion* posicion = new Posicion(gc->powerUps[i]->x, gc->powerUps[i]->y);
@@ -180,7 +184,6 @@ SDL_Event* Escenario::run() {
 
 	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
-
 		while (!quit && this->unCliente->isConnected()) {
 
 			start = SDL_GetTicks();
@@ -239,6 +242,8 @@ SDL_Event* Escenario::run() {
 
 			if (isFinNivel(numeroNivel)) {
 				// Send player score
+				musica->fadeOut(4000);
+
 				PlayerScore* playerScore = new PlayerScore;
 				strcpy( playerScore->name, this->player->getName().c_str() );
 				strcpy( playerScore->color, this->player->getColor().c_str() );
@@ -258,6 +263,9 @@ SDL_Event* Escenario::run() {
 				this->unCliente->resetClientsPlaying();
 
 				this->loadSinglePlayerScoreScreen( numeroNivel );
+				delete musica;
+				musica = new Music("musicaDeFondo.mp3");
+				musica->play();
 				break;
 			} else {
 
@@ -282,7 +290,7 @@ SDL_Event* Escenario::run() {
 
 void Escenario::verificarEstacionamiento(int numeroNivel) {
 	Avion* avion = (Avion*)myControl->getVivible();
-	if (!avion->estaEstacionando() && (pixelesRecorridos + 200) >= LONGITUD_NIVEL * numeroNivel) {
+	if (!avion->estaEstacionando() && (pixelesRecorridos + 400) >= LONGITUD_NIVEL * numeroNivel) {
 		cout << "verificar estacionamiento" << endl;
 		avion->inicializoEstacionar();
 		Evento* e;
