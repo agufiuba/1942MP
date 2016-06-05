@@ -29,6 +29,10 @@ void Player::addScore( int score ) {
   this->score += score;
 }
 
+void Player::resetScore() {
+  this->score = 0;
+}
+
 int Player::getX() {
   return this->x;
 }
