@@ -12,10 +12,8 @@
 using namespace std;
 
 Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
-
 	musica = new Music("musicaDeFondo.mp3");
 	musica->play();
-
 	this->gc = configuracion;
 	this->sdl = sdl;
 	this->SCREEN_WIDTH = gc->escenario->ancho;
@@ -60,6 +58,9 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir();
+	}
+	for (int i=0; i < enemigos.size(); i++) {
+		enemigos[i]->vivir(1, 1);
 	}
 
 	controllers->hacerVivir();
@@ -162,7 +163,6 @@ void Escenario::configurarFondosVivibles() {
 }
 
 void Escenario::configurarPowerUps() {
-
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
 	if (gc->powerUps.size() <= 0) return;
 //	cout << gc->powerUps.size() << " power ups creados" << endl;
@@ -171,7 +171,6 @@ void Escenario::configurarPowerUps() {
 		Posicion* posicion = new Posicion(gc->powerUps[i]->x, gc->powerUps[i]->y);
 		hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, posicion, this->unCliente, player, myControl, tipo, to_string(i)));
 	}
-
 }
 
 HandlerPlayersControllers* Escenario::getHandler() {
@@ -197,6 +196,11 @@ void Escenario::setFondosVivibles(int x, int y) {
 }
 
 SDL_Event* Escenario::run() {
+	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
+	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
+  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente, player, myControl, "Shot", "1"));
+  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), this->unCliente, player, myControl, "Destroy", "2"));
+  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), this->unCliente, player, myControl, "Bonus", "3"));
 
 	pixelesRecorridos = 0;
 
@@ -205,6 +209,7 @@ SDL_Event* Escenario::run() {
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
+  	crearEnemigo();
 
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
 	if (!this->unCliente->reinicia) {
@@ -224,6 +229,9 @@ SDL_Event* Escenario::run() {
 	tPowerUps.detach();
 
 	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
+
+		thread tPowerUps(&Escenario::getPowerUp, this);
+		tPowerUps.detach();
 
 		while (!quit && this->unCliente->isConnected()) {
 
@@ -733,6 +741,16 @@ void Escenario::getPowerUp() {
 		}
 	}
 //	delete soundGetPowerUp;
+}
+
+void Escenario::crearEnemigo() {
+	// int x_gc = gc->elementos[i]->x;
+	// int y_gc = gc->elementos[i]->y;
+	int index = GameParser::findSprite(gc->sprites,"avionVerde.bmp");
+	Posicion* p = new Posicion(300, 400);
+	// string jString  = to_string(j);
+	Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
+	enemigos.push_back(e);
 }
 
 void Escenario::loadScoreData() {

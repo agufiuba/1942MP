@@ -17,6 +17,7 @@
 #include "../model/Resolucion.h"
 #include "../model/Posicion.h"
 #include "../model/Avion.h"
+#include "../model/Enemy.h"
 #include "../model/Vivible.h"
 #include "../controller/IController.h"
 #include "../controller/Controller.h"
@@ -75,6 +76,7 @@ private:
 	HandlerPowerUp* hPowerUp;
 
 	vector<Isla*> fondosVivibles;
+	vector<Enemy*> enemigos;
 
 	GameConf* gc;
 	Client* unCliente;
@@ -104,7 +106,7 @@ public:
 	void setPlayer(Player* player);
 	void configurarAvionAmigo(PlayerData* playerData);
 	void configurarMiAvion(PlayerData* playerData);
-
+	void crearEnemigo();
 };
 
 #endif /* ESCENARIO_H_ */

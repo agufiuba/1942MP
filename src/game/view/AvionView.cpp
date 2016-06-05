@@ -1,5 +1,7 @@
 #include "AvionView.h"
 
+#include <math.h>
+
 using namespace std;
 
 void AvionView::ametralladora(){
@@ -136,6 +138,21 @@ void AvionView::mostrar( int x, int y, int velX){
   	currentClip = &clipsDerecha[ frame ];
   }
   vistaAvionTexture->render( x, y, currentClip );
+}
+
+void AvionView::mostrarRotado( int x, int y, int velX, int velY){
+  bool izquierda = true;
+  int frame = 0;
+  SDL_Rect* currentClip = &clipsIzquierda[0];
+  if(velX == 0 && velY == 0) {
+  	velY = -1;
+  	velX = 0;
+  }
+  double mod = pow(velX * velX + velY * velY, 0.5);
+  double angle = asin(velY / mod);
+  angle = angle * 180 / M_PI;
+  if (velX < 0) angle  = 180 - angle;
+  vistaAvionTexture->renderWithAngle( x, y, currentClip, 90 - angle);
 }
 
 void AvionView::mostrarVueltereta(int x, int y, int frame){
