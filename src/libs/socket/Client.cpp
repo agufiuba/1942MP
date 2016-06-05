@@ -431,6 +431,21 @@ bool Client::sendPlayerDisconnection() {
 	bool recvStatus;
 	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
 	PlayerStatus* data = new PlayerStatus;
+	data->status = 'I';
+	// Send player status to server
+	recvStatus = tmt->sendData(data);
+
+	delete tmt;
+	delete data;
+
+	return recvStatus;
+}
+
+bool Client::sendPlayerDeath() {
+	this->received = false;
+	bool recvStatus;
+	Transmitter* tmt = new Transmitter(this->socketFD, this->logger);
+	PlayerStatus* data = new PlayerStatus;
 	data->status = 'D';
 	// Send player status to server
 	recvStatus = tmt->sendData(data);

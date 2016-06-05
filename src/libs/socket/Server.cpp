@@ -156,8 +156,10 @@ void* Server::getInAddr( struct sockaddr* sa ) {
 }
 
 void Server::updatePlayerStatus( PlayerStatus* data, int cfd ) {
-  if( data->status == 'D' ) {
+  if( data->status == 'I' ) {
     this->players[ cfd ]->deactivate();
+  } else if ( data->status == 'D' ) {
+    this->players[ cfd ]->die();
   }
 }
 
