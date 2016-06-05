@@ -62,6 +62,7 @@ class Server {
     void sendCurrentStageOffset( int clientFD );
     void removeAllPlayers();
     void sendActivePlayers( int clientFD );
+    int getActivePlayersCount();
     void sendStageReadySignal();
 
   public:
