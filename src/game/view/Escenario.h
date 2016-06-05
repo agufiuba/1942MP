@@ -86,9 +86,10 @@ private:
 	bool isFinNivel(int numeroNivel);
 	void loadSinglePlayerScoreScreen( int stage );
 	void loadWaitForPlayersScreen();
+	void loadGameOverScreen();
 	void verificarEstacionamiento(int numeroNivel);
 	void getPowerUp();
-
+	void loadScoreData();
 	bool escenarioCreado;
 
 public:
