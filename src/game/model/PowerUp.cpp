@@ -29,6 +29,8 @@ PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* pos
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
 
+	soundGetPowerUp = new Sound("getPowerUp.wav");
+
 }
 
 PowerUp::~PowerUp() {
@@ -106,6 +108,7 @@ bool PowerUp::aunVive(){
 }
 
 void PowerUp::activarPowerUp() {
+	soundGetPowerUp->play();
 	Evento* e;
 	CompanionEvent* ce = new CompanionEvent();
 	Vivible* obj = control->getVivible();

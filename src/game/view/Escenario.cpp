@@ -462,6 +462,7 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
 
 void Escenario::getPowerUp() {
 	int offset = 25; //TODO: Hardcodeo para hacer mas preciso la toma de power ups
+//	Sound* soundGetPowerUp = new Sound("getPowerUp.wav");
 	while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
 		usleep(1);
 		Vivible* avion = myControl->getVivible();
@@ -478,6 +479,8 @@ void Escenario::getPowerUp() {
 				int yp2 = y2 + it->second->getLargo();
 				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
 				if (touched) {
+//					soundGetPowerUp->play();
+					usleep(1000);
 					it->second->activarPowerUp();
 					delete it->second;
 					hPowerUp->mapaPowerUp.erase(it);
@@ -485,4 +488,5 @@ void Escenario::getPowerUp() {
 			}
 		}
 	}
+//	delete soundGetPowerUp;
 }
