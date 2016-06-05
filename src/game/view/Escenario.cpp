@@ -188,6 +188,9 @@ SDL_Event* Escenario::run() {
 
 			start = SDL_GetTicks();
 
+			// TODO: remove when adding score via game events, testing purposes only
+			this->unCliente->addScoreToPlayer( this->player, 1 );	
+			
 			if (this->unCliente->reset) {
 				SDL_Event* eventReset = new SDL_Event();
 				eventReset->key.keysym.sym = SDLK_r;
@@ -243,18 +246,10 @@ SDL_Event* Escenario::run() {
 			if (isFinNivel(numeroNivel)) {
 				// Send player score
 				musica->fadeOut(4000);
-
-				PlayerScore* playerScore = new PlayerScore;
-				strcpy( playerScore->name, this->player->getName().c_str() );
-				strcpy( playerScore->color, this->player->getColor().c_str() );
-				playerScore->score = this->player->getScore();
-				playerScore->team = this->player->getTeam();
-
-				this->unCliente->sendScore( playerScore );
-				delete playerScore;
+	    
 
 				// Request clients playing
-				this->unCliente->requestClientsPlaying();
+				this->unCliente->requestScoreTable();
 				// wait for clients playing
 				while( this->unCliente->getClientsPlaying() == 0 );
 
