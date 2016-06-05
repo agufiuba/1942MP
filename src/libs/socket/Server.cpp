@@ -19,6 +19,7 @@ Server::Server( const char* configFileName ) {
   this->config = GameParser::parse("gameconf.xml");
   this->socketFD = 0;
   this->clientCount = 0;
+  this->readyPlayers = 0;
   this->maxClientCount = this->config->maxClients;
   this->listening = false;
   this->connected = false;
@@ -510,6 +511,13 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "PQ" ) {
 	  // send active players count
 	  this->sendActivePlayers( cfd );
+	} else if( dataID == "RR" ) {
+	  // increment player ready count
+	  this->readyPlayers++; 
+	  if ( this->readyPlayers == this->clientCount ) {
+	    this->sendStageReadySignal();
+	    this->readyPlayers = 0;
+	  }
 	}
 
       }
@@ -686,4 +694,14 @@ void Server::sendActivePlayers( int clientFD ) {
 
   delete tmt;
   delete data;
+}
+
+void Server::sendStageReadySignal() {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    Transmitter* tmt = new Transmitter( it->first, this->logger ); 
+    tmt->sendDataID( "RR" );
+    delete tmt;
+  }
 }

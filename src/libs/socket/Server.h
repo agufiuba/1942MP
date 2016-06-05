@@ -21,6 +21,7 @@ class Server {
     int socketFD;
     int clientCount;
     int maxClientCount;
+    int readyPlayers;
     bool listening;
     bool connected;
     bool allowConnections;
@@ -60,6 +61,7 @@ class Server {
     void sendCurrentStageOffset( int clientFD );
     void removeAllPlayers();
     void sendActivePlayers( int clientFD );
+    void sendStageReadySignal();
 
   public:
     Server( const char* configFileName );

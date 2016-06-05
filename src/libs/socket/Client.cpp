@@ -20,6 +20,7 @@ Client::Client(const char* configFileName) {
 	this->config = new GameConf;
 	this->stageOffset = 0;
 	this->clientsPlaying = 0;
+	this->stageClearReady = false;
 }
 
 Client::Client(string ip, string puerto) {
@@ -33,6 +34,7 @@ Client::Client(string ip, string puerto) {
 	this->config = new GameConf;
 	this->stageOffset = 0;
 	this->clientsPlaying = 0;
+	this->stageClearReady = false;
 }
 
 Client::Client(string ip, string puerto,
@@ -48,6 +50,7 @@ Client::Client(string ip, string puerto,
 	this->config = new GameConf;
 	this->stageOffset = 0;
 	this->clientsPlaying = 0;
+	this->stageClearReady = false;
 }
 
 Client::~Client() {
@@ -340,6 +343,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					this->clientsPlaying = data->playerCount;
 				}
 				delete data;
+			} else if ( dataID == "RR" ) {
+			  this->stageClearReady = true;
 			}
 		}
 
@@ -532,4 +537,11 @@ bool Client::isConnected() {
 
 void Client::resetScores() {
 	this->playersScoreData.clear();
+}
+
+void Client::sendStageClearReady() {
+  this->stageClearReady = false;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendDataID( "RR" );
+  delete tmt;
 }

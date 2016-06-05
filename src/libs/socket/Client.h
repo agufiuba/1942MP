@@ -77,5 +77,7 @@ class Client {
     void requestClientsPlaying();
     int getClientsPlaying();
     void resetClientsPlaying();
+    void sendStageClearReady();
+    bool stageClearReady;
 };
 #endif
