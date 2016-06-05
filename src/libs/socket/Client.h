@@ -81,5 +81,6 @@ class Client {
     void sendStageClearReady();
     bool stageClearReady;
     void addScoreToPlayer( Player* player, int score );
+    void requestScoreReset();
 };
 #endif

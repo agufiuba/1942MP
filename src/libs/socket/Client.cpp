@@ -561,3 +561,9 @@ void Client::addScoreToPlayer( Player* player, int score ) {
   this->sendScore( ps );
   delete ps;
 }
+
+void Client::requestScoreReset() {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendDataID( "RS" );
+  delete tmt;
+}

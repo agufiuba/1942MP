@@ -521,6 +521,9 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "ST" ) {
 	  // send score table
 	  this->sendScoreTable( cfd );
+	} else if( dataID == "RS" ) {
+	  // reset score
+	  this->players[ cfd ]->resetScore();
 	}
 
       }
