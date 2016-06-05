@@ -240,11 +240,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					string color(data->color);
 					bool newPlayer = (name == "Y" && color == "Y");
 					bool resumePlayer = (name == "R" && color == "R");
-					if (newPlayer || resumePlayer) {
-						this->playerOk = true;
-					} else {
-						this->playerOk = false;
-					}
+					this->playerOk = (newPlayer || resumePlayer);
+					this->playerResume = resumePlayer;
 				}
 				delete data;
 
@@ -329,7 +326,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				char data[1];
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
 					int cant = atoi(data);
-					//					cout<<cant<<endl;
 					this->config->maxClients = cant;
 					this->config->elementos = this->elementos;
 					this->config->powerUps = this->powerUps;
