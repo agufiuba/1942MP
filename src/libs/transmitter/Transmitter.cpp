@@ -60,9 +60,9 @@ bool Transmitter::sendData( PlayerData* data ) {
   return true;
 }
 
-bool Transmitter::sendData( PlayerScore* data ) {
+bool Transmitter::sendData( PlayerScore* data, string id ) {
   // Send data id
-  if( !( this->sendDataID( "SP" ) ) ) {
+  if( !( this->sendDataID( id ) ) ) {
     return false;
   }
 

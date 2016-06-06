@@ -28,7 +28,7 @@ class Transmitter {
     ~Transmitter();
     bool sendDataID( string id );
     bool sendData( PlayerData* data );
-    bool sendData( PlayerScore* data );
+    bool sendData( PlayerScore* data, string id = "SP" );
     bool sendData( PlanesActives* data );
     bool sendData( PlayerStatus* data );
     bool sendData( PlayerData* data, string s );
