@@ -21,6 +21,7 @@ Client::Client(const char* configFileName) {
 	this->stageOffset = 0;
 	this->clientsPlaying = 0;
 	this->stageClearReady = false;
+	this->player = NULL;
 }
 
 Client::Client(string ip, string puerto) {
@@ -35,6 +36,7 @@ Client::Client(string ip, string puerto) {
 	this->stageOffset = 0;
 	this->clientsPlaying = 0;
 	this->stageClearReady = false;
+	this->player = NULL;
 }
 
 Client::Client(string ip, string puerto,
@@ -51,6 +53,7 @@ Client::Client(string ip, string puerto,
 	this->stageOffset = 0;
 	this->clientsPlaying = 0;
 	this->stageClearReady = false;
+	this->player = NULL;
 }
 
 Client::~Client() {
@@ -345,6 +348,13 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				delete data;
 			} else if ( dataID == "RR" ) {
 			  this->stageClearReady = true;
+			} else if ( dataID == "GS" ) {
+				PlayerScore* data = new PlayerScore;
+				if ((bytesReceived = tmt->receiveData(data)) > 0) {
+				  // set player score
+				  this->player->addScore( data->score );
+				}
+				delete data;
 			}
 		}
 
@@ -563,9 +573,9 @@ void Client::sendStageClearReady() {
   delete tmt;
 }
 
-void Client::addScoreToPlayer( Player* player, int score ) {
+void Client::addScoreToPlayer( int score ) {
   // add score to player
-  player->addScore( score );
+  this->player->addScore( score );
 
   // create score data
   PlayerScore* ps = new PlayerScore;
@@ -580,5 +590,15 @@ void Client::addScoreToPlayer( Player* player, int score ) {
 void Client::requestScoreReset() {
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendDataID( "RS" );
+  delete tmt;
+}
+
+void Client::setPlayer( Player* player ) {
+  this->player = player;
+}
+
+void Client::requestPlayerScore() {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendDataID( "GS" ); 
   delete tmt;
 }
