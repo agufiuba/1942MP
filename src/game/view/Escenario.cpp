@@ -190,7 +190,7 @@ SDL_Event* Escenario::run() {
 			start = SDL_GetTicks();
 
 			// TODO: remove when adding score via game events, testing purposes only
-			this->unCliente->addScoreToPlayer( this->player, 1 );	
+			this->unCliente->addScoreToPlayer( 1 );	
 			
 			if (this->unCliente->reset) {
 				SDL_Event* eventReset = new SDL_Event();
