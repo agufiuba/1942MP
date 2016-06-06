@@ -62,7 +62,9 @@ void Game::cargarEscenario() {
     }
 
     escenario->setPlayer( this->player );
+    this->unCliente->setPlayer( this->player );
     unCliente->setHandler(escenario->getHandler());
+    this->unCliente->requestPlayerScore();
     exitEven = escenario->run();
     if( !( this->unCliente->isConnected() ) ) {
       this->loadTimeoutScreen();

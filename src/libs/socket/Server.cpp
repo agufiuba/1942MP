@@ -169,6 +169,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	string selectedName(data->name);
 	string selectedColor(data->color);
 	int selectedTeam = data->team;
+	int score = 0;
 	bool createPlayer = true;
 	bool encontrePlayer = false;
 	theMutex.lock();
@@ -184,6 +185,8 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 				// resume player game
 				cout<<"Resume Game"<<endl;
 				selectedColor = it->second->getColor();
+				cout << "RESUME SCORE: " << it->second->getScore() << endl;
+				score = it->second->getScore();
 				posicionInicialX = it->second->getX();
 				posicionInicialY = it->second->getY();
 				delete it->second;
@@ -207,6 +210,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 		// Add new player
 		cout<<"Creo Jugador"<<endl;
 		Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY, selectedTeam);
+		p->addScore( score );
 		theMutex.lock();
 		this->players[cfd] = p;
 		posicionInicialX += 100;
@@ -526,6 +530,9 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "RS" ) {
 	  // reset score
 	  this->players[ cfd ]->resetScore();
+	} else if( dataID == "GS" ) {
+	  // send score to client
+	  this->sendScore( cfd );
 	}
 
       }
@@ -750,4 +757,16 @@ int Server::getActivePlayersCount() {
   }
 
   return playerCount;
+}
+
+void Server::sendScore( int clientFD ) {
+  Player* player = this->players[ clientFD ];
+
+  PlayerScore* ps = new PlayerScore;
+  ps->score = player->getScore();
+
+  Transmitter* tmt = new Transmitter( clientFD, this->logger );
+  tmt->sendData( ps, "GS" );
+  delete tmt;
+  delete ps;
 }

@@ -21,6 +21,7 @@ class Client {
     HandlerPlayersControllers* pc;
     string ip;
     string puerto;
+    Player* player;
     int socketFD;
     bool connected;
     bool received;
@@ -81,7 +82,9 @@ class Client {
     void resetClientsPlaying();
     void sendStageClearReady();
     bool stageClearReady;
-    void addScoreToPlayer( Player* player, int score );
+    void addScoreToPlayer( int score );
+    void requestPlayerScore();
     void requestScoreReset();
+    void setPlayer( Player* player );
 };
 #endif
