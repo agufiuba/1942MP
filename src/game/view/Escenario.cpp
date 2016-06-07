@@ -60,7 +60,7 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 		fondosVivibles[i]->vivir();
 	}
 	for (int i=0; i < enemigos.size(); i++) {
-		enemigos[i]->vivir(1, 1);
+		enemigos[i]->vivirRandom();
 	}
 
 	controllers->hacerVivir();
@@ -757,27 +757,27 @@ void Escenario::crearEnemigo() {
 
 void Escenario::hitEnemy() {
 	while (escenarioCreado) {
-		vector<Vivible*> disparos = myControl->controlDeMisiles->vivibles->vectorObjetos;
-		for (vector<Vivible*>::iterator it = disparos.begin(); it != disparos.end(); it++) {
-			for (vector<Enemy*>::iterator jt = enemigos.begin(); jt != enemigos.end(); jt++) {
-				bool touched = false;
-				int x = (*it)->posX;
-				int xp = x + (*it)->getAncho();
-				int y = (*it)->posY;
-				int yp = y + (*it)->getLargo();
-
-				cout << x << " " << xp << " " << y << " " << yp << endl;
-
-				// if (y > resolucion->getHeightScreen())
-				// 	(*it)->viviendo = false;
-
-				int x2 = (*jt)->getX();
-				int x2p = x2 + (*jt)->getAncho();
-				int y2 = (*jt)->getY();
-				int y2p = y2p + (*jt)->getLargo();
-				// touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-				// if (touched) cout << "chocooo" << endl;
-			}
+		vector<Vivible*>* disparos = &(myControl->controlDeMisiles->vivibles->vectorObjetos);
+		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
+//			for (vector<Enemy*>::iterator jt = enemigos.begin(); jt != enemigos.end(); jt++) {
+//				bool touched = false;
+//				int x = (*it)->posX;
+//				int xp = x + (*it)->getAncho();
+//				int y = (*it)->posY;
+//				int yp = y + (*it)->getLargo();
+//
+//				cout << x << " " << xp << " " << y << " " << yp << endl;
+//
+//				// if (y > resolucion->getHeightScreen())
+//				// 	(*it)->viviendo = false;
+//
+//				int x2 = (*jt)->getX();
+//				int x2p = x2 + (*jt)->getAncho();
+//				int y2 = (*jt)->getY();
+//				int y2p = y2p + (*jt)->getLargo();
+//				// touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+//				// if (touched) cout << "chocooo" << endl;
+//			}
 		}
 	}
 }
