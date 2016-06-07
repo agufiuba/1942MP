@@ -163,6 +163,28 @@ void Enemy::mostrarEstacionar(int frame){
 	vistaAvion->mostrarEstacionar(posicion->getX(),posicion->getYsdl(),frame); //estacionar
 }
 
+void Enemy::vivirRandom(){
+	if (tieneHP()) {
+		if (!viviendo) {
+			this->viviendo = true;
+			vistaAvion->conectar();
+		}
+		moverRandom();
+		mostrar(angleX, angleY);
+	} else {
+		if (vistaAvion != NULL) {
+			delete vistaAvion;
+			vistaAvion = NULL;
+		}
+
+		if (!explosion->exploto()) {
+			posicion->mover(-1, -3);
+			explosion->explotar(posicion);
+		}
+	}
+
+}
+
 void Enemy::vivir(int velX, int velY){
 	if (tieneHP()) {
 		if ((velX != 0 || velY != 0) && !viviendo) {
@@ -170,7 +192,7 @@ void Enemy::vivir(int velX, int velY){
 			vistaAvion->conectar();
 		}
 		if (!realizandoVueltereta) {
-			moverRandom();
+			mover(velX, velY);
 			mostrar(angleX, angleY);
 		} else {
 			realizoVueltereta();

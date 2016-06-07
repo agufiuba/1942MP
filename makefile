@@ -127,7 +127,7 @@ endif
 OBJS = $(COMPILE) $(MODEL) $(VIEW) $(CONTROLLER) $(WINDOWINITIAL) $(XM_SDL) $(CONF) $(XML) $(LOGGER) $(PALETTE) $(TMT) $(RED) $(EVENT) $(UTILS) $(COLISION)
 
 all: $(OBJS)
-	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE)
+	$(CC) $(OBJS) $(COMPILER) $(LINKER) -o $(EXE) -g3 -DDEBUG_ALL -gdwarf-2 -g
 	
 run:
 	./$(EXE) $(p)

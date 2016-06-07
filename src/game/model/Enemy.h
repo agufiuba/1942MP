@@ -66,6 +66,7 @@ public:
 	void inicializoVueltereta();
 
 	void vivir(int velX, int velY);
+	void vivirRandom();
 	bool aunVive();
 	void desconectar();
 
