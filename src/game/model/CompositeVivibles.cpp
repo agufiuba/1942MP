@@ -23,11 +23,13 @@ void CompositeVivibles::vivir(int x, int y){
 	int eliminar = -1;
 	for (int var = 0; var < vectorObjetos.size(); ++var) {
 		Vivible* obj= vectorObjetos[var];
+		obj->theMutex.lock();
 		if(obj->aunVive()){
 			obj->vivir(x,y);
 		} else {
 			eliminar = var;
 		}
+		obj->theMutex.unlock();
 	}
 	// if (eliminar >= 0 ){
 	// 	Vivible* objEliminar = vectorObjetos[eliminar];
@@ -37,5 +39,7 @@ void CompositeVivibles::vivir(int x, int y){
 }
 
 void CompositeVivibles::agregarObjetoVivible(Vivible* &unObj){
+	unObj->theMutex.lock();
 	vectorObjetos.push_back(unObj);
+	unObj->theMutex.unlock();
 }

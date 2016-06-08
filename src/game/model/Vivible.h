@@ -9,6 +9,7 @@
 #define SRC_MODEL_VIVIBLE_H_
 
 #include <string>
+#include <mutex>
 
 using namespace std;
 
@@ -43,6 +44,7 @@ class Vivible{
 
 	int posX;
 	int posY;
+	mutex theMutex;	
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */
