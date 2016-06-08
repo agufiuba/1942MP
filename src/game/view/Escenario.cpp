@@ -490,12 +490,13 @@ void Escenario::hitEnemy() {
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
 //			for (vector<Enemy*>::iterator jt = enemigos.begin(); jt != enemigos.end(); jt++) {
 //				bool touched = false;
-//				int x = (*it)->posX;
-//				int xp = x + (*it)->getAncho();
-//				int y = (*it)->posY;
-//				int yp = y + (*it)->getLargo();
-//
-//				cout << x << " " << xp << " " << y << " " << yp << endl;
+				(*it)->theMutex.lock();
+				int x = (*it)->posX;
+				int xp = x + (*it)->getAncho();
+				int y = (*it)->posY;
+				int yp = y + (*it)->getLargo();
+				(*it)->theMutex.unlock();
+				cout << x << " " << xp << " " << y << " " << yp << endl;
 //
 //				// if (y > resolucion->getHeightScreen())
 //				// 	(*it)->viviendo = false;
