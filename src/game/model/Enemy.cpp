@@ -23,6 +23,7 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 
 	t = new Timer();
 
+        flota = -1;
 	explosion = new ExplosionView("idExplosion", screen, posicion);
 
 /*	inicializoVueltereta();*/

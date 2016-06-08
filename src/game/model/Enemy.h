@@ -42,7 +42,6 @@ private:
 	void mover(int velX, int velY);
 	void moverEjeX(int velX);
 	void moverEjeY(int velY);
-
 	int angleX;
 	int angleY;
 
@@ -85,6 +84,7 @@ public:
 
 	bool hit(int, int);
 	void moverRandom();
+        int flota;
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */

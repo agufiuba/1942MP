@@ -60,7 +60,11 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 		fondosVivibles[i]->vivir();
 	}
 	for (int i=0; i < enemigos.size(); i++) {
-		enemigos[i]->vivirRandom();
+            if (enemigos[i]->flota == -1)
+                enemigos[i]->vivirRandom();
+            else
+                enemigos[i]->vivir(3, 0);
+                
 	}
 
 	controllers->hacerVivir();
@@ -208,7 +212,8 @@ SDL_Event* Escenario::run() {
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
-  	crearEnemigo();
+  	crearEnemigo(300, 400);
+        crearFlota(0, 400);
 
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
 	if (!this->unCliente->reinicia) {
@@ -745,14 +750,19 @@ void Escenario::getPowerUp() {
 //	delete soundGetPowerUp;
 }
 
-void Escenario::crearEnemigo() {
-	// int x_gc = gc->elementos[i]->x;
-	// int y_gc = gc->elementos[i]->y;
-	int index = GameParser::findSprite(gc->sprites,"avionVerde.bmp");
-	Posicion* p = new Posicion(300, 400);
-	// string jString  = to_string(j);
+void Escenario::crearEnemigo(int x, int y) {
+	Posicion* p = new Posicion(x, y);
 	Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
 	enemigos.push_back(e);
+}
+
+void Escenario::crearFlota(int x, int y) {
+    for (int i = 0; i < 5; i++) {
+        Posicion* p = new Posicion(x + i * 70, y);
+        Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
+        e->flota = 4;
+        enemigos.push_back(e);
+    }
 }
 
 void Escenario::hitEnemy() {
