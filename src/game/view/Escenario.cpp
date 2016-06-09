@@ -64,7 +64,7 @@ void Escenario::actualizarEscenario(Posicion* pos) {
             if (enemigos[i]->flota == -1)
                 enemigos[i]->vivirRandom();
             else
-                enemigos[i]->vivir(3, 0);
+                enemigos[i]->vivirFlota();
                 
 	}
 
@@ -759,9 +759,10 @@ void Escenario::crearEnemigo(int x, int y) {
 
 void Escenario::crearFlota(int x, int y) {
     for (int i = 0; i < 5; i++) {
-        Posicion* p = new Posicion(x + i * 70, y);
+        Posicion* p = new Posicion(x, y);
         Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
         e->flota = flota;
+        e->posFlota = i;
         enemigos.push_back(e);
     }
     flota++;

@@ -1,7 +1,9 @@
 #ifndef SRC_MODEL_Enemy_H_
 #define SRC_MODEL_Enemy_H_
 
+#include <iostream>
 #include <ctime>
+#include <chrono>
 #include "../view/AvionView.h"
 #include "Vivible.h"
 #include "../controller/Timer.h"
@@ -67,6 +69,7 @@ public:
 
 	void vivir(int velX, int velY);
 	void vivirRandom();
+	void vivirFlota();
 	bool aunVive();
 	void desconectar();
 
@@ -85,10 +88,13 @@ public:
 
 	bool hit(int, int);
 	void moverRandom();
+	void moverFlota();
     int flota;
+    int posFlota;
     bool firsttime;
     struct tm* tm;
-    int secs;
+    int secsRandom;
+    chrono::time_point<chrono::system_clock> nFlota;
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */

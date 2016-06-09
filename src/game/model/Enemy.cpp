@@ -24,11 +24,13 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	t = new Timer();
 
     flota = -1;
+    posFlota = 0;
 	explosion = new ExplosionView("idExplosion", screen, posicion);
 
 	firsttime = true;
 	time_t tp = time(0);
 	tm = localtime(&tp);
+	nFlota = chrono::system_clock::now();
 }
 
 void Enemy::inicializoVueltereta() {
@@ -188,6 +190,28 @@ void Enemy::vivirRandom(){
 
 }
 
+void Enemy::vivirFlota(){
+	if (tieneHP()) {
+		if (!viviendo) {
+			this->viviendo = true;
+			vistaAvion->conectar();
+		}
+		moverFlota();
+		mostrar(angleX, angleY);
+	} else {
+		if (vistaAvion != NULL) {
+			delete vistaAvion;
+			vistaAvion = NULL;
+		}
+
+		if (!explosion->exploto()) {
+			posicion->mover(-1, -3);
+			explosion->explotar(posicion);
+		}
+	}
+
+}
+
 void Enemy::vivir(int velX, int velY){
 	if (tieneHP()) {
 		if ((velX != 0 || velY != 0) && !viviendo) {
@@ -273,7 +297,7 @@ void Enemy::moverRandom() {
 	time_t temp = time(0);
 	localtime(&temp);
 	
-	if ((tm->tm_sec - secs) < 2 && !firsttime) {
+	if ((tm->tm_sec - secsRandom) < 2 && !firsttime) {
 		x = angleX;
 		y = angleY;
 	}
@@ -288,8 +312,61 @@ void Enemy::moverRandom() {
 		firsttime = false;
 		angleX = x;
 		angleY = y;
-		secs = tm->tm_sec;
+		secsRandom = tm->tm_sec;
 	}
 
 	mover(x, y);
+}
+
+void Enemy::moverFlota() {
+	auto now = chrono::system_clock::now();
+	chrono::duration<double> duration = now - nFlota;
+	float delay = posFlota / 3.5;
+	if (duration.count() > delay) {
+		if(duration.count() < 1.5 + delay) {
+			mover(10, 0);
+			angleX = 4;
+			angleY = 0;
+		}
+		else {
+			if(duration.count() < 2 + delay) {
+				mover(7, 7);
+				angleX = 2;
+				angleY = 2;
+			}
+			else {
+				if(duration.count() < 2.5 + delay) {
+					mover(-7, 7);
+					angleX = -2;
+					angleY = 2;
+				}
+				else {
+					if(duration.count() < 3.5 + delay) {
+						mover(-10, 0);
+						angleX = -2;
+						angleY = 0;
+					}
+					else {
+						if(duration.count() < 4 + delay) {
+							mover(-7, -7);
+							angleX = -1;
+							angleY = -1;
+						}
+						else {
+							if(duration.count() < 4.5 + delay) {
+								mover(7, -7);
+								angleX = 1;
+								angleY = -1;
+							}
+							else {
+								mover(10, 0);
+								angleX = 1;
+								angleY = 0;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
