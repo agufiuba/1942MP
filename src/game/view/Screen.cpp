@@ -112,3 +112,7 @@ int Screen::getTextCenter( string text ) {
 int Screen::getRectCenter( int rectWidth ) {
   return ( this->canvasWidth - rectWidth ) / 2;
 }
+
+int Screen::getCanvasWidth() {
+  return this->canvasWidth;
+}
