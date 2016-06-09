@@ -156,6 +156,8 @@ SDL_Event* Escenario::run() {
 	escenarioCreado = true;
   	crearEnemigo();
 
+	thread tShot(&Escenario::hitEnemy, this);
+	tShot.detach();
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
 	if (!this->unCliente->reinicia) {
 
@@ -175,8 +177,6 @@ SDL_Event* Escenario::run() {
 		thread tPowerUps(&Escenario::getPowerUp, this);
 		tPowerUps.detach();
 
-		thread tShot(&Escenario::hitEnemy, this);
-		tShot.detach();
 
 		while (!quit && this->unCliente->isConnected()) {
 
@@ -485,29 +485,40 @@ void Escenario::crearEnemigo() {
 }
 
 void Escenario::hitEnemy() {
+	vector<Vivible*>* disparos = &(myControl->controlDeMisiles->vivibles->vectorObjetos);
+	cout<<"obtengo los misiles"<<endl;
+	mutex theMutex;
 	while (escenarioCreado) {
-		vector<Vivible*>* disparos = &(myControl->controlDeMisiles->vivibles->vectorObjetos);
+		theMutex.lock();
+//		cout<<"Hit mutea"<<endl;
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
-//			for (vector<Enemy*>::iterator jt = enemigos.begin(); jt != enemigos.end(); jt++) {
-//				bool touched = false;
-				(*it)->theMutex.lock();
+//			cout<<"veo enemigos"<<endl;
+			for (vector<Enemy*>::iterator jt = enemigos.begin(); jt != enemigos.end(); jt++) {
+//				cout<<"aca entro"<<endl;
+				bool touched = false;
 				int x = (*it)->posX;
 				int xp = x + (*it)->getAncho();
 				int y = (*it)->posY;
 				int yp = y + (*it)->getLargo();
-				(*it)->theMutex.unlock();
 				cout << x << " " << xp << " " << y << " " << yp << endl;
-//
-//				// if (y > resolucion->getHeightScreen())
-//				// 	(*it)->viviendo = false;
-//
-//				int x2 = (*jt)->getX();
-//				int x2p = x2 + (*jt)->getAncho();
-//				int y2 = (*jt)->getY();
-//				int y2p = y2p + (*jt)->getLargo();
-//				// touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-//				// if (touched) cout << "chocooo" << endl;
-//			}
+//				cout<<"aca entro1"<<endl;
+				// if (y > resolucion->getHeightScreen())
+				// 	(*it)->viviendo = false;
+
+				int x2 = (*jt)->getX();
+				int x2p = x2 + (*jt)->getAncho();
+				int y2 = (*jt)->getY();
+				int y2p = y2p + (*jt)->getLargo();
+//				cout<<"aca entro2"<<endl;
+				cout << x2 << " " << x2p << " " << y2 << " " << y2p << endl;
+				cout << "||||||||||||||||||||||||||||||||||||||||||||||||"<<endl;
+				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+				if (touched) cout << "/////////////////////// chocooo /////////////////////////" << endl;
+//				cout<<"aca entro3"<<endl;
+			}
 		}
+		theMutex.unlock();
+		usleep(100000);
+//		cout<<"Hit Des mutea"<<endl;
 	}
 }

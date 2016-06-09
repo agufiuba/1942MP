@@ -44,7 +44,6 @@ class Vivible{
 
 	int posX;
 	int posY;
-	mutex theMutex;	
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */
