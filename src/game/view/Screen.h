@@ -35,5 +35,6 @@ class Screen {
     int getTextureCenter( string textureID );
     int getTextCenter( string text );
     int getRectCenter( int rectWidth );
+    int getCanvasWidth();
 };
 #endif

@@ -38,7 +38,9 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 
 	this->healthView = NULL;
 	this->scoreView = NULL;
-
+	this->teamScoreView = NULL;
+	this->teamAlphaScoreView = NULL;
+	this->teamBetaScoreView = NULL;
 }
 
 Escenario::~Escenario() {
@@ -66,9 +68,30 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	// Render health
 	this->healthView->update( this->player->getHealth() );
 	this->healthView->render();
-	// Render score
-	this->scoreView->update( this->player->getScore() );
-	this->scoreView->render();
+	GameData* gd = this->unCliente->getGameData();
+	// Render score and team score
+	if ( gd->cooperativeMode ) {
+	  this->scoreView->update( this->player->getScore() );
+	  this->scoreView->render( "R" );
+	  this->teamScoreView->update( this->unCliente->getTeamScore() );
+	  this->teamScoreView->render();
+	// Team mode
+	} else if ( gd->teamMode ) {
+	  int team = this->player->getTeam();
+	  // Alpha team
+	  if ( team == 1 ) {
+	  this->teamAlphaScoreView->update( this->unCliente->getTeamScore() );
+	  this->teamAlphaScoreView->render( "R" );
+	  this->teamBetaScoreView->update( this->unCliente->getRivalTeamScore() );
+	  this->teamBetaScoreView->render();
+	  // Beta team
+	  } else {
+	    this->teamBetaScoreView->update( this->unCliente->getTeamScore() );
+	    this->teamBetaScoreView->render( "R" );
+	    this->teamAlphaScoreView->update( this->unCliente->getRivalTeamScore() );
+	    this->teamAlphaScoreView->render();
+	  }
+	}
 
 	this->sdl->updateWindow();
 	// set new offset on client
@@ -90,7 +113,24 @@ void Escenario::setClient(Client* cliente) {
 void Escenario::setPlayer( Player* player ) {
   this->player = player;
   this->healthView = new HealthView( this->escenarioScreen, this->player->getHealth() );
-  this->scoreView = new ScoreView( this->escenarioScreen, this->player->getScore() );
+  GameData* gd = this->unCliente->getGameData();
+  // Coop mode
+  if ( gd->cooperativeMode ) {
+    this->scoreView = new ScoreView( this->escenarioScreen, this->player->getScore() );
+    this->teamScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getTeamScore(), "Team Score" );
+  // Team mode
+  } else if ( gd->teamMode ) {
+    int team = this->player->getTeam();
+    // Alpha team
+    if ( team == 1 ) {
+      this->teamAlphaScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getTeamScore(), "Alpha Score" );
+      this->teamBetaScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getRivalTeamScore(), "Beta Score" );
+    // Beta team
+    } else {
+      this->teamBetaScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getTeamScore(), "Beta Score" );
+      this->teamAlphaScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getRivalTeamScore(), "Alpha Score" );
+    }
+  }
 }
 
 void Escenario::configurarFondosVivibles() {
@@ -190,7 +230,7 @@ SDL_Event* Escenario::run() {
 			start = SDL_GetTicks();
 
 			// TODO: remove when adding score via game events, testing purposes only
-			this->unCliente->addScoreToPlayer( 1 );	
+			// this->unCliente->addScoreToPlayer( 1 );	
 			
 			if (this->unCliente->reset) {
 				SDL_Event* eventReset = new SDL_Event();
@@ -204,6 +244,10 @@ SDL_Event* Escenario::run() {
 				myControl->press(&evento);
 
 				if( evento.type == SDL_KEYDOWN ) {
+					  // TODO: remove, only for testing score additions
+					  if ( evento.key.keysym.sym == SDLK_g ) {
+					    this->unCliente->addScoreToPlayer( 50 );
+					  }
 					if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
 					  // reset client score on game reset
 					  if( evento.key.keysym.sym == SDLK_r ) {
