@@ -25,6 +25,8 @@ Client::Client(const char* configFileName) {
     this->gameData = new GameData;
     this->ready = false;
     this->playerResume = false;
+    this->teamScore = 0;
+    this->rivalTeamScore = 0;
 }
 
 Client::Client(string ip, string puerto) {
@@ -43,6 +45,8 @@ Client::Client(string ip, string puerto) {
     this->gameData = new GameData;
     this->ready = false;
     this->playerResume = false;
+    this->teamScore = 0;
+    this->rivalTeamScore = 0;
 }
 
 Client::Client(string ip, string puerto,
@@ -63,6 +67,8 @@ Client::Client(string ip, string puerto,
     this->gameData = new GameData;
     this->ready = false;
     this->playerResume = false;
+    this->teamScore = 0;
+    this->rivalTeamScore = 0;
 }
 
 Client::~Client() {
@@ -360,6 +366,20 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				  this->player->addScore( data->score );
 				}
 				delete data;
+			} else if ( dataID == "TS" ) {
+				PlayerScore* data = new PlayerScore;
+				mutex m;
+				if ((bytesReceived = tmt->receiveData(data)) > 0) {
+				  // add score to corresponding team
+				  m.lock();
+				  if ( data->team == this->player->getTeam() ) {
+				    this->teamScore += data->score;
+				  } else {
+				    this->rivalTeamScore += data->score;
+				  }
+				  m.unlock();
+				}
+				delete data;
 			} else if ( dataID == "GD" ) {
 			    GameData* data = new GameData;
 			    if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
@@ -593,12 +613,17 @@ void Client::sendStageClearReady() {
 }
 
 void Client::addScoreToPlayer( int score ) {
+  mutex m;
   // add score to player
   this->player->addScore( score );
+  m.lock();
+  this->teamScore += score;
+  m.unlock();
 
-  // create score data
+  // create player score data
   PlayerScore* ps = new PlayerScore;
-  strcpy( ps->name, ( player->getName() ).c_str() );
+  strcpy( ps->name, ( this->player->getName() ).c_str() );
+  ps->team = this->player->getTeam();
   ps->score = score;
 
   // send score data to server
@@ -655,4 +680,12 @@ void Client::sendStatusReady(){
 
 bool Client::isPlayerResume(){
 	return this->playerResume;
+}
+
+int Client::getTeamScore() {
+  return this->teamScore;
+}
+
+int Client::getRivalTeamScore() {
+  return this->rivalTeamScore;
 }

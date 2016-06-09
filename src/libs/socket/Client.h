@@ -23,6 +23,8 @@ class Client {
     string ip;
     string puerto;
     Player* player;
+    int teamScore;
+    int rivalTeamScore;
     int socketFD;
     bool connected;
     bool received;
@@ -95,5 +97,7 @@ class Client {
     void sendMode(string mode);
     void sendStatusReady();
     bool isPlayerResume();
+    int getTeamScore();
+    int getRivalTeamScore();
 };
 #endif

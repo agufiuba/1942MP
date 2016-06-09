@@ -735,7 +735,11 @@ void Server::addScoreToPlayer( PlayerScore* data ) {
 	++it ) {
     if ( it->second->getName() == string( data->name ) ) {
       it->second->addScore( data->score );
-      break;
+    } else {
+      // send team score
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendData( data, "TS" ); 
+      delete tmt;
     }
   }
 }
