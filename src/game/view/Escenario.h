@@ -44,6 +44,8 @@ private:
 	HealthView* healthView;
 	ScoreView* scoreView;
 	ScoreView* teamScoreView;
+	ScoreView* teamAlphaScoreView;
+	ScoreView* teamBetaScoreView;
 	Player* player;
 	SDL_Renderer* gRenderer = NULL;
 	SDL_Event evento;

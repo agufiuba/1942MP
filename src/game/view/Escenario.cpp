@@ -39,7 +39,8 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	this->healthView = NULL;
 	this->scoreView = NULL;
 	this->teamScoreView = NULL;
-
+	this->teamAlphaScoreView = NULL;
+	this->teamBetaScoreView = NULL;
 }
 
 Escenario::~Escenario() {
@@ -67,12 +68,31 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	// Render health
 	this->healthView->update( this->player->getHealth() );
 	this->healthView->render();
-	// Render score
-	this->scoreView->update( this->player->getScore() );
-	this->scoreView->render( "R" );
-	// Render team score
-	this->teamScoreView->update( this->player->getScore() );
-	this->teamScoreView->render();
+	GameData* gd = this->unCliente->getGameData();
+	// Render score and team score
+	if ( gd->cooperativeMode ) {
+	  this->scoreView->update( this->player->getScore() );
+	  this->scoreView->render( "R" );
+	  this->teamScoreView->update( this->player->getScore() );
+	  this->teamScoreView->render();
+	// Team mode
+	} else if ( gd->teamMode ) {
+	  int team = this->player->getTeam();
+	  // Alpha team
+	  if ( team == 1 ) {
+	  this->teamAlphaScoreView->update( this->player->getScore() );
+	  this->teamBetaScoreView->update( this->player->getScore() );
+	  
+	  this->teamAlphaScoreView->render( "R" );
+	  this->teamBetaScoreView->render();
+	  // Beta team
+	  } else {
+	    this->teamAlphaScoreView->update( this->player->getScore() );
+	    this->teamBetaScoreView->update( this->player->getScore() );
+	    this->teamAlphaScoreView->render();
+	    this->teamBetaScoreView->render( "R" );
+	  }
+	}
 
 	this->sdl->updateWindow();
 	// set new offset on client
@@ -94,8 +114,16 @@ void Escenario::setClient(Client* cliente) {
 void Escenario::setPlayer( Player* player ) {
   this->player = player;
   this->healthView = new HealthView( this->escenarioScreen, this->player->getHealth() );
-  this->scoreView = new ScoreView( this->escenarioScreen, this->player->getScore() );
-  this->teamScoreView = new ScoreView( this->escenarioScreen, this->player->getScore(), "Team Score" );
+  GameData* gd = this->unCliente->getGameData();
+  // Coop mode
+  if ( gd->cooperativeMode ) {
+    this->scoreView = new ScoreView( this->escenarioScreen, this->player->getScore() );
+    this->teamScoreView = new ScoreView( this->escenarioScreen, this->player->getScore(), "Team Score" );
+  // Team mode
+  } else if ( gd->teamMode ) {
+    this->teamAlphaScoreView = new ScoreView( this->escenarioScreen, this->player->getScore(), "Alpha Score" );
+    this->teamBetaScoreView = new ScoreView( this->escenarioScreen, this->player->getScore(), "Beta Score" );
+  }
 }
 
 void Escenario::configurarFondosVivibles() {
