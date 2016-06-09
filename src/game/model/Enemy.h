@@ -1,6 +1,7 @@
 #ifndef SRC_MODEL_Enemy_H_
 #define SRC_MODEL_Enemy_H_
 
+#include <ctime>
 #include "../view/AvionView.h"
 #include "Vivible.h"
 #include "../controller/Timer.h"
@@ -84,7 +85,10 @@ public:
 
 	bool hit(int, int);
 	void moverRandom();
-        int flota;
+    int flota;
+    bool firsttime;
+    struct tm* tm;
+    int secs;
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */

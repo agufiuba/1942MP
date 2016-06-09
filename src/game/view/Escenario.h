@@ -108,7 +108,8 @@ public:
 	void configurarAvionAmigo(PlayerData* playerData);
 	void configurarMiAvion(PlayerData* playerData);
 	void crearEnemigo(int, int);
-        void crearFlota(int, int);
+    void crearFlota(int, int);
+    int flota;
 };
 
 #endif /* ESCENARIO_H_ */

@@ -39,6 +39,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	this->teamScoreView = NULL;
 	this->teamAlphaScoreView = NULL;
 	this->teamBetaScoreView = NULL;
+	flota = 0;
 }
 
 Escenario::~Escenario() {
@@ -760,9 +761,10 @@ void Escenario::crearFlota(int x, int y) {
     for (int i = 0; i < 5; i++) {
         Posicion* p = new Posicion(x + i * 70, y);
         Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
-        e->flota = 4;
+        e->flota = flota;
         enemigos.push_back(e);
     }
+    flota++;
 }
 
 void Escenario::hitEnemy() {

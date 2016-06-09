@@ -23,10 +23,12 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 
 	t = new Timer();
 
-        flota = -1;
+    flota = -1;
 	explosion = new ExplosionView("idExplosion", screen, posicion);
 
-/*	inicializoVueltereta();*/
+	firsttime = true;
+	time_t tp = time(0);
+	tm = localtime(&tp);
 }
 
 void Enemy::inicializoVueltereta() {
@@ -267,16 +269,27 @@ bool Enemy::hit(int x, int y) {
 }
 
 void Enemy::moverRandom() {
-	srand(time(NULL));
-	int x = rand() % 11 - 5;
-	int y = rand() % 11 - 5;
+	int x, y;
+	time_t temp = time(0);
+	localtime(&temp);
+	
+	if ((tm->tm_sec - secs) < 2 && !firsttime) {
+		x = angleX;
+		y = angleY;
+	}
+	else {
+		srand(time(NULL));
+		x = rand() % 11 - 5;
+		y = rand() % 11 - 5;
 
-	// centrar +/-
-	x -= (posicion->getX() - anchoFondo / 2) / 120;
-	y -= (posicion->getY() - largoFondo / 2) / 150;
-
-	angleX = x;
-	angleY = y;
+		// centrar +/-
+		x -= (posicion->getX() - anchoFondo / 2) / 120;
+		y -= (posicion->getY() - largoFondo / 2) / 150;
+		firsttime = false;
+		angleX = x;
+		angleY = y;
+		secs = tm->tm_sec;
+	}
 
 	mover(x, y);
 }
