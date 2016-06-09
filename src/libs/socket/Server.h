@@ -61,7 +61,6 @@ class Server {
     void sendConf(int);
     void addScoreToPlayer( PlayerScore* data );
     void sendScoreTable( int clientFD );
-    void sendScore( int clientFD );
     void createPlayers();
     void queryCurrentStageOffset();
     void sendCurrentStageOffset( int clientFD );
