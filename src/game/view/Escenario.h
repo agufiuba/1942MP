@@ -43,6 +43,7 @@ private:
 	Screen* escenarioScreen;
 	HealthView* healthView;
 	ScoreView* scoreView;
+	ScoreView* teamScoreView;
 	Player* player;
 	SDL_Renderer* gRenderer = NULL;
 	SDL_Event evento;

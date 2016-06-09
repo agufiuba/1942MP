@@ -38,6 +38,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 
 	this->healthView = NULL;
 	this->scoreView = NULL;
+	this->teamScoreView = NULL;
 
 }
 
@@ -68,7 +69,10 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	this->healthView->render();
 	// Render score
 	this->scoreView->update( this->player->getScore() );
-	this->scoreView->render();
+	this->scoreView->render( "R" );
+	// Render team score
+	this->teamScoreView->update( this->player->getScore() );
+	this->teamScoreView->render();
 
 	this->sdl->updateWindow();
 	// set new offset on client
@@ -91,6 +95,7 @@ void Escenario::setPlayer( Player* player ) {
   this->player = player;
   this->healthView = new HealthView( this->escenarioScreen, this->player->getHealth() );
   this->scoreView = new ScoreView( this->escenarioScreen, this->player->getScore() );
+  this->teamScoreView = new ScoreView( this->escenarioScreen, this->player->getScore(), "Team Score" );
 }
 
 void Escenario::configurarFondosVivibles() {
