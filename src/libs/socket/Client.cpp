@@ -285,6 +285,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 							<< endl;
 					cout << "READY -->Equipo del jugador: " << data->team
 							<< endl;
+					cout << "READY -->Puntaje del jugador: " << data->score
+							<< endl;
 					this->allPlayers.push_back(data);
 				}
 			} else if (dataID == "AV") {
@@ -359,13 +361,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				delete data;
 			} else if ( dataID == "RR" ) {
 			  this->stageClearReady = true;
-			} else if ( dataID == "GS" ) {
-				PlayerScore* data = new PlayerScore;
-				if ((bytesReceived = tmt->receiveData(data)) > 0) {
-				  // set player score
-				  this->player->addScore( data->score );
-				}
-				delete data;
 			} else if ( dataID == "TS" ) {
 				PlayerScore* data = new PlayerScore;
 				mutex m;
