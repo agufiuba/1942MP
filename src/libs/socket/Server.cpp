@@ -550,22 +550,23 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "MT" ) {
 		if(!this->gameData->cooperativeMode && !this->gameData->teamMode){
 			this->gameData->teamMode = true;
-			cout<<"modo team"<<endl;
+//			cout<<"modo team"<<endl;
 			this->sendGameDataAll();
 		}
 	} else if( dataID == "MC" ) {
 		if(!this->gameData->cooperativeMode && !this->gameData->teamMode){
 			this->gameData->cooperativeMode = true;
-			cout<<"modo cooperativo"<<endl;
+//			cout<<"modo cooperativo"<<endl;
+			this->setTeamPlayer(0, cfd);
 			this->sendGameDataAll();
 		}
 	} else if( dataID == "T1" ) {
-		cout<<"se suma al team 1"<<endl;
+//		cout<<"se suma al team 1"<<endl;
 		this->gameData->countPlayersTeam1++;
 		this->setTeamPlayer(1, cfd);
 		this->sendGameDataAll();
 	} else if( dataID == "T2" ) {
-		cout<<"se suma al team 2"<<endl;
+//		cout<<"se suma al team 2"<<endl;
 		this->gameData->countPlayersTeam2++;
 		this->setTeamPlayer(2, cfd);
 		this->sendGameDataAll();

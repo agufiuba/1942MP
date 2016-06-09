@@ -390,11 +390,9 @@ void Game::loadValidationScreen() {
 		if(!this->unCliente->isPlayerResume()){
 			if ( this->unCliente->getGameData()->teamMode ){
 				//hay una partida de team, elige a que team entra
-				cout<<"Modo team true"<<endl;
 				this->loadTeamSelectedScreen();
 			} else if ( !this->unCliente->getGameData()->cooperativeMode ){
 				//no hay partida creada...elige tipo de partida
-				cout<<"no hay modo"<<endl;
 				this->loadModeGameScreen();
 			}
 			//envio que esta listo
@@ -1071,7 +1069,6 @@ void Game::loadModeGameScreen(){
 			this->unCliente->getGameData()->teamMode = teamPromptSelected;
 			this->unCliente->getGameData()->cooperativeMode = cooperativePromptSelected;
 			this->unCliente->getGameData()->practiceMode = practicePromptSelected;
-			cout<<"entro"<<endl;
 		}
 		this->checkGameMode();
 		runningScreen = false;
