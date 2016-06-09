@@ -55,6 +55,7 @@ void Game::cargarEscenario() {
       PlayerData* pData = this->unCliente->getPlayers()[i];
       if( this->clientId == pData->name ) {
 	  this->player = new Player( pData->name, pData->color, pData->x, pData->y, pData->team);
+	  this->player->addScore( pData->score );
     	  escenario->configurarMiAvion( pData );
       } else {
     	  escenario->configurarAvionAmigo( pData );
@@ -64,7 +65,7 @@ void Game::cargarEscenario() {
     escenario->setPlayer( this->player );
     this->unCliente->setPlayer( this->player );
     unCliente->setHandler(escenario->getHandler());
-    this->unCliente->requestPlayerScore();
+    //this->unCliente->requestPlayerScore();
     exitEven = escenario->run();
     if( !( this->unCliente->isConnected() ) ) {
       this->loadTimeoutScreen();

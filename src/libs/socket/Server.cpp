@@ -305,6 +305,7 @@ void Server::createPlayers() {
       player->x = it->second->getX();
       player->y = it->second->getY();
       player->team = it->second->getTeam();
+      player->score = it->second->getScore();
 
       while (!tmt->sendData(player, "PR"));
 
@@ -537,9 +538,6 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "RS" ) {
 	  // reset score
 	  this->players[ cfd ]->resetScore();
-	} else if( dataID == "GS" ) {
-	  // send score to client
-	  this->sendScore( cfd );
 	} else if( dataID == "GD" ) {
 	  GameData* data = new GameData;
 	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
@@ -800,18 +798,6 @@ int Server::getActivePlayersCount() {
   }
 
   return playerCount;
-}
-
-void Server::sendScore( int clientFD ) {
-  Player* player = this->players[ clientFD ];
-
-  PlayerScore* ps = new PlayerScore;
-  ps->score = player->getScore();
-
-  Transmitter* tmt = new Transmitter( clientFD, this->logger );
-  tmt->sendData( ps, "GS" );
-  delete tmt;
-  delete ps;
 }
 
 void Server::sendGameData(int clientFD){
