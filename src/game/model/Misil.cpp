@@ -37,10 +37,8 @@ Misil::~Misil() {
 }
 
 void Misil::vivir(int x,int velY){
-	theMutex.lock();
 	this->moverEjeY(velY);
 	this->mostrar();
-	theMutex.unlock();
 }
 
 void Misil::mostrar(){
@@ -56,31 +54,23 @@ void Misil::moverEjeY(int velY){
 }
 
 int Misil::getAnchoFondo() {
-	theMutex.lock();
 	int a = anchoFondo;
-	theMutex.unlock();
 	return a;
 }
 
 int Misil::getLargoFondo() {
-	theMutex.lock();
 	int a = largoFondo;
-	theMutex.unlock();
 	return a;
 }
 
 
 bool Misil::aunVive(){
-	theMutex.lock();
 	bool v = viviendo;
-	theMutex.unlock();
 	return v;
 }
 
 int Misil::getDano() {
-	theMutex.lock();
 	int d = this->dano;
-	theMutex.unlock();
 	return d;
 }
 
