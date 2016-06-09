@@ -73,24 +73,23 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	if ( gd->cooperativeMode ) {
 	  this->scoreView->update( this->player->getScore() );
 	  this->scoreView->render( "R" );
-	  this->teamScoreView->update( this->player->getScore() );
+	  this->teamScoreView->update( this->unCliente->getTeamScore() );
 	  this->teamScoreView->render();
 	// Team mode
 	} else if ( gd->teamMode ) {
 	  int team = this->player->getTeam();
 	  // Alpha team
 	  if ( team == 1 ) {
-	  this->teamAlphaScoreView->update( this->player->getScore() );
-	  this->teamBetaScoreView->update( this->player->getScore() );
-	  
+	  this->teamAlphaScoreView->update( this->unCliente->getTeamScore() );
 	  this->teamAlphaScoreView->render( "R" );
+	  this->teamBetaScoreView->update( this->unCliente->getRivalTeamScore() );
 	  this->teamBetaScoreView->render();
 	  // Beta team
 	  } else {
-	    this->teamAlphaScoreView->update( this->player->getScore() );
-	    this->teamBetaScoreView->update( this->player->getScore() );
-	    this->teamAlphaScoreView->render();
+	    this->teamBetaScoreView->update( this->unCliente->getTeamScore() );
 	    this->teamBetaScoreView->render( "R" );
+	    this->teamAlphaScoreView->update( this->unCliente->getRivalTeamScore() );
+	    this->teamAlphaScoreView->render();
 	  }
 	}
 
@@ -118,11 +117,19 @@ void Escenario::setPlayer( Player* player ) {
   // Coop mode
   if ( gd->cooperativeMode ) {
     this->scoreView = new ScoreView( this->escenarioScreen, this->player->getScore() );
-    this->teamScoreView = new ScoreView( this->escenarioScreen, this->player->getScore(), "Team Score" );
+    this->teamScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getTeamScore(), "Team Score" );
   // Team mode
   } else if ( gd->teamMode ) {
-    this->teamAlphaScoreView = new ScoreView( this->escenarioScreen, this->player->getScore(), "Alpha Score" );
-    this->teamBetaScoreView = new ScoreView( this->escenarioScreen, this->player->getScore(), "Beta Score" );
+    int team = this->player->getTeam();
+    // Alpha team
+    if ( team == 1 ) {
+      this->teamAlphaScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getTeamScore(), "Alpha Score" );
+      this->teamBetaScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getRivalTeamScore(), "Beta Score" );
+    // Beta team
+    } else {
+      this->teamBetaScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getTeamScore(), "Beta Score" );
+      this->teamAlphaScoreView = new ScoreView( this->escenarioScreen, this->unCliente->getRivalTeamScore(), "Alpha Score" );
+    }
   }
 }
 
