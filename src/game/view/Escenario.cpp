@@ -230,7 +230,7 @@ SDL_Event* Escenario::run() {
 			start = SDL_GetTicks();
 
 			// TODO: remove when adding score via game events, testing purposes only
-			this->unCliente->addScoreToPlayer( 1 );	
+			// this->unCliente->addScoreToPlayer( 1 );	
 			
 			if (this->unCliente->reset) {
 				SDL_Event* eventReset = new SDL_Event();
@@ -244,6 +244,10 @@ SDL_Event* Escenario::run() {
 				myControl->press(&evento);
 
 				if( evento.type == SDL_KEYDOWN ) {
+					  // TODO: remove, only for testing score additions
+					  if ( evento.key.keysym.sym == SDLK_g ) {
+					    this->unCliente->addScoreToPlayer( 50 );
+					  }
 					if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
 					  // reset client score on game reset
 					  if( evento.key.keysym.sym == SDLK_r ) {
