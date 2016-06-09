@@ -56,6 +56,7 @@ class Game {
     //Modos Tp3
     void loadModeGameScreen();
     void loadTeamSelectedScreen();
+    void checkGameMode();
 
   public:
     Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );

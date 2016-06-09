@@ -29,9 +29,9 @@ Server::Server( const char* configFileName ) {
   this->logger = Logger::instance();
   this->running = false;
   this->stageData = NULL;
-
   this->posicionInicialX = 0;
   this->posicionInicialY = 100;
+  this->createGameData();
   //  this->config = XMLParser::parseServerConf( configFileName );
 
 }
@@ -160,6 +160,13 @@ void Server::updatePlayerStatus( PlayerStatus* data, int cfd ) {
     this->players[ cfd ]->deactivate();
   } else if ( data->status == 'D' ) {
     this->players[ cfd ]->die();
+  }
+  if (data->status == 'R' ){
+	this->players[ cfd ]->changeReady();
+	cout<<"Estado: cantidad de players - "<< this->players.size()<<endl;
+	if(this->players.size() == this->maxClientCount){
+		this->sendPlayersReady();
+	}
   }
 }
 
@@ -419,7 +426,8 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
     }
 
     usleep(100);
-    this->sendPlanesActives( cfd);
+    this->sendPlanesActives( cfd );
+    this->sendGameData( cfd );
 
     timeval timeout;
     timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
@@ -450,7 +458,6 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	    // Process received data
 	    cout << "Nombre del jugador: " << string( data->name ) << endl;
 	    cout << "Color del jugador: " << string( data->color ) << endl;
-	    cout << "Equipo del jugador: " << data->team << endl;
 	    this->addPlayer( data, cfd );
 	  }
 
@@ -533,8 +540,38 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	} else if( dataID == "GS" ) {
 	  // send score to client
 	  this->sendScore( cfd );
+	} else if( dataID == "GD" ) {
+	  GameData* data = new GameData;
+	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
+		// Process received data
+		this->gameData = data;
+		cout<<"cantidad team 1 "<<this->gameData->countPlayersTeam1<<endl;
+		cout<<"cantidad team 2 "<<this->gameData->countPlayersTeam2<<endl;
+	    this->sendGameData( cfd );
+	  }
+	} else if( dataID == "MT" ) {
+		if(!this->gameData->cooperativeMode && !this->gameData->teamMode){
+			this->gameData->teamMode = true;
+			cout<<"modo team"<<endl;
+			this->sendGameDataAll();
+		}
+	} else if( dataID == "MC" ) {
+		if(!this->gameData->cooperativeMode && !this->gameData->teamMode){
+			this->gameData->cooperativeMode = true;
+			cout<<"modo cooperativo"<<endl;
+			this->sendGameDataAll();
+		}
+	} else if( dataID == "T1" ) {
+		cout<<"se suma al team 1"<<endl;
+		this->gameData->countPlayersTeam1++;
+		this->setTeamPlayer(1, cfd);
+		this->sendGameDataAll();
+	} else if( dataID == "T2" ) {
+		cout<<"se suma al team 2"<<endl;
+		this->gameData->countPlayersTeam2++;
+		this->setTeamPlayer(2, cfd);
+		this->sendGameDataAll();
 	}
-
       }
 
       // Check peer disconnection or timeout
@@ -656,6 +693,8 @@ void Server::closeClient( int cfd ) {
   if ( this->clientCount == 0 ) {
     // clear players hash
     this->removeAllPlayers();
+    delete this->gameData;
+    this->createGameData();
     this->running = false;
   }
   cout << " cantidad " << this->clientCount << endl;
@@ -769,4 +808,63 @@ void Server::sendScore( int clientFD ) {
   tmt->sendData( ps, "GS" );
   delete tmt;
   delete ps;
+}
+
+void Server::sendGameData(int clientFD){
+	Transmitter* tmt = new Transmitter( clientFD, this->logger );
+	tmt->sendData( this->gameData );
+	delete tmt;
+}
+
+void Server::sendGameDataAll(){
+	for( map<int, Player*>::iterator it = this->players.begin(); it != this->players.end(); ++it ) {
+		this->sendGameData(it->first);
+	}
+}
+
+void Server::createGameData(){
+  this->gameData = new GameData();
+  this->gameData->cooperativeMode = false;
+  this->gameData->countPlayersTeam1 = 0;
+  this->gameData->countPlayersTeam2 = 0;
+  this->gameData->practiceMode = false;
+  this->gameData->teamMode = false;
+  this->gameData->maxPlayersTeams = this->config->jugadoresPorEquipo;
+}
+
+void Server::sendPlayersReady(){
+  bool playerReady = true;
+  mutex theMutex;
+  theMutex.lock();
+  for( map<int, Player*>::iterator it = this->players.begin(); it != this->players.end();  ++it ) {
+	// if game is running and player is inactive, skip
+	if( this->running && !( it->second->isActive() ) ) continue;
+	// if already a player with that color
+	if( !it->second->isReady()){
+		playerReady = false;
+		cout<<"player no ready"<<it->second->getName()<<endl;
+	}
+  }
+  theMutex.unlock();
+  if ( playerReady ){
+	  cout<<"||||||||||||||||||| Todos listos ||||||||||||||||||||"<<endl;
+	// send other players data
+	for (map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end(); ++it) {
+	  cout<<"TEAMS:   "<<endl;
+	  cout <<"Avion: "<<it->second->getName()<<endl;
+	  cout <<"Team: "<<it->second->getTeam()<<endl;
+	  Transmitter* tmt = new Transmitter(it->first, this->logger);
+	  tmt->sendDataID("OK");
+	  delete tmt;
+	}
+  }
+}
+
+void Server::setTeamPlayer(int team, int cliendFd){
+ for( map<int, Player*>::iterator it = this->players.begin(); it != this->players.end();  ++it ) {
+	 if (it->first == cliendFd){
+		 it->second->setTeam(team);
+	 }
+ }
 }

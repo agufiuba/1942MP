@@ -22,6 +22,9 @@ Client::Client(const char* configFileName) {
 	this->clientsPlaying = 0;
 	this->stageClearReady = false;
 	this->player = NULL;
+    this->gameData = new GameData;
+    this->ready = false;
+    this->playerResume = false;
 }
 
 Client::Client(string ip, string puerto) {
@@ -37,6 +40,9 @@ Client::Client(string ip, string puerto) {
 	this->clientsPlaying = 0;
 	this->stageClearReady = false;
 	this->player = NULL;
+    this->gameData = new GameData;
+    this->ready = false;
+    this->playerResume = false;
 }
 
 Client::Client(string ip, string puerto,
@@ -54,6 +60,9 @@ Client::Client(string ip, string puerto,
 	this->clientsPlaying = 0;
 	this->stageClearReady = false;
 	this->player = NULL;
+    this->gameData = new GameData;
+    this->ready = false;
+    this->playerResume = false;
 }
 
 Client::~Client() {
@@ -63,11 +72,11 @@ void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers) {
 	this->pc = handlerPlayersControllers;
 }
 
-bool Client::allPlayersReady() {
-	if (this->configComplete) {
-		return (allPlayers.size() == this->config->maxClients);
+bool Client::allPlayersReady(){
+	if (this->ready){
+		cout<<"Ready"<<endl;
 	}
-	return false;
+  return (this->configComplete && this->ready);
 }
 
 bool Client::connectToServer() {
@@ -231,11 +240,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					string color(data->color);
 					bool newPlayer = (name == "Y" && color == "Y");
 					bool resumePlayer = (name == "R" && color == "R");
-					if (newPlayer || resumePlayer) {
-						this->playerOk = true;
-					} else {
-						this->playerOk = false;
-					}
+					this->playerOk = (newPlayer || resumePlayer);
+					this->playerResume = resumePlayer;
 				}
 				delete data;
 
@@ -320,7 +326,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				char data[1];
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
 					int cant = atoi(data);
-					//					cout<<cant<<endl;
 					this->config->maxClients = cant;
 					this->config->elementos = this->elementos;
 					this->config->powerUps = this->powerUps;
@@ -355,7 +360,22 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				  this->player->addScore( data->score );
 				}
 				delete data;
-			}
+			} else if ( dataID == "GD" ) {
+			    GameData* data = new GameData;
+			    if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
+				  this->gameData = data;
+				  if (this->gameData->teamMode){
+					  cout<<"Aca llega el game data: Team"<<endl;
+				  } else  if (this->gameData->cooperativeMode){
+					  cout<<"Aca llega el game data: Cooperative"<<endl;
+				  } else {
+					  cout<<"no hay modo"<<endl;
+				  }
+			    }
+			 } else if ( dataID == "OK" ){
+			   cout<<"Llega el OK"<<endl;
+			   this->ready = true;
+			 }
 		}
 
 		// Check peer disconnection or timeout
@@ -371,7 +391,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			}
 		}
 	}
-
 	delete tmt;
 }
 
@@ -601,4 +620,39 @@ void Client::requestPlayerScore() {
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendDataID( "GS" ); 
   delete tmt;
+}
+
+GameData* Client::getGameData(){
+  return this->gameData;
+}
+
+void Client::sendGameData(){
+  this->received = false;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendData(this->gameData);
+  delete tmt;
+}
+
+void Client::sendMode(string mode ){
+  this->received = false;
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendDataID(mode);
+  delete tmt;
+}
+
+void Client::sendStatusReady(){
+	  this->received = false;
+	  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+	  PlayerStatus* data = new PlayerStatus;
+	  data->status = 'R';
+	  cout<<"Send player status to server"<<endl;
+	  tmt->sendData( data );
+
+	  delete tmt;
+	  delete data;
+
+}
+
+bool Client::isPlayerResume(){
+	return this->playerResume;
 }

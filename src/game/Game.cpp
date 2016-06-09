@@ -46,7 +46,7 @@ void Game::cargarEscenario() {
 		this->unCliente->sendGetConfig();
 		while(!unCliente->isConfigComplete()){}
 	}
-
+	cout<<"creo escenario"<<endl;
     this->unCliente->reset =false;
     escenario = new Escenario(this->unCliente->getConfig(), sdlHandler);
     escenario->setClient(unCliente);
@@ -367,8 +367,42 @@ void Game::loadValidationScreen() {
 	if (connectionFailed){
 	  this->loadConnectionScreen();
 	} else {
-		this->loadModeGameScreen();
+		//Cargo la pantalla de seleccion de aviones
+		bool endSelectingPlane = false;
+		bool primerIntento = true;
+		while(!endSelectingPlane){
+			PlanesActives* planes = this->unCliente->getPlanesActives();
+			this->bluePlaneActive = planes->blue;
+			this->redPlaneActive = planes->red;
+			this->greenPlaneActive = planes->green;
+			this->yellowPlaneActive = planes->yellow;
+			this->clientId = "";
+			this->planeId = "";
+			if (primerIntento){
+				this->loadselectionPlane(true);
+			}else{
+				this->loadselectionPlane(this->unCliente->isPlayerOk());
+			}
+			primerIntento = false;
+			endSelectingPlane = this->unCliente->isPlayerOk();
+		}
+		if(!this->unCliente->isPlayerResume()){
+			if ( this->unCliente->getGameData()->teamMode ){
+				//hay una partida de team, elige a que team entra
+				cout<<"Modo team true"<<endl;
+				this->loadTeamSelectedScreen();
+			} else if ( !this->unCliente->getGameData()->cooperativeMode ){
+				//no hay partida creada...elige tipo de partida
+				cout<<"no hay modo"<<endl;
+				this->loadModeGameScreen();
+			}
+			//envio que esta listo
+			this->unCliente->sendStatusReady();
+			//empieza la partida
+			this->loadWaitingGame();
+		}
 	}
+	cout<<"salgo de las pantallas"<<endl;
 	break;
       }
     }
@@ -469,8 +503,8 @@ void Game::loadselectionPlane(bool selectedOk) {
 
   //	this->setInitialScreen()
   initialScreen->loadTexture("logo", "windowImages/1942logoPrincipal.bmp");
-  initialScreen->loadText("clientText", "  Jugador: ", { 0, 255, 100 });
-  initialScreen->loadText("planeText", " Avion: ", { 0, 255, 100 });
+  initialScreen->loadText("clientText", "Jugador:", { 0, 255, 100 });
+  initialScreen->loadText("planeText", "Avion:", { 0, 255, 100 });
   initialScreen->loadText("accept", "CONTINUAR");
   initialScreen->loadText("rechazo", " Rechazado por maximo clientes", { 255, 0, 0 });
 
@@ -491,7 +525,7 @@ void Game::loadselectionPlane(bool selectedOk) {
   int promptCenter = logoCenter - 20;
   int buttonCenter = promptCenter + 15;
   int textCenter = promptCenter + 20;
-  int textoIzquierda = 100;
+  int textoIzquierda = 220;
   int buttonTextCenter = buttonCenter	+ ((230 - initialScreen->getTextureWidth("accept")) / 2);
   int inputClientIdPosY = 250;
   int inputPlaneIdPosY = 350;
@@ -503,6 +537,12 @@ void Game::loadselectionPlane(bool selectedOk) {
 
   int mouseX, mouseY;
 
+  int inputBluePlaneIdPosX = textoIzquierda + 300;
+  int inputRedPlaneIdPosX = textoIzquierda + 380;
+  int inputGreenPlaneIdPosX = textoIzquierda + 460;
+  int inputYellowPlaneIdPosX = textoIzquierda + 540;
+  int promptClientIdPosX = textoIzquierda + 310;
+
   bool runningScreen = true;
   bool firstPromptSelected = true;
   bool bluePromptSelected = false;
@@ -512,7 +552,7 @@ void Game::loadselectionPlane(bool selectedOk) {
   bool clicked = false;
 
   // Create prompts
-  initialScreen->loadRectangle("promptClientId", promptCenter,inputClientIdPosY, 260, 50);
+  initialScreen->loadRectangle("promptClientId",promptClientIdPosX ,inputClientIdPosY, 260, 50);
   initialScreen->loadRectangle("button", promptCenter + 15, 475, 230, 50);
 
   // Enable text input
@@ -641,11 +681,6 @@ void Game::loadselectionPlane(bool selectedOk) {
     // Set window background
     sdlHandler->setWindowBG(0, 0, 0);
 
-    int inputBluePlaneIdPosX = 250;
-    int inputRedPlaneIdPosX = 330;
-    int inputGreenPlaneIdPosX = 410;
-    int inputYellowPlaneIdPosX = 490;
-
     // Render logo
     initialScreen->renderTexture("logo", logoCenter, 90);
     if (bluePlaneActive){
@@ -681,6 +716,7 @@ void Game::loadselectionPlane(bool selectedOk) {
 	  this->planeId = "amarillo";
 	}
 	if(this->clientId != "" && this->planeId != ""){
+	  //envia el Player Data
 	  this->sendDataPlayer();
 	  runningScreen = false;
 	}
@@ -714,9 +750,9 @@ void Game::loadselectionPlane(bool selectedOk) {
 
     // Set outline color
     initialScreen->setRenderDrawColor(19, 144, 27, 255);
-    initialScreen->loadRectangle("outline", promptCenter,clientIdPromptOutline, 260, 50);
-    initialScreen->loadRectangle("outline2", promptCenter + 1,clientIdPromptOutline2, 258, 48);
-    initialScreen->loadRectangle("outline3", promptCenter + 2,clientIdPromptOutline3, 256, 46);
+    initialScreen->loadRectangle("outline", promptClientIdPosX,clientIdPromptOutline, 260, 50);
+    initialScreen->loadRectangle("outline2", promptClientIdPosX + 1,clientIdPromptOutline2, 258, 48);
+    initialScreen->loadRectangle("outline3", promptClientIdPosX + 2,clientIdPromptOutline3, 256, 46);
 
     if (bluePromptSelected){
       initialScreen->loadRectangle("planeOutline", inputBluePlaneIdPosX,bluePlanePromptOutline, 60, 60);
@@ -749,7 +785,7 @@ void Game::loadselectionPlane(bool selectedOk) {
 
     // Render text textures
     if (this->clientId != ""){
-      initialScreen->renderTexture("clientId", textCenter, inputClientIdPosY);
+      initialScreen->renderTexture("clientId", promptClientIdPosX, inputClientIdPosY);
     }
 
     initialScreen->renderTexture("accept", buttonTextCenter, 475);
@@ -775,7 +811,6 @@ void Game::sendDataPlayer(){
   this->jugador = new PlayerData;
   strcpy( jugador->name, this->clientId.c_str() );
   strcpy( jugador->color, this->planeId.c_str() );
-  jugador->team = this->team;
   this->unCliente->sendData(jugador);
 }
 
@@ -788,7 +823,7 @@ void Game::loadWaitingGame() {
   waitingScreen->loadText( "connecting", connectingText, { 255, 255, 255, 255 } );
 
   int logoCenter = ( this->windowWidth - waitingScreen->getTextureWidth( "logo" ) ) / 2;
-  int promptCenter = logoCenter - 20;
+  int promptCenter = logoCenter - 100;
 
   // Enable text input
   SDL_StartTextInput();
@@ -796,7 +831,7 @@ void Game::loadWaitingGame() {
   this->sdlHandler->setWindowBG(0, 0, 0);
   // Render logo
   waitingScreen->renderTexture( "logo", logoCenter, 90 );
-  waitingScreen->renderTexture("connecting", logoCenter, 300 );
+  waitingScreen->renderTexture("connecting", promptCenter, 300 );
   //Update screen
   this->sdlHandler->updateWindow();
   while( !unCliente->allPlayersReady()){
@@ -958,7 +993,7 @@ void Game::loadSinglePlayerScoreScreen( int stage ) {
 void Game::loadModeGameScreen(){
   SDL_Event e;
   Timer timer;
-
+  cout<<"Seleccion Modo "<<endl;
   Screen* initialScreen = new Screen( this->sdlHandler );
   initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   initialScreen->loadText( "gameModeText", "Modo de Juego:", { 0, 200, 100 } );
@@ -1030,35 +1065,19 @@ void Game::loadModeGameScreen(){
 	if( clicked ) {
 	  clicked = false;
 	  if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) && ( mouseY > 525 ) && ( mouseY < ( 525 + 50 ) ) ) {
-			runningScreen = false;
-			//Disable text input
-			SDL_StopTextInput();
-			delete initialScreen;
-
-			if ( teamPromptSelected ){
-				this->loadTeamSelectedScreen();
-			}
-
-			bool endSelectingPlane = false;
-			bool primerIntento = true;
-			while(!endSelectingPlane){
-				PlanesActives* planes = this->unCliente->getPlanesActives();
-				this->bluePlaneActive = planes->blue;
-				this->redPlaneActive = planes->red;
-				this->greenPlaneActive = planes->green;
-				this->yellowPlaneActive = planes->yellow;
-				this->clientId = "";
-				this->planeId = "";
-				if (primerIntento){
-					this->loadselectionPlane(true);
-				}else{
-					this->loadselectionPlane(this->unCliente->isPlayerOk());
-				}
-				primerIntento = false;
-				endSelectingPlane = this->unCliente->isPlayerOk();
-			}
-			this->loadWaitingGame();
-			break;
+		//Si no hay ningun modo puesto toma los del cliente
+		if(!this->unCliente->getGameData()->teamMode && !this->unCliente->getGameData()->cooperativeMode){
+			this->unCliente->getGameData()->teamMode = teamPromptSelected;
+			this->unCliente->getGameData()->cooperativeMode = cooperativePromptSelected;
+			this->unCliente->getGameData()->practiceMode = practicePromptSelected;
+			cout<<"entro"<<endl;
+		}
+		this->checkGameMode();
+		runningScreen = false;
+		//Disable text input
+		SDL_StopTextInput();
+		delete initialScreen;
+		break;
 	  } else if( ( mouseX > promptCenter+150 ) && ( mouseX < ( promptCenter+150 + 230 ) ) && ( mouseY > 300 ) && ( mouseY < ( 300 + 50 ) ) ) {
 			  teamPromptSelected = true;
 			  cooperativePromptSelected = false;
@@ -1122,6 +1141,15 @@ void Game::loadTeamSelectedScreen(){
   SDL_Event e;
   Timer timer;
 
+  GameData* gameData = this->unCliente->getGameData();
+
+  bool team1Complete = (gameData->maxPlayersTeams == gameData->countPlayersTeam1);
+  bool team2Complete = (gameData->maxPlayersTeams == gameData->countPlayersTeam2);
+  bool alphaTeamSelected = true;
+  bool betaTeamSelected = false;
+  bool runningScreen = true;
+  bool clicked = false;
+
   Screen* initialScreen = new Screen( this->sdlHandler );
   initialScreen->loadTexture( "logo", "windowImages/1942logoPrincipal.bmp" );
   initialScreen->loadText( "teamText", "Elija equipo:", { 0, 200, 100 } );
@@ -1139,11 +1167,6 @@ void Game::loadTeamSelectedScreen(){
   int alphaTeamPromptOutline = 300, alphaTeamPromptOutline2 = 301, alphaTeamPromptOutline3 = 302;
   int betaTeamPromptOutline = 375, betaTeamPromptOutline2 = 376, betaTeamPromptOutline3 = 377;
   int mouseX, mouseY;
-
-  bool runningScreen = true;
-  bool alphaTeamSelected = true;
-  bool betaTeamSelected = false;
-  bool clicked = false;
 
   // Create prompts
   initialScreen->loadRectangle( "promptAlphaTeam", promptCenter+150, 300, 260, 50 );
@@ -1181,22 +1204,39 @@ void Game::loadTeamSelectedScreen(){
 	// Set prompt color
 	initialScreen->setRenderDrawColor( 160, 160, 160, 255 );
 	// Render prompts
-	initialScreen->renderRectangle( "promptAlphaTeam" );
-	initialScreen->renderRectangle( "promptBetaTeam" );
+	if( !team1Complete ){
+		initialScreen->renderRectangle( "promptAlphaTeam" );
+	}
+	if( !team2Complete ){
+		initialScreen->renderRectangle( "promptBetaTeam" );
+	}
 
 	if( clicked ) {
 	  clicked = false;
 	  if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) && ( mouseY > 525 ) && ( mouseY < ( 525 + 50 ) ) ) {
-		runningScreen = false;
-		if ( alphaTeamSelected ){
+		GameData* game = this->unCliente->getGameData();
+		cout<<"Aca llego el game data de team 1: "<<game->countPlayersTeam1<<endl;
+		cout<<"Aca llego el game data de team 2: "<<game->countPlayersTeam2<<endl;
+		if ( alphaTeamSelected && (game->countPlayersTeam1 < game->maxPlayersTeams)){
 			this->team = 1;
-		} else if (betaTeamSelected ){
-			this->team = 2;
+			//TODO enviar team
+			this->unCliente->sendMode("T1");
+			runningScreen = false;
+			//Disable text input
+			SDL_StopTextInput();
+			delete initialScreen;
+			break;
 		}
-		//Disable text input
-		SDL_StopTextInput();
-		delete initialScreen;
-		break;
+		if (betaTeamSelected && (game->countPlayersTeam2 < game->maxPlayersTeams)){
+			this->team = 2;
+			//TODO enviar team
+			this->unCliente->sendMode("T2");
+			runningScreen = false;
+			//Disable text input
+			SDL_StopTextInput();
+			delete initialScreen;
+			break;
+		}
 	  } else if( ( mouseX > promptCenter+150 ) && ( mouseX < ( promptCenter+150 + 230 ) ) && ( mouseY > 300 ) && ( mouseY < ( 300 + 50 ) ) ) {
 		  alphaTeamSelected = true;
 		  betaTeamSelected = false;
@@ -1211,25 +1251,32 @@ void Game::loadTeamSelectedScreen(){
 	// Set outline color
 	initialScreen->setRenderDrawColor( 19, 144, 27, 255 );
 
-	if( alphaTeamSelected ) {
+	if( alphaTeamSelected && !team1Complete ) {
 	  initialScreen->loadRectangle( "outline", promptCenter+150, alphaTeamPromptOutline, 260, 50 );
 	  initialScreen->loadRectangle( "outline2", promptCenter+150 + 1, alphaTeamPromptOutline2, 258, 48 );
 	  initialScreen->loadRectangle( "outline3", promptCenter+150 + 2, alphaTeamPromptOutline3, 256, 46 );
-	} else if( betaTeamSelected ) {
+	} else if( betaTeamSelected && !team2Complete ) {
 	  initialScreen->loadRectangle( "outline", promptCenter+150, betaTeamPromptOutline, 260, 50 );
 	  initialScreen->loadRectangle( "outline2", promptCenter+150 + 1, betaTeamPromptOutline2, 258, 48 );
 	  initialScreen->loadRectangle( "outline3", promptCenter+150 + 2, betaTeamPromptOutline3, 256, 46 );
 	}
 
-	// Render outlines
-	initialScreen->renderRectangle( "outline", true );
-	initialScreen->renderRectangle( "outline2", true );
-	initialScreen->renderRectangle( "outline3", true );
 
+	if( (alphaTeamSelected && !team1Complete) || (betaTeamSelected && !team2Complete) ) {
+	  // Render outlines
+	  initialScreen->renderRectangle( "outline", true );
+	  initialScreen->renderRectangle( "outline2", true );
+  	  initialScreen->renderRectangle( "outline3", true );
+
+	}
 	// Render text textures
 	initialScreen->renderTexture( "teamText", 120, alphaTeamPromptOutline );
-	initialScreen->renderTexture( "alphaTeam", buttonAlphaTeamTextCenter, alphaTeamPromptOutline );
-	initialScreen->renderTexture( "betaTeam", buttonBetaTeamTextCenter, betaTeamPromptOutline );
+	if( !team1Complete ){
+		initialScreen->renderTexture( "alphaTeam", buttonAlphaTeamTextCenter, alphaTeamPromptOutline );
+	}
+	if( !team2Complete ){
+		initialScreen->renderTexture( "betaTeam", buttonBetaTeamTextCenter, betaTeamPromptOutline );
+	}
 	initialScreen->renderTexture( "accept", buttonAcceptTextCenter, 525 );
 
 	//Update screen
@@ -1239,5 +1286,16 @@ void Game::loadTeamSelectedScreen(){
 	  SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
 	}
   }
+}
+
+void Game::checkGameMode(){
+	if ( this->unCliente->getGameData()->teamMode ){
+		this->unCliente->sendMode("MT");
+		this->loadTeamSelectedScreen();
+	}
+	if ( this->unCliente->getGameData()->cooperativeMode ){
+		cout<<"modo cooperativo"<<endl;
+		this->unCliente->sendMode("MC");
+	}
 }
 

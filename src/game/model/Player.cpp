@@ -1,5 +1,7 @@
 #include "Player.h"
 
+using namespace std;
+
 Player::Player( string name, string color, int x, int y, int team, int health ) {
   this->name = name;
   this->color = color;
@@ -9,6 +11,7 @@ Player::Player( string name, string color, int x, int y, int team, int health ) 
   this->health = health;
   this->score = 0;
   this->team = team;
+  this->ready = false;
 }
 
 Player::~Player() {}
@@ -80,4 +83,16 @@ void Player::die() {
 
 int Player::getTeam(){
 	return this->team;
+}
+
+void Player::changeReady(){
+	this->ready = !this->ready;
+}
+
+bool Player::isReady(){
+	return this->ready;
+}
+
+void Player::setTeam(int team){
+	this->team = team;
 }
