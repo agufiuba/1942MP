@@ -55,7 +55,10 @@ void Game::cargarEscenario() {
       PlayerData* pData = this->unCliente->getPlayers()[i];
       if( this->clientId == pData->name ) {
 	  this->player = new Player( pData->name, pData->color, pData->x, pData->y, pData->team);
+	  // set player and teams score
 	  this->player->addScore( pData->score );
+	  this->unCliente->setTeamScore( pData->teamScore );
+	  this->unCliente->setRivalTeamScore( pData->rivalTeamScore );
     	  escenario->configurarMiAvion( pData );
       } else {
     	  escenario->configurarAvionAmigo( pData );
