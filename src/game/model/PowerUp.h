@@ -70,6 +70,7 @@ public:
 
 	void vivir();
 	bool aunVive();
+	void morir();
 };
 
 #endif /* SRC_GAME_MODEL_POWERUP_H_ */

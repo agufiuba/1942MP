@@ -96,6 +96,7 @@ private:
 	void getPowerUp();
 	void loadScoreData();
 	void hitEnemy();
+	void actualizarEnemigos();
 	bool escenarioCreado;
 
 public:

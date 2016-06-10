@@ -131,3 +131,7 @@ void PowerUp::activarPowerUp() {
 			cliente->sendData(ce->destroy(obj->getId()));
 	}
 }
+
+void PowerUp::morir(){
+	this->viviendo = false;
+}
