@@ -267,6 +267,9 @@ void Enemy::recibirMisil(Misil* misil) {
 		this->vida -= misil->getDano();
 		cout << "La vida actual es " << this->vida << endl;
 	}
+	if(!tieneHP()){
+		viviendo = false;
+	}
 }
 
 bool Enemy::tieneHP() {
@@ -370,3 +373,14 @@ void Enemy::moverFlota() {
 		}
 	}
 }
+
+void Enemy::morir(){
+	if (vistaAvion != NULL) {
+		delete vistaAvion;
+		vistaAvion = NULL;
+	}
+	posicion->mover(-1, -3);
+	explosion->explotar(posicion);
+	cout<<"muere"<<endl;
+}
+

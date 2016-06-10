@@ -45,6 +45,7 @@ private:
 	void mover(int velX, int velY);
 	void moverEjeX(int velX);
 	void moverEjeY(int velY);
+
 	int angleX;
 	int angleY;
 
@@ -95,6 +96,7 @@ public:
     struct tm* tm;
     int secsRandom;
     chrono::time_point<chrono::system_clock> nFlota;
+    void morir();
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */
