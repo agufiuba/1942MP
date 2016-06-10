@@ -43,6 +43,11 @@ bool Enemy::haciendoVueltereta(){
 }
 
 Enemy::~Enemy(){
+	if (!explosion->exploto()) {
+	   cout<<"entro"<<endl;
+	   posicion->mover(-1, -3);
+	   explosion->explotar(posicion);
+	}
 
 	if (vistaAvion != NULL) delete vistaAvion;
 	if (explosion != NULL) delete explosion;
