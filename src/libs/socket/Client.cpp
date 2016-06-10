@@ -627,6 +627,9 @@ void Client::addScoreToPlayer( int score ) {
 }
 
 void Client::requestScoreReset() {
+  this->player->resetScore();
+  this->teamScore = 0;
+  this->rivalTeamScore = 0;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendDataID( "RS" );
   delete tmt;
