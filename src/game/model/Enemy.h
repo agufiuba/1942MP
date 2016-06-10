@@ -85,6 +85,7 @@ public:
 
 	bool hit(int, int);
 	void moverRandom();
+	void morir();
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */

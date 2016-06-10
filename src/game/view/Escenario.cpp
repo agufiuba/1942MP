@@ -514,20 +514,23 @@ void Escenario::hitEnemy() {
 //				cout << x2 << " " << x2p << " " << y2 << " " << y2p << endl;
 //				cout << "||||||||||||||||||||||||||||||||||||||||||||||||"<<endl;
 				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-				if (touched) {
-					cout << "*********************** CHOCOOOOOO ****************************************" << endl;
-					//enemigos[var]->recibirMisil((Misil*)*it);
-					if (!enemigos[var]->aunVive()){
-						eliminar = var;
-					}
+				if (touched && enemigos[var]->aunVive()) {
+					cout << "****************** CHOCOOOOOO ********************" << endl;
+					enemigos[var]->recibirMisil((Misil*)*it);
+//					if (!enemigos[var]->aunVive()){
+//						enemigos[var]->morir();
+//						eliminar = var;
+//					}
 				}
 			}
-			if (eliminar >= 0 ){
-				cout<<"Elimino"<<endl;
-				//Enemy* objEliminar = enemigos[eliminar];
-				//delete objEliminar;
-				//enemigos.erase(enemigos.begin()+eliminar);
-			}
+//			if (eliminar >= 0 ){
+//				cout<<"Elimino"<<endl;
+//				Enemy* objEliminar = enemigos[eliminar];
+//				delete objEliminar;
+//				enemigos.erase(enemigos.begin()+eliminar);
+////				cout<<"aca paso"<<endl;
+//			}
+//			eliminar = -1;
 		}
 		theMutex.unlock();
 		usleep(100);
@@ -543,15 +546,16 @@ void Escenario::actualizarEnemigos(){
 	for (int i=0; i < enemigos.size(); i++) {
 		if (enemigos[i]->aunVive()){
 			enemigos[i]->vivirRandom();
+//			enemigos[i]->vivir(0,0);
 		}else{
 			eliminar = i;
 		}
 	}
-//	if (eliminar >= 0 ){
-//		Enemy* objEliminar = enemigos[eliminar];
-//		delete objEliminar;
-//		enemigos.erase(enemigos.begin()+eliminar);
-//	}
+	if (eliminar >= 0 ){
+		Enemy* objEliminar = enemigos[eliminar];
+		delete objEliminar;
+		enemigos.erase(enemigos.begin()+eliminar);
+	}
 //	cout<<"UnLooooooock"<<endl;
 	theMutex.unlock();
 

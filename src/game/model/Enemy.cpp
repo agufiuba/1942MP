@@ -177,7 +177,9 @@ void Enemy::vivirRandom(){
 			vistaAvion = NULL;
 		}
 
+		cout<<"antes"<<endl;
 		if (!explosion->exploto()) {
+			cout<<"endtro"<<endl;
 			posicion->mover(-1, -3);
 			explosion->explotar(posicion);
 		}
@@ -240,6 +242,9 @@ void Enemy::recibirMisil(Misil* misil) {
 		this->vida -= misil->getDano();
 		cout << "La vida actual es " << this->vida << endl;
 	}
+	if(!tieneHP()){
+		viviendo = false;
+	}
 }
 
 bool Enemy::tieneHP() {
@@ -278,4 +283,14 @@ void Enemy::moverRandom() {
 	angleY = y;
 
 	mover(x, y);
+}
+
+void Enemy::morir(){
+	if (vistaAvion != NULL) {
+		delete vistaAvion;
+		vistaAvion = NULL;
+	}
+	posicion->mover(-1, -3);
+	explosion->explotar(posicion);
+	cout<<"muere"<<endl;
 }
