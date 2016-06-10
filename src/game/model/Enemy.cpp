@@ -197,7 +197,7 @@ void Enemy::vivirFlota(){
 			vistaAvion->conectar();
 		}
 		moverFlota();
-		mostrar(0, 0);
+		mostrar(angleX, angleY);
 	} else {
 		if (vistaAvion != NULL) {
 			delete vistaAvion;
@@ -383,4 +383,3 @@ void Enemy::morir(){
 	explosion->explotar(posicion);
 	cout<<"muere"<<endl;
 }
-

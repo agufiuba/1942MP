@@ -197,5 +197,5 @@
 	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
 	<disparosSpriteID>balaNormal</disparosSpriteID>
 </avion>
-<maxClients>2</maxClients>
+<maxClients>1</maxClients>
 <jugadoresPorEquipo>1</jugadoresPorEquipo>

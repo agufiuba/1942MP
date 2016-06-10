@@ -235,16 +235,7 @@ SDL_Event* Escenario::run() {
 	Uint32 start;
 	bool quit = false;
 
-	thread tPowerUps(&Escenario::getPowerUp, this);
-	tPowerUps.detach();
-
 	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
-
-		thread tPowerUps(&Escenario::getPowerUp, this);
-		tPowerUps.detach();
-
-		thread tShot(&Escenario::hitEnemy, this);
-		tShot.detach();
 
 		while (!quit && this->unCliente->isConnected()) {
 
