@@ -813,6 +813,7 @@ void Game::sendDataPlayer(){
   this->jugador = new PlayerData;
   strcpy( jugador->name, this->clientId.c_str() );
   strcpy( jugador->color, this->planeId.c_str() );
+  jugador->team = 0;
   this->unCliente->sendData(jugador);
 }
 
