@@ -28,6 +28,8 @@ void HandlerPowerUp::activar(string id) {
 }
 
 void HandlerPowerUp::hacerVivir() {
+	mutex theMutex;
+	theMutex.lock();
 	for (map<string, PowerUp*>::iterator it = this->mapaPowerUp.begin(); it != this->mapaPowerUp.end(); ++it) {
 		if(it->second->aunVive()){
 			it->second->vivir();
@@ -36,4 +38,5 @@ void HandlerPowerUp::hacerVivir() {
 			this->mapaPowerUp.erase(it);
 		}
 	}
+	theMutex.unlock();
 }

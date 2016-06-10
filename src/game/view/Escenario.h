@@ -89,7 +89,7 @@ private:
 	void verificarEstacionamiento(int numeroNivel);
 	void getPowerUp();
 	void hitEnemy();
-
+	void actualizarEnemigos();
 	bool escenarioCreado;
 
 public:

@@ -54,26 +54,30 @@ void Misil::moverEjeY(int velY){
 }
 
 int Misil::getAnchoFondo() {
-	int a = anchoFondo;
-	return a;
+	return this->anchoFondo;
 }
 
 int Misil::getLargoFondo() {
-	int a = largoFondo;
-	return a;
+	return this->largoFondo;
 }
 
 
 bool Misil::aunVive(){
-	bool v = viviendo;
-	return v;
+	return this->viviendo;
 }
 
 int Misil::getDano() {
-	int d = this->dano;
-	return d;
+	return this->dano;
 }
 
 void Misil::setAmetralladora() {
 	vistaMisil->cargarImagenDelMisil("balaAmetralladora.bmp");
+}
+
+int Misil::getAncho(){
+	return this->vistaMisil->getAncho();
+}
+
+int Misil::getLargo(){
+	return this->vistaMisil->getLargo();
 }

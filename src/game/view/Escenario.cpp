@@ -48,16 +48,15 @@ Escenario::~Escenario() {
 }
 
 void Escenario::actualizarEscenario(Posicion* pos) {
+	mutex theMutex;
 
 	escenarioScreen->renderTexture("agua", pos->getX(), pos->getYsdl());
 
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir();
 	}
-	for (int i=0; i < enemigos.size(); i++) {
-		enemigos[i]->vivirRandom();
-	}
 
+	actualizarEnemigos();
 	controllers->hacerVivir();
 	myControl->hacerVivir();
 	hPowerUp->hacerVivir();
@@ -156,6 +155,9 @@ SDL_Event* Escenario::run() {
 	escenarioCreado = true;
   	crearEnemigo();
 
+	thread tPowerUps(&Escenario::getPowerUp, this);
+	tPowerUps.detach();
+
 	thread tShot(&Escenario::hitEnemy, this);
 	tShot.detach();
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
@@ -173,10 +175,6 @@ SDL_Event* Escenario::run() {
 	bool quit = false;
 
 	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
-
-		thread tPowerUps(&Escenario::getPowerUp, this);
-		tPowerUps.detach();
-
 
 		while (!quit && this->unCliente->isConnected()) {
 
@@ -450,6 +448,7 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
 }
 
 void Escenario::getPowerUp() {
+	mutex theMutex;
 	while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
 		Vivible* avion = myControl->getVivible();
 		if (avion->tieneHP()) {
@@ -457,6 +456,7 @@ void Escenario::getPowerUp() {
 			int y = avion->getY();
 			int xp = x + avion->getAncho();
 			int yp = y + avion->getLargo();
+			theMutex.lock();
 			for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
 				bool touched = false;
 				int x2 = it->second->getX();
@@ -466,10 +466,13 @@ void Escenario::getPowerUp() {
 				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
 				if (touched) {
 					it->second->activarPowerUp();
-					delete it->second;
-					hPowerUp->mapaPowerUp.erase(it);
+					it->second->morir();
+//					delete it->second;
+//					hPowerUp->mapaPowerUp.erase(it);
 				}
 			}
+			theMutex.unlock();
+			usleep(100);
 		}
 	}
 }
@@ -491,34 +494,65 @@ void Escenario::hitEnemy() {
 	while (escenarioCreado) {
 		theMutex.lock();
 //		cout<<"Hit mutea"<<endl;
+		int eliminar = -1;
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
-//			cout<<"veo enemigos"<<endl;
-			for (vector<Enemy*>::iterator jt = enemigos.begin(); jt != enemigos.end(); jt++) {
-//				cout<<"aca entro"<<endl;
+//			for (vector<Enemy*>::iterator jt = enemigos.begin(); jt != enemigos.end(); jt++) {
+			for (int var = 0; var < enemigos.size(); ++var) {
 				bool touched = false;
 				int x = (*it)->posX;
 				int xp = x + (*it)->getAncho();
 				int y = (*it)->posY;
 				int yp = y + (*it)->getLargo();
-				cout << x << " " << xp << " " << y << " " << yp << endl;
-//				cout<<"aca entro1"<<endl;
+//				cout << x << " " << xp << " " << y << " " << yp << endl;
 				// if (y > resolucion->getHeightScreen())
 				// 	(*it)->viviendo = false;
 
-				int x2 = (*jt)->getX();
-				int x2p = x2 + (*jt)->getAncho();
-				int y2 = (*jt)->getY();
-				int y2p = y2p + (*jt)->getLargo();
-//				cout<<"aca entro2"<<endl;
-				cout << x2 << " " << x2p << " " << y2 << " " << y2p << endl;
-				cout << "||||||||||||||||||||||||||||||||||||||||||||||||"<<endl;
+				int x2 = enemigos[var]->getX();
+				int x2p = x2 + enemigos[var]->getAncho();
+				int y2 = enemigos[var]->getY();
+				int y2p = y2 + enemigos[var]->getLargo();
+//				cout << x2 << " " << x2p << " " << y2 << " " << y2p << endl;
+//				cout << "||||||||||||||||||||||||||||||||||||||||||||||||"<<endl;
 				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-				if (touched) cout << "/////////////////////// chocooo /////////////////////////" << endl;
-//				cout<<"aca entro3"<<endl;
+				if (touched) {
+					cout << "*********************** CHOCOOOOOO ****************************************" << endl;
+					//enemigos[var]->recibirMisil((Misil*)*it);
+					if (!enemigos[var]->aunVive()){
+						eliminar = var;
+					}
+				}
+			}
+			if (eliminar >= 0 ){
+				cout<<"Elimino"<<endl;
+				//Enemy* objEliminar = enemigos[eliminar];
+				//delete objEliminar;
+				//enemigos.erase(enemigos.begin()+eliminar);
 			}
 		}
 		theMutex.unlock();
-		usleep(100000);
+		usleep(100);
 //		cout<<"Hit Des mutea"<<endl;
 	}
+}
+
+void Escenario::actualizarEnemigos(){
+	mutex theMutex;
+	theMutex.lock();
+//	cout<<"Looooooock"<<endl;
+	int eliminar = -1;
+	for (int i=0; i < enemigos.size(); i++) {
+		if (enemigos[i]->aunVive()){
+			enemigos[i]->vivirRandom();
+		}else{
+			eliminar = i;
+		}
+	}
+//	if (eliminar >= 0 ){
+//		Enemy* objEliminar = enemigos[eliminar];
+//		delete objEliminar;
+//		enemigos.erase(enemigos.begin()+eliminar);
+//	}
+//	cout<<"UnLooooooock"<<endl;
+	theMutex.unlock();
+
 }

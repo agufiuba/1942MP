@@ -40,6 +40,8 @@ public:
 	void vivir(int x,int y);
 	int getAnchoFondo();
 	int getLargoFondo();
+	int getAncho();
+	int getLargo();
 	bool aunVive();
 	int getDano();
 
