@@ -684,3 +684,11 @@ int Client::getTeamScore() {
 int Client::getRivalTeamScore() {
   return this->rivalTeamScore;
 }
+
+void Client::setTeamScore( int score ) {
+  this->teamScore = score;
+}
+
+void Client::setRivalTeamScore( int score ) {
+  this->rivalTeamScore = score;
+}

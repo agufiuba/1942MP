@@ -70,6 +70,8 @@ class Server {
     void sendStageReadySignal();
     void sendPlayersReady();
     void setTeamPlayer(int team, int cfd);
+    int getPlayerTeamScore( Player* player );
+    int getPlayerRivalTeamScore( Player* player );
 
   public:
     Server( const char* configFileName );

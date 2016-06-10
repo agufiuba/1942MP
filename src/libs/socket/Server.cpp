@@ -297,25 +297,64 @@ void Server::createPlayers() {
     // send other players data
     for (map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end(); ++it) {
+      Player* player = it->second;
       Transmitter* tmt = new Transmitter(it2->first, this->logger);
 
-      PlayerData* player = new PlayerData;
-      strcpy(player->name, it->second->getName().c_str());
-      strcpy(player->color, it->second->getColor().c_str());
-      player->x = it->second->getX();
-      player->y = it->second->getY();
-      player->team = it->second->getTeam();
-      player->score = it->second->getScore();
+      PlayerData* pd = new PlayerData;
+      strcpy(pd->name, player->getName().c_str());
+      strcpy(pd->color, player->getColor().c_str());
+      pd->x = player->getX();
+      pd->y = player->getY();
+      pd->team = player->getTeam();
+      pd->score = player->getScore();
 
-      while (!tmt->sendData(player, "PR"));
+      if ( it2->second->getName() == player->getName() ) {
+	// get team score
+	if ( this->gameData->cooperativeMode ) {
+	  pd->teamScore = this->getPlayerTeamScore( player );
+	// get team score and rival team score
+	} else if ( this->gameData->teamMode ) {
+	  pd->teamScore = this->getPlayerTeamScore( player );
+	  pd->rivalTeamScore = this->getPlayerRivalTeamScore( player );
+	}
+      }
 
-      delete player;
+      while (!tmt->sendData(pd, "PR"));
+
+      delete pd;
       delete tmt;
     }
     // activate player
     it2->second->activate();
     it2++;
   }
+}
+
+int Server::getPlayerTeamScore( Player* player ) {
+  int teamScore = 0;
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    if ( player->getTeam() == it->second->getTeam() ) {
+      teamScore += it->second->getScore();
+    }
+  }
+
+  return teamScore;
+}
+
+int Server::getPlayerRivalTeamScore( Player* player ) {
+  int rivalTeamScore = 0;
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    if ( player->getTeam() != it->second->getTeam() ) {
+      rivalTeamScore += it->second->getScore();
+    }
+  }
+
+  return rivalTeamScore;
+
 }
 
 void Server::sendPlanesActives(int cfd){

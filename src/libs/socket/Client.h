@@ -99,5 +99,7 @@ class Client {
     bool isPlayerResume();
     int getTeamScore();
     int getRivalTeamScore();
+    void setTeamScore( int score );
+    void setRivalTeamScore( int score );
 };
 #endif
