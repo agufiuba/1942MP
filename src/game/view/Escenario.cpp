@@ -213,7 +213,7 @@ SDL_Event* Escenario::run() {
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
-  	crearEnemigo();
+  	crearEnemigo(300, 400);
 	crearFlota(0, 400);
 
 	thread tPowerUps(&Escenario::getPowerUp, this);
@@ -778,26 +778,18 @@ void Escenario::hitEnemy() {
 	mutex theMutex;
 	while (escenarioCreado) {
 		theMutex.lock();
-//		cout<<"Hit mutea"<<endl;
 		int eliminar = -1;
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
-//			for (vector<Enemy*>::iterator jt = enemigos.begin(); jt != enemigos.end(); jt++) {
+			bool touched = false;
+			int x = (*it)->posX;
+			int xp = x + (*it)->getAncho();
+			int y = (*it)->posY;
+			int yp = y + (*it)->getLargo();
 			for (int var = 0; var < enemigos.size(); ++var) {
-				bool touched = false;
-				int x = (*it)->posX;
-				int xp = x + (*it)->getAncho();
-				int y = (*it)->posY;
-				int yp = y + (*it)->getLargo();
-//				cout << x << " " << xp << " " << y << " " << yp << endl;
-				// if (y > resolucion->getHeightScreen())
-				// 	(*it)->viviendo = false;
-
 				int x2 = enemigos[var]->getX();
 				int x2p = x2 + enemigos[var]->getAncho();
 				int y2 = enemigos[var]->getY();
 				int y2p = y2 + enemigos[var]->getLargo();
-//				cout << x2 << " " << x2p << " " << y2 << " " << y2p << endl;
-//				cout << "||||||||||||||||||||||||||||||||||||||||||||||||"<<endl;
 				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
 				if (touched && enemigos[var]->aunVive()) {
 					cout << "****************** CHOCOOOOOO ********************" << endl;
@@ -819,7 +811,6 @@ void Escenario::hitEnemy() {
 		}
 		theMutex.unlock();
 		usleep(100);
-//		cout<<"Hit Des mutea"<<endl;
 	}
 }
 
@@ -830,8 +821,10 @@ void Escenario::actualizarEnemigos(){
 	int eliminar = -1;
 	for (int i=0; i < enemigos.size(); i++) {
 		if (enemigos[i]->aunVive()){
-			enemigos[i]->vivirRandom();
-//			enemigos[i]->vivir(0,0);
+			if(enemigos[i]->flota == -1)
+				enemigos[i]->vivirRandom();
+			else
+				enemigos[i]->vivirFlota();
 		}else{
 			eliminar = i;
 		}

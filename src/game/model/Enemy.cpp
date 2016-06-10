@@ -197,7 +197,7 @@ void Enemy::vivirFlota(){
 			vistaAvion->conectar();
 		}
 		moverFlota();
-		mostrar(angleX, angleY);
+		mostrar(0, 0);
 	} else {
 		if (vistaAvion != NULL) {
 			delete vistaAvion;
@@ -300,7 +300,7 @@ void Enemy::moverRandom() {
 	time_t temp = time(0);
 	localtime(&temp);
 	
-	if ((tm->tm_sec - secsRandom) < 2 && !firsttime) {
+	if ((tm->tm_sec - secsRandom) < 1 && !firsttime) {
 		x = angleX;
 		y = angleY;
 	}
@@ -327,42 +327,42 @@ void Enemy::moverFlota() {
 	float delay = posFlota / 3.5;
 	if (duration.count() > delay) {
 		if(duration.count() < 1.5 + delay) {
-			mover(10, 0);
+			mover(5, 0);
 			angleX = 4;
 			angleY = 0;
 		}
 		else {
 			if(duration.count() < 2 + delay) {
-				mover(7, 7);
+				mover(3, 3);
 				angleX = 2;
 				angleY = 2;
 			}
 			else {
 				if(duration.count() < 2.5 + delay) {
-					mover(-7, 7);
+					mover(-3, 3);
 					angleX = -2;
 					angleY = 2;
 				}
 				else {
 					if(duration.count() < 3.5 + delay) {
-						mover(-10, 0);
+						mover(-5, 0);
 						angleX = -2;
 						angleY = 0;
 					}
 					else {
 						if(duration.count() < 4 + delay) {
-							mover(-7, -7);
+							mover(-3, -3);
 							angleX = -1;
 							angleY = -1;
 						}
 						else {
 							if(duration.count() < 4.5 + delay) {
-								mover(7, -7);
+								mover(3, -3);
 								angleX = 1;
 								angleY = -1;
 							}
 							else {
-								mover(10, 0);
+								mover(5, 0);
 								angleX = 1;
 								angleY = 0;
 							}
