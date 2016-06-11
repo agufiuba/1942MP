@@ -290,3 +290,7 @@ bool Avion::hit(int x, int y) {
 	       (y >= posicion->getY()) &&
 	       (y <= posicion->getY() + vistaAvion->getLargoVista());
 }
+
+void Avion::morir(){
+	this->setHP(0);
+}

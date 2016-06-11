@@ -99,6 +99,7 @@ private:
 	void deleteEnemys();
 	void actualizarEnemigos();
 	bool escenarioCreado;
+	void planesColision();
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl);

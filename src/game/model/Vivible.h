@@ -42,6 +42,7 @@ class Vivible{
 
 	   virtual bool estaEstacionando(){return true;};
 
+	   virtual void morir(){};
 	int posX;
 	int posY;
 };

@@ -46,6 +46,7 @@ public:
 	int getDano();
 
 	void setAmetralladora();
+	void morir();
 };
 
 #endif /* SRC_GAME_MODEL_MISIL_H_ */

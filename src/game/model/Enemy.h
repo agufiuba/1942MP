@@ -4,7 +4,7 @@
 #include <iostream>
 #include <ctime>
 #include <chrono>
-#include "../view/AvionView.h"
+#include "../view/EnemyView.h"
 #include "Vivible.h"
 #include "../controller/Timer.h"
 #include "Resolucion.h"
@@ -31,15 +31,12 @@ private:
 	Timer* t;
 
 	Screen* screen;
-	AvionView* vistaAvion;
+	EnemyView* vistaAvion;
 	ExplosionView* explosion;
 	Posicion* posicion;
 	AvionConf* configuracion;
 
 	Posicion* posicionAEstacionar;
-
-	void realizoVueltereta();
-	void mostrarVueltereta(int frame);
 
 	void mostrar(int velX, int velY);
 	void mover(int velX, int velY);
@@ -65,25 +62,15 @@ public:
 	AvionConf* getConfiguracion();
 
 	void setVelocidadStandard(int vel);
-	bool haciendoVueltereta();
-	void inicializoVueltereta();
 
 	void vivir(int velX, int velY);
 	void vivirRandom();
 	void vivirFlota();
 	bool aunVive();
-	void desconectar();
-
-	void setAmetralladora();
 
 	void recibirMisil(Misil* misil);
 	bool tieneHP();
 	void setHP(int hp);
-
-	void inicializoEstacionar();
-	bool estaEstacionando();
-	void mostrarEstacionar(int frame);
-	void despegar();
 
 	Posicion* getPosicion();
 

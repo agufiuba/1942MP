@@ -67,19 +67,23 @@ void Escenario::actualizarEscenario(Posicion* pos) {
                 enemigos[i]->vivirFlota();
                 
 	}*/
-
 	myControl->hacerVivir();
 	controllers->hacerVivir();
 
 	this->getPowerUp();
 	this->hitEnemy();
+//	if (!unCliente->getGameData()->practiceMode){
+		this->planesColision();
+//    }
 
 	hPowerUp->hacerVivir();
 	this->actualizarEnemigos();
 
 	this->getPowerUp();
 	this->hitEnemy();
-
+//	if (!unCliente->getGameData()->practiceMode){
+		this->planesColision();
+//	}
 	// Render health
 	this->healthView->update( this->player->getHealth() );
 	this->healthView->render();
@@ -722,15 +726,12 @@ void Escenario::loadWaitForPlayersScreen() {
 }
 
 void Escenario::getPowerUp() {
-	//mutex theMutex;
-	//while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
 		Vivible* avion = myControl->getVivible();
 		if (avion->tieneHP()) {
 			int x = avion->getX();
 			int y = avion->getY();
-			int xp = x + avion->getAncho();
-			int yp = y + avion->getLargo();
-			//theMutex.lock();
+			int xp = x + avion->getAncho()-5;
+			int yp = y + avion->getLargo()-5;
 			for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
 				bool touched = false;
 				int x2 = it->second->getX();
@@ -755,14 +756,9 @@ void Escenario::getPowerUp() {
 					delete ce;
 
 					it->second->morir();
-//					delete it->second;
-//					hPowerUp->mapaPowerUp.erase(it);
 				}
 			}
-			//theMutex.unlock();
-			//usleep(100);
 		}
-	//}
 }
 
 void Escenario::crearEnemigo(int x, int y) {
@@ -784,63 +780,34 @@ void Escenario::crearFlota(int x, int y) {
 
 void Escenario::hitEnemy() {
 	vector<Vivible*>* disparos = &(myControl->controlDeMisiles->vivibles->vectorObjetos);
-	//cout<<"obtengo los misiles"<<endl;
-	//mutex theMutex;
-	//while (escenarioCreado) {
-		//theMutex.lock();
 		int eliminar = -1;
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
-
-				cout << "it" << endl;
 			bool touched = false;
 			int x = (*it)->posX;
-
-			cout << "it2" << endl;
 			int xp = x + (*it)->getAncho();
 			int y = (*it)->posY;
 			int yp = y + (*it)->getLargo();
 			//cout << enemigos[0]->getLargo() << endl;
 			for (int var = 0; var < enemigos.size(); ++var) {
-
-				cout << "enemigos" << endl;
 				int x2 = enemigos[var]->getX();
-
-				cout << "enemigos 1" << endl;
-				int x2p = x2 + enemigos[var]->getAncho();
+				int x2p = x2 + enemigos[var]->getAncho()-5;
 				int y2 = enemigos[var]->getY();
-				int y2p = y2 + enemigos[var]->getLargo();
+				int y2p = y2 + enemigos[var]->getLargo()-5;
 				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
 				if (touched && enemigos[var]->aunVive()) {
 					cout << "****************** CHOCOOOOOO ********************" << endl;
 					enemigos[var]->recibirMisil((Misil*)*it);
-//					if (!enemigos[var]->aunVive()){
-//						enemigos[var]->morir();
-//						eliminar = var;
-//					}
+					(*it)->morir();
 				}
 			}
-//			if (eliminar >= 0 ){
-//				cout<<"Elimino"<<endl;
-//				Enemy* objEliminar = enemigos[eliminar];
-//				delete objEliminar;
-//				enemigos.erase(enemigos.begin()+eliminar);
-////				cout<<"aca paso"<<endl;
-//			}
-//			eliminar = -1;
 		}
-		//theMutex.unlock();
-		//usleep(100);
-	//}
 }
 
 void Escenario::actualizarEnemigos(){
-	//mutex theMutex;
-	//theMutex.lock();
 	if(unCliente->destroyEnemys()) {
 		this->deleteEnemys();
 		unCliente->setNotDestroyEnemys();
 	}
-
 	int eliminar = -1;
 	for (int i=0; i < enemigos.size(); i++) {
 		if (enemigos[i]->aunVive()){
@@ -857,9 +824,6 @@ void Escenario::actualizarEnemigos(){
 		delete objEliminar;
 		enemigos.erase(enemigos.begin()+eliminar);
 	}
-//	cout<<"UnLooooooock"<<endl;
-	//theMutex.unlock();
-
 }
 
 void Escenario::deleteEnemys() {
@@ -878,4 +842,27 @@ void Escenario::loadScoreData() {
   // wait for player score data
   while ( this->unCliente->getPlayersScoreData().size() != this->unCliente->getClientsPlaying() );
   this->unCliente->resetClientsPlaying();
+}
+
+void Escenario::planesColision(){
+	Vivible* avion = myControl->getVivible();
+	bool touched = false;
+	if (avion->tieneHP()) {
+		int x = avion->getX();
+		int y = avion->getY();
+		int xp = x + avion->getAncho()-5;
+		int yp = y + avion->getLargo()-5;
+		for (int var = 0; var < enemigos.size(); ++var) {
+			int x2 = enemigos[var]->getX();
+			int x2p = x2 + enemigos[var]->getAncho()-5;
+			int y2 = enemigos[var]->getY();
+			int y2p = y2 + enemigos[var]->getLargo()-5;
+			touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+			if (touched && enemigos[var]->aunVive()) {
+				cout << "****************** CHOCOOOOOO ********************" << endl;
+				enemigos[var]->morir();
+				myControl->getVivible()->morir();
+			}
+		}
+	}
 }

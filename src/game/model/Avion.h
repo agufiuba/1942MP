@@ -81,6 +81,7 @@ public:
 	Posicion* getPosicion();
 
 	bool hit(int, int);
+	void morir();
 };
 
 #endif /* SRC_MODEL_AVION_H_ */

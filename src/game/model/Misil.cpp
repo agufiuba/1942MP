@@ -81,3 +81,7 @@ int Misil::getAncho(){
 int Misil::getLargo(){
 	return this->vistaMisil->getLargo();
 }
+
+void Misil::morir(){
+	this->viviendo = false;
+}

@@ -9,7 +9,7 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	this->vida = 1;
 
 	this->screen = screen;
-	vistaAvion = new AvionView(renderer, "verde", conf->avionSpriteID);
+	vistaAvion = new EnemyView(renderer, "avionGris");
 	explosion = NULL;
 	viviendo = true;
 
@@ -33,18 +33,8 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	nFlota = chrono::system_clock::now();
 }
 
-void Enemy::inicializoVueltereta() {
-	realizandoVueltereta = true;
-	t->correr();
-}
-
-bool Enemy::haciendoVueltereta(){
-	return this->realizandoVueltereta;
-}
-
 Enemy::~Enemy(){
 	if (!explosion->exploto()) {
-	   cout<<"entro"<<endl;
 	   posicion->mover(-1, -3);
 	   explosion->explotar(posicion);
 	}
@@ -107,78 +97,12 @@ void Enemy::mostrar(int velX, int velY){
 	vistaAvion->mostrarRotado(posicion->getX(),posicion->getYsdl(),velX, velY);
 }
 
-void Enemy::mostrarVueltereta(int frame){
-	vistaAvion->mostrarVueltereta(posicion->getX(),posicion->getYsdl(),frame);
-}
-
-void Enemy::realizoVueltereta() {
-	int tiempoIda = 1600; //recomendado >> 1600
-	int tiempoVuelta = tiempoIda;
-	int tiempoMuerto = 400; //recomendado >> 400
-	int frame = 0;
-
-	if (t->tiempoActual() < tiempoIda) {
-		frame = 0;
-		mover(0, velocidadStandard);
-
-	} else {
-		if (t->tiempoActual() < tiempoIda + tiempoMuerto / 2) {
-			frame = 1;
-
-		} else {
-			if (t->tiempoActual() < tiempoIda + tiempoMuerto) {
-				frame = 2;
-
-			} else {
-				if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta) {
-					frame = 3;
-					mover(0, -velocidadStandard);
-
-				} else {
-					if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta + tiempoMuerto / 2) {
-						frame = 4;
-
-					} else {
-						if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoVuelta + tiempoMuerto) {
-							frame = 5;
-
-						} else {
-							if (t->tiempoActual() < tiempoIda + tiempoMuerto * 2 + tiempoVuelta + tiempoIda / 4) {
-								frame = 0;
-								mover(0, velocidadStandard);
-
-							} else {
-								realizandoVueltereta = false;
-								t->parar();
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	mostrarVueltereta(frame);
-}
-
-bool Enemy::estaEstacionando() {
-	return estacionando;
-}
-
-void Enemy::inicializoEstacionar() {
-	estacionando = true;
-	llegoPuntoDeEstacionamiento = false;
-}
-
-void Enemy::mostrarEstacionar(int frame){
-	vistaAvion->mostrarEstacionar(posicion->getX(),posicion->getYsdl(),frame); //estacionar
-}
-
 void Enemy::vivirRandom(){
 	if (tieneHP()) {
-		if (!viviendo) {
-			this->viviendo = true;
-			vistaAvion->conectar();
-		}
+//		if (!viviendo) {
+//			this->viviendo = true;
+//			vistaAvion->conectar();
+//		}
 		moverRandom();
 		mostrar(angleX, angleY);
 	} else {
@@ -197,10 +121,10 @@ void Enemy::vivirRandom(){
 
 void Enemy::vivirFlota(){
 	if (tieneHP()) {
-		if (!viviendo) {
-			this->viviendo = true;
-			vistaAvion->conectar();
-		}
+//		if (!viviendo) {
+//			this->viviendo = true;
+//			vistaAvion->conectar();
+//		}
 		moverFlota();
 		mostrar(angleX, angleY);
 	} else {
@@ -219,16 +143,16 @@ void Enemy::vivirFlota(){
 
 void Enemy::vivir(int velX, int velY){
 	if (tieneHP()) {
-		if ((velX != 0 || velY != 0) && !viviendo) {
-			this->viviendo = true;
-			vistaAvion->conectar();
-		}
-		if (!realizandoVueltereta) {
+//		if ((velX != 0 || velY != 0) && !viviendo) {
+//			this->viviendo = true;
+//			vistaAvion->conectar();
+//		}
+//		if (!realizandoVueltereta) {
 			mover(velX, velY);
 			mostrar(angleX, angleY);
-		} else {
-			realizoVueltereta();
-		}
+//		} else {
+//			realizoVueltereta();
+//		}
 	} else {
 		if (vistaAvion != NULL) {
 			delete vistaAvion;
@@ -256,17 +180,6 @@ bool Enemy::aunVive(){
 	return viviendo;
 }
 
-void Enemy::desconectar(){
-	this->viviendo = false;
-	if (vistaAvion != NULL)
-	vistaAvion->desconectar();
-}
-
-void Enemy::setAmetralladora(){
-	if (vistaAvion != NULL)
-	vistaAvion->ametralladora();
-}
-
 void Enemy::recibirMisil(Misil* misil) {
 	if (tieneHP()) {
 		this->vida -= misil->getDano();
@@ -287,10 +200,6 @@ void Enemy::setHP(int hp) {
 
 Posicion* Enemy::getPosicion() {
 	return this->posicion;
-}
-
-void Enemy::despegar() {
-	estacionando = false;
 }
 
 bool Enemy::hit(int x, int y) {
@@ -380,12 +289,5 @@ void Enemy::moverFlota() {
 }
 
 void Enemy::morir(){
-		viviendo = false;
-/*	if (vistaAvion != NULL) {
-		delete vistaAvion;
-		vistaAvion = NULL;
-	}
-	posicion->mover(-1, -3);
-	explosion->explotar(posicion);
-	cout<<"muere"<<endl;*/
+	viviendo = false;
 }
