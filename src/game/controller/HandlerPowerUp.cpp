@@ -34,7 +34,6 @@ void HandlerPowerUp::hacerVivir() {
 		if(it->second->aunVive()){
 			it->second->vivir();
 		} else {
-			cout <<"deletePU" << endl;
 			delete it->second;
 			this->mapaPowerUp.erase(it);
 		}

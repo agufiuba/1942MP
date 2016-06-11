@@ -745,6 +745,7 @@ void Escenario::getPowerUp() {
 						unCliente->sendData(ce->ametralladora(myControl->getVivible()->getId()));
 					}
 					if (resp == 'd') {
+						unCliente->setDestroyEnemys();
 						unCliente->sendData(ce->destroy(myControl->getVivible()->getId()));
 					}
 					if (resp == 'b') {
@@ -835,7 +836,11 @@ void Escenario::hitEnemy() {
 void Escenario::actualizarEnemigos(){
 	//mutex theMutex;
 	//theMutex.lock();
-//	cout<<"Looooooock"<<endl;
+	if(unCliente->destroyEnemys()) {
+		this->deleteEnemys();
+		unCliente->setNotDestroyEnemys();
+	}
+
 	int eliminar = -1;
 	for (int i=0; i < enemigos.size(); i++) {
 		if (enemigos[i]->aunVive()){
@@ -855,6 +860,13 @@ void Escenario::actualizarEnemigos(){
 //	cout<<"UnLooooooock"<<endl;
 	//theMutex.unlock();
 
+}
+
+void Escenario::deleteEnemys() {
+	for(int i=0;i<this->enemigos.size();i++) {
+		cout<<"Elimino un enemigo"<<endl;
+		this->enemigos[i]->morir();
+	}
 }
 
 void Escenario::loadScoreData() {

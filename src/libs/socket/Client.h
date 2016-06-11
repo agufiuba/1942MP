@@ -11,6 +11,7 @@
 #include "../../xml/conf/ClientConf.h"
 #include "../../game/events/Events.cpp"
 #include "../../game/model/Player.h"
+#include "../../game/model/Enemy.h"
 #include "../../game/controller/HandlerPlayersControllers.h"
 #include "../../game/controller/HandlerPowerUp.h"
 #include <vector>
@@ -51,6 +52,8 @@ class Client {
     GameData* gameData;
     bool playerResume;
 
+    bool destroyEne;
+
   public:
     Client( const char* configFileName );
     Client( string ip, string puerto );
@@ -73,6 +76,9 @@ class Client {
     bool sendPlayerDeath();
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
     void setPowerUpHandler(HandlerPowerUp* hPowerUp);
+    void setNotDestroyEnemys();
+    void setDestroyEnemys();
+    bool destroyEnemys();
     vector<PlayerData*> getPlayers();
     vector<PlayerScore*> getPlayersScoreData();
     GameConf* getConfig();

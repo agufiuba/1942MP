@@ -694,19 +694,15 @@ void Server::processQueue() {
       //tSending.detach();
 
 
-      //TODO: Aqui vendria el codigo para eliminar todos los aviones enemigos
-      if (it->second->value == 'X') {
-      	cout << "Destruyo todos los aviones enemigos en la Queue, avisando a todos los clientes de este suceso " <<endl;
-      } else {
-  			if (!(this->players.empty())) {
-  				for (map<int, Player*>::iterator itP = this->players.begin();
-  						itP != this->players.end(); ++itP) {
-  					if ((itP->first) != it->first) {
-  						sendData(itP->first, it->second);
-  					}
-  				}
-  			}
-      }
+			if (!(this->players.empty())) {
+				for (map<int, Player*>::iterator itP = this->players.begin();
+						itP != this->players.end(); ++itP) {
+					if ((itP->first) != it->first) {
+						sendData(itP->first, it->second);
+					}
+				}
+			}
+
 
       delete data;
 

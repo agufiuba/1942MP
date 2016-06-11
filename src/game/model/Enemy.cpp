@@ -380,11 +380,12 @@ void Enemy::moverFlota() {
 }
 
 void Enemy::morir(){
-	if (vistaAvion != NULL) {
+		viviendo = false;
+/*	if (vistaAvion != NULL) {
 		delete vistaAvion;
 		vistaAvion = NULL;
 	}
 	posicion->mover(-1, -3);
 	explosion->explotar(posicion);
-	cout<<"muere"<<endl;
+	cout<<"muere"<<endl;*/
 }
