@@ -27,6 +27,8 @@ class Texture{
     //Renders texture at given point
     void render( int x, int y, SDL_Rect* clip = NULL );
 
+    void renderWithAngle(int x, int y, SDL_Rect* clip = NULL, double angle = 0.0);
+
     //Gets image dimensions
     int getWidth();
     int getHeight();

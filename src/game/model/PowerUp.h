@@ -13,7 +13,6 @@
 #include "Resolucion.h"
 #include "../model/Avion.h"
 #include "../model/Posicion.h"
-#include "../../libs/socket/Client.h"
 #include "../controller/IController.h"
 #include "../events/CompanionEvent.h"
 #include "../model/Player.h"
@@ -34,8 +33,6 @@ private:
 	bool viviendo;
 
 	IController* control;
-	Client* cliente;
-	Player* player;
 
 	PowerUpView* vistaPowerUp;
 
@@ -50,7 +47,7 @@ private:
 	void moverEjeY(int velY);
 
 public:
-	PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente, Player* player, IController* control, string type, string id);
+	PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, IController* control, string type, string id);
 	~PowerUp();
 
 	string getId();
@@ -66,10 +63,11 @@ public:
 
 	void setVelocidadStandard(int vel);
 
-	void activarPowerUp();
+	char activarPowerUp();
 
 	void vivir();
 	bool aunVive();
+	void morir();
 };
 
 #endif /* SRC_GAME_MODEL_POWERUP_H_ */

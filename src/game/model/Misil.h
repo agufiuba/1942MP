@@ -24,7 +24,6 @@ private:
 	int dano;
 	MisilView* vistaMisil;
 	Posicion* posicion;
-	bool viviendo;
 	Sound* sonido;
 
 	Timer* t;
@@ -41,10 +40,13 @@ public:
 	void vivir(int x,int y);
 	int getAnchoFondo();
 	int getLargoFondo();
+	int getAncho();
+	int getLargo();
 	bool aunVive();
 	int getDano();
 
 	void setAmetralladora();
+	void morir();
 };
 
 #endif /* SRC_GAME_MODEL_MISIL_H_ */

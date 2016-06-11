@@ -1299,5 +1299,9 @@ void Game::checkGameMode(){
 		cout<<"modo cooperativo"<<endl;
 		this->unCliente->sendMode("MC");
 	}
+	if ( this->unCliente->getGameData()->practiceMode ){
+		cout<<"modo practica"<<endl;
+//		this->unCliente->sendMode("MP");
+	}
 }
 

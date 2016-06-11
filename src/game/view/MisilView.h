@@ -29,6 +29,8 @@ class MisilView {
 		virtual ~MisilView();
 		bool cargarImagenDelMisil( string filename );
 		void mostrar(int x, int y);
+		int getAncho();
+		int getLargo();
 };
 
 #endif /* SRC_GAME_VIEW_MISILVIEW_H_ */

@@ -27,6 +27,7 @@ Client::Client(const char* configFileName) {
     this->playerResume = false;
     this->teamScore = 0;
     this->rivalTeamScore = 0;
+    this->destroyEne = false;
 }
 
 Client::Client(string ip, string puerto) {
@@ -47,6 +48,7 @@ Client::Client(string ip, string puerto) {
     this->playerResume = false;
     this->teamScore = 0;
     this->rivalTeamScore = 0;
+    this->destroyEne = false;
 }
 
 Client::Client(string ip, string puerto,
@@ -69,6 +71,7 @@ Client::Client(string ip, string puerto,
     this->playerResume = false;
     this->teamScore = 0;
     this->rivalTeamScore = 0;
+    this->destroyEne = false;
 }
 
 Client::~Client() {
@@ -76,6 +79,10 @@ Client::~Client() {
 
 void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers) {
 	this->pc = handlerPlayersControllers;
+}
+
+void Client::setPowerUpHandler(HandlerPowerUp* hPowerUp) {
+	this->hPowerUp = hPowerUp;
 }
 
 bool Client::allPlayersReady(){
@@ -265,11 +272,14 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					cout << "Evento: " << e->value << endl;
 					cout << "PlayerName: " << e->name << endl;
 					if (e->value == 'T') {
-						this->reset = true;
+						  this->reset = true;
+					} else if (e->value == 'Y') {
+							this->hPowerUp->matar(string(e->name));
+					} else if (e->value == 'X') {
+							this->destroyEne = true;
 					} else {
-						this->pc->mover(e->name, e->value);
+							this->pc->mover(e->name, e->value);
 					}
-
 				}
 			} else if (dataID == "PR") {
 				PlayerData* data = new PlayerData;
@@ -694,4 +704,16 @@ void Client::setTeamScore( int score ) {
 
 void Client::setRivalTeamScore( int score ) {
   this->rivalTeamScore = score;
+}
+
+void Client::setNotDestroyEnemys() {
+  this->destroyEne = false;
+}
+
+void Client::setDestroyEnemys() {
+  this->destroyEne = true;
+}
+
+bool Client::destroyEnemys() {
+	return this->destroyEne;
 }

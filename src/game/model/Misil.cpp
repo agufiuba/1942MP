@@ -20,6 +20,8 @@ Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion,
 	viviendo = true;
 
 	this->posicion = posicion;
+	posX = posicion->getX();
+	posY = posicion->getY();
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
@@ -45,23 +47,23 @@ void Misil::mostrar(){
 
 void Misil::moverEjeY(int velY){
 	posicion->mover(0, velY);
-	int y = posicion->getY();
-	if (y + getLargo() > getLargoFondo()) {
+	posY = posicion->getY();
+	if (posY + getLargo() > getLargoFondo()) {
 		viviendo = false;
 	}
 }
 
 int Misil::getAnchoFondo() {
-	return anchoFondo;
+	return this->anchoFondo;
 }
 
 int Misil::getLargoFondo() {
-	return largoFondo;
+	return this->largoFondo;
 }
 
 
 bool Misil::aunVive(){
-	return viviendo;
+	return this->viviendo;
 }
 
 int Misil::getDano() {
@@ -70,4 +72,16 @@ int Misil::getDano() {
 
 void Misil::setAmetralladora() {
 	vistaMisil->cargarImagenDelMisil("balaAmetralladora.bmp");
+}
+
+int Misil::getAncho(){
+	return this->vistaMisil->getAncho();
+}
+
+int Misil::getLargo(){
+	return this->vistaMisil->getLargo();
+}
+
+void Misil::morir(){
+	this->viviendo = false;
 }

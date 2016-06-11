@@ -12,10 +12,8 @@
 using namespace std;
 
 Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
-
 	musica = new Music("musicaDeFondo.mp3");
 	musica->play();
-
 	this->gc = configuracion;
 	this->sdl = sdl;
 	this->SCREEN_WIDTH = gc->escenario->ancho;
@@ -41,6 +39,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	this->teamScoreView = NULL;
 	this->teamAlphaScoreView = NULL;
 	this->teamBetaScoreView = NULL;
+	flota = 0;
 }
 
 Escenario::~Escenario() {
@@ -61,10 +60,30 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir();
 	}
-
-	controllers->hacerVivir();
+/*	for (int i=0; i < enemigos.size(); i++) {
+            if (enemigos[i]->flota == -1)
+                enemigos[i]->vivirRandom();
+            else
+                enemigos[i]->vivirFlota();
+                
+	}*/
 	myControl->hacerVivir();
+	controllers->hacerVivir();
+
+	this->getPowerUp();
+	this->hitEnemy();
+//	if (!unCliente->getGameData()->practiceMode){
+		this->planesColision();
+//    }
+
 	hPowerUp->hacerVivir();
+	this->actualizarEnemigos();
+
+	this->getPowerUp();
+	this->hitEnemy();
+//	if (!unCliente->getGameData()->practiceMode){
+		this->planesColision();
+//	}
 	// Render health
 	this->healthView->update( this->player->getHealth() );
 	this->healthView->render();
@@ -162,16 +181,15 @@ void Escenario::configurarFondosVivibles() {
 }
 
 void Escenario::configurarPowerUps() {
-
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
+	unCliente->setPowerUpHandler(hPowerUp);
 	if (gc->powerUps.size() <= 0) return;
 //	cout << gc->powerUps.size() << " power ups creados" << endl;
 	for (int i = 0; i < gc->powerUps.size(); i++) {
 		string tipo = gc->powerUps[i]->tipo;
 		Posicion* posicion = new Posicion(gc->powerUps[i]->x, gc->powerUps[i]->y);
-		hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, posicion, this->unCliente, player, myControl, tipo, to_string(i)));
+		hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, posicion, myControl, tipo, to_string(i)));
 	}
-
 }
 
 HandlerPlayersControllers* Escenario::getHandler() {
@@ -199,13 +217,19 @@ void Escenario::setFondosVivibles(int x, int y) {
 SDL_Event* Escenario::run() {
 
 	pixelesRecorridos = 0;
-
 	configurarFondosVivibles();
 	configurarPowerUps();
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
+  	crearEnemigo(300, 400);
+	crearFlota(0, 400);
 
+/*	thread tPowerUps(&Escenario::getPowerUp, this);
+	tPowerUps.detach();
+
+	thread tShot(&Escenario::hitEnemy, this);
+	tShot.detach();*/
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
 	if (!this->unCliente->reinicia) {
 
@@ -219,9 +243,6 @@ SDL_Event* Escenario::run() {
 	actualizarEscenario(posicionEscenario);
 	Uint32 start;
 	bool quit = false;
-
-	thread tPowerUps(&Escenario::getPowerUp, this);
-	tPowerUps.detach();
 
 	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
@@ -705,16 +726,12 @@ void Escenario::loadWaitForPlayersScreen() {
 }
 
 void Escenario::getPowerUp() {
-	int offset = 25; //TODO: Hardcodeo para hacer mas preciso la toma de power ups
-//	Sound* soundGetPowerUp = new Sound("getPowerUp.wav");
-	while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
-		usleep(1);
 		Vivible* avion = myControl->getVivible();
 		if (avion->tieneHP()) {
 			int x = avion->getX();
-			int y = avion->getY() - offset;
-			int xp = x + avion->getAncho();
-			int yp = y + avion->getLargo();
+			int y = avion->getY();
+			int xp = x + avion->getAncho()-5;
+			int yp = y + avion->getLargo()-5;
 			for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
 				bool touched = false;
 				int x2 = it->second->getX();
@@ -722,17 +739,98 @@ void Escenario::getPowerUp() {
 				int y2 = it->second->getY();
 				int yp2 = y2 + it->second->getLargo();
 				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
-				if (touched) {
-//					soundGetPowerUp->play();
-					usleep(1000);
-					it->second->activarPowerUp();
-					delete it->second;
-					hPowerUp->mapaPowerUp.erase(it);
+				if (touched && it->second->aunVive()) {
+					char resp = it->second->activarPowerUp();
+					CompanionEvent* ce = new CompanionEvent();
+					if (resp == 's') {
+						unCliente->sendData(ce->ametralladora(myControl->getVivible()->getId()));
+					}
+					if (resp == 'd') {
+						unCliente->setDestroyEnemys();
+						unCliente->sendData(ce->destroy(myControl->getVivible()->getId()));
+					}
+					if (resp == 'b') {
+						this->unCliente->addScoreToPlayer( 250 );
+					}
+					unCliente->sendData(ce->powerUpDestroy(it->second->getId()));
+					delete ce;
+
+					it->second->morir();
 				}
 			}
 		}
+}
+
+void Escenario::crearEnemigo(int x, int y) {
+	Posicion* p = new Posicion(x, y);
+	Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
+	enemigos.push_back(e);
+}
+
+void Escenario::crearFlota(int x, int y) {
+    for (int i = 0; i < 5; i++) {
+        Posicion* p = new Posicion(x, y);
+        Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
+        e->flota = flota;
+        e->posFlota = i;
+        enemigos.push_back(e);
+    }
+    flota++;
+}
+
+void Escenario::hitEnemy() {
+	vector<Vivible*>* disparos = &(myControl->controlDeMisiles->vivibles->vectorObjetos);
+		int eliminar = -1;
+		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
+			bool touched = false;
+			int x = (*it)->posX;
+			int xp = x + (*it)->getAncho();
+			int y = (*it)->posY;
+			int yp = y + (*it)->getLargo();
+			//cout << enemigos[0]->getLargo() << endl;
+			for (int var = 0; var < enemigos.size(); ++var) {
+				int x2 = enemigos[var]->getX();
+				int x2p = x2 + enemigos[var]->getAncho()-5;
+				int y2 = enemigos[var]->getY();
+				int y2p = y2 + enemigos[var]->getLargo()-5;
+				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+				if (touched && enemigos[var]->aunVive()) {
+					cout << "****************** CHOCOOOOOO ********************" << endl;
+					enemigos[var]->recibirMisil((Misil*)*it);
+					(*it)->morir();
+				}
+			}
+		}
+}
+
+void Escenario::actualizarEnemigos(){
+	if(unCliente->destroyEnemys()) {
+		this->deleteEnemys();
+		unCliente->setNotDestroyEnemys();
 	}
-//	delete soundGetPowerUp;
+	int eliminar = -1;
+	for (int i=0; i < enemigos.size(); i++) {
+		if (enemigos[i]->aunVive()){
+			if(enemigos[i]->flota == -1)
+				enemigos[i]->vivirRandom();
+			else
+				enemigos[i]->vivirFlota();
+		}else{
+			eliminar = i;
+		}
+	}
+	if (eliminar >= 0 ){
+		Enemy* objEliminar = enemigos[eliminar];
+		delete objEliminar;
+		enemigos.erase(enemigos.begin()+eliminar);
+	}
+}
+
+void Escenario::deleteEnemys() {
+	for(int i=0;i<this->enemigos.size();i++) {
+		cout<<"Elimino un enemigo"<<endl;
+		this->enemigos[i]->morir();
+	}
 }
 
 void Escenario::loadScoreData() {
@@ -744,4 +842,27 @@ void Escenario::loadScoreData() {
   // wait for player score data
   while ( this->unCliente->getPlayersScoreData().size() != this->unCliente->getClientsPlaying() );
   this->unCliente->resetClientsPlaying();
+}
+
+void Escenario::planesColision(){
+	Vivible* avion = myControl->getVivible();
+	bool touched = false;
+	if (avion->tieneHP()) {
+		int x = avion->getX();
+		int y = avion->getY();
+		int xp = x + avion->getAncho()-5;
+		int yp = y + avion->getLargo()-5;
+		for (int var = 0; var < enemigos.size(); ++var) {
+			int x2 = enemigos[var]->getX();
+			int x2p = x2 + enemigos[var]->getAncho()-5;
+			int y2 = enemigos[var]->getY();
+			int y2p = y2 + enemigos[var]->getLargo()-5;
+			touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+			if (touched && enemigos[var]->aunVive()) {
+				cout << "****************** CHOCOOOOOO ********************" << endl;
+				enemigos[var]->morir();
+				myControl->getVivible()->morir();
+			}
+		}
+	}
 }

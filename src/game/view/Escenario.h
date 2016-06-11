@@ -17,6 +17,7 @@
 #include "../model/Resolucion.h"
 #include "../model/Posicion.h"
 #include "../model/Avion.h"
+#include "../model/Enemy.h"
 #include "../model/Vivible.h"
 #include "../controller/IController.h"
 #include "../controller/Controller.h"
@@ -70,11 +71,12 @@ private:
 
 	string DIR_FONDO_PANTALLA;
 
-	IController* myControl;
+	Controller* myControl;
 	HandlerPlayersControllers* controllers;
 	HandlerPowerUp* hPowerUp;
 
 	vector<Isla*> fondosVivibles;
+	vector<Enemy*> enemigos;
 
 	GameConf* gc;
 	Client* unCliente;
@@ -93,7 +95,11 @@ private:
 	void verificarEstacionamiento(int numeroNivel);
 	void getPowerUp();
 	void loadScoreData();
+	void hitEnemy();
+	void deleteEnemys();
+	void actualizarEnemigos();
 	bool escenarioCreado;
+	void planesColision();
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl);
@@ -104,7 +110,9 @@ public:
 	void setPlayer(Player* player);
 	void configurarAvionAmigo(PlayerData* playerData);
 	void configurarMiAvion(PlayerData* playerData);
-
+	void crearEnemigo(int, int);
+    void crearFlota(int, int);
+    int flota;
 };
 
 #endif /* ESCENARIO_H_ */

@@ -1,6 +1,9 @@
-#ifndef SRC_MODEL_AVION_H_
-#define SRC_MODEL_AVION_H_
+#ifndef SRC_MODEL_Enemy_H_
+#define SRC_MODEL_Enemy_H_
 
+#include <iostream>
+#include <ctime>
+#include <chrono>
 #include "../view/AvionView.h"
 #include "Vivible.h"
 #include "../controller/Timer.h"
@@ -13,7 +16,7 @@
 #include "../view/ExplosionView.h"
 #include "../view/Screen.h"
 
-class Avion: public Vivible {
+class Enemy: public Vivible {
 private:
 	string id;
 	int anchoFondo, largoFondo;
@@ -35,17 +38,17 @@ private:
 
 	Posicion* posicionAEstacionar;
 
-	void realizoVueltereta();
-	void mostrarVueltereta(int frame);
-
-	void mostrar(int velX);
+	void mostrar(int velX, int velY);
 	void mover(int velX, int velY);
 	void moverEjeX(int velX);
 	void moverEjeY(int velY);
 
+	int angleX;
+	int angleY;
+
 public:
-	Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf);
-	~Avion();
+	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf);
+	~Enemy();
 
 	string getId();
 	int getAnchoFondo();
@@ -59,29 +62,28 @@ public:
 	AvionConf* getConfiguracion();
 
 	void setVelocidadStandard(int vel);
-	bool haciendoVueltereta();
-	void inicializoVueltereta();
 
 	void vivir(int velX, int velY);
+	void vivirRandom();
+	void vivirFlota();
 	bool aunVive();
-	void desconectar();
-
-	void setAmetralladora();
 
 	void recibirMisil(Misil* misil);
 	bool tieneHP();
 	void setHP(int hp);
 
-	void inicializoEstacionar();
-	bool estaEstacionando();
-	void mostrarEstacionar(int frame);
-	void estacionar();
-	void despegar();
-
 	Posicion* getPosicion();
 
 	bool hit(int, int);
-	void morir();
+	void moverRandom();
+	void moverFlota();
+    int flota;
+    int posFlota;
+    bool firsttime;
+    struct tm* tm;
+    int secsRandom;
+    chrono::time_point<chrono::system_clock> nFlota;
+    void morir();
 };
 
-#endif /* SRC_MODEL_AVION_H_ */
+#endif /* SRC_MODEL_Enemy_H_ */

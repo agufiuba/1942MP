@@ -40,3 +40,12 @@ bool MisilView::cargarImagenDelMisil( string filename ){
 void MisilView::mostrar( int x, int y){
     vistaMisilTexture->render( x, y );
 }
+
+int MisilView::getAncho(){
+	return vistaMisilTexture->getWidth();
+}
+
+int MisilView::getLargo(){
+	return vistaMisilTexture->getHeight();
+}
+
