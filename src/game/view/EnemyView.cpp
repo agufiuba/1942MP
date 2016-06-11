@@ -50,15 +50,37 @@ bool EnemyView::cargarImagenDelAvion(string filename){
 void EnemyView::cargarClips(){
 //	int posYInicial = 50;
 
-	clipsDerecha[ 0 ].x = 0;
-	clipsDerecha[ 0 ].y = 0;
-	clipsDerecha[ 0 ].w = vistaAvionTexture->getWidth();
-	clipsDerecha[ 0 ].h = vistaAvionTexture->getHeight();
+//	clipsDerecha[ 0 ].x = 0;
+//	clipsDerecha[ 0 ].y = 0;
+//	clipsDerecha[ 0 ].w = vistaAvionTexture->getWidth();
+//	clipsDerecha[ 0 ].h = vistaAvionTexture->getHeight();
+//
+//	clipsIzquierda[ 0 ].x = 0;
+//	clipsIzquierda[ 0 ].y = 0;
+//	clipsIzquierda[ 0 ].w = vistaAvionTexture->getWidth();
+//	clipsIzquierda[ 0 ].h = vistaAvionTexture->getHeight();
 
-	clipsIzquierda[ 0 ].x = 0;
-	clipsIzquierda[ 0 ].y = 0;
-	clipsIzquierda[ 0 ].w = vistaAvionTexture->getWidth();
-	clipsIzquierda[ 0 ].h = vistaAvionTexture->getHeight();
+	int posYInicial = 50;
+
+			clipsDerecha[ 0 ].x = 40;
+			clipsDerecha[ 0 ].y = posYInicial+5;
+			clipsDerecha[ 0 ].w = anchoVista-10;
+			clipsDerecha[ 0 ].h = largoVista;
+
+			clipsDerecha[ 1 ].x = 1010;
+			clipsDerecha[ 1 ].y = posYInicial+5;
+			clipsDerecha[ 1 ].w = anchoVista-10;
+			clipsDerecha[ 1 ].h = largoVista;
+
+			clipsIzquierda[ 0 ].x = 40;
+			clipsIzquierda[ 0 ].y = posYInicial+5;
+			clipsIzquierda[ 0 ].w = anchoVista-10;
+			clipsIzquierda[ 0 ].h = largoVista;
+
+			clipsIzquierda[ 1 ].x = 865;
+			clipsIzquierda[ 1 ].y = posYInicial+5;
+			clipsIzquierda[ 1 ].w = anchoVista-10;
+			clipsIzquierda[ 1 ].h = largoVista;
 }
 
 void EnemyView::mostrarRotado( int x, int y, int velX, int velY){

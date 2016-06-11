@@ -9,7 +9,7 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	this->vida = 1;
 
 	this->screen = screen;
-	vistaAvion = new EnemyView(renderer, "avionGris");
+	vistaAvion = new AvionView(renderer, "verde", conf->avionSpriteID);
 	explosion = NULL;
 	viviendo = true;
 
