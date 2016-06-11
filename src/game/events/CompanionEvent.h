@@ -20,6 +20,7 @@ public:
     static Evento* destroy(string n);
     static Evento* estaciono(string n);
     static Evento* explosion(string n);
+    static Evento* powerUpDestroy(string n);
 };
 
 #endif

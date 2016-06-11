@@ -9,7 +9,7 @@
 
 using namespace std;
 
-PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, Client* cliente, Player* player, IController* control, string type, string id) {
+PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, IController* control, string type, string id) {
 
 	//this->configuracion = conf; //TODO: hay que agregar que guarde su configuracion de XML
 
@@ -17,9 +17,6 @@ PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* pos
 	viviendo = true;
 
 	this->control = control;
-	this->cliente = cliente;
-
-	this->player = player;
 
 	this->id = id; //TODO:hay que hacer que cada powerUp tenga una ID??
 	this->type = type;
@@ -107,7 +104,7 @@ bool PowerUp::aunVive(){
 	return viviendo;
 }
 
-void PowerUp::activarPowerUp() {
+char PowerUp::activarPowerUp() {
 	soundGetPowerUp->play();
 	Evento* e;
 	CompanionEvent* ce = new CompanionEvent();
@@ -117,19 +114,20 @@ void PowerUp::activarPowerUp() {
 			cout << "PowerUp Shot" << endl;
 			//Cuando el avion toca este Power Up, este hace que el avion mejore el disparo
 			this->control->setAmetralladora();
-			cliente->sendData(ce->ametralladora(obj->getId()));
+			return 's';
 	}
 
 	if( this->type == "Bonus") {
 			cout << "PowerUp Bonus" << endl;
-			this->player->addScore(10);
+			return 'b';
 	}
 
 	if( this->type == "Destroy") {
 			cout << "PowerUp Destroy" << endl;
 			//Envio al servidor un evento Destroy para que este elimine todos los enemigos que tenga en la Queue
-			cliente->sendData(ce->destroy(obj->getId()));
+			return 'd';
 	}
+	return 'x';
 }
 
 void PowerUp::morir(){

@@ -24,6 +24,7 @@ public:
 	void activar(string id);
 	void setPowerUp(PowerUp* powerUp);
 	void hacerVivir();
+	void matar(string id);
 };
 
 #endif /* SRC_GAME_CONTROLLER_HANDLERPOWERUP_H_ */

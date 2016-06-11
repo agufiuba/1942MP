@@ -28,15 +28,20 @@ void HandlerPowerUp::activar(string id) {
 }
 
 void HandlerPowerUp::hacerVivir() {
-	mutex theMutex;
-	theMutex.lock();
+	//mutex theMutex;
+	//theMutex.lock();
 	for (map<string, PowerUp*>::iterator it = this->mapaPowerUp.begin(); it != this->mapaPowerUp.end(); ++it) {
 		if(it->second->aunVive()){
 			it->second->vivir();
 		} else {
+			cout <<"deletePU" << endl;
 			delete it->second;
 			this->mapaPowerUp.erase(it);
 		}
 	}
-	theMutex.unlock();
+	//theMutex.unlock();
+}
+
+void HandlerPowerUp::matar(string id) {
+	this->mapaPowerUp[id]->morir();
 }

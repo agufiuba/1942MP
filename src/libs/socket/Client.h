@@ -12,6 +12,7 @@
 #include "../../game/events/Events.cpp"
 #include "../../game/model/Player.h"
 #include "../../game/controller/HandlerPlayersControllers.h"
+#include "../../game/controller/HandlerPowerUp.h"
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +21,7 @@ using namespace std;
 class Client {
   private:
     HandlerPlayersControllers* pc;
+    HandlerPowerUp* hPowerUp;
     string ip;
     string puerto;
     Player* player;
@@ -70,6 +72,7 @@ class Client {
     bool sendPlayerDisconnection();
     bool sendPlayerDeath();
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
+    void setPowerUpHandler(HandlerPowerUp* hPowerUp);
     vector<PlayerData*> getPlayers();
     vector<PlayerScore*> getPlayersScoreData();
     GameConf* getConfig();

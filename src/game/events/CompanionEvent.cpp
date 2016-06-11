@@ -90,3 +90,10 @@ Evento* CompanionEvent::explosion(string n) {
     strcpy(e->name, n.c_str());
     return e;
 }
+
+Evento* CompanionEvent::powerUpDestroy(string n) {
+		Evento* e = new Evento();
+    e->value = POWERUPDESTROY;
+    strcpy(e->name, n.c_str());
+    return e;
+}

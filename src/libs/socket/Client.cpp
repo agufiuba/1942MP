@@ -78,6 +78,11 @@ void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers) {
 	this->pc = handlerPlayersControllers;
 }
 
+void Client::setPowerUpHandler(HandlerPowerUp* hPowerUp) {
+	this->hPowerUp = hPowerUp;
+}
+
+
 bool Client::allPlayersReady(){
 	if (this->ready){
 		cout<<"Ready"<<endl;
@@ -266,6 +271,9 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					cout << "PlayerName: " << e->name << endl;
 					if (e->value == 'T') {
 						this->reset = true;
+					}
+					if (e->value == 'Y') {
+						this->hPowerUp->matar(string(e->name));
 					} else {
 						this->pc->mover(e->name, e->value);
 					}

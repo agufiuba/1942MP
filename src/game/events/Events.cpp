@@ -16,6 +16,7 @@
 #define DESTROY 'X'
 #define ESTACIONO 'P'
 #define EXPLOSION 'W'
+#define POWERUPDESTROY 'Y'
 
 #include <iostream>
 

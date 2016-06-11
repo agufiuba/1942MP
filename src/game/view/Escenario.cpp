@@ -67,23 +67,18 @@ void Escenario::actualizarEscenario(Posicion* pos) {
                 enemigos[i]->vivirFlota();
                 
 	}*/
-	cout << "1" << endl;
+
 	myControl->hacerVivir();
 	controllers->hacerVivir();
 
-	cout << "2" << endl;
 	this->getPowerUp();
 	this->hitEnemy();
 
-	cout << "3" << endl;
 	hPowerUp->hacerVivir();
 	this->actualizarEnemigos();
 
-	cout << "4" << endl;
 	this->getPowerUp();
-	cout << "5" << endl;
 	this->hitEnemy();
-	cout << "6" << endl;
 
 	// Render health
 	this->healthView->update( this->player->getHealth() );
@@ -183,12 +178,13 @@ void Escenario::configurarFondosVivibles() {
 
 void Escenario::configurarPowerUps() {
 	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
+	unCliente->setPowerUpHandler(hPowerUp);
 	if (gc->powerUps.size() <= 0) return;
 //	cout << gc->powerUps.size() << " power ups creados" << endl;
 	for (int i = 0; i < gc->powerUps.size(); i++) {
 		string tipo = gc->powerUps[i]->tipo;
 		Posicion* posicion = new Posicion(gc->powerUps[i]->x, gc->powerUps[i]->y);
-		hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, posicion, this->unCliente, player, myControl, tipo, to_string(i)));
+		hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, posicion, myControl, tipo, to_string(i)));
 	}
 }
 
@@ -215,11 +211,6 @@ void Escenario::setFondosVivibles(int x, int y) {
 }
 
 SDL_Event* Escenario::run() {
-	//TODO: hay que cargar desde el XML donde van a salir los PowerUps
-	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
-  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(350, 600), this->unCliente, player, myControl, "Shot", "1"));
-  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(150, 300), this->unCliente, player, myControl, "Destroy", "2"));
-  	hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, new Posicion(550, 100), this->unCliente, player, myControl, "Bonus", "3"));
 
 	pixelesRecorridos = 0;
 	configurarFondosVivibles();
@@ -748,7 +739,20 @@ void Escenario::getPowerUp() {
 				int yp2 = y2 + it->second->getLargo();
 				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
 				if (touched && it->second->aunVive()) {
-					it->second->activarPowerUp();
+					char resp = it->second->activarPowerUp();
+					CompanionEvent* ce = new CompanionEvent();
+					if (resp == 's') {
+						unCliente->sendData(ce->ametralladora(myControl->getVivible()->getId()));
+					}
+					if (resp == 'd') {
+						unCliente->sendData(ce->destroy(myControl->getVivible()->getId()));
+					}
+					if (resp == 'b') {
+						this->unCliente->addScoreToPlayer( 250 );
+					}
+					unCliente->sendData(ce->powerUpDestroy(it->second->getId()));
+					delete ce;
+
 					it->second->morir();
 //					delete it->second;
 //					hPowerUp->mapaPowerUp.erase(it);
