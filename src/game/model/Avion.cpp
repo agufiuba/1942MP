@@ -43,7 +43,6 @@ bool Avion::haciendoVueltereta(){
 }
 
 Avion::~Avion(){
-
 	if (vistaAvion != NULL) delete vistaAvion;
 	if (explosion != NULL) delete explosion;
 	delete t;
@@ -228,7 +227,6 @@ void Avion::vivir(int velX, int velY){
 			delete vistaAvion;
 			vistaAvion = NULL;
 		}
-
 		if (!explosion->exploto()) {
 			posicion->mover(-1, -3);
 			explosion->explotar(posicion);
@@ -293,4 +291,5 @@ bool Avion::hit(int x, int y) {
 
 void Avion::morir(){
 	this->setHP(0);
+	this->viviendo = false;
 }

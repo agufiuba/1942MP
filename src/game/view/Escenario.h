@@ -100,6 +100,7 @@ private:
 	void actualizarEnemigos();
 	bool escenarioCreado;
 	void planesColision();
+	void enemyOtherPlayerColision();
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl);

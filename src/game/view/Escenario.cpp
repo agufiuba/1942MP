@@ -67,23 +67,33 @@ void Escenario::actualizarEscenario(Posicion* pos) {
                 enemigos[i]->vivirFlota();
                 
 	}*/
+//	cout<<"1"<<endl;
 	myControl->hacerVivir();
 	controllers->hacerVivir();
+//	cout<<"2"<<endl;
 
 	this->getPowerUp();
 	this->hitEnemy();
+//	cout<<"3"<<endl;
 //	if (!unCliente->getGameData()->practiceMode){
 		this->planesColision();
+		this->enemyOtherPlayerColision();
 //    }
 
+//	cout<<"4"<<endl;
 	hPowerUp->hacerVivir();
+//	cout<<"5"<<endl;
 	this->actualizarEnemigos();
 
+//	cout<<"6"<<endl;
 	this->getPowerUp();
 	this->hitEnemy();
+//	cout<<"7"<<endl;
 //	if (!unCliente->getGameData()->practiceMode){
 		this->planesColision();
+		this->enemyOtherPlayerColision();
 //	}
+//	cout<<"8"<<endl;
 	// Render health
 	this->healthView->update( this->player->getHealth() );
 	this->healthView->render();
@@ -854,14 +864,38 @@ void Escenario::planesColision(){
 		int yp = y + avion->getLargo()-5;
 		for (int var = 0; var < enemigos.size(); ++var) {
 			int x2 = enemigos[var]->getX();
-			int x2p = x2 + enemigos[var]->getAncho()-5;
+			int x2p = x2 + enemigos[var]->getAncho();
 			int y2 = enemigos[var]->getY();
-			int y2p = y2 + enemigos[var]->getLargo()-5;
+			int y2p = y2 + enemigos[var]->getLargo();
 			touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
 			if (touched && enemigos[var]->aunVive()) {
 				cout << "****************** CHOCOOOOOO ********************" << endl;
 				enemigos[var]->morir();
 				myControl->getVivible()->morir();
+			}
+		}
+	}
+}
+
+void Escenario::enemyOtherPlayerColision() {
+	map<string, IController*>* othersPlanes = &(this->controllers->mapaControllers);
+	int eliminar = -1;
+	for (map<string, IController*>::iterator it = othersPlanes->begin(); it != othersPlanes->end(); it++) {
+		bool touched = false;
+		int x = it->second->getVivible()->getX();
+		int xp = x + it->second->getVivible()->getAncho();
+		int y = it->second->getVivible()->getY();
+		int yp = y + it->second->getVivible()->getLargo();
+		for (int var = 0; var < enemigos.size(); ++var) {
+			int x2 = enemigos[var]->getX();
+			int x2p = x2 + enemigos[var]->getAncho();
+			int y2 = enemigos[var]->getY();
+			int y2p = y2 + enemigos[var]->getLargo();
+			touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+			if (touched && enemigos[var]->aunVive()) {
+				cout << "****************** CHOCOOOOOO ********************" << endl;
+				enemigos[var]->morir();
+//				it->second->getVivible()->morir();
 			}
 		}
 	}

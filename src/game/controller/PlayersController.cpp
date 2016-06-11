@@ -40,7 +40,7 @@ void PlayersController::press(SDL_Event *event){
 				break;
             case SDLK_CLEAR: controlDeMisiles->setAmetralladora(); break;
             case SDLK_HASH: obj->inicializoEstacionar(); break;
-            case SDLK_ASTERISK: obj->setHP(0); break;
+            case SDLK_ASTERISK: obj->morir(); break;
 
         }
 
@@ -60,4 +60,8 @@ void PlayersController::hacerVivir(){
 		crearMisil = false;
 	}
 	controlDeMisiles->hacerVivir();
+}
+
+Vivible* PlayersController::getVivible(){
+	return this->obj;
 }
