@@ -60,17 +60,31 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir();
 	}
-	for (int i=0; i < enemigos.size(); i++) {
+/*	for (int i=0; i < enemigos.size(); i++) {
             if (enemigos[i]->flota == -1)
                 enemigos[i]->vivirRandom();
             else
                 enemigos[i]->vivirFlota();
                 
-	}
-
-	controllers->hacerVivir();
+	}*/
+	cout << "1" << endl;
 	myControl->hacerVivir();
+	controllers->hacerVivir();
+
+	cout << "2" << endl;
+	this->getPowerUp();
+	this->hitEnemy();
+
+	cout << "3" << endl;
 	hPowerUp->hacerVivir();
+	this->actualizarEnemigos();
+
+	cout << "4" << endl;
+	this->getPowerUp();
+	cout << "5" << endl;
+	this->hitEnemy();
+	cout << "6" << endl;
+
 	// Render health
 	this->healthView->update( this->player->getHealth() );
 	this->healthView->render();
@@ -216,11 +230,11 @@ SDL_Event* Escenario::run() {
   	crearEnemigo(300, 400);
 	crearFlota(0, 400);
 
-	thread tPowerUps(&Escenario::getPowerUp, this);
+/*	thread tPowerUps(&Escenario::getPowerUp, this);
 	tPowerUps.detach();
 
 	thread tShot(&Escenario::hitEnemy, this);
-	tShot.detach();
+	tShot.detach();*/
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
 	if (!this->unCliente->reinicia) {
 
@@ -717,15 +731,15 @@ void Escenario::loadWaitForPlayersScreen() {
 }
 
 void Escenario::getPowerUp() {
-	mutex theMutex;
-	while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
+	//mutex theMutex;
+	//while (hPowerUp->mapaPowerUp.size() > 0 && escenarioCreado) {
 		Vivible* avion = myControl->getVivible();
 		if (avion->tieneHP()) {
 			int x = avion->getX();
 			int y = avion->getY();
 			int xp = x + avion->getAncho();
 			int yp = y + avion->getLargo();
-			theMutex.lock();
+			//theMutex.lock();
 			for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
 				bool touched = false;
 				int x2 = it->second->getX();
@@ -733,17 +747,17 @@ void Escenario::getPowerUp() {
 				int y2 = it->second->getY();
 				int yp2 = y2 + it->second->getLargo();
 				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
-				if (touched) {
+				if (touched && it->second->aunVive()) {
 					it->second->activarPowerUp();
 					it->second->morir();
 //					delete it->second;
 //					hPowerUp->mapaPowerUp.erase(it);
 				}
 			}
-			theMutex.unlock();
-			usleep(100);
+			//theMutex.unlock();
+			//usleep(100);
 		}
-	}
+	//}
 }
 
 void Escenario::crearEnemigo(int x, int y) {
@@ -765,19 +779,28 @@ void Escenario::crearFlota(int x, int y) {
 
 void Escenario::hitEnemy() {
 	vector<Vivible*>* disparos = &(myControl->controlDeMisiles->vivibles->vectorObjetos);
-	cout<<"obtengo los misiles"<<endl;
-	mutex theMutex;
-	while (escenarioCreado) {
-		theMutex.lock();
+	//cout<<"obtengo los misiles"<<endl;
+	//mutex theMutex;
+	//while (escenarioCreado) {
+		//theMutex.lock();
 		int eliminar = -1;
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
+
+				cout << "it" << endl;
 			bool touched = false;
 			int x = (*it)->posX;
+
+			cout << "it2" << endl;
 			int xp = x + (*it)->getAncho();
 			int y = (*it)->posY;
 			int yp = y + (*it)->getLargo();
+			//cout << enemigos[0]->getLargo() << endl;
 			for (int var = 0; var < enemigos.size(); ++var) {
+
+				cout << "enemigos" << endl;
 				int x2 = enemigos[var]->getX();
+
+				cout << "enemigos 1" << endl;
 				int x2p = x2 + enemigos[var]->getAncho();
 				int y2 = enemigos[var]->getY();
 				int y2p = y2 + enemigos[var]->getLargo();
@@ -800,14 +823,14 @@ void Escenario::hitEnemy() {
 //			}
 //			eliminar = -1;
 		}
-		theMutex.unlock();
-		usleep(100);
-	}
+		//theMutex.unlock();
+		//usleep(100);
+	//}
 }
 
 void Escenario::actualizarEnemigos(){
-	mutex theMutex;
-	theMutex.lock();
+	//mutex theMutex;
+	//theMutex.lock();
 //	cout<<"Looooooock"<<endl;
 	int eliminar = -1;
 	for (int i=0; i < enemigos.size(); i++) {
@@ -826,7 +849,7 @@ void Escenario::actualizarEnemigos(){
 		enemigos.erase(enemigos.begin()+eliminar);
 	}
 //	cout<<"UnLooooooock"<<endl;
-	theMutex.unlock();
+	//theMutex.unlock();
 
 }
 
