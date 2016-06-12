@@ -72,6 +72,7 @@ class Server {
     void setTeamPlayer(int team, int cfd);
     int getPlayerTeamScore( Player* player );
     int getPlayerRivalTeamScore( Player* player );
+    void freePlayerSlot( int clientFD );
 
   public:
     Server( const char* configFileName );

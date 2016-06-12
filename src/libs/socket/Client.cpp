@@ -277,6 +277,9 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 							this->hPowerUp->matar(string(e->name));
 					} else if (e->value == 'X') {
 							this->destroyEne = true;
+					} else if (e->value == QUITGAME ) {
+					   cout << "QUITGAME TRIGGERED BY: " << string(e->name) << endl; 
+					   this->pc->killPlayer( string( e->name ) );
 					} else {
 							this->pc->mover(e->name, e->value);
 					}
@@ -716,4 +719,13 @@ void Client::setDestroyEnemys() {
 
 bool Client::destroyEnemys() {
 	return this->destroyEne;
+}
+
+void Client::quitGame() {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendDataID( "QG" );
+  delete tmt;
+
+  this->disconnectFromServer();
+  exit(0);
 }

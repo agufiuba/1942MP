@@ -526,7 +526,9 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	    this->eventQueue->push(clientMsgFD);
 	    theMutex.unlock();
 	  }
-
+	} else if ( dataID == "QG" ) {
+	    // free player slot
+	    this->freePlayerSlot( cfd );
 	} else if (dataID == "DP") {
 	  PlayerData* data = new PlayerData;
 
@@ -893,4 +895,27 @@ void Server::setTeamPlayer(int team, int cliendFd){
 		 it->second->setTeam(team);
 	 }
  }
+}
+
+void Server::freePlayerSlot( int clientFD ) {
+  string playerName = this->players[ clientFD ]->getName();
+
+  // delete player
+  delete this->players[ clientFD ];
+  // free player slot in hash
+  map<int, Player*>::iterator it = this->players.find( clientFD );
+  this->players.erase( it );
+
+  Evento* ev = new Evento;
+  ev->value = QUITGAME;
+  strcpy( ev->name, playerName.c_str() );
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    Transmitter* tmt = new Transmitter( it->first, this->logger );
+    tmt->sendData( ev );
+    delete tmt;
+  }
+
+  delete ev;
 }

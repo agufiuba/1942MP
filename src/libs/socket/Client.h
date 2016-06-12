@@ -110,5 +110,6 @@ class Client {
     int getRivalTeamScore();
     void setTeamScore( int score );
     void setRivalTeamScore( int score );
+    void quitGame();
 };
 #endif
