@@ -260,6 +260,10 @@ SDL_Event* Escenario::run() {
 				return eventReset;
 			}
 
+			if ( this->unCliente->wins() ) {
+			  this->loadSinglePlayerScoreScreen( numeroNivel );
+			}
+
 			while (this->sdl->nextEvent(&evento)) {
 
 				myControl->press(&evento);

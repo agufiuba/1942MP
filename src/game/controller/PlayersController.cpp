@@ -40,6 +40,7 @@ void PlayersController::press(SDL_Event *event){
             case SDLK_CLEAR: controlDeMisiles->setAmetralladora(); break;
             case SDLK_HASH: obj->inicializoEstacionar(); break;
             case SDLK_ASTERISK: obj->morir(); break;
+	    case SDLK_ESCAPE: this->obj->morir(); break;
 
         }
 

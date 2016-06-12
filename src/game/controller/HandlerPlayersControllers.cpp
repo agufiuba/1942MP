@@ -61,3 +61,10 @@ void HandlerPlayersControllers::hacerVivir() {
 map<string, IController*> HandlerPlayersControllers::getMapaControllers(){
 	return this->mapaControllers;
 }
+
+void HandlerPlayersControllers::killPlayer( string playerID ) {
+  SDL_Event* sdlEvent = new SDL_Event;
+  sdlEvent->key.keysym.sym = SDLK_ESCAPE;
+  this->mapaControllers[ playerID ]->press( sdlEvent );
+  delete sdlEvent;
+}

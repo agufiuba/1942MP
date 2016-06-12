@@ -55,6 +55,8 @@ void Controller::press(SDL_Event *event){
 
             case SDLK_r: cout<<"Se Reinicia la partida"<<endl;cliente->sendData(ce->restart(obj->getId()));break;
 
+	    case SDLK_ESCAPE: this->cliente->quitGame(); break; 
+
             case SDLK_s: cout<<"Modo Practica"<<endl;break;
             //TODO cuando tengamos los enemigos se implementa el bool
             //Enviarlo por server-cliente al resto, validarlo

@@ -17,6 +17,7 @@
 #define ESTACIONO 'P'
 #define EXPLOSION 'W'
 #define POWERUPDESTROY 'Y'
+#define QUITGAME 'Z'
 
 #include <iostream>
 
