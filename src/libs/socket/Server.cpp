@@ -918,4 +918,37 @@ void Server::freePlayerSlot( int clientFD ) {
   }
 
   delete ev;
+
+  // if playing on team mode, check if remaining players win
+  if ( this->gameData->teamMode ) {
+    this->checkTeamWin();
+  }
+}
+
+void Server::checkTeamWin() {
+  int teamAlpha = 0, teamBeta = 0;
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    Player* player = it->second;
+    if ( player->getTeam() == 1 ) { 
+      teamAlpha++; 
+    } else if ( player->getTeam() == 2 ) {
+      teamBeta++; 
+    }
+  } 
+
+  if ( teamAlpha == 0 || teamBeta == 0 ) {
+    this->sendTeamWin(); 
+  }
+}
+
+void Server::sendTeamWin() {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    Transmitter* tmt = new Transmitter( it->first, this->logger );
+    tmt->sendDataID( "WN" ); 
+    delete tmt;
+  } 
 }
