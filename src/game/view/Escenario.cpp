@@ -427,6 +427,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   string nameText = "Name";
   string scoreText = "Score";
   string teamText = "Team";
+  string totalText = "Total";
 
   Screen* scoreScreen = new Screen( this->sdl );
 
@@ -437,8 +438,9 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   scoreScreen->loadText( "stageComplete", stageCompleteText, { 53, 167, 84, 255 } );
   scoreScreen->loadText( "scoreText", scoreHeaderText, { 255, 0, 0, 255 } );
   scoreScreen->loadText( "nameHeader", nameText, { 191, 189, 37, 255 } );
-  scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
   scoreScreen->loadText( "teamHeader", teamText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "totalHeader", totalText, { 191, 189, 37, 255 } );
   scoreScreen->loadText( "buttonText", buttonText, { 0, 0, 0, 255 } );
 
   // Get max score player ID
@@ -453,6 +455,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   }
 
   // Load ranking score table data 
+  int alphaTotal = 0, betaTotal = 0;
   for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
     string team = ps->team == 1 ? "Alpha" : "Beta";
@@ -468,6 +471,24 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
     }
     // Load plane
     scoreScreen->loadTexture( string( ps->color ), "score/avion_" + string( ps->color ) + ".bmp" );
+
+    if ( ps->team == 1 ) {
+      alphaTotal += ps->score;
+    } else {
+      betaTotal += ps->score;
+    }
+  }
+
+  // load totals
+  if ( alphaTotal > betaTotal ) {
+    scoreScreen->loadText( "alphaTotal", to_string( alphaTotal ), { 12, 246, 246, 255 } );
+    scoreScreen->loadText( "betaTotal", to_string( betaTotal ), { 255, 255, 255, 255 } );
+  } else if ( betaTotal > alphaTotal ) {
+    scoreScreen->loadText( "betaTotal", to_string( betaTotal ), { 12, 246, 246, 255 } );
+    scoreScreen->loadText( "alphaTotal", to_string( alphaTotal ), { 255, 255, 255, 255 } );
+  } else {
+    scoreScreen->loadText( "alphaTotal", to_string( alphaTotal ), { 255, 255, 255, 255 } );
+    scoreScreen->loadText( "betaTotal", to_string( betaTotal ), { 255, 255, 255, 255 } );
   }
 
   int buttonWidth = 250;
@@ -478,19 +499,22 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   scoreScreen->loadRectangle( "continue", buttonCenter, 600, buttonWidth, 50 );
 
   int gap = scoreScreen->getTextHeight( scoreText );
-  int rowPadding = 150;
+  int rowPadding = 120;
   int topPadding = 60;
   // Get center positions
   int stageCompleteTextCenter = scoreScreen->getTextCenter( stageCompleteText ); 
   int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
   int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
   int teamHeaderSpace = scoreScreen->getTextWidth( teamText ) + rowPadding;
-  int scoreTableWidth = nameHeaderSpace + teamHeaderSpace + scoreScreen->getTextWidth( "Score" );
+  int scoreHeaderSpace = scoreScreen->getTextWidth( scoreText ) + rowPadding;
+  int scoreTableWidth = nameHeaderSpace + teamHeaderSpace + scoreHeaderSpace + scoreScreen->getTextWidth( totalText );
   int nameHeaderCenter = ( scoreScreen->getCanvasWidth() - scoreTableWidth ) / 2;
   int teamHeaderCenter = nameHeaderCenter + nameHeaderSpace;
   int scoreHeaderCenter = teamHeaderCenter + teamHeaderSpace;
-  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
-  int teamRightLimit = teamHeaderCenter + scoreScreen->getTextWidth( "Team" );
+  int totalHeaderCenter = scoreHeaderCenter + scoreHeaderSpace;
+  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( scoreText );
+  int teamRightLimit = teamHeaderCenter + scoreScreen->getTextWidth( teamText );
+  int totalRightLimit = totalHeaderCenter + scoreScreen->getTextWidth( totalText );
   int imageCenter = nameHeaderCenter - 65;
 
   bool clicked = false;
@@ -531,6 +555,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
     scoreScreen->renderTexture( "nameHeader", nameHeaderCenter, topPadding + gap * 4 );
     scoreScreen->renderTexture( "teamHeader", teamHeaderCenter, topPadding + gap * 4 );
     scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
+    scoreScreen->renderTexture( "totalHeader", totalHeaderCenter, topPadding + gap * 4 );
 
     // Render players score and data
     for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
@@ -546,14 +571,24 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
       scoreScreen->renderTexture( string( ps->name ) + "score", 
 				  scoreRightLimit - scoreScreen->getTextWidth( to_string( ps->score ) ), 
 				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      if ( ps->team == 1 ) {
+	scoreScreen->renderTexture( "alphaTotal", 
+				    totalRightLimit - scoreScreen->getTextWidth( to_string( alphaTotal ) ), 
+				    topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      } else {
+	scoreScreen->renderTexture( "betaTotal", 
+				    totalRightLimit - scoreScreen->getTextWidth( to_string( betaTotal ) ), 
+				    topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      }
+
       scoreScreen->renderTexture( string( ps->color ), 
 				  imageCenter, 
 				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
       if( string( ps->name ) == maxScoreID ) {
-	scoreScreen->renderTexture( "topScore", scoreRightLimit + 15, topPadding - 15 + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+	scoreScreen->renderTexture( "topScore", totalRightLimit + 15, topPadding - 15 + ( gap * ( gapMult + ( i * gapStep ) ) ) );
       }
     }
-
+  
     scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
     scoreScreen->renderRectangle( "continue" );
     scoreScreen->renderTexture( "buttonText", buttonTextCenter, 605 );
