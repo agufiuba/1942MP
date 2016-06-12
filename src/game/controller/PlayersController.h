@@ -37,6 +37,7 @@ public:
 	void press(SDL_Event *event);
 	void hacerVivir();
 	Vivible* getVivible();
+	ControllerMissiles* getMissiles();
 };
 
 #endif /* SRC_CONTROL_PLAYERS_CONTROLLER_H_ */

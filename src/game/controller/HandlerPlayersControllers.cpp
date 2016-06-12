@@ -39,7 +39,7 @@ void HandlerPlayersControllers::mover(string id, char evento) {
 		case 'S': code = SDLK_SPACE		; break;
 		case 'A': code = SDLK_CLEAR		; break;
 		case 'P': code = SDLK_HASH		; break;
-		case 'W': code = SDLK_ASTERISK		; break;
+		case 'W': code = SDLK_ASTERISK	; break;
 
 	}
 

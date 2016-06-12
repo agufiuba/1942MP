@@ -43,3 +43,7 @@ void ControllerMissiles::setAmetralladora(){
 void ControllerMissiles::setBalaNormal(){
 	ametralladora = false;
 }
+
+CompositeVivibles* ControllerMissiles::getVivibles(){
+	return this->vivibles;
+}

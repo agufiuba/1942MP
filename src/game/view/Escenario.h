@@ -24,6 +24,7 @@
 #include "../controller/PlayersController.h"
 #include "../controller/Timer.h"
 #include "../controller/HandlerPlayersControllers.h"
+#include "../controller/ControllerMissiles.h"
 #include "../../xml/conf/GameConf.h"
 #include "../../xml/parser/GameParser.h"
 #include "../../xml/conf/EscenarioConf.h"
@@ -95,12 +96,13 @@ private:
 	void verificarEstacionamiento(int numeroNivel);
 	void getPowerUp();
 	void loadScoreData();
-	void hitEnemy();
+	void hitEnemy(vector<Vivible*>* disparos);
 	void deleteEnemys();
 	void actualizarEnemigos();
 	bool escenarioCreado;
 	void planesColision();
 	void enemyOtherPlayerColision();
+	void hitEnemyMissileByOtherPlayer(ControllerMissiles* controller);
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl);

@@ -34,7 +34,6 @@ void PlayersController::press(SDL_Event *event){
             case SDLK_KP_ENTER: obj->inicializoVueltereta();break;
             case SDLK_SPACE:
 				if (!obj->haciendoVueltereta()){
-					cout << "tirando misiles" << endl;
 					crearMisil = true;
 				}
 				break;
@@ -64,4 +63,8 @@ void PlayersController::hacerVivir(){
 
 Vivible* PlayersController::getVivible(){
 	return this->obj;
+}
+
+ControllerMissiles* PlayersController::getMissiles(){
+	return this->controlDeMisiles;
 }

@@ -9,6 +9,7 @@
 #define ICONTROLLER_H_
 
 #include "../model/Avion.h"
+#include "../controller/ControllerMissiles.h"
 
 class IController {
 public:
@@ -18,6 +19,7 @@ public:
 	virtual Vivible* getVivible(){return 0;};
 	virtual void setAmetralladora() {};
 	virtual void setBalaNormal() {};
+	virtual ControllerMissiles* getMissiles(){return 0;}
 };
 
 

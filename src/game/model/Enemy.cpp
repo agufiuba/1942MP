@@ -62,11 +62,19 @@ int Enemy::getLargoFondo() {
 }
 
 int Enemy::getAncho() {
-	return vistaAvion->getAnchoVista();
+	if (this->vistaAvion != NULL){
+		return vistaAvion->getAnchoVista();
+	} else {
+		return 0;
+	}
 }
 
 int Enemy::getLargo() {
-	return vistaAvion->getLargoVista();
+	if (this->vistaAvion != NULL){
+		return vistaAvion->getLargoVista();
+	} else {
+		return 0;
+	}
 }
 
 AvionConf* Enemy::getConfiguracion() {
@@ -114,6 +122,8 @@ void Enemy::vivirRandom(){
 		if (!explosion->exploto()) {
 			posicion->mover(-1, -3);
 			explosion->explotar(posicion);
+		} else {
+			this->viviendo = false;
 		}
 	}
 
@@ -136,6 +146,8 @@ void Enemy::vivirFlota(){
 		if (!explosion->exploto()) {
 			posicion->mover(-1, -3);
 			explosion->explotar(posicion);
+		} else {
+			this->viviendo = false;
 		}
 	}
 
@@ -162,6 +174,8 @@ void Enemy::vivir(int velX, int velY){
 		if (!explosion->exploto()) {
 			posicion->mover(-1, -3);
 			explosion->explotar(posicion);
+		} else {
+			this->viviendo = false;
 		}
 	}
 
@@ -289,5 +303,6 @@ void Enemy::moverFlota() {
 }
 
 void Enemy::morir(){
-	viviendo = false;
+	this->setHP(0);
+//	viviendo = false;
 }
