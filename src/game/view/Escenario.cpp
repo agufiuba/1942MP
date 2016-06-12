@@ -417,6 +417,12 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   Timer timer;
   int fps = 10;
   string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
+  string buttonText = "Continue";
+  // win screen
+  if ( stage == 0 ) {
+    stageCompleteText = "Congratulations. You Win !!";
+    buttonText = "Finish";
+  }
   string scoreHeaderText = "Team Mode Score Ranking";
   string nameText = "Name";
   string scoreText = "Score";
@@ -433,7 +439,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   scoreScreen->loadText( "nameHeader", nameText, { 191, 189, 37, 255 } );
   scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
   scoreScreen->loadText( "teamHeader", teamText, { 191, 189, 37, 255 } );
-  scoreScreen->loadText( "continueText", "Continue", { 0, 0, 0, 255 } );
+  scoreScreen->loadText( "buttonText", buttonText, { 0, 0, 0, 255 } );
 
   // Get max score player ID
   string maxScoreID;
@@ -466,7 +472,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
 
   int buttonWidth = 250;
   int buttonCenter = scoreScreen->getRectCenter( buttonWidth ); 
-  int continueTextCenter = scoreScreen->getTextCenter( "continue" );
+  int buttonTextCenter = scoreScreen->getTextCenter( buttonText );
 
   // Load prompts
   scoreScreen->loadRectangle( "continue", buttonCenter, 600, buttonWidth, 50 );
@@ -479,7 +485,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
   int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
   int teamHeaderSpace = scoreScreen->getTextWidth( teamText ) + rowPadding;
-  int nameHeaderCenter = stageCompleteTextCenter - ( rowPadding / 2 );
+  int nameHeaderCenter = scoreTextCenter - ( rowPadding / 3 );
   int teamHeaderCenter = nameHeaderCenter + nameHeaderSpace;
   int scoreHeaderCenter = teamHeaderCenter + teamHeaderSpace;
   int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
@@ -549,7 +555,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
 
     scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
     scoreScreen->renderRectangle( "continue" );
-    scoreScreen->renderTexture( "continueText", continueTextCenter, 605 );
+    scoreScreen->renderTexture( "buttonText", buttonTextCenter, 605 );
 
     if( clicked ) {
       clicked = false;
