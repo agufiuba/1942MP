@@ -261,7 +261,9 @@ SDL_Event* Escenario::run() {
 			}
 
 			if ( this->unCliente->wins() ) {
-			  this->loadSinglePlayerScoreScreen( numeroNivel );
+			  this->loadScoreScreen();
+			  quit = true;
+			  break;
 			}
 
 			while (this->sdl->nextEvent(&evento)) {
@@ -326,7 +328,7 @@ SDL_Event* Escenario::run() {
 				musica->fadeOut(4000);
 	    
 				// load score screen
-				this->loadSinglePlayerScoreScreen( numeroNivel );
+				this->loadScoreScreen( numeroNivel );
 
 				delete musica;
 				musica = new Music("musicaDeFondo.mp3");
@@ -378,16 +380,208 @@ void Escenario::limpiarFondosVivibles() {
 	fondosVivibles.clear();
 }
 
-void Escenario::loadSinglePlayerScoreScreen( int stage ) {
+void Escenario::loadScoreScreen( int stage ) {
   // load score data
   this->loadScoreData();
 
+  GameData* gd = this->unCliente->getGameData();
+
+  // load cooperative mode score screen
+  if ( gd->cooperativeMode ) {
+    this->loadCoopModeScoreScreen( stage );
+  // load team mode score screen
+  } else {
+    this->loadTeamModeScoreScreen( stage );
+  }
+
+  // reset score table
+  this->unCliente->resetScores();
+  // load waiting screen
+  this->loadWaitForPlayersScreen();
+}
+
+void Escenario::loadScoreData() {
+  // Request clients playing
+  this->unCliente->requestScoreTable();
+  // wait for clients playing
+  while( this->unCliente->getClientsPlaying() == 0 );
+
+  // wait for player score data
+  while ( this->unCliente->getPlayersScoreData().size() != this->unCliente->getClientsPlaying() );
+  this->unCliente->resetClientsPlaying();
+}
+
+void Escenario::loadTeamModeScoreScreen( int stage ) {
   bool runningScreen = true;
   SDL_Event e;
   Timer timer;
   int fps = 10;
   string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
-  string scoreHeaderText = "Score Ranking";
+  string scoreHeaderText = "Team Mode Score Ranking";
+  string nameText = "Name";
+  string scoreText = "Score";
+  string teamText = "Team";
+
+  Screen* scoreScreen = new Screen( this->sdl );
+
+  // Load max score ribbon
+  scoreScreen->loadTexture( "topScore", "topScore.bmp" );
+
+  // Load text
+  scoreScreen->loadText( "stageComplete", stageCompleteText, { 53, 167, 84, 255 } );
+  scoreScreen->loadText( "scoreText", scoreHeaderText, { 255, 0, 0, 255 } );
+  scoreScreen->loadText( "nameHeader", nameText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "teamHeader", teamText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "continueText", "Continue", { 0, 0, 0, 255 } );
+
+  // Get max score player ID
+  string maxScoreID;
+  int maxScore = 0;
+  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+    PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+    if ( ps->score > maxScore ) {
+      maxScoreID = ps->name;
+      maxScore = ps->score;
+    }
+  }
+
+  // Load ranking score table data 
+  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+    PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+    string team = ps->team == 1 ? "Alpha" : "Beta";
+    
+    if ( string( ps->name ) == maxScoreID ) {
+      scoreScreen->loadText( string( ps->name ), string( ps->name ), { 12, 246, 246, 255 } );
+      scoreScreen->loadText( string( ps->name ) + "team", team, { 12, 246, 246, 255 } );
+      scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 12, 246, 246, 255 } );
+    } else {
+      scoreScreen->loadText( string( ps->name ), string( ps->name ), { 255, 255, 255, 255 } );
+      scoreScreen->loadText( string( ps->name ) + "team", team, { 255, 255, 255, 255 } );
+      scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 255, 255, 255, 255 } );
+    }
+    // Load plane
+    scoreScreen->loadTexture( string( ps->color ), "score/avion_" + string( ps->color ) + ".bmp" );
+  }
+
+  int buttonWidth = 250;
+  int buttonCenter = scoreScreen->getRectCenter( buttonWidth ); 
+  int continueTextCenter = scoreScreen->getTextCenter( "continue" );
+
+  // Load prompts
+  scoreScreen->loadRectangle( "continue", buttonCenter, 600, buttonWidth, 50 );
+
+  int gap = scoreScreen->getTextHeight( scoreText );
+  int rowPadding = 150;
+  int topPadding = 60;
+  // Get center positions
+  int stageCompleteTextCenter = scoreScreen->getTextCenter( stageCompleteText ); 
+  int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
+  int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
+  int teamHeaderSpace = scoreScreen->getTextWidth( teamText ) + rowPadding;
+  int nameHeaderCenter = stageCompleteTextCenter - ( rowPadding / 2 );
+  int teamHeaderCenter = nameHeaderCenter + nameHeaderSpace;
+  int scoreHeaderCenter = teamHeaderCenter + teamHeaderSpace;
+  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
+  int teamRightLimit = teamHeaderCenter + scoreScreen->getTextWidth( "Team" );
+  int imageCenter = nameHeaderCenter - 65;
+
+  bool clicked = false;
+  int mouseX, mouseY;
+  double gapMult = 5.5;
+  double gapStep = 1.5;
+
+  HealthView* remainingHealth = new HealthView( scoreScreen, this->player->getHealth() );
+
+  // Enable text input
+  SDL_StartTextInput();
+
+  while( runningScreen ) {
+    timer.correr();
+    // Get events
+    while( this->sdl->nextEvent( &e ) ) {
+      if( e.type == SDL_QUIT ) {
+	runningScreen = false;
+	break;
+      }
+      if (e.button.type == SDL_MOUSEBUTTONDOWN) {
+	if (e.button.button == SDL_BUTTON_LEFT) {
+	  clicked = true;
+	  // Get the mouse offsets
+	  mouseX = e.button.x;
+	  mouseY = e.button.y;
+	}
+      }
+    }
+    // Set window background
+    this->sdl->setWindowBG(0, 0, 0);
+
+    remainingHealth->render();
+
+    // Render text textures
+    scoreScreen->renderTexture( "stageComplete", stageCompleteTextCenter, topPadding );
+    scoreScreen->renderTexture( "scoreText", scoreTextCenter, topPadding + gap * 2 );
+    scoreScreen->renderTexture( "nameHeader", nameHeaderCenter, topPadding + gap * 4 );
+    scoreScreen->renderTexture( "teamHeader", teamHeaderCenter, topPadding + gap * 4 );
+    scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
+
+    // Render players score and data
+    for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+      PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+      string team = ps->team == 1 ? "Alpha" : "Beta";
+      
+      scoreScreen->renderTexture( string( ps->name ), 
+				  nameHeaderCenter, 
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      scoreScreen->renderTexture( string( ps->name ) + "team", 
+				  teamRightLimit - scoreScreen->getTextWidth( team ), 
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      scoreScreen->renderTexture( string( ps->name ) + "score", 
+				  scoreRightLimit - scoreScreen->getTextWidth( to_string( ps->score ) ), 
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      scoreScreen->renderTexture( string( ps->color ), 
+				  imageCenter, 
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      if( string( ps->name ) == maxScoreID ) {
+	scoreScreen->renderTexture( "topScore", scoreRightLimit + 15, topPadding - 15 + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      }
+    }
+
+    scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
+    scoreScreen->renderRectangle( "continue" );
+    scoreScreen->renderTexture( "continueText", continueTextCenter, 605 );
+
+    if( clicked ) {
+      clicked = false;
+      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
+	  && ( mouseY > 600 ) && ( mouseY < ( 600 + 50 ) ) ) {
+	// send ready signal
+	this->unCliente->sendStageClearReady();
+	break;
+      }
+    }
+
+    //Update screen
+    this->sdl->updateWindow();
+
+    if( timer.tiempoActual() < 1000 / fps ){
+      SDL_Delay( ( 1000 / fps ) - timer.tiempoActual() );
+    }
+  }
+
+  //Disable text input
+  SDL_StopTextInput();
+  delete remainingHealth;
+  delete scoreScreen;
+}
+
+void Escenario::loadCoopModeScoreScreen( int stage ) {
+  bool runningScreen = true;
+  SDL_Event e;
+  Timer timer;
+  int fps = 10;
+  string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
+  string scoreHeaderText = "Coop Mode Score Ranking";
   string nameText = "Name";
   string scoreText = "Score";
 
@@ -523,14 +717,10 @@ void Escenario::loadSinglePlayerScoreScreen( int stage ) {
     }
   }
 
-  this->unCliente->resetScores();
   //Disable text input
   SDL_StopTextInput();
   delete remainingHealth;
   delete scoreScreen;
-
-  // load waiting screen
-  this->loadWaitForPlayersScreen();
 }
 
 void Escenario::loadGameOverScreen() {
@@ -833,17 +1023,6 @@ void Escenario::deleteEnemys() {
 		cout<<"Elimino un enemigo"<<endl;
 		this->enemigos[i]->morir();
 	}
-}
-
-void Escenario::loadScoreData() {
-  // Request clients playing
-  this->unCliente->requestScoreTable();
-  // wait for clients playing
-  while( this->unCliente->getClientsPlaying() == 0 );
-
-  // wait for player score data
-  while ( this->unCliente->getPlayersScoreData().size() != this->unCliente->getClientsPlaying() );
-  this->unCliente->resetClientsPlaying();
 }
 
 void Escenario::planesColision(){
