@@ -34,13 +34,12 @@ void PlayersController::press(SDL_Event *event){
             case SDLK_KP_ENTER: obj->inicializoVueltereta();break;
             case SDLK_SPACE:
 				if (!obj->haciendoVueltereta()){
-					cout << "tirando misiles" << endl;
 					crearMisil = true;
 				}
 				break;
             case SDLK_CLEAR: controlDeMisiles->setAmetralladora(); break;
             case SDLK_HASH: obj->inicializoEstacionar(); break;
-            case SDLK_ASTERISK: obj->setHP(0); break;
+            case SDLK_ASTERISK: obj->morir(); break;
 
         }
 
@@ -60,4 +59,12 @@ void PlayersController::hacerVivir(){
 		crearMisil = false;
 	}
 	controlDeMisiles->hacerVivir();
+}
+
+Vivible* PlayersController::getVivible(){
+	return this->obj;
+}
+
+ControllerMissiles* PlayersController::getMissiles(){
+	return this->controlDeMisiles;
 }

@@ -29,11 +29,11 @@ class ControllerMissiles{
 
 		void setAmetralladora();
 		void setBalaNormal();
-		CompositeVivibles* vivibles;
+		CompositeVivibles* getVivibles();
 	private:
 		SDL_Renderer* rendererMisil;
 		int distanciaDeDesplazamiento = 25;//Todo sacarlo del hardcodeo
-
+		CompositeVivibles* vivibles;
 		bool ametralladora;
 };
 

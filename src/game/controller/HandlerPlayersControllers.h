@@ -17,16 +17,17 @@
 class HandlerPlayersControllers {
 
 private:
-	map<string, IController*> mapaControllers;
 	SDL_Renderer* renderer;
 	Resolucion* resolucion;
 
 public:
+	map<string, IController*> mapaControllers;
 	HandlerPlayersControllers(SDL_Renderer* renderer, Resolucion* resolucion);
 	virtual ~HandlerPlayersControllers();
 	void setPlayer(Avion* vivible);
 	void mover(string id, char event);
 	void hacerVivir();
+	map<string, IController*> getMapaControllers();
 };
 
 #endif /* HANDLERPLAYERSCONTROLLERS_H_ */

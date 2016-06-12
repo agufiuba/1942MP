@@ -81,13 +81,14 @@ void Controller::press(SDL_Event *event){
 }
 
 void Controller::hacerVivir(){
-	Evento* e;
-	CompanionEvent* ce = new CompanionEvent();
-
-	if (!obj->tieneHP() && !envioExplosion) {
-		cliente->sendData(ce->explosion(obj->getId()));
-		envioExplosion = true;
-	}
+//	Evento* e;
+//	CompanionEvent* ce = new CompanionEvent();
+//
+//	if (!obj->tieneHP() && !envioExplosion) {
+//		cliente->sendData(ce->explosion(obj->getId()));
+//		envioExplosion = true;
+//		delete ce;
+//	}
 
 	obj->vivir(velX, velY);
 	controlDeMisiles->hacerVivir();

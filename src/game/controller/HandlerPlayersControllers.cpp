@@ -39,7 +39,7 @@ void HandlerPlayersControllers::mover(string id, char evento) {
 		case 'S': code = SDLK_SPACE		; break;
 		case 'A': code = SDLK_CLEAR		; break;
 		case 'P': code = SDLK_HASH		; break;
-		case 'W': code = SDLK_ASTERISK		; break;
+		case 'W': code = SDLK_ASTERISK	; break;
 
 	}
 
@@ -49,6 +49,15 @@ void HandlerPlayersControllers::mover(string id, char evento) {
 
 void HandlerPlayersControllers::hacerVivir() {
 	for (map<string, IController*>::iterator it = this->mapaControllers.begin(); it != this->mapaControllers.end(); ++it) {
-		it->second->hacerVivir();
+		if(it->second->getVivible()->aunVive()){
+			it->second->hacerVivir();
+		} else {
+			delete it->second;
+			this->mapaControllers.erase(it);
+		}
 	}
+}
+
+map<string, IController*> HandlerPlayersControllers::getMapaControllers(){
+	return this->mapaControllers;
 }

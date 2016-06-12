@@ -43,7 +43,6 @@ bool Avion::haciendoVueltereta(){
 }
 
 Avion::~Avion(){
-
 	if (vistaAvion != NULL) delete vistaAvion;
 	if (explosion != NULL) delete explosion;
 	delete t;
@@ -67,11 +66,19 @@ int Avion::getLargoFondo() {
 }
 
 int Avion::getAncho() {
-	return vistaAvion->getAnchoVista();
+	if (this->vistaAvion != NULL){
+		return vistaAvion->getAnchoVista();
+	} else {
+		return 0;
+	}
 }
 
 int Avion::getLargo() {
-	return vistaAvion->getLargoVista();
+	if (this->vistaAvion != NULL){
+		return vistaAvion->getLargoVista();
+	} else {
+		return 0;
+	}
 }
 
 AvionConf* Avion::getConfiguracion() {
@@ -107,6 +114,7 @@ void Avion::mostrar(int velX){
 }
 
 void Avion::mostrarVueltereta(int frame){
+	if (vistaAvion != NULL)
 	vistaAvion->mostrarVueltereta(posicion->getX(),posicion->getYsdl(),frame);
 }
 
@@ -228,10 +236,11 @@ void Avion::vivir(int velX, int velY){
 			delete vistaAvion;
 			vistaAvion = NULL;
 		}
-
 		if (!explosion->exploto()) {
 			posicion->mover(-1, -3);
 			explosion->explotar(posicion);
+		} else {
+			this->viviendo = false;
 		}
 	}
 
@@ -251,9 +260,9 @@ bool Avion::aunVive(){
 }
 
 void Avion::desconectar(){
-	this->viviendo = false;
+//	this->viviendo = false;
 	if (vistaAvion != NULL)
-	vistaAvion->desconectar();
+		vistaAvion->desconectar();
 }
 
 void Avion::setAmetralladora(){
@@ -293,4 +302,5 @@ bool Avion::hit(int x, int y) {
 
 void Avion::morir(){
 	this->setHP(0);
+//	this->viviendo = false;
 }
