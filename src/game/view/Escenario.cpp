@@ -485,7 +485,8 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
   int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
   int teamHeaderSpace = scoreScreen->getTextWidth( teamText ) + rowPadding;
-  int nameHeaderCenter = scoreTextCenter - ( rowPadding / 3 );
+  int scoreTableWidth = nameHeaderSpace + teamHeaderSpace + scoreScreen->getTextWidth( "Score" );
+  int nameHeaderCenter = ( scoreScreen->getCanvasWidth() - scoreTableWidth ) / 2;
   int teamHeaderCenter = nameHeaderCenter + nameHeaderSpace;
   int scoreHeaderCenter = teamHeaderCenter + teamHeaderSpace;
   int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
