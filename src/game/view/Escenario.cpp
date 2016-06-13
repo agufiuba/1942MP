@@ -616,11 +616,18 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
   Timer timer;
   int fps = 10;
   string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
+  string buttonText = "Continue";
+  // win screen
+  if ( stage == 0 ) {
+    stageCompleteText = "Congratulations. You Win !!";
+    buttonText = "Finish";
+  }
   string scoreHeaderText = "Coop Mode Score Ranking";
   string nameText = "Name";
   string scoreText = "Score";
+  string totalText = "Total";
 
-  Screen* scoreScreen= new Screen( this->sdl );
+  Screen* scoreScreen = new Screen( this->sdl );
 
   // Load max score ribbon
   scoreScreen->loadTexture( "topScore", "topScore.bmp" );
@@ -630,23 +637,24 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
   scoreScreen->loadText( "scoreText", scoreHeaderText, { 255, 0, 0, 255 } );
   scoreScreen->loadText( "nameHeader", nameText, { 191, 189, 37, 255 } );
   scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
-  scoreScreen->loadText( "continueText", "Continue", { 0, 0, 0, 255 } );
+  scoreScreen->loadText( "totalHeader", totalText, { 191, 189, 37, 255 } );
+  scoreScreen->loadText( "buttonText", buttonText, { 0, 0, 0, 255 } );
 
-  // Get max score player ID
-  string maxScoreID;
+  // Get max score
   int maxScore = 0;
   for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
     if ( ps->score > maxScore ) {
-      maxScoreID = ps->name;
       maxScore = ps->score;
     }
   }
 
   // Load ranking score table data 
+  int teamTotal = 0;
   for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
-    if ( string( ps->name ) == maxScoreID ) {
+    
+    if ( ps->score == maxScore ) {
       scoreScreen->loadText( string( ps->name ), string( ps->name ), { 12, 246, 246, 255 } );
       scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 12, 246, 246, 255 } );
     } else {
@@ -655,25 +663,36 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
     }
     // Load plane
     scoreScreen->loadTexture( string( ps->color ), "score/avion_" + string( ps->color ) + ".bmp" );
+
+    teamTotal += ps->score;
   }
+
+  // load total
+  scoreScreen->loadText( "teamTotal", to_string( teamTotal ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( "teamTotalTop", to_string( teamTotal ), { 12, 246, 246, 255 } );
 
   int buttonWidth = 250;
   int buttonCenter = scoreScreen->getRectCenter( buttonWidth ); 
-  int continueTextCenter = scoreScreen->getTextCenter( "continue" );
+  int buttonTextCenter = scoreScreen->getTextCenter( buttonText );
 
   // Load prompts
   scoreScreen->loadRectangle( "continue", buttonCenter, 600, buttonWidth, 50 );
 
   int gap = scoreScreen->getTextHeight( scoreText );
-  int rowPadding = 200;
+  int rowPadding = 120;
   int topPadding = 60;
   // Get center positions
   int stageCompleteTextCenter = scoreScreen->getTextCenter( stageCompleteText ); 
   int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
   int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
-  int scoreHeaderCenter = stageCompleteTextCenter + nameHeaderSpace;
-  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
-  int imageCenter = stageCompleteTextCenter - 65;
+  int scoreHeaderSpace = scoreScreen->getTextWidth( scoreText ) + rowPadding;
+  int scoreTableWidth = nameHeaderSpace + scoreHeaderSpace + scoreScreen->getTextWidth( totalText );
+  int nameHeaderCenter = ( scoreScreen->getCanvasWidth() - scoreTableWidth ) / 2;
+  int scoreHeaderCenter = nameHeaderCenter + nameHeaderSpace;
+  int totalHeaderCenter = scoreHeaderCenter + scoreHeaderSpace;
+  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( scoreText );
+  int totalRightLimit = totalHeaderCenter + scoreScreen->getTextWidth( totalText );
+  int imageCenter = nameHeaderCenter - 65;
 
   bool clicked = false;
   int mouseX, mouseY;
@@ -710,14 +729,16 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
     // Render text textures
     scoreScreen->renderTexture( "stageComplete", stageCompleteTextCenter, topPadding );
     scoreScreen->renderTexture( "scoreText", scoreTextCenter, topPadding + gap * 2 );
-    scoreScreen->renderTexture( "nameHeader", stageCompleteTextCenter, topPadding + gap * 4 );
+    scoreScreen->renderTexture( "nameHeader", nameHeaderCenter, topPadding + gap * 4 );
     scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
+    scoreScreen->renderTexture( "totalHeader", totalHeaderCenter, topPadding + gap * 4 );
 
     // Render players score and data
     for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
       PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
+      string teamTotalID = "teamTotal";
       scoreScreen->renderTexture( string( ps->name ), 
-				  stageCompleteTextCenter, 
+				  nameHeaderCenter, 
 				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
       scoreScreen->renderTexture( string( ps->name ) + "score", 
 				  scoreRightLimit - scoreScreen->getTextWidth( to_string( ps->score ) ), 
@@ -725,14 +746,19 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
       scoreScreen->renderTexture( string( ps->color ), 
 				  imageCenter, 
 				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
-      if( string( ps->name ) == maxScoreID ) {
-	scoreScreen->renderTexture( "topScore", scoreRightLimit + 15, topPadding - 15 + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      if( ps->score == maxScore ) {
+	scoreScreen->renderTexture( "topScore", totalRightLimit + 15, topPadding - 15 + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+	teamTotalID = "teamTotalTop";
       }
+      
+      scoreScreen->renderTexture( teamTotalID, 
+				  totalRightLimit - scoreScreen->getTextWidth( to_string( teamTotal ) ), 
+				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
     }
-
+  
     scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
     scoreScreen->renderRectangle( "continue" );
-    scoreScreen->renderTexture( "continueText", continueTextCenter, 605 );
+    scoreScreen->renderTexture( "buttonText", buttonTextCenter, 605 );
 
     if( clicked ) {
       clicked = false;
