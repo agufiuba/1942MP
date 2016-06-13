@@ -392,6 +392,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			  } else {
 			    this->loser = true;
 			  }
+			} else if ( dataID == "CL" ) {
+			  this->loser = true;
 			} else if ( dataID == "TS" ) {
 				PlayerScore* data = new PlayerScore;
 				mutex m;
