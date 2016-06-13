@@ -399,6 +399,9 @@ void Escenario::loadScoreScreen( int stage ) {
     this->loadTeamModeScoreScreen( stage );
   }
 
+  // if win or lose, exit
+  if ( stage <= 0 ) exit(0);
+
   // reset score table
   this->unCliente->resetScores();
   // load waiting screen
@@ -629,19 +632,25 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
   SDL_Event e;
   Timer timer;
   int fps = 10;
+  Screen* scoreScreen = new Screen( this->sdl );
   string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
   string buttonText = "Continue";
   // win screen
   if ( stage == 0 ) {
     stageCompleteText = "Congratulations. You Win !!";
     buttonText = "Finish";
+  // game over screen
+  } else if ( stage == -1 ) {
+    stageCompleteText = "Game Over";
+    buttonText = "Finish";
+    // Load skull image
+    scoreScreen->loadTexture( "skull", "skull.bmp" );
   }
+
   string scoreHeaderText = "Coop Mode Score Ranking";
   string nameText = "Name";
   string scoreText = "Score";
   string totalText = "Total";
-
-  Screen* scoreScreen = new Screen( this->sdl );
 
   // Load max score ribbon
   scoreScreen->loadTexture( "topScore", "topScore.bmp" );
@@ -746,6 +755,10 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
     scoreScreen->renderTexture( "nameHeader", nameHeaderCenter, topPadding + gap * 4 );
     scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
     scoreScreen->renderTexture( "totalHeader", totalHeaderCenter, topPadding + gap * 4 );
+    if ( stage == -1 ) {
+      scoreScreen->renderTexture( "skull", stageCompleteTextCenter - scoreScreen->getTextureWidth( "skull" ) - 15, topPadding );
+      scoreScreen->renderTexture( "skull", stageCompleteTextCenter + scoreScreen->getTextWidth( stageCompleteText ) + 15, topPadding );
+    }
 
     // Render players score and data
     for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
