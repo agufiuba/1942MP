@@ -413,9 +413,13 @@ void Escenario::loadScoreData() {
   this->unCliente->requestScoreTable();
   // wait for clients playing
   while( this->unCliente->getClientsPlaying() == 0 );
-
+ 
+  GameData* gd = this->unCliente->getGameData();
+  int scoreTableSize = this->unCliente->getClientsPlaying();
+  scoreTableSize += gd->teamMode ? 2 : 1;
+  
   // wait for player score data
-  while ( this->unCliente->getPlayersScoreData().size() != this->unCliente->getClientsPlaying() );
+  while ( this->unCliente->getPlayersScoreData().size() != scoreTableSize );
   this->unCliente->resetClientsPlaying();
 }
 
@@ -424,6 +428,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   SDL_Event e;
   Timer timer;
   int fps = 10;
+  int playersScoreTableSize = this->unCliente->getPlayersScoreData().size() - 2;
   Screen* scoreScreen = new Screen( this->sdl );
   string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
   string buttonText = "Continue";
@@ -458,7 +463,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
 
   // Get max score
   int maxScore = 0;
-  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+  for( int i = 0; i < playersScoreTableSize; i++ ) {  
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
     if ( ps->score > maxScore ) {
       maxScore = ps->score;
@@ -466,8 +471,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   }
 
   // Load ranking score table data 
-  int alphaTotal = 0, betaTotal = 0;
-  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+  for( int i = 0; i < playersScoreTableSize; i++ ) {  
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
     string team = ps->team == 1 ? "Alpha" : "Beta";
     
@@ -482,14 +486,12 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
     }
     // Load plane
     scoreScreen->loadTexture( string( ps->color ), "score/avion_" + string( ps->color ) + ".bmp" );
-
-    if ( ps->team == 1 ) {
-      alphaTotal += ps->score;
-    } else {
-      betaTotal += ps->score;
-    }
   }
 
+  int scoreTableSize = this->unCliente->getPlayersScoreData().size();
+  int alphaTotal = ( this->unCliente->getPlayersScoreData()[ scoreTableSize - 2 ] )->score;
+  int betaTotal = ( this->unCliente->getPlayersScoreData()[ scoreTableSize - 1 ] )->score;
+  
   // load totals
   scoreScreen->loadText( "alphaTotal", to_string( alphaTotal ), { 255, 255, 255, 255 } );
   scoreScreen->loadText( "alphaTotalTop", to_string( alphaTotal ), { 12, 246, 246, 255 } );
@@ -567,7 +569,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
     }
 
     // Render players score and data
-    for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+    for( int i = 0; i < playersScoreTableSize; i++ ) {  
       PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
       string team = ps->team == 1 ? "Alpha" : "Beta";
       string alphaTotalID = "alphaTotal", betaTotalID = "betaTotal"; 
@@ -632,6 +634,7 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
   SDL_Event e;
   Timer timer;
   int fps = 10;
+  int playersScoreTableSize = this->unCliente->getPlayersScoreData().size() - 1;
   Screen* scoreScreen = new Screen( this->sdl );
   string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
   string buttonText = "Continue";
@@ -665,7 +668,7 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
 
   // Get max score
   int maxScore = 0;
-  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+  for( int i = 0; i < playersScoreTableSize; i++ ) {  
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
     if ( ps->score > maxScore ) {
       maxScore = ps->score;
@@ -673,8 +676,7 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
   }
 
   // Load ranking score table data 
-  int teamTotal = 0;
-  for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+  for( int i = 0; i < playersScoreTableSize; i++ ) {  
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
     
     if ( ps->score == maxScore ) {
@@ -687,8 +689,10 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
     // Load plane
     scoreScreen->loadTexture( string( ps->color ), "score/avion_" + string( ps->color ) + ".bmp" );
 
-    teamTotal += ps->score;
   }
+
+  int scoreTableSize = this->unCliente->getPlayersScoreData().size();
+  int teamTotal = ( this->unCliente->getPlayersScoreData()[ scoreTableSize - 1 ] )->score;
 
   // load total
   scoreScreen->loadText( "teamTotal", to_string( teamTotal ), { 255, 255, 255, 255 } );
@@ -761,7 +765,7 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
     }
 
     // Render players score and data
-    for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
+    for( int i = 0; i < playersScoreTableSize; i++ ) {  
       PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
       string teamTotalID = "teamTotal";
       scoreScreen->renderTexture( string( ps->name ), 
