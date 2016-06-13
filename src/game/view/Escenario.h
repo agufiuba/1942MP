@@ -90,7 +90,9 @@ private:
 	void configurarPowerUps();
 	void limpiarFondosVivibles();
 	bool isFinNivel(int numeroNivel);
-	void loadSinglePlayerScoreScreen( int stage );
+	void loadScoreScreen( int stage = 0 );
+	void loadCoopModeScoreScreen( int stage );
+	void loadTeamModeScoreScreen( int stage );
 	void loadWaitForPlayersScreen();
 	void loadGameOverScreen();
 	void verificarEstacionamiento(int numeroNivel);
