@@ -624,7 +624,7 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       if ( bytesReceived <= 0 ) {
 	receiving = false;
 
-	if ( this->running && ( this->clientCount > 1 ) ) {
+	if ( this->running && ( this->clientCount > 1 ) && ( this->players.find( cfd ) != this->players.end() ) ) {
 	  thread timedDisconnection( &Server::checkAliveClose, this, cfd );
 	  timedDisconnection.detach();
 	} else {
