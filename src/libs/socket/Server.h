@@ -32,6 +32,9 @@ class Server {
     StageData* stageData;
     queue<map<int, Evento*>*>* eventQueue;
     map<int, Player*> players;
+    int alphaTeamScore;
+    int betaTeamScore;
+    int coopTeamScore;
 
     //vector<int> players2;
     int posicionInicialX;

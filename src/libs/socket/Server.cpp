@@ -33,7 +33,9 @@ Server::Server( const char* configFileName ) {
   this->posicionInicialY = 100;
   this->createGameData();
   //  this->config = XMLParser::parseServerConf( configFileName );
-
+  this->alphaTeamScore = 0;
+  this->betaTeamScore = 0;
+  this->coopTeamScore = 0;
 }
 
 Server::~Server() {
@@ -758,6 +760,10 @@ void Server::closeClient( int cfd ) {
     delete this->gameData;
     this->createGameData();
     this->running = false;
+    // reset scores
+    this->alphaTeamScore = 0;
+    this->betaTeamScore = 0;
+    this->coopTeamScore = 0;
   }
   cout << " cantidad " << this->clientCount << endl;
   this->logger->info( "Cantidad de Clientes Conectados: " + to_string( this->clientCount ) );
@@ -804,6 +810,18 @@ void Server::addScoreToPlayer( PlayerScore* data ) {
       delete tmt;
     }
   }
+
+  if ( this->gameData->teamMode ) {
+    // alpha team
+    if ( data->team == 1 ) {
+      this->alphaTeamScore += data->score;
+    // beta team
+    } else {
+      this->betaTeamScore += data->score;
+    }
+  } else {
+    this->coopTeamScore += data->score;
+  }
 }
 
 void Server::sendScoreTable( int clientFD ) {
@@ -823,6 +841,28 @@ void Server::sendScoreTable( int clientFD ) {
     // send score data
     tmt->sendData( ps );
     delete ps;
+  }
+
+  if ( this->gameData->teamMode ) {
+    PlayerScore* as = new PlayerScore;
+    PlayerScore* bs = new PlayerScore;
+    strcpy( as->name, "alphaTotal" ); 
+    as->score = this->alphaTeamScore;
+    strcpy( bs->name, "betaTotal" ); 
+    bs->score = this->betaTeamScore;
+    
+    tmt->sendData( as );
+    tmt->sendData( bs );
+
+    delete as;
+    delete bs;
+  } else {
+    PlayerScore* ts = new PlayerScore;
+    strcpy( ts->name, "total" );
+    ts->score = this->coopTeamScore;
+    tmt->sendData( ts );
+
+    delete ts;
   }
 
   delete tmt;
