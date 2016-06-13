@@ -74,7 +74,7 @@ class Server {
     int getPlayerRivalTeamScore( Player* player );
     void freePlayerSlot( int clientFD );
     void checkTeamWin();
-    void sendTeamWin();
+    void sendTeamWin( string winningTeam );
     void checkAliveClose( int clientFD );
 
   public:

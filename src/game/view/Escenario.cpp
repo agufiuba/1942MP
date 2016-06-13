@@ -266,6 +266,12 @@ SDL_Event* Escenario::run() {
 			  break;
 			}
 
+			if ( this->unCliente->losses() ) {
+			  this->loadGameOverScreen();
+			  quit = true;
+			  break;
+			}
+
 			while (this->sdl->nextEvent(&evento)) {
 
 				myControl->press(&evento);
@@ -315,7 +321,6 @@ SDL_Event* Escenario::run() {
 						this->player->takeHit();
 						if( !( this->player->isAlive() ) ) {
 						  this->unCliente->sendPlayerDeath();
-						  this->loadGameOverScreen();
 						}
 					}
 				}
@@ -1104,6 +1109,7 @@ void Escenario::planesColision(){
 				cout << "**** CHOQUE: ENEMIGOS VS MI AVION ****" << endl;
 				enemigos[var]->morir();
 				myControl->getVivible()->morir();
+				this->unCliente->sendPlayerDeath();
 			}
 		}
 	}

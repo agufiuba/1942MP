@@ -33,6 +33,7 @@ class Client {
     bool received;
     bool playerOk;
     bool winner;
+    bool loser;
     Logger* logger;
     int stageOffset;
     PlanesActives* planes;
@@ -113,5 +114,6 @@ class Client {
     void setRivalTeamScore( int score );
     void quitGame();
     bool wins();
+    bool losses();
 };
 #endif

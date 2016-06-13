@@ -29,6 +29,7 @@ Client::Client(const char* configFileName) {
     this->rivalTeamScore = 0;
     this->destroyEne = false;
     this->winner = false;
+    this->loser = false;
 }
 
 Client::Client(string ip, string puerto) {
@@ -51,6 +52,7 @@ Client::Client(string ip, string puerto) {
     this->rivalTeamScore = 0;
     this->destroyEne = false;
     this->winner = false;
+    this->loser = false;
 }
 
 Client::Client(string ip, string puerto,
@@ -75,6 +77,7 @@ Client::Client(string ip, string puerto,
     this->rivalTeamScore = 0;
     this->destroyEne = false;
     this->winner = false;
+    this->loser = false;
 }
 
 Client::~Client() {
@@ -377,8 +380,18 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				delete data;
 			} else if ( dataID == "RR" ) {
 			  this->stageClearReady = true;
-			} else if ( dataID == "WN" ) {
-			  this->winner = true;
+			} else if ( dataID == "AW" ) {
+			  if ( this->player->getTeam() == 1 ) {
+			    this->winner = true;
+			  } else {
+			    this->loser = true;
+			  }
+			} else if ( dataID == "BW" ) {
+			  if ( this->player->getTeam() == 2 ) {
+			    this->winner = true;
+			  } else {
+			    this->loser = true;
+			  }
 			} else if ( dataID == "TS" ) {
 				PlayerScore* data = new PlayerScore;
 				mutex m;
@@ -737,4 +750,8 @@ void Client::quitGame() {
 
 bool Client::wins() {
   return this->winner;
+}
+
+bool Client::losses() {
+  return this->loser;
 }
