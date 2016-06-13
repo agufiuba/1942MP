@@ -94,7 +94,6 @@ private:
 	void loadCoopModeScoreScreen( int stage );
 	void loadTeamModeScoreScreen( int stage );
 	void loadWaitForPlayersScreen();
-	void loadGameOverScreen();
 	void verificarEstacionamiento(int numeroNivel);
 	void getPowerUp();
 	void loadScoreData();
