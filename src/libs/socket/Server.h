@@ -75,6 +75,7 @@ class Server {
     void freePlayerSlot( int clientFD );
     void checkTeamWin();
     void sendTeamWin();
+    void checkAliveClose( int clientFD );
 
   public:
     Server( const char* configFileName );

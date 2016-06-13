@@ -617,12 +617,20 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
       // Check peer disconnection or timeout
       if ( bytesReceived <= 0 ) {
 	receiving = false;
-	this->avisarDesconexionDeAvion(cfd);
-	this->closeClient( cfd );
+
+	if ( this->running && ( this->clientCount > 1 ) ) {
+	  thread timedDisconnection( &Server::checkAliveClose, this, cfd );
+	  timedDisconnection.detach();
+	} else {
+	  this->closeClient( cfd );
+	}
+
+	// disconnection	
 	if( bytesReceived == 0 ) {
 	  cout << endl << warning( "El cliente " ) << clientIP
-	    << warning( " se desconecto" ) << endl;
+	       << warning( " se desconecto" ) << endl;
 	  this->logger->warn( "El Cliente " + string( clientIP ) + " se desconecto" );
+	// timeout
 	} else {
 	  DEBUG_WARN( CONNECTION_TIMEOUT );
 	  this->logger->warn( CONNECTION_TIMEOUT );
@@ -634,6 +642,18 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
     this->logger->warn( "El cliente " + string(clientIP) + " se rechazo" );
     usleep( 1000000 );
     this->closeClient( cfd );
+  }
+}
+
+void Server::checkAliveClose( int clientFD ) {
+  this->avisarDesconexionDeAvion( clientFD );
+  this->closeClient( clientFD );
+  this->players[ clientFD ]->deactivate();
+  // 10 sec wait
+  usleep( 10000000 );
+  // if player didn't resume
+  if ( this->players.find( clientFD ) != this->players.end() ) {
+    this->freePlayerSlot( clientFD );
   }
 }
 
@@ -898,30 +918,37 @@ void Server::setTeamPlayer(int team, int cliendFd){
 }
 
 void Server::freePlayerSlot( int clientFD ) {
-  string playerName = this->players[ clientFD ]->getName();
-
-  // delete player
-  delete this->players[ clientFD ];
-  // free player slot in hash
+  string playerName;
   map<int, Player*>::iterator it = this->players.find( clientFD );
-  this->players.erase( it );
 
-  Evento* ev = new Evento;
-  ev->value = QUITGAME;
-  strcpy( ev->name, playerName.c_str() );
-  for ( map<int, Player*>::iterator it = this->players.begin();
-	it != this->players.end();
-	++it ) {
-    Transmitter* tmt = new Transmitter( it->first, this->logger );
-    tmt->sendData( ev );
-    delete tmt;
+  // if player exists
+  if ( it != this->players.end() ) {
+    playerName = this->players[ clientFD ]->getName();
+    // delete player
+    delete this->players[ clientFD ];
+    // free player slot in hash
+    this->players.erase( it );
   }
 
-  delete ev;
+  // if game is running
+  if ( this->running ) {
+    Evento* ev = new Evento;
+    ev->value = QUITGAME;
+    strcpy( ev->name, playerName.c_str() );
+    for ( map<int, Player*>::iterator it = this->players.begin();
+	  it != this->players.end();
+	  ++it ) {
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendData( ev );
+      delete tmt;
+    }
 
-  // if playing on team mode, check if remaining players win
-  if ( this->gameData->teamMode ) {
-    this->checkTeamWin();
+    delete ev;
+
+    // if playing on team mode, check if remaining players win
+    if ( this->gameData->teamMode ) {
+      this->checkTeamWin();
+    }
   }
 }
 
