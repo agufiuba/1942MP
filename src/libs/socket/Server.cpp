@@ -160,6 +160,10 @@ void Server::updatePlayerStatus( PlayerStatus* data, int cfd ) {
     this->players[ cfd ]->deactivate();
   } else if ( data->status == 'D' ) {
     this->players[ cfd ]->die();
+    // if playing on team mode, check if remaining players win
+    if ( this->gameData->teamMode ) {
+      this->checkTeamWin();
+    }
   }
   if (data->status == 'R' ){
 	this->players[ cfd ]->changeReady();
@@ -958,24 +962,29 @@ void Server::checkTeamWin() {
 	it != this->players.end();
 	++it ) {
     Player* player = it->second;
-    if ( player->getTeam() == 1 ) { 
-      teamAlpha++; 
-    } else if ( player->getTeam() == 2 ) {
-      teamBeta++; 
+    // if player is alive, check player team
+    if ( player->isAlive() ) {
+      if ( player->getTeam() == 1 ) { 
+	teamAlpha++; 
+      } else if ( player->getTeam() == 2 ) {
+	teamBeta++; 
+      }
     }
   } 
 
-  if ( teamAlpha == 0 || teamBeta == 0 ) {
-    this->sendTeamWin(); 
+  if ( teamAlpha == 0 ) {
+    this->sendTeamWin( "BW" ); 
+  } else if ( teamBeta == 0 ) {
+    this->sendTeamWin( "AW" ); 
   }
 }
 
-void Server::sendTeamWin() {
+void Server::sendTeamWin( string winningTeam ) {
   for ( map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end();
 	++it ) {
     Transmitter* tmt = new Transmitter( it->first, this->logger );
-    tmt->sendDataID( "WN" ); 
+    tmt->sendDataID( winningTeam.c_str() ); 
     delete tmt;
   } 
 }
