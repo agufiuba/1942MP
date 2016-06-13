@@ -443,13 +443,11 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   scoreScreen->loadText( "totalHeader", totalText, { 191, 189, 37, 255 } );
   scoreScreen->loadText( "buttonText", buttonText, { 0, 0, 0, 255 } );
 
-  // Get max score player ID
-  string maxScoreID;
+  // Get max score
   int maxScore = 0;
   for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
     if ( ps->score > maxScore ) {
-      maxScoreID = ps->name;
       maxScore = ps->score;
     }
   }
@@ -460,7 +458,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
     PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
     string team = ps->team == 1 ? "Alpha" : "Beta";
     
-    if ( string( ps->name ) == maxScoreID ) {
+    if ( ps->score == maxScore ) {
       scoreScreen->loadText( string( ps->name ), string( ps->name ), { 12, 246, 246, 255 } );
       scoreScreen->loadText( string( ps->name ) + "team", team, { 12, 246, 246, 255 } );
       scoreScreen->loadText( string( ps->name ) + "score", to_string( ps->score ), { 12, 246, 246, 255 } );
@@ -480,16 +478,10 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   }
 
   // load totals
-  if ( alphaTotal > betaTotal ) {
-    scoreScreen->loadText( "alphaTotal", to_string( alphaTotal ), { 12, 246, 246, 255 } );
-    scoreScreen->loadText( "betaTotal", to_string( betaTotal ), { 255, 255, 255, 255 } );
-  } else if ( betaTotal > alphaTotal ) {
-    scoreScreen->loadText( "betaTotal", to_string( betaTotal ), { 12, 246, 246, 255 } );
-    scoreScreen->loadText( "alphaTotal", to_string( alphaTotal ), { 255, 255, 255, 255 } );
-  } else {
-    scoreScreen->loadText( "alphaTotal", to_string( alphaTotal ), { 255, 255, 255, 255 } );
-    scoreScreen->loadText( "betaTotal", to_string( betaTotal ), { 255, 255, 255, 255 } );
-  }
+  scoreScreen->loadText( "alphaTotal", to_string( alphaTotal ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( "alphaTotalTop", to_string( alphaTotal ), { 12, 246, 246, 255 } );
+  scoreScreen->loadText( "betaTotal", to_string( betaTotal ), { 255, 255, 255, 255 } );
+  scoreScreen->loadText( "betaTotalTop", to_string( betaTotal ), { 12, 246, 246, 255 } );
 
   int buttonWidth = 250;
   int buttonCenter = scoreScreen->getRectCenter( buttonWidth ); 
@@ -561,7 +553,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
     for( int i = 0; i < this->unCliente->getPlayersScoreData().size(); i++ ) {  
       PlayerScore* ps = this->unCliente->getPlayersScoreData()[i];
       string team = ps->team == 1 ? "Alpha" : "Beta";
-      
+      string alphaTotalID = "alphaTotal", betaTotalID = "betaTotal"; 
       scoreScreen->renderTexture( string( ps->name ), 
 				  nameHeaderCenter, 
 				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
@@ -571,21 +563,22 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
       scoreScreen->renderTexture( string( ps->name ) + "score", 
 				  scoreRightLimit - scoreScreen->getTextWidth( to_string( ps->score ) ), 
 				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
-      if ( ps->team == 1 ) {
-	scoreScreen->renderTexture( "alphaTotal", 
-				    totalRightLimit - scoreScreen->getTextWidth( to_string( alphaTotal ) ), 
-				    topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
-      } else {
-	scoreScreen->renderTexture( "betaTotal", 
-				    totalRightLimit - scoreScreen->getTextWidth( to_string( betaTotal ) ), 
-				    topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
-      }
-
       scoreScreen->renderTexture( string( ps->color ), 
 				  imageCenter, 
 				  topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
-      if( string( ps->name ) == maxScoreID ) {
+      if( ps->score == maxScore ) {
 	scoreScreen->renderTexture( "topScore", totalRightLimit + 15, topPadding - 15 + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+	alphaTotalID = "alphaTotalTop", betaTotalID = "betaTotalTop";
+      }
+      
+      if ( ps->team == 1 ) {
+	scoreScreen->renderTexture( alphaTotalID, 
+				    totalRightLimit - scoreScreen->getTextWidth( to_string( alphaTotal ) ), 
+				    topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
+      } else {
+	scoreScreen->renderTexture( betaTotalID, 
+				    totalRightLimit - scoreScreen->getTextWidth( to_string( betaTotal ) ), 
+				    topPadding + ( gap * ( gapMult + ( i * gapStep ) ) ) );
       }
     }
   
