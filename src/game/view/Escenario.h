@@ -104,9 +104,10 @@ private:
 	void planesColision();
 	void enemyOtherPlayerColision();
 	void hitEnemyMissileByOtherPlayer(ControllerMissiles* controller);
+	void enemyOtherPlayerMissileColision();
 
 public:
-	Escenario(GameConf* configuracion, XM_SDL* sdl);
+	Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client);
 	~Escenario();
 	SDL_Event* run();
 	HandlerPlayersControllers* getHandler();

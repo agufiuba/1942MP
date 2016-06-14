@@ -53,19 +53,24 @@ void Controller::press(SDL_Event *event){
 
             case SDLK_i: obj->desconectar(); break;
 
-            case SDLK_r: cout<<"Se Reinicia la partida"<<endl;cliente->sendData(ce->restart(obj->getId()));break;
+            case SDLK_r: cliente->sendData(ce->restart(obj->getId()));break;
 
-	    case SDLK_ESCAPE: this->cliente->quitGame(); break; 
+            case SDLK_ESCAPE: this->cliente->quitGame(); break;
 
-            case SDLK_s: cout<<"Modo Practica"<<endl;break;
-            //TODO cuando tengamos los enemigos se implementa el bool
-            //Enviarlo por server-cliente al resto, validarlo
-						case SDLK_SPACE:
-							if (!obj->haciendoVueltereta() && !obj->estaEstacionando()) {
-								controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX() + 12,obj->getY(), resolucionPantalla, misilConf);
-								cliente->sendData(ce->shot(obj->getId()));
-							}
-							break;
+            case SDLK_s:
+            	if (cliente->getGameData()->practiceMode){
+            		cout<<"SALIMOS DEL MODO PRACTICA"<<endl;
+				 	cliente->getGameData()->practiceMode = false;
+            		cliente->sendData(ce->outPractice(obj->getId()));
+            	}
+				break;
+
+            case SDLK_SPACE:
+				if (!obj->haciendoVueltereta() && !obj->estaEstacionando()) {
+					controlDeMisiles->crearNuevoMisilEnPosicion(obj->getX() + 12,obj->getY(), resolucionPantalla, misilConf);
+					cliente->sendData(ce->shot(obj->getId()));
+				}
+				break;
 
         }
     }

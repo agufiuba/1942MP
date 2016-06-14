@@ -525,10 +525,12 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 
 	  if (( bytesReceived = tmt->receiveData(e)) > 0 ) {
 	    cout << "Evento: " << e->value << endl;
-
+	    //Modo Practica
+	    if (e->value == 'O'){
+	    	this->gameData->practiceMode = false;
+	    }
 	    theMutex.lock();
 	    cout << endl << "FD cliente: " << notice(to_string(cfd)) << endl;
-
 	    map<int, Evento*>* clientMsgFD = new map<int, Evento*>();
 	    clientMsgFD->insert(pair<int, Evento*>(cfd, e));
 	    this->eventQueue->push(clientMsgFD);
@@ -607,6 +609,12 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 			this->gameData->cooperativeMode = true;
 //			cout<<"modo cooperativo"<<endl;
 			this->setTeamPlayer(0, cfd);
+			this->sendGameDataAll();
+		}
+	} else if( dataID == "MP" ) {
+		if(!this->gameData->practiceMode){
+			this->gameData->practiceMode = true;
+//			cout<<"modo cooperativo"<<endl;
 			this->sendGameDataAll();
 		}
 	} else if( dataID == "T1" ) {

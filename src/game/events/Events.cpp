@@ -18,6 +18,7 @@
 #define EXPLOSION 'W'
 #define POWERUPDESTROY 'Y'
 #define QUITGAME 'Z'
+#define OUTPRACTICE 'O'
 
 #include <iostream>
 

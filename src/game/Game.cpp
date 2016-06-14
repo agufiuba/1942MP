@@ -48,8 +48,8 @@ void Game::cargarEscenario() {
 	}
 //	cout<<"creo escenario"<<endl;
     this->unCliente->reset =false;
-    escenario = new Escenario(this->unCliente->getConfig(), sdlHandler);
-    escenario->setClient(unCliente);
+    escenario = new Escenario(this->unCliente->getConfig(), sdlHandler, unCliente);
+//    escenario->setClient(unCliente);
 
     for( int i = 0; i < this->unCliente->getPlayers().size(); i++) {
       PlayerData* pData = this->unCliente->getPlayers()[i];
@@ -1073,7 +1073,10 @@ void Game::loadModeGameScreen(){
 		if(!this->unCliente->getGameData()->teamMode && !this->unCliente->getGameData()->cooperativeMode){
 			this->unCliente->getGameData()->teamMode = teamPromptSelected;
 			this->unCliente->getGameData()->cooperativeMode = cooperativePromptSelected;
-			this->unCliente->getGameData()->practiceMode = practicePromptSelected;
+		}
+		if ( practicePromptSelected ){
+			cout<<"Modo Practica"<<endl;
+			this->unCliente->sendMode("MP");
 		}
 		this->checkGameMode();
 		runningScreen = false;
@@ -1299,12 +1302,8 @@ void Game::checkGameMode(){
 		this->loadTeamSelectedScreen();
 	}
 	if ( this->unCliente->getGameData()->cooperativeMode ){
-		cout<<"modo cooperativo"<<endl;
+//		cout<<"modo cooperativo"<<endl;
 		this->unCliente->sendMode("MC");
-	}
-	if ( this->unCliente->getGameData()->practiceMode ){
-		cout<<"modo practica"<<endl;
-//		this->unCliente->sendMode("MP");
 	}
 }
 

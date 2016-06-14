@@ -2,7 +2,7 @@
 
 using namespace std;
 
-PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* renderer, Resolucion* resolucion){
+PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* renderer, Resolucion* resolucion, GameData* gameData){
 	AvionConf* config = ((Avion*) unObj)->getConfiguracion();
 	velocidadStandard = config->velocidadDesplazamiento;;
 	obj = unObj;
@@ -15,6 +15,7 @@ PlayersController::PlayersController(Vivible * unObj,SDL_Renderer* renderer, Res
 	strcpy(misilConf->disparosSpriteID,config->disparosSpriteID);
 	misilConf->velocidadDisparos = config->velocidadDisparos + config->velocidadDesplazamiento;
 	controlDeMisiles = new ControllerMissiles(misilConf, renderer);
+	this->gameData = gameData;
 }
 
 PlayersController::~PlayersController(){
@@ -40,7 +41,8 @@ void PlayersController::press(SDL_Event *event){
             case SDLK_CLEAR: controlDeMisiles->setAmetralladora(); break;
             case SDLK_HASH: obj->inicializoEstacionar(); break;
             case SDLK_ASTERISK: obj->morir(); break;
-	    case SDLK_ESCAPE: this->obj->morir(); break;
+            case SDLK_ESCAPE: this->obj->morir(); break;
+            case SDLK_s: cout<<"SALIMOS DEL MODO PRACTICA"<<endl;this->gameData->practiceMode = false; break;
 
         }
 

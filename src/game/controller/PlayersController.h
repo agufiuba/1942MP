@@ -14,6 +14,7 @@
 #include "../model/Avion.h"
 #include "../../xml/conf/MisilConf.h"
 #include "../../xml/conf/AvionConf.h"
+#include "../../libs/data/game_data.h"
 
 #include <iostream>
 #include <string>
@@ -30,9 +31,10 @@ private:
 	MisilConf* misilConf;
 	bool crearMisil = false;
 	bool desconectarAvion = false;
+	GameData* gameData;
 
 public:
-	PlayersController(Vivible* unObj, SDL_Renderer* renderer, Resolucion* resolucion);
+	PlayersController(Vivible* unObj, SDL_Renderer* renderer, Resolucion* resolucion, GameData* gameData);
 	~PlayersController();
 	void press(SDL_Event *event);
 	void hacerVivir();
