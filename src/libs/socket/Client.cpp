@@ -92,9 +92,6 @@ void Client::setPowerUpHandler(HandlerPowerUp* hPowerUp) {
 }
 
 bool Client::allPlayersReady(){
-	if (this->ready){
-		cout<<"Ready"<<endl;
-	}
   return (this->configComplete && this->ready);
 }
 
@@ -413,15 +410,15 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			    if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
 				  this->gameData = data;
 				  if (this->gameData->teamMode){
-					  cout<<"Aca llega el game data: Team"<<endl;
+					  cout<<"Modo de Juego: EQUIPOS"<<endl;
 				  } else  if (this->gameData->cooperativeMode){
-					  cout<<"Aca llega el game data: Cooperative"<<endl;
+					  cout<<"Modo de Juego: COOPERATIVO"<<endl;
 				  } else {
-					  cout<<"no hay modo"<<endl;
+					  cout<<"Modo de Juego: NO HAY MODO"<<endl;
 				  }
 			    }
 			 } else if ( dataID == "OK" ){
-			   cout<<"Llega el OK"<<endl;
+//			   cout<<"Llega el OK"<<endl;
 			   this->ready = true;
 			 }
 		}

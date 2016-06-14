@@ -41,12 +41,12 @@ void Game::cargarEscenario() {
   while (exitEven->key.keysym.sym == SDLK_r || this->unCliente->reset) {
 	if (!inicia){
 		this->unCliente->reinicia = true;
-		cout<<"Se reinicio"<<endl;
+		cout<<"SE AH REINICIADO EL JUEGO"<<endl;
 	    this->unCliente->setConfigComplete(false);
 		this->unCliente->sendGetConfig();
 		while(!unCliente->isConfigComplete()){}
 	}
-	cout<<"creo escenario"<<endl;
+//	cout<<"creo escenario"<<endl;
     this->unCliente->reset =false;
     escenario = new Escenario(this->unCliente->getConfig(), sdlHandler);
     escenario->setClient(unCliente);
@@ -54,11 +54,12 @@ void Game::cargarEscenario() {
     for( int i = 0; i < this->unCliente->getPlayers().size(); i++) {
       PlayerData* pData = this->unCliente->getPlayers()[i];
       if( this->clientId == pData->name ) {
-	  this->player = new Player( pData->name, pData->color, pData->x, pData->y, pData->team);
-	  // set player and teams score
-	  this->player->addScore( pData->score );
-	  this->unCliente->setTeamScore( pData->teamScore );
-	  this->unCliente->setRivalTeamScore( pData->rivalTeamScore );
+//    	  cout<<"team del Data: "<<this->team<<endl;
+		  this->player = new Player( pData->name, pData->color, pData->x, pData->y, this->team);
+		  // set player and teams score
+		  this->player->addScore( pData->score );
+		  this->unCliente->setTeamScore( pData->teamScore );
+		  this->unCliente->setRivalTeamScore( pData->rivalTeamScore );
     	  escenario->configurarMiAvion( pData );
       } else {
     	  escenario->configurarAvionAmigo( pData );
@@ -404,7 +405,7 @@ void Game::loadValidationScreen() {
 			this->loadWaitingGame();
 		}
 	}
-	cout<<"salgo de las pantallas"<<endl;
+//	cout<<"salgo de las pantallas"<<endl;
 	break;
       }
     }
@@ -1217,11 +1218,12 @@ void Game::loadTeamSelectedScreen(){
 	  clicked = false;
 	  if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) && ( mouseY > 525 ) && ( mouseY < ( 525 + 50 ) ) ) {
 		GameData* game = this->unCliente->getGameData();
-		cout<<"Aca llego el game data de team 1: "<<game->countPlayersTeam1<<endl;
-		cout<<"Aca llego el game data de team 2: "<<game->countPlayersTeam2<<endl;
+//		cout<<"Aca llego el game data de team 1: "<<game->countPlayersTeam1<<endl;
+//		cout<<"Aca llego el game data de team 2: "<<game->countPlayersTeam2<<endl;
 		if ( alphaTeamSelected && (game->countPlayersTeam1 < game->maxPlayersTeams)){
 			this->team = 1;
 			//TODO enviar team
+//			cout<<"Soy team 1"<<endl;
 			this->unCliente->sendMode("T1");
 			runningScreen = false;
 			//Disable text input
@@ -1231,6 +1233,7 @@ void Game::loadTeamSelectedScreen(){
 		}
 		if (betaTeamSelected && (game->countPlayersTeam2 < game->maxPlayersTeams)){
 			this->team = 2;
+//			cout<<"Soy team 2"<<endl;
 			//TODO enviar team
 			this->unCliente->sendMode("T2");
 			runningScreen = false;
