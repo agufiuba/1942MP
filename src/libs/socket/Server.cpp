@@ -448,7 +448,7 @@ void Server::sendConf(int cfd){
     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
   }
-  cout<<"Envio toda la Configuracion"<<endl;
+//  cout<<"Envio toda la Configuracion"<<endl;
   delete tmt;
 }
 
@@ -610,12 +610,12 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 			this->sendGameDataAll();
 		}
 	} else if( dataID == "T1" ) {
-//		cout<<"se suma al team 1"<<endl;
+		cout<<"se suma al team 1"<<endl;
 		this->gameData->countPlayersTeam1++;
 		this->setTeamPlayer(1, cfd);
 		this->sendGameDataAll();
 	} else if( dataID == "T2" ) {
-//		cout<<"se suma al team 2"<<endl;
+		cout<<"se suma al team 2"<<endl;
 		this->gameData->countPlayersTeam2++;
 		this->setTeamPlayer(2, cfd);
 		this->sendGameDataAll();
@@ -936,18 +936,17 @@ void Server::sendPlayersReady(){
 	// if already a player with that color
 	if( !it->second->isReady()){
 		playerReady = false;
-		cout<<"player no ready"<<it->second->getName()<<endl;
+//		cout<<"player no ready"<<it->second->getName()<<endl;
 	}
   }
   theMutex.unlock();
   if ( playerReady ){
-	  cout<<"||||||||||||||||||| Todos listos ||||||||||||||||||||"<<endl;
+	  cout<<"Iniciando la Partida"<<endl;
+	  cout<<"Equipos Configurados  "<<endl;
 	// send other players data
 	for (map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end(); ++it) {
-	  cout<<"TEAMS:   "<<endl;
-	  cout <<"Avion: "<<it->second->getName()<<endl;
-	  cout <<"Team: "<<it->second->getTeam()<<endl;
+	  cout <<"Jugador: "<<it->second->getName()<<" - Equipo: "<<it->second->getTeam()<<endl;
 	  Transmitter* tmt = new Transmitter(it->first, this->logger);
 	  tmt->sendDataID("OK");
 	  delete tmt;
@@ -958,6 +957,7 @@ void Server::sendPlayersReady(){
 void Server::setTeamPlayer(int team, int cliendFd){
  for( map<int, Player*>::iterator it = this->players.begin(); it != this->players.end();  ++it ) {
 	 if (it->first == cliendFd){
+//		 cout <<"Set team: "<<team<<endl;
 		 it->second->setTeam(team);
 	 }
  }
