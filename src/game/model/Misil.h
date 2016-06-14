@@ -47,6 +47,7 @@ public:
 
 	void setAmetralladora();
 	void morir();
+	void apuntar(int siguienteX, int siguienteY, int velocidad);
 };
 
 #endif /* SRC_GAME_MODEL_MISIL_H_ */
