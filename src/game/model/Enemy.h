@@ -66,6 +66,7 @@ public:
 	void vivir(int velX, int velY);
 	void vivirRandom();
 	void vivirFlota();
+	void vivirGrande();
 	bool aunVive();
 
 	void recibirMisil(Misil* misil);
@@ -77,6 +78,7 @@ public:
 	bool hit(int, int);
 	void moverRandom();
 	void moverFlota();
+	void moverGrande();
     int flota;
     int posFlota;
     bool firsttime;

@@ -129,6 +129,26 @@ void Enemy::vivirRandom(){
 
 }
 
+void Enemy::vivirGrande(){
+	if (tieneHP()) {
+		moverGrande();
+		mostrar(angleX, angleY);
+	} else {
+		if (vistaAvion != NULL) {
+			delete vistaAvion;
+			vistaAvion = NULL;
+		}
+
+		if (!explosion->exploto()) {
+			posicion->mover(-1, -3);
+			explosion->explotar(posicion);
+		} else {
+			this->viviendo = false;
+		}
+	}
+
+}
+
 void Enemy::vivirFlota(){
 	if (tieneHP()) {
 //		if (!viviendo) {
@@ -300,6 +320,15 @@ void Enemy::moverFlota() {
 			}
 		}
 	}
+}
+
+void Enemy::moverGrande() {
+	if(posicion->getY() < 300)
+		mover(0, 0);
+	else
+		mover(0, -1);
+	angleX = 0;
+	angleY = -1;
 }
 
 void Enemy::morir(){

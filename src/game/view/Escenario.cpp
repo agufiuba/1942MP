@@ -224,6 +224,7 @@ SDL_Event* Escenario::run() {
 	escenarioCreado = true;
   	crearEnemigo(300, 400);
 	crearFlota(0, 400);
+	crearGrande();
 
 /*	thread tPowerUps(&Escenario::getPowerUp, this);
 	tPowerUps.detach();
@@ -912,6 +913,13 @@ void Escenario::crearFlota(int x, int y) {
     flota++;
 }
 
+void Escenario::crearGrande() {
+	Posicion* p = new Posicion(400, 900);
+	Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
+	e->flota = -2;
+	enemigos.push_back(e);
+}
+
 void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 		int eliminar = -1;
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
@@ -946,7 +954,10 @@ void Escenario::actualizarEnemigos(){
 			if(enemigos[i]->flota == -1)
 				enemigos[i]->vivirRandom();
 			else
-				enemigos[i]->vivirFlota();
+				if(enemigos[i]->flota == -2)
+					enemigos[i]->vivirGrande();
+				else
+					enemigos[i]->vivirFlota();
 		}else{
 			eliminar = i;
 		}
