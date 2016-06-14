@@ -11,7 +11,8 @@
 
 using namespace std;
 
-Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
+Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client) {
+	this->unCliente = client;
 	musica = new Music("musicaDeFondo.mp3");
 	musica->play();
 	this->gc = configuracion;
@@ -32,7 +33,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl) {
 	escenarioScreen = new Screen(this->sdl);
 	escenarioScreen->loadTexture("agua", "fondos/" + DIR_FONDO_PANTALLA);
 
-	controllers = new HandlerPlayersControllers(gRenderer, resolucion);
+	controllers = new HandlerPlayersControllers(gRenderer, resolucion, this->unCliente->getGameData());
 
 	this->healthView = NULL;
 	this->scoreView = NULL;
@@ -60,13 +61,7 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir();
 	}
-/*	for (int i=0; i < enemigos.size(); i++) {
-            if (enemigos[i]->flota == -1)
-                enemigos[i]->vivirRandom();
-            else
-                enemigos[i]->vivirFlota();
-                
-	}*/
+/*  Aca estan los Vivir y las Colisiones */
 //	cout<<"1"<<endl;
 	myControl->hacerVivir();
 	controllers->hacerVivir();
@@ -79,11 +74,15 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 //	cout<<"5"<<endl;
 	this->hitEnemy(&(myControl->controlDeMisiles->getVivibles()->vectorObjetos));
 //	cout<<"6"<<endl;
-//	if (!unCliente->getGameData()->practiceMode){
+	if (!unCliente->getGameData()->practiceMode){
+//		cout<<"Con colision"<<endl;
 		this->planesColision();
 		this->enemyOtherPlayerColision();
-//	}
-//	cout<<"7"<<endl;
+	} else {
+		this->enemyOtherPlayerMissileColision();
+	}
+/*  Termina el bloque */
+
 	// Render health
 	this->healthView->update( this->player->getHealth() );
 	this->healthView->render();
@@ -215,7 +214,8 @@ void Escenario::setFondosVivibles(int x, int y) {
 }
 
 SDL_Event* Escenario::run() {
-
+	if (unCliente->getGameData()->practiceMode)
+		cout<<"Modo Practica"<<endl;
 	pixelesRecorridos = 0;
 	configurarFondosVivibles();
 	configurarPowerUps();
@@ -1011,6 +1011,16 @@ void Escenario::enemyOtherPlayerColision() {
 					it->second->getVivible()->morir();
 				}
 			}
+			this->hitEnemy(&(it->second->getMissiles()->getVivibles()->vectorObjetos));
+		}
+	}
+}
+
+/* SOLO EN MODO PRACTICA*/
+void Escenario::enemyOtherPlayerMissileColision() {
+	map<string, IController*>* othersPlanes = &(this->controllers->mapaControllers);
+	for (map<string, IController*>::iterator it = othersPlanes->begin(); it != othersPlanes->end(); it++) {
+		if (it->second->getVivible()->aunVive()){
 			this->hitEnemy(&(it->second->getMissiles()->getVivibles()->vectorObjetos));
 		}
 	}

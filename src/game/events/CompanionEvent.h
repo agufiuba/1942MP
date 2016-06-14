@@ -21,6 +21,7 @@ public:
     static Evento* estaciono(string n);
     static Evento* explosion(string n);
     static Evento* powerUpDestroy(string n);
+    static Evento* outPractice(string n);
 };
 
 #endif

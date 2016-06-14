@@ -7,9 +7,10 @@
 
 #include "HandlerPlayersControllers.h"
 
-HandlerPlayersControllers::HandlerPlayersControllers(SDL_Renderer* renderer, Resolucion* resolucion) {
+HandlerPlayersControllers::HandlerPlayersControllers(SDL_Renderer* renderer, Resolucion* resolucion, GameData* gameData) {
 	this->renderer = renderer;
 	this->resolucion = resolucion;
+	this->gameData = gameData;
 }
 
 HandlerPlayersControllers::~HandlerPlayersControllers() {
@@ -19,7 +20,7 @@ HandlerPlayersControllers::~HandlerPlayersControllers() {
 }
 
 void HandlerPlayersControllers::setPlayer(Avion* player) {
-	IController* controller = new PlayersController(player, renderer, resolucion);
+	IController* controller = new PlayersController(player, renderer, resolucion, gameData);
 	this->mapaControllers[player->getId()] = controller;
 }
 
@@ -40,6 +41,7 @@ void HandlerPlayersControllers::mover(string id, char evento) {
 		case 'A': code = SDLK_CLEAR		; break;
 		case 'P': code = SDLK_HASH		; break;
 		case 'W': code = SDLK_ASTERISK	; break;
+		case 'O': code = SDLK_s	; break;
 
 	}
 

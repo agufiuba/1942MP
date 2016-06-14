@@ -13,16 +13,18 @@
 #include "IController.h"
 #include "PlayersController.h"
 #include "../model/Avion.h"
+#include "../../libs/data/game_data.h"
 
 class HandlerPlayersControllers {
 
 private:
 	SDL_Renderer* renderer;
 	Resolucion* resolucion;
+	GameData* gameData;
 
 public:
 	map<string, IController*> mapaControllers;
-	HandlerPlayersControllers(SDL_Renderer* renderer, Resolucion* resolucion);
+	HandlerPlayersControllers(SDL_Renderer* renderer, Resolucion* resolucion, GameData* gameData);
 	virtual ~HandlerPlayersControllers();
 	void setPlayer(Avion* vivible);
 	void mover(string id, char event);
