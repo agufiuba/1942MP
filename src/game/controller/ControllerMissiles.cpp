@@ -25,7 +25,10 @@ void ControllerMissiles::press(SDL_Event *event){
 }
 
 void ControllerMissiles::crearNuevoMisilEnPosicion(int x, int y,Resolucion* resolucion, MisilConf* config){
-	Vivible* misilNuevo = new Misil(rendererMisil, new Posicion(x,y),resolucion, config);
+	//Vivible* misilNuevo = new Misil(rendererMisil, new Posicion(x,y),resolucion, config);
+
+	//TODO:Para que el avion tire tiros dirigidos
+	Vivible* misilNuevo = new MisilDirigido(rendererMisil, new Posicion(x,y),resolucion, config);
 
 	if (ametralladora) misilNuevo->setAmetralladora();
 

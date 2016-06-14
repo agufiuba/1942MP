@@ -1,12 +1,12 @@
 /*
- * Misil.h
+ * MisilDirigido.h
  *
- *  Created on: 30 de abr. de 2016
- *      Author: ramon
+ *  Created on: 14 de jun. de 2016
+ *      Author: keynaka
  */
 
-#ifndef SRC_GAME_MODEL_MISIL_H_
-#define SRC_GAME_MODEL_MISIL_H_
+#ifndef SRC_GAME_MODEL_MISILDIRIGIDO_H_
+#define SRC_GAME_MODEL_MISILDIRIGIDO_H_
 
 #include "Vivible.h"
 #include "../controller/Timer.h"
@@ -18,7 +18,7 @@
 
 using namespace std;
 
-class Misil: public Vivible {
+class MisilDirigido: public Vivible {
 private:
 	int anchoFondo, largoFondo;
 	int dano;
@@ -26,16 +26,16 @@ private:
 	Posicion* posicion;
 	Sound* sonido;
 
+	Posicion* vectorVelocidad;
+
 	Timer* t;
 
 	void mostrar();
-	void mover(int velX, int velY);
-	void moverEjeX(int velX);
-	void moverEjeY(int velY);
+	void mover();
 
 public:
-	Misil(SDL_Renderer * renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config);
-	virtual ~Misil();
+	MisilDirigido(SDL_Renderer * renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config);
+	virtual ~MisilDirigido();
 
 	void vivir(int x,int y);
 	int getAnchoFondo();
@@ -47,6 +47,8 @@ public:
 
 	void setAmetralladora();
 	void morir();
+	Posicion* apuntar(Posicion* posicionAvion, int velocidad);
 };
 
-#endif /* SRC_GAME_MODEL_MISIL_H_ */
+
+#endif /* SRC_GAME_MODEL_MISILDIRIGIDO_H_ */

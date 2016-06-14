@@ -12,6 +12,7 @@
 #include "SDL2/SDL.h"
 #include "../model/Avion.h"
 #include "../model/Misil.h"
+#include "../model/MisilDirigido.h"
 #include "../model/Resolucion.h"
 #include "../../xml/conf/MisilConf.h"
 
