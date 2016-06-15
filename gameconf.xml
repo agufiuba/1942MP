@@ -197,5 +197,39 @@
 	<vueltaSpriteID>ESTE_CAMPO_NO_IRIA</vueltaSpriteID>
 	<disparosSpriteID>balaNormal</disparosSpriteID>
 </avion>
+<enemigos>
+	<enemigo>
+		<tipo>pequeno</tipo>
+		<velocidadDisparos>4</velocidadDisparos>
+		<posicion>
+			<x>550</x>
+			<y>600</y>
+		</posicion>
+	</enemigo>
+	<enemigo>
+		<tipo>flota</tipo>
+		<velocidadDisparos>4</velocidadDisparos>
+		<posicion>
+			<x>30</x>
+			<y>350</y>
+		</posicion>
+	</enemigo>
+	<enemigo>
+		<tipo>mediano</tipo>
+		<velocidadDisparos>4</velocidadDisparos>
+		<posicion>
+			<x>110</x>
+			<y>150</y>
+		</posicion>
+	</enemigo>
+	<enemigo>
+		<tipo>grande</tipo>
+		<velocidadDisparos>4</velocidadDisparos>
+		<posicion>
+			<x>650</x>
+			<y>750</y>
+		</posicion>
+	</enemigo>
+</enemigos>
 <maxClients>1</maxClients>
 <jugadoresPorEquipo>1</jugadoresPorEquipo>

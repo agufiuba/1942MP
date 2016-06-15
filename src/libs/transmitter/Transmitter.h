@@ -37,6 +37,7 @@ class Transmitter {
     bool sendData( AvionConf* e );
     bool sendData( ElementoConf* e );
     bool sendData( PowerUpConf* e );
+    bool sendData( EnemigoConf* e );
     bool sendData( EscenarioConf* e );
     bool sendData( SpriteConf* e );
     bool sendData( StageData* data, string id );
@@ -55,6 +56,7 @@ class Transmitter {
     int receiveData( AvionConf* data );
     int receiveData( ElementoConf* data );
     int receiveData( PowerUpConf* data );
+    int receiveData( EnemigoConf* data );
     int receiveData( EscenarioConf* data );
     int receiveData( SpriteConf* data );
     int receiveData( Evento* e );

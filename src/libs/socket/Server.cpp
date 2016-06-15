@@ -435,6 +435,15 @@ void Server::sendConf(int cfd){
       }
     }
 
+    vector<EnemigoConf*> enemigos = this->config->enemigos;
+    for (int var = 0; var < enemigos.size(); var++) {
+    	EnemigoConf* enemigo = enemigos[var];
+    	if (!tmt->sendData(enemigo)) {
+    		DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::send enemigos" );
+			this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send enemigos" );
+    	}
+    }
+
   vector<SpriteConf* > sprites = this->config->sprites;
   for (int var = 0; var < sprites.size(); ++var) {
     SpriteConf* sprite = sprites[var];

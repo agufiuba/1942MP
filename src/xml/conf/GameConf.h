@@ -8,6 +8,7 @@
 #include "AvionConf.h"
 #include "ElementoConf.h"
 #include "PowerUpConf.h"
+#include "EnemigoConf.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ typedef struct GameConf {
     vector<PowerUpConf*> powerUps;
     EscenarioConf *escenario;
     AvionConf *avion;
+    vector<EnemigoConf*> enemigos;
 
 } GameConf;
 

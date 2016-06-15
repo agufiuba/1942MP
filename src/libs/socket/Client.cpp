@@ -329,6 +329,14 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					//					cout<<data->x <<endl;
 					//					cout<<data->y <<endl;
 				}
+			} else if (dataID == "EN") {
+				EnemigoConf* data = new EnemigoConf;
+				if ((bytesReceived = tmt->receiveData(data)) > 0) {
+					this->enemigos.push_back(data);
+					//					cout<<data->tipo <<endl;
+					//					cout<<data->x <<endl;
+					//					cout<<data->y <<endl;
+				}
 			} else if (dataID == "ES") {
 				EscenarioConf* data = new EscenarioConf;
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
@@ -353,6 +361,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					this->config->maxClients = cant;
 					this->config->elementos = this->elementos;
 					this->config->powerUps = this->powerUps;
+					this->config->enemigos = this->enemigos;
 					this->config->sprites = this->sprites;
 					this->configComplete = true;
 				}
@@ -611,6 +620,9 @@ void Client::resetConfig() {
 	while (this->powerUps.size() > 0) {
 		this->powerUps.pop_back();
 		//cout<<"elimino power up"<<endl;
+	}
+	while (this->enemigos.size() > 0) {
+		this->enemigos.pop_back();
 	}
 }
 

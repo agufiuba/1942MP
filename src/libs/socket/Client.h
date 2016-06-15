@@ -39,6 +39,7 @@ class Client {
     PlanesActives* planes;
 	vector<ElementoConf*> elementos;
 	vector<PowerUpConf*> powerUps;
+	vector<EnemigoConf*> enemigos;
 	vector<SpriteConf*> sprites;
     vector<PlayerData*> allPlayers;
     vector<PlayerScore*> playersScoreData;

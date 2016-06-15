@@ -8,6 +8,7 @@
 #include "../conf/ElementoConf.h"
 #include "../conf/PowerUpConf.h"
 #include "../conf/AvionConf.h"
+#include "../conf/EnemigoConf.h"
 
 using namespace tinyxml2;
 using namespace std;
@@ -33,8 +34,11 @@ private:
 
     static PowerUpConf* powerUp(XMLElement *);
 
-
     static AvionConf *avion(XMLDocument *);
+
+    static vector<EnemigoConf*> enemigos(XMLDocument *);
+
+    static EnemigoConf* enemigo(XMLElement *);
 };
 
 #endif

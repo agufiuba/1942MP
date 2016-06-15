@@ -203,6 +203,22 @@ bool Transmitter::sendData(PowerUpConf* data ){
   return true;
 }
 
+bool Transmitter::sendData(EnemigoConf* data ){
+ // Send data id
+  if( !( this->sendDataID( "EN" ) ) ) {
+	return false;
+  }
+
+  // Send data
+  if( send( this->peerFD, data, sizeof( EnemigoConf ), 0 ) == -1 ) {
+	this->logger->error( SEND_FAIL );
+	DEBUG_WARN( SEND_FAIL );
+	return false;
+  }
+
+  return true;
+}
+
 bool Transmitter::sendData( EscenarioConf* data ){
  // Send data id
   if( !( this->sendDataID( "ES" ) ) ) {
@@ -331,6 +347,10 @@ int Transmitter::receiveData( ElementoConf* data ) {
 
 int Transmitter::receiveData( PowerUpConf* data ) {
   return recv( this->peerFD, data, sizeof( PowerUpConf ), 0 ) ;
+}
+
+int Transmitter::receiveData( EnemigoConf* data ) {
+  return recv( this->peerFD, data, sizeof( EnemigoConf ), 0 ) ;
 }
 
 int Transmitter::receiveData( EscenarioConf* data ) {
