@@ -191,6 +191,32 @@ void Escenario::configurarPowerUps() {
 	}
 }
 
+void Escenario::configurarEnemigos() {
+	if (gc->enemigos.size() <= 0) return;
+
+	for (int i = 0; i < gc->enemigos.size(); i++) {
+		string tipo = gc->enemigos[i]->tipo;
+		int velocidadDisparos = gc->enemigos[i]->velocidadDisparos;
+		int x = gc->enemigos[i]->x;
+		int y = gc->enemigos[i]->y;
+
+		//TODO: Cambiar constructor de creador de enemigos.
+		// Hay que incluir la velocidad de disparos, pedido por Key
+
+		if (tipo == "pequeno") {
+			crearEnemigo(x, y);
+		} else if (tipo == "mediano") {
+			//TODO: Crear enemigo mediano
+		} else if (tipo == "grande") {
+			//TODO: Crear enemigo grande
+		} else if (tipo == "flota") {
+			crearFlota(x, y);
+		}
+
+	}
+
+}
+
 HandlerPlayersControllers* Escenario::getHandler() {
 	return this->controllers;
 }
@@ -219,11 +245,10 @@ SDL_Event* Escenario::run() {
 	pixelesRecorridos = 0;
 	configurarFondosVivibles();
 	configurarPowerUps();
+	configurarEnemigos();
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
-  	crearEnemigo(300, 400);
-	crearFlota(0, 400);
 
 /*	thread tPowerUps(&Escenario::getPowerUp, this);
 	tPowerUps.detach();

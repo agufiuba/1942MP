@@ -10,6 +10,7 @@ GameConf *GameParser::parse(string fn) {
     gc->sprites = sprites(&doc);
     gc->escenario = escenario(&doc, gc);
     gc->avion = avion(&doc);
+    gc->enemigos = enemigos(&doc);
     int mc, jugadoresPorEquipo;
     doc.FirstChildElement("maxClients")->QueryIntText(&mc);
     doc.FirstChildElement("jugadoresPorEquipo")->QueryIntText(&jugadoresPorEquipo);
@@ -148,6 +149,31 @@ AvionConf *GameParser::avion(XMLDocument *doc) {
     avionConf->velocidadDesplazamiento = velocidadDesplazamiento;
     avionConf->velocidadDisparos = velocidadDisparos;
     return avionConf;
+}
+
+vector<EnemigoConf*> GameParser::enemigos(XMLDocument *e) {
+	vector<EnemigoConf*> enemigos;
+	XMLElement *enemigosE = e->FirstChildElement("enemigos");
+	for (XMLElement* enemigoE = enemigosE->FirstChildElement("enemigo");
+		 enemigoE != NULL;
+		 enemigoE = enemigoE->NextSiblingElement("enemigo")) {
+			enemigos.push_back(enemigo(enemigoE));
+	}
+	return enemigos;
+}
+
+EnemigoConf* GameParser::enemigo(XMLElement* e) {
+	EnemigoConf* enemigoConf = new EnemigoConf;
+	string tipo = e->FirstChildElement("tipo")->GetText();
+	int x, y, velocidadDisparos;
+	e->FirstChildElement("posicion")->FirstChildElement("x")->QueryIntText(&x);
+	e->FirstChildElement("posicion")->FirstChildElement("y")->QueryIntText(&y);
+	e->FirstChildElement("velocidadDisparos")->QueryIntText(&velocidadDisparos);
+	strcpy(enemigoConf->tipo, tipo.c_str());
+	enemigoConf->x = x;
+	enemigoConf->y = y;
+	enemigoConf->velocidadDisparos = velocidadDisparos;
+	return enemigoConf;
 }
 
 int GameParser::findSprite(vector<SpriteConf *> sprites, string spriteID) {
