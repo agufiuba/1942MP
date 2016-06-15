@@ -159,6 +159,8 @@ void Enemy::vivirFlota(){
 //			this->viviendo = true;
 //			vistaAvion->conectar();
 //		}
+		disparar();
+		mostrarDisparo();
 		moverFlota();
 		mostrar(angleX, angleY);
 	} else {
