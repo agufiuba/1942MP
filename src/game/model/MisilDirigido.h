@@ -34,7 +34,7 @@ private:
 	void mover();
 
 public:
-	MisilDirigido(SDL_Renderer * renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config);
+	MisilDirigido(SDL_Renderer * renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config, int posicionApuntadoX, int posicionApuntadoY);
 	virtual ~MisilDirigido();
 
 	void vivir(int x,int y);
@@ -47,7 +47,7 @@ public:
 
 	void setAmetralladora();
 	void morir();
-	Posicion* apuntar(Posicion* posicionAvion, int velocidad);
+	Posicion* apuntar(int posicionApuntadoX, int posicionApuntadoY, int velocidad);
 };
 
 

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-MisilDirigido::MisilDirigido(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config) {
+MisilDirigido::MisilDirigido(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion, MisilConf* config, int posicionApuntadoX, int posicionApuntadoY) {
 
 	if (config != NULL) {
 		vistaMisil = new MisilView(renderer, config);
@@ -30,7 +30,7 @@ MisilDirigido::MisilDirigido(SDL_Renderer* renderer, Posicion* posicion, Resoluc
 	t = new Timer();
 	dano = 1;
 
-	this->vectorVelocidad = this->apuntar(new Posicion(500,350), 10);
+	this->vectorVelocidad = this->apuntar(posicionApuntadoX, posicionApuntadoY, 10);
 
 }
 
@@ -56,9 +56,9 @@ void MisilDirigido::mover(){
 	}
 }
 
-Posicion* MisilDirigido::apuntar(Posicion* posicionAvion, int velocidad) {
-	int ejeX =  abs(posicionAvion->getX()) - abs(this->posX);
-	int ejeY = abs(posicionAvion->getY()) - abs(this->posY);
+Posicion* MisilDirigido::apuntar(int posicionApuntadoX, int posicionApuntadoY, int velocidad) {
+	int ejeX =  abs(posicionApuntadoX) - abs(this->posX);
+	int ejeY = abs(posicionApuntadoY) - abs(this->posY);
 	double velX;
 	double velY;
 

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf) {
+Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf, Avion* avionApuntado) {
 
 	this->id = id;
 	this->configuracion = conf;
@@ -17,6 +17,7 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();
+	this->resolucion = resolucion;
 
 	angleX = 0;
 	angleY = -1;
@@ -31,6 +32,14 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	time_t tp = time(0);
 	tm = localtime(&tp);
 	nFlota = chrono::system_clock::now();
+
+	misilConf = new MisilConf();
+	strcpy(misilConf->disparosSpriteID,conf->disparosSpriteID);
+	misilConf->velocidadDisparos = conf->velocidadDisparos + conf->velocidadDesplazamiento;
+	controlDeMisiles = new ControllerMissilesEnemy(misilConf, renderer);
+	this->avionApuntado = avionApuntado;
+	contador = 0;
+	tiempoEntreDisparo = 20;
 }
 
 Enemy::~Enemy(){
@@ -43,6 +52,7 @@ Enemy::~Enemy(){
 	if (explosion != NULL) delete explosion;
 	delete t;
 	delete posicion;
+	delete controlDeMisiles;
 }
 
 string Enemy::getId() {
@@ -95,6 +105,18 @@ void Enemy::moverEjeY(int velY) {
 	}
 }
 
+void Enemy::disparar() {
+	if (contador >= tiempoEntreDisparo){
+		controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + 12,this->getY(), resolucion, misilConf, avionApuntado->getX(), avionApuntado->getY());
+		contador = 0;
+	}
+		contador ++;
+}
+
+void Enemy::mostrarDisparo() {
+	controlDeMisiles->hacerVivir();
+}
+
 void Enemy::mover(int velX, int velY) {
 	moverEjeX(velX);
 	moverEjeY(velY);
@@ -111,6 +133,8 @@ void Enemy::vivirRandom(){
 //			this->viviendo = true;
 //			vistaAvion->conectar();
 //		}
+		disparar();
+		mostrarDisparo();
 		moverRandom();
 		mostrar(angleX, angleY);
 	} else {

@@ -15,9 +15,11 @@
 #include "Misil.h"
 #include "../view/ExplosionView.h"
 #include "../view/Screen.h"
+#include "../controller/ControllerMissilesEnemy.h"
 
 class Enemy: public Vivible {
 private:
+
 	string id;
 	int anchoFondo, largoFondo;
 	int velocidadStandard;
@@ -35,6 +37,8 @@ private:
 	ExplosionView* explosion;
 	Posicion* posicion;
 	AvionConf* configuracion;
+	int contador;
+	int tiempoEntreDisparo;
 
 	Posicion* posicionAEstacionar;
 
@@ -46,8 +50,13 @@ private:
 	int angleX;
 	int angleY;
 
+	ControllerMissilesEnemy* controlDeMisiles;
+	MisilConf* misilConf;
+	Resolucion* resolucion;
+	Avion* avionApuntado;
+
 public:
-	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf);
+	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf, Avion* avionApuntado);
 	~Enemy();
 
 	string getId();
@@ -84,6 +93,8 @@ public:
     int secsRandom;
     chrono::time_point<chrono::system_clock> nFlota;
     void morir();
+    void disparar();
+    void mostrarDisparo();
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */
