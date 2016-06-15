@@ -1,12 +1,12 @@
 /*
- * ControllerAutomatic.h
+ * ControllerMissilesEnemy.h
  *
- *  Created on: 30 de abr. de 2016
- *      Author: ramon
+ *  Created on: 15 de jun. de 2016
+ *      Author: keynaka
  */
 
-#ifndef SRC_GAME_CONTROL_CONTROLLERMISSILES_H_
-#define SRC_GAME_CONTROL_CONTROLLERMISSILES_H_
+#ifndef SRC_GAME_CONTROLLER_CONTROLLERMISSILESENEMY_H_
+#define SRC_GAME_CONTROLLER_CONTROLLERMISSILESENEMY_H_
 
 #include "../model/CompositeVivibles.h"
 #include "SDL2/SDL.h"
@@ -20,13 +20,13 @@
 
 using namespace std;
 
-class ControllerMissiles{
+class ControllerMissilesEnemy{
 	public:
-		ControllerMissiles(MisilConf* config, SDL_Renderer* renderer);
-		virtual ~ControllerMissiles();
+		ControllerMissilesEnemy(MisilConf* config, SDL_Renderer* renderer);
+		virtual ~ControllerMissilesEnemy();
 		void press(SDL_Event *event);
 		void hacerVivir();
-		void crearNuevoMisilEnPosicion(int x, int y, Resolucion* resolucion, MisilConf* config);
+		void crearNuevoMisilEnPosicion(int x, int y, Resolucion* resolucion, MisilConf* config, int posicionApuntadoX, int posicionApuntadoY);
 
 		void setAmetralladora();
 		void setBalaNormal();
@@ -38,4 +38,4 @@ class ControllerMissiles{
 		bool ametralladora;
 };
 
-#endif /* SRC_GAME_CONTROL_CONTROLLERMISSILES_H_ */
+#endif /* SRC_GAME_CONTROLLER_CONTROLLERMISSILESENEMY_H_ */
