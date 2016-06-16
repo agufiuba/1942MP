@@ -25,7 +25,6 @@ class Server {
     int readyPlayers;
     bool listening;
     bool connected;
-    bool allowConnections;
     bool processing;
     bool running;
     GameData* gameData;
@@ -46,7 +45,7 @@ class Server {
     static const int MAX_UNREACHABLE_TIME = 5;
     void listenForConnections( int clientFD, struct sockaddr_storage clientAddress );
     void checkAliveSend( int clientFD );
-    void receiveClientData( int clientFD, struct sockaddr_storage clientAddress );
+    void receiveClientData( int clientFD, string clientIP );
     void closeClient( int clientFD );
     void* getInAddr( struct sockaddr* sa );
     void closeConnection();
