@@ -313,6 +313,10 @@ void Server::sendCurrentStageOffset( int clientFD ) {
 }
 
 void Server::createPlayers() {
+  // reset player starting positions
+  this->posicionInicialX = 0;
+  this->posicionInicialY = 100;
+
   map<int, Player*>::iterator it2 = this->players.begin();
 
   for (int i = 0; i < this->players.size(); i++) {
