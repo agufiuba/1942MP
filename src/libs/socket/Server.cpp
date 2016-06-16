@@ -573,6 +573,9 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	} else if( dataID == "RS" ) {
 	  // reset score
 	  this->players[ cfd ]->resetScore();
+	  this->coopTeamScore = 0;
+	  this->alphaTeamScore = 0;
+	  this->betaTeamScore = 0;
 	} else if( dataID == "GD" ) {
 	  GameData* data = new GameData;
 	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
