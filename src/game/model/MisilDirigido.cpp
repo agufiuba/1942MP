@@ -51,6 +51,7 @@ void MisilDirigido::mostrar(){
 void MisilDirigido::mover(){
 	posicion->mover(vectorVelocidad->getX(), vectorVelocidad->getY());
 	posY = posicion->getY();
+	posX = posicion->getX();
 	if (posY + getLargo() > getLargoFondo()) {
 		viviendo = false;
 	}

@@ -291,7 +291,7 @@ SDL_Event* Escenario::run() {
 			  break;
 			}
 
-			if ( this->unCliente->losses() ) {
+			if ( this->unCliente->losses() && ((Avion*)this->myControl->getVivible())->getExplosion()) {
 			  this->loadScoreScreen( -1 );
 			  quit = true;
 			  break;
@@ -1007,9 +1007,11 @@ void Escenario::planesColision(){
 			if (touched && enemigos[var]->aunVive()) {
 				cout << "**** CHOQUE: ENEMIGOS VS MI AVION ****" << endl;
 				enemigos[var]->morir();
+				this->player->die();
 				myControl->getVivible()->morir();
 				this->unCliente->sendPlayerDeath();
 			}
+			this->hitPlanes(&(enemigos[var]->getControllerMissiles()->getVivibles()->vectorObjetos), avion);
 		}
 	}
 }
@@ -1035,6 +1037,7 @@ void Escenario::enemyOtherPlayerColision() {
 					enemigos[var]->morir();
 					it->second->getVivible()->morir();
 				}
+				this->hitPlanes(&(enemigos[var]->getControllerMissiles()->getVivibles()->vectorObjetos),it->second->getVivible());
 			}
 			this->hitEnemy(&(it->second->getMissiles()->getVivibles()->vectorObjetos));
 		}
@@ -1051,3 +1054,30 @@ void Escenario::enemyOtherPlayerMissileColision() {
 	}
 }
 
+void Escenario::hitPlanes(vector<Vivible*>* disparos,Vivible* avion){
+	if (avion->tieneHP()) {
+		int x = avion->getX();
+		int y = avion->getY();
+		int xp = x + avion->getAncho()-5;
+		int yp = y + avion->getLargo()-5;
+		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
+			bool touched = false;
+			int x2 = (*it)->posX;
+			int x2p = x2 + (*it)->getAncho();
+			int y2 = (*it)->posY;
+			int y2p = y2 + (*it)->getLargo();
+			touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+			if (touched && (*it)->aunVive()) {
+				cout << "**** CHOQUE: AVION VS MISILES ****" << endl;
+				((Avion*)avion)->recibirMisil((Misil*)*it);
+				(*it)->morir();
+				this->player->takeHit();
+				if( !( this->player->isAlive() ) ) {
+				  this->unCliente->sendPlayerDeath();
+				}
+			}
+
+		}
+	}
+
+}

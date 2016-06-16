@@ -304,3 +304,7 @@ void Avion::morir(){
 	this->setHP(0);
 //	this->viviendo = false;
 }
+
+bool Avion::getExplosion(){
+	return this->explosion->exploto();
+}

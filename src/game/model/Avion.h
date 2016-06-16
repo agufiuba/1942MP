@@ -82,6 +82,8 @@ public:
 
 	bool hit(int, int);
 	void morir();
+
+	bool getExplosion();
 };
 
 #endif /* SRC_MODEL_AVION_H_ */

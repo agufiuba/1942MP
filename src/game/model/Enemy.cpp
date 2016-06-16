@@ -332,3 +332,7 @@ void Enemy::morir(){
 	this->setHP(0);
 //	viviendo = false;
 }
+
+ControllerMissilesEnemy* Enemy::getControllerMissiles(){
+	return this->controlDeMisiles;
+}

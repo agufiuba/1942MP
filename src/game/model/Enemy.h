@@ -95,6 +95,7 @@ public:
     void morir();
     void disparar();
     void mostrarDisparo();
+    ControllerMissilesEnemy* getControllerMissiles();
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */
