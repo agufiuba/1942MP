@@ -44,7 +44,6 @@ class Game {
     void loadConnectionScreen();
     void loadValidationScreen();
     void loadTimeoutScreen();
-    void loadSinglePlayerScoreScreen( int stage );
     void loadselectionPlane(bool selectedOk);
     void loadWaitingGame();
     void sendDataPlayer();
