@@ -24,7 +24,6 @@ Server::Server( const char* configFileName ) {
   this->listening = false;
   this->connected = false;
   this->processing = false;
-  this->allowConnections = false;
   this->eventQueue = new queue<map<int, Evento*>*>;
   this->logger = Logger::instance();
   this->running = false;
@@ -130,23 +129,52 @@ void Server::initialize() {
 }
 
 void Server::listenForConnections( int cfd, struct sockaddr_storage client_addr ) {
-  // accept connections
+  socklen_t sinSize = sizeof client_addr;
+ 
   while( this->listening ) {
-    socklen_t sinSize = sizeof client_addr;
+    char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
+    
+    // accept connection
     if( ( cfd = accept( this->socketFD, (struct sockaddr*) (&client_addr), &sinSize ) ) == -1 ) {
       this->logger->error( "Error al aceptar Cliente" );
-      exit( -1 );
+      continue;
     }
     this->clientCount++;
 
-    //HARDCODEADO
-    this->allowConnections = ( this->clientCount <= this->maxClientCount );
+    // if client slots left 
+    if ( this->clientCount <= this->maxClientCount ) {
+      // get connected host IP in presentation format
+      inet_ntop( client_addr.ss_family, 
+		 this->getInAddr( (struct sockaddr*) (&client_addr) ), clientIP,
+		 sizeof clientIP);
 
-    thread tCheckAliveSend( &Server::checkAliveSend, this, cfd);
-    tCheckAliveSend.detach();
+      // notify client of established connection
+      cout << endl << notice( "Se inicio una conexion con el host: " ) << clientIP
+	   << endl;
+      this->logger->info( "Se inicio una conexion con el host: " + string( clientIP ) );
 
-    thread process( &Server::receiveClientData, this, cfd, client_addr );
-    process.detach();
+      if( send( cfd, "Aceptado", 8, 0 ) == -1 ) {
+	this->logger->error( "Error al enviar que se acepto la conexion" );
+      }
+
+      usleep( 100 );
+      // send used planes and game data      
+      this->sendPlanesActives( cfd );
+      this->sendGameData( cfd );
+
+      // create timeout check thread
+      thread tCheckAliveSend( &Server::checkAliveSend, this, cfd );
+      tCheckAliveSend.detach();
+
+      // create thread for receiving client data
+      thread process( &Server::receiveClientData, this, cfd, clientIP );
+      process.detach();
+    } else {
+      cout << endl << warning( "El cliente " ) << clientIP << warning( " se rechazo" ) << endl;
+      this->logger->warn( "El cliente " + string(clientIP) + " se rechazo" );
+      //usleep( 1000000 );
+      this->closeClient( cfd );
+    }
   }
 }
 
@@ -462,30 +490,9 @@ void Server::sendConf(int cfd){
 }
 
 
-void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
-  char clientIP[ INET_ADDRSTRLEN ]; // connected client IP
+void Server::receiveClientData( int cfd, string clientIP ) {
   Evento* msgToRecv = new Evento;
   mutex theMutex;
-
-  // get connected host IP in presentation format
-  inet_ntop( client_addr.ss_family,
-      this->getInAddr( (struct sockaddr*) (&client_addr) ), clientIP,
-      sizeof clientIP);
-
-  if( this->allowConnections ) {
-    //players2.push_back(cfd);
-    cout << endl << notice( "Se inicio una conexion con el host: " ) << clientIP
-      << endl;
-    this->logger->info( "Se inicio una conexion con el host: " + string( clientIP ) );
-
-    if( send( cfd, "Aceptado", 8, 0 ) == -1 ) {
-      this->logger->error( "Error al enviar que se acepto la conexion" );
-    }
-
-    usleep(100);
-    this->sendPlanesActives( cfd );
-    this->sendGameData( cfd );
-
     timeval timeout;
     timeout.tv_sec = this->MAX_UNREACHABLE_TIME;
     timeout.tv_usec = 0;
@@ -662,12 +669,6 @@ void Server::receiveClientData( int cfd, struct sockaddr_storage client_addr ) {
 	}
       }
     }
-  } else {
-    cout << endl << warning( "El cliente " ) << clientIP << warning( " se rechazo" ) << endl;
-    this->logger->warn( "El cliente " + string(clientIP) + " se rechazo" );
-    usleep( 1000000 );
-    this->closeClient( cfd );
-  }
 }
 
 void Server::checkAliveClose( int clientFD ) {
@@ -782,7 +783,7 @@ void Server::closeClient( int cfd ) {
     this->betaTeamScore = 0;
     this->coopTeamScore = 0;
   }
-  cout << " cantidad " << this->clientCount << endl;
+  cout << "Cantidad de clientes conectados: " << this->clientCount << endl;
   this->logger->info( "Cantidad de Clientes Conectados: " + to_string( this->clientCount ) );
   theMutex.unlock();
 }
