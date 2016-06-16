@@ -7,7 +7,8 @@ typedef struct PlayerData {
   int y;
   int team;
   int score;
-  int teamScore;
-  int rivalTeamScore;
+  int coopTeamScore;
+  int alphaTeamScore;
+  int betaTeamScore;
 } PlayerData;
 #endif
