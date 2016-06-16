@@ -58,8 +58,9 @@ void Game::cargarEscenario() {
 		  this->player = new Player( pData->name, pData->color, pData->x, pData->y, this->team);
 		  // set player and teams score
 		  this->player->addScore( pData->score );
-		  this->unCliente->setTeamScore( pData->teamScore );
-		  this->unCliente->setRivalTeamScore( pData->rivalTeamScore );
+		  this->unCliente->setCoopTeamScore( pData->coopTeamScore );
+		  this->unCliente->setAlphaTeamScore( pData->alphaTeamScore );
+		  this->unCliente->setBetaTeamScore( pData->betaTeamScore );
     	  escenario->configurarMiAvion( pData );
       } else {
     	  escenario->configurarAvionAmigo( pData );
@@ -854,146 +855,6 @@ void Game::loadWaitingGame() {
   delete waitingScreen;
 }
 
-void Game::loadSinglePlayerScoreScreen( int stage ) {
-  if( !( this->running ) ) return;
-  bool runningScreen = true;
-  SDL_Event e;
-  Timer timer;
-  string stageCompleteText = "Stage " + to_string( stage ) + " Complete !!";
-  string scoreHeaderText = "Score Ranking";
-  string nameText = "Name";
-  string scoreText = "Score";
-
-  Screen* scoreScreen= new Screen( this->sdlHandler );
-
-  // TODO: REMOVE, only for test purpouses
-  this->player = new Player( "sousuke", "rojo", 20, 200, 1);
-  Player* player2 = new Player( "kaname", "azul", 20, 200, 1);
-  Player* player3 = new Player( "tessa", "amarillo", 20, 200, 2);
-  Player* player4 = new Player( "melissa", "verde", 20, 200, 2);
-
-  this->player->addScore( 17816229 );
-  player3->addScore( 5287 );
-  player4->addScore( 98723 );
-
-  // Load text
-  scoreScreen->loadText( "stageComplete", stageCompleteText, { 53, 167, 84, 255 } );
-  scoreScreen->loadText( "scoreText", scoreHeaderText, { 255, 0, 0, 255 } );
-  scoreScreen->loadText( "nameHeader", nameText, { 191, 189, 37, 255 } );
-  scoreScreen->loadText( "scoreHeader", scoreText, { 191, 189, 37, 255 } );
-  scoreScreen->loadText( player->getName(), player->getName(), { 255, 255, 255, 255 } );
-  scoreScreen->loadText( player->getName() + "score", to_string( player->getScore() ), { 255, 255, 255, 255 } );
-  scoreScreen->loadText( player2->getName(), player2->getName(), { 255, 255, 255, 255 } );
-  scoreScreen->loadText( player2->getName() + "score", to_string( player2->getScore() ), { 255, 255, 255, 255 } );
-  scoreScreen->loadText( player3->getName(), player3->getName(), { 255, 255, 255, 255 } );
-  scoreScreen->loadText( player3->getName() + "score", to_string( player3->getScore() ), { 255, 255, 255, 255 } );
-  scoreScreen->loadText( player4->getName(), player4->getName(), { 255, 255, 255, 255 } );
-  scoreScreen->loadText( player4->getName() + "score", to_string( player4->getScore() ), { 255, 255, 255, 255 } );
-  scoreScreen->loadText( "continueText", "Continue", { 0, 0, 0, 255 } );
-
-  int buttonWidth = 250;
-  int buttonCenter = scoreScreen->getRectCenter( buttonWidth ); 
-  int continueTextCenter = scoreScreen->getTextCenter( "continue" );
-
-  // Load prompts
-  scoreScreen->loadRectangle( "continue", buttonCenter, 600, buttonWidth, 50 );
-
-  // Load planes
-  scoreScreen->loadTexture( player->getColor(), "score/avion_" + player->getColor() + ".bmp" );
-  scoreScreen->loadTexture( player2->getColor(), "score/avion_" + player2->getColor() + ".bmp" );
-  scoreScreen->loadTexture( player3->getColor(), "score/avion_" + player3->getColor() + ".bmp" );
-  scoreScreen->loadTexture( player4->getColor(), "score/avion_" + player4->getColor() + ".bmp" );
-
-  int gap = scoreScreen->getTextHeight( scoreText );
-  int rowPadding = 200;
-  int topPadding = 60;
-  // Get center positions
-  int stageCompleteTextCenter = scoreScreen->getTextCenter( stageCompleteText ); 
-  int scoreTextCenter = scoreScreen->getTextCenter( scoreHeaderText );
-  int nameHeaderSpace = scoreScreen->getTextWidth( nameText ) + rowPadding;
-  int scoreHeaderCenter = stageCompleteTextCenter + nameHeaderSpace;
-  int scoreRightLimit = scoreHeaderCenter + scoreScreen->getTextWidth( "Score" );
-  int imageCenter = stageCompleteTextCenter - 65;
-
-  bool clicked = false;
-  int mouseX, mouseY;
-
-  HealthView* remainingHealth = new HealthView( scoreScreen, this->player->getHealth() );
-
-  // Enable text input
-  SDL_StartTextInput();
-
-  while( runningScreen ) {
-    timer.correr();
-    // Get events
-    while( this->sdlHandler->nextEvent( &e ) ) {
-      if( e.type == SDL_QUIT ) {
-	runningScreen = false;
-	this->running = false;
-	break;
-      }
-      if (e.button.type == SDL_MOUSEBUTTONDOWN) {
-	if (e.button.button == SDL_BUTTON_LEFT) {
-	  clicked = true;
-	  // Get the mouse offsets
-	  mouseX = e.button.x;
-	  mouseY = e.button.y;
-	}
-      }
-    }
-    // Set window background
-    this->sdlHandler->setWindowBG(0, 0, 0);
-
-    remainingHealth->render();
-    // Render text textures
-    scoreScreen->renderTexture( "stageComplete", stageCompleteTextCenter, topPadding );
-    scoreScreen->renderTexture( "scoreText", scoreTextCenter, topPadding + gap * 2 );
-    scoreScreen->renderTexture( "nameHeader", stageCompleteTextCenter, topPadding + gap * 4 );
-    scoreScreen->renderTexture( "scoreHeader", scoreHeaderCenter, topPadding + gap * 4 );
-    scoreScreen->renderTexture( player->getName(), stageCompleteTextCenter, topPadding + gap * 5.5 );
-    scoreScreen->renderTexture( player->getName() + "score", 
-				scoreRightLimit - scoreScreen->getTextWidth( to_string( player->getScore() ) ), topPadding + gap * 5.5 );
-    scoreScreen->renderTexture( player->getColor(), imageCenter, topPadding + gap * 5.5 );
-    scoreScreen->renderTexture( player2->getName(), stageCompleteTextCenter, topPadding + gap * 7 );
-    scoreScreen->renderTexture( player2->getName() + "score", 
-				scoreRightLimit - scoreScreen->getTextWidth( to_string(
-				player2->getScore() ) ), topPadding + gap * 7 );
-    scoreScreen->renderTexture( player2->getColor(), imageCenter, topPadding + gap * 7 );
-    scoreScreen->renderTexture( player3->getName(), stageCompleteTextCenter, topPadding + gap * 8.5 );
-    scoreScreen->renderTexture( player3->getName() + "score", 
-				scoreRightLimit - scoreScreen->getTextWidth( to_string( player3->getScore() ) ), topPadding + gap * 8.5 );
-    scoreScreen->renderTexture( player3->getColor(), imageCenter, topPadding + gap * 8.5 );
-    scoreScreen->renderTexture( player4->getName(), stageCompleteTextCenter, topPadding + gap * 10 );
-    scoreScreen->renderTexture( player4->getName() + "score", 
-				scoreRightLimit - scoreScreen->getTextWidth( to_string(
-				player4->getScore() ) ), topPadding + gap * 10 );
-    scoreScreen->renderTexture( player4->getColor(), imageCenter, topPadding + gap * 10 );
-    scoreScreen->setRenderDrawColor( 160, 160, 160, 255 );
-    scoreScreen->renderRectangle( "continue" );
-    scoreScreen->renderTexture( "continueText", continueTextCenter, 605 );
-
-    if( clicked ) {
-      clicked = false;
-      if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
-	  && ( mouseY > 600 ) && ( mouseY < ( 600 + 50 ) ) ) {
-	runningScreen = false;
-	break;
-      }
-    }
-
-    //Update screen
-    this->sdlHandler->updateWindow();
-
-    if( timer.tiempoActual() < 1000 / this->fps ){
-      SDL_Delay( ( 1000 / this->fps ) - timer.tiempoActual() );
-    }
-  }
-
-  //Disable text input
-  SDL_StopTextInput();
-  delete scoreScreen;
-}
-
 void Game::loadModeGameScreen(){
   SDL_Event e;
   Timer timer;
@@ -1071,8 +932,10 @@ void Game::loadModeGameScreen(){
 	  if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 230 ) ) && ( mouseY > 525 ) && ( mouseY < ( 525 + 50 ) ) ) {
 		//Si no hay ningun modo puesto toma los del cliente
 		if(!this->unCliente->getGameData()->teamMode && !this->unCliente->getGameData()->cooperativeMode){
-			this->unCliente->getGameData()->teamMode = teamPromptSelected;
-			this->unCliente->getGameData()->cooperativeMode = cooperativePromptSelected;
+			this->unCliente->setCoopMode( cooperativePromptSelected );
+			this->unCliente->setTeamMode( teamPromptSelected );
+			//this->unCliente->getGameData()->teamMode = teamPromptSelected;
+			//this->unCliente->getGameData()->cooperativeMode = cooperativePromptSelected;
 		}
 		if ( practicePromptSelected ){
 			cout<<"Modo Practica"<<endl;
