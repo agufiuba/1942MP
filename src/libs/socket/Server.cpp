@@ -888,8 +888,8 @@ int Server::getActivePlayersCount() {
 	it != this->players.end();
 	++it ) {
     Player* player = it->second;
-    // if player is connected and alive
-    if ( player->isActive() && player->isAlive() ) {
+    // if player is connected
+    if ( player->isActive() ) {
       playerCount++;
     }
   }
