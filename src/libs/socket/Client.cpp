@@ -25,8 +25,9 @@ Client::Client(const char* configFileName) {
     this->gameData = new GameData;
     this->ready = false;
     this->playerResume = false;
-    this->teamScore = 0;
-    this->rivalTeamScore = 0;
+    this->coopTeamScore = 0;
+    this->alphaTeamScore = 0;
+    this->betaTeamScore = 0;
     this->destroyEne = false;
     this->winner = false;
     this->loser = false;
@@ -48,8 +49,9 @@ Client::Client(string ip, string puerto) {
     this->gameData = new GameData;
     this->ready = false;
     this->playerResume = false;
-    this->teamScore = 0;
-    this->rivalTeamScore = 0;
+    this->coopTeamScore = 0;
+    this->alphaTeamScore = 0;
+    this->betaTeamScore = 0;
     this->destroyEne = false;
     this->winner = false;
     this->loser = false;
@@ -73,8 +75,9 @@ Client::Client(string ip, string puerto,
     this->gameData = new GameData;
     this->ready = false;
     this->playerResume = false;
-    this->teamScore = 0;
-    this->rivalTeamScore = 0;
+    this->coopTeamScore = 0;
+    this->alphaTeamScore = 0;
+    this->betaTeamScore = 0;
     this->destroyEne = false;
     this->winner = false;
     this->loser = false;
@@ -406,11 +409,9 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
 				  // add score to corresponding team
 				  m.lock();
-				  if ( data->team == this->player->getTeam() ) {
-				    this->teamScore += data->score;
-				  } else {
-				    this->rivalTeamScore += data->score;
-				  }
+				  if ( data->team == 0 ) this->coopTeamScore += data->score;
+				  if ( data->team == 1 ) this->alphaTeamScore += data->score;
+				  if ( data->team == 2 ) this->betaTeamScore += data->score;
 				  m.unlock();
 				}
 				delete data;
@@ -654,7 +655,9 @@ void Client::addScoreToPlayer( int score ) {
   // add score to player
   this->player->addScore( score );
   m.lock();
-  this->teamScore += score;
+  if ( this->player->getTeam() == 0 ) this->coopTeamScore += score;
+  if ( this->player->getTeam() == 1 ) this->alphaTeamScore += score;
+  if ( this->player->getTeam() == 2 ) this->betaTeamScore += score;
   m.unlock();
 
   // create player score data
@@ -670,8 +673,9 @@ void Client::addScoreToPlayer( int score ) {
 
 void Client::requestScoreReset() {
   this->player->resetScore();
-  this->teamScore = 0;
-  this->rivalTeamScore = 0;
+  this->coopTeamScore = 0;
+  this->alphaTeamScore = 0;
+  this->betaTeamScore = 0;
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendDataID( "RS" );
   delete tmt;
@@ -722,20 +726,28 @@ bool Client::isPlayerResume(){
 	return this->playerResume;
 }
 
-int Client::getTeamScore() {
-  return this->teamScore;
+int Client::getCoopTeamScore() {
+  return this->coopTeamScore;
 }
 
-int Client::getRivalTeamScore() {
-  return this->rivalTeamScore;
+int Client::getAlphaTeamScore() {
+  return this->alphaTeamScore;
 }
 
-void Client::setTeamScore( int score ) {
-  this->teamScore = score;
+int Client::getBetaTeamScore() {
+  return this->betaTeamScore;
 }
 
-void Client::setRivalTeamScore( int score ) {
-  this->rivalTeamScore = score;
+void Client::setCoopTeamScore( int score ) {
+  this->coopTeamScore = score;
+}
+
+void Client::setAlphaTeamScore( int score ) {
+  this->alphaTeamScore = score;
+}
+
+void Client::setBetaTeamScore( int score ) {
+  this->betaTeamScore = score;
 }
 
 void Client::setNotDestroyEnemys() {
@@ -765,4 +777,12 @@ bool Client::wins() {
 
 bool Client::losses() {
   return this->loser;
+}
+
+void Client::setCoopMode( bool mode ) {
+  this->gameData->cooperativeMode = mode;
+}
+
+void Client::setTeamMode( bool mode ) {
+  this->gameData->teamMode = mode;
 }

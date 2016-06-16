@@ -26,8 +26,9 @@ class Client {
     string ip;
     string puerto;
     Player* player;
-    int teamScore;
-    int rivalTeamScore;
+    int coopTeamScore;
+    int alphaTeamScore;
+    int betaTeamScore;
     int socketFD;
     bool connected;
     bool received;
@@ -109,12 +110,16 @@ class Client {
     void sendMode(string mode);
     void sendStatusReady();
     bool isPlayerResume();
-    int getTeamScore();
-    int getRivalTeamScore();
-    void setTeamScore( int score );
-    void setRivalTeamScore( int score );
+    int getCoopTeamScore();
+    int getAlphaTeamScore();
+    int getBetaTeamScore();
+    void setCoopTeamScore( int score );
+    void setAlphaTeamScore( int score );
+    void setBetaTeamScore( int score );
     void quitGame();
     bool wins();
     bool losses();
+    void setCoopMode( bool mode );
+    void setTeamMode( bool mode );
 };
 #endif

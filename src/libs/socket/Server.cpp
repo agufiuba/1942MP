@@ -345,21 +345,9 @@ void Server::createPlayers() {
       pd->score = player->getScore();
 
       if ( it2->second->getName() == player->getName() ) {
-	// get team score
-	if ( this->gameData->cooperativeMode ) {
-	  pd->teamScore = this->coopTeamScore;
-	// get team score and rival team score
-	} else if ( this->gameData->teamMode ) {
-	  // alpha team
-	  if ( player->getTeam() == 1 ) {
-	    pd->teamScore = this->alphaTeamScore;
-	    pd->rivalTeamScore = this->betaTeamScore;
-	  // beta team
-	  } else {
-	    pd->teamScore = this->betaTeamScore;
-	    pd->rivalTeamScore = this->alphaTeamScore;
-	  }
-	}
+	pd->coopTeamScore = this->coopTeamScore;
+	pd->alphaTeamScore = this->alphaTeamScore;
+	pd->betaTeamScore = this->betaTeamScore;
       }
 
       while (!tmt->sendData(pd, "PR"));
