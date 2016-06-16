@@ -347,11 +347,18 @@ void Server::createPlayers() {
       if ( it2->second->getName() == player->getName() ) {
 	// get team score
 	if ( this->gameData->cooperativeMode ) {
-	  pd->teamScore = this->getPlayerTeamScore( player );
+	  pd->teamScore = this->coopTeamScore;
 	// get team score and rival team score
 	} else if ( this->gameData->teamMode ) {
-	  pd->teamScore = this->getPlayerTeamScore( player );
-	  pd->rivalTeamScore = this->getPlayerRivalTeamScore( player );
+	  // alpha team
+	  if ( player->getTeam() == 1 ) {
+	    pd->teamScore = this->alphaTeamScore;
+	    pd->rivalTeamScore = this->betaTeamScore;
+	  // beta team
+	  } else {
+	    pd->teamScore = this->betaTeamScore;
+	    pd->rivalTeamScore = this->alphaTeamScore;
+	  }
 	}
       }
 
@@ -364,33 +371,6 @@ void Server::createPlayers() {
     it2->second->activate();
     it2++;
   }
-}
-
-int Server::getPlayerTeamScore( Player* player ) {
-  int teamScore = 0;
-  for ( map<int, Player*>::iterator it = this->players.begin();
-	it != this->players.end();
-	++it ) {
-    if ( player->getTeam() == it->second->getTeam() ) {
-      teamScore += it->second->getScore();
-    }
-  }
-
-  return teamScore;
-}
-
-int Server::getPlayerRivalTeamScore( Player* player ) {
-  int rivalTeamScore = 0;
-  for ( map<int, Player*>::iterator it = this->players.begin();
-	it != this->players.end();
-	++it ) {
-    if ( player->getTeam() != it->second->getTeam() ) {
-      rivalTeamScore += it->second->getScore();
-    }
-  }
-
-  return rivalTeamScore;
-
 }
 
 void Server::sendPlanesActives(int cfd){
