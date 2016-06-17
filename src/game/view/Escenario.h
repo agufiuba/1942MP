@@ -83,6 +83,7 @@ private:
 	GameConf* gc;
 	Client* unCliente;
 	Music* musica;
+	Sound* gameOver;
 
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);

@@ -41,15 +41,16 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client) {
 	this->teamAlphaScoreView = NULL;
 	this->teamBetaScoreView = NULL;
 	flota = 0;
-
 	hEnemigos = new HandlerEnemigos(gRenderer, resolucion, escenarioScreen, gc);
 	this->unCliente->setEnemyHandler(hEnemigos);
+	gameOver = new Sound("gameOver.wav");
 }
 
 Escenario::~Escenario() {
 	delete this->player;
 	resolucion->~Resolucion();
 	delete musica;
+	delete gameOver;
 	escenarioCreado = false;
 	delete escenarioScreen;
 	delete myControl;
@@ -258,6 +259,7 @@ SDL_Event* Escenario::run() {
 	actualizarEscenario(posicionEscenario);
 	Uint32 start;
 	bool quit = false;
+	int ultimoNivelJugado;
 
 	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
@@ -342,6 +344,7 @@ SDL_Event* Escenario::run() {
 
 			}
 
+			ultimoNivelJugado = numeroNivel;
 			verificarEstacionamiento(numeroNivel);
 
 			if (isFinNivel(numeroNivel)) {
@@ -368,6 +371,13 @@ SDL_Event* Escenario::run() {
 			}
 		}
 
+	}
+
+	if (ultimoNivelJugado == CANTIDAD_NIVELES) {
+		musica->stop();
+		gameOver->play();
+		loadScoreScreen(-1);
+		cout << "GAME OVER" << endl;
 	}
 
 	delete posicionEscenario;
