@@ -17,6 +17,8 @@ ServerAvionEnemigoRandom::~ServerAvionEnemigoRandom(){
 }
 
 void ServerAvionEnemigoRandom::vivir() {
+	enum Direction { U, D, R, L };
+	Direction d;
 	int x, y;
 	time_t temp = time(0);
 	localtime(&temp);
@@ -24,22 +26,29 @@ void ServerAvionEnemigoRandom::vivir() {
 	if ((tm->tm_sec - secsRandom) < 1 && !firsttime) {
 		x = angleX;
 		y = angleY;
-	}
-	else {
+	} else {
 		srand(time(NULL));
-		x = rand() % 11 - 5;
-		y = rand() % 11 - 5;
+		d = static_cast<Direction>( rand() % 5 );
 
-		// centrar +/-
-		x -= (posicion->getX() - anchoFondo / 2) / 120;
-		y -= (posicion->getY() - largoFondo / 2) / 150;
+		switch( d ) {
+		  case U:
+		    cout << "UP" << endl;
+		    break;
+		  case D:
+		    cout << "DOWN" << endl;
+		    break;
+		  case R:
+		    cout << "RIGHT" << endl;
+		    break;
+		  case L:
+		    cout << "LEFT" << endl;
+		    break;
+		  default:
+		    break;
+		}
+		
 		firsttime = false;
-		angleX = x;
-		angleY = y;
 		secsRandom = tm->tm_sec;
 	}
-
-	moverEjeX(x);
-	moverEjeY(y);
 }
 
