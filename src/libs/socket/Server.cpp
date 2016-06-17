@@ -944,7 +944,24 @@ void Server::sendPlayersReady(){
 	  tmt->sendDataID("OK");
 	  delete tmt;
 	}
+	thread tMoveEnemy( &Server::makeEnemyMove, this);
+	tMoveEnemy.detach();
   }
+}
+
+void Server::makeEnemyMove() {
+	int i = 0;
+
+	ServerAvionEnemigoRandom* avionEnemigo = new ServerAvionEnemigoRandom(new Posicion(500, 500));
+
+	while (this->running) {
+		if (i >= 1000000000) {
+			cout << "corriendo " << i << endl;
+			avionEnemigo->vivir();
+			i = 0;
+		}
+		i++;
+	}
 }
 
 void Server::setTeamPlayer(int team, int cliendFd){

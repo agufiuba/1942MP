@@ -25,7 +25,7 @@
 #include "../controller/ControllerMissilesEnemy.h"
 
 class ServerAvionEnemigo {
-private:
+protected:
 
 	string id;
 	int anchoFondo, largoFondo;
@@ -51,8 +51,8 @@ private:
 	Avion* avionApuntado;
 
 public:
-	virtual ServerAvionEnemigo(Posicion* posicionInicial, Avion* avionApuntado);
-	virtual ~ServerAvionEnemigo();
+	ServerAvionEnemigo(Posicion* posicionInicial);
+	~ServerAvionEnemigo();
 	string getId();
 	int getAnchoFondo();
 	int getLargoFondo();
@@ -62,7 +62,7 @@ public:
 	int getY();
 	int getVida();
 
-	virtual void mover();
+	virtual void vivir();
 
 	bool aunVive();
 	void morir();

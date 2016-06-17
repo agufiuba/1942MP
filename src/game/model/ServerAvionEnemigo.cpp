@@ -7,7 +7,7 @@
 
 #include "ServerAvionEnemigo.h"
 
-ServerAvionEnemigo::ServerAvionEnemigo(Posicion* posicionInicial, Avion* avionApuntado) {
+ServerAvionEnemigo::ServerAvionEnemigo(Posicion* posicionInicial) {
 
 	this->id = id;
 	this->vida = 1;
@@ -32,7 +32,6 @@ ServerAvionEnemigo::ServerAvionEnemigo(Posicion* posicionInicial, Avion* avionAp
 	tm = localtime(&tp);
 	nFlota = chrono::system_clock::now();
 
-	this->avionApuntado = avionApuntado;
 	contador = 0;
 	tiempoEntreDisparo = 20;
 }

@@ -7,34 +7,8 @@
 
 #include "ServerAvionEnemigoRandom.h"
 
-ServerAvionEnemigoRandom::ServerAvionEnemigoRandom(Posicion* posicionInicial, Avion* avionApuntado) {
+ServerAvionEnemigoRandom::ServerAvionEnemigoRandom(Posicion* posicionInicial):ServerAvionEnemigo(Posicion* posicionInicial) {
 
-	this->id = id;
-	this->vida = 1;
-
-	anchoVista = 70; //TODO: hardcodeado por ahora, porque hay que conseguirlo desde el cliente
-	largoVista = 60;
-
-	viviendo = true;
-
-	this->posicion = posicionInicial;
-
-	anchoFondo = 1024; //TODO: hardcodeado por ahora, porque hay que conseguirlo desde el cliente
-	largoFondo = 700;
-
-	angleX = 0;
-	angleY = -1;
-
-	t = new Timer();
-
-	firsttime = true;
-	time_t tp = time(0);
-	tm = localtime(&tp);
-	nFlota = chrono::system_clock::now();
-
-	this->avionApuntado = avionApuntado;
-	contador = 0;
-	tiempoEntreDisparo = 20;
 }
 
 ServerAvionEnemigoRandom::~ServerAvionEnemigoRandom(){
@@ -42,7 +16,7 @@ ServerAvionEnemigoRandom::~ServerAvionEnemigoRandom(){
 	delete posicion;
 }
 
-void ServerAvionEnemigoRandom::mover() {
+void ServerAvionEnemigoRandom::vivir() {
 	int x, y;
 	time_t temp = time(0);
 	localtime(&temp);

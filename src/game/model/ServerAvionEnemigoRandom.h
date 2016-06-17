@@ -23,14 +23,15 @@
 #include "../view/ExplosionView.h"
 #include "../view/Screen.h"
 #include "../controller/ControllerMissilesEnemy.h"
+#include "../model/ServerAvionEnemigo.h"
 
 class ServerAvionEnemigoRandom :public ServerAvionEnemigo{
 
 public:
-	ServerAvionEnemigoRandom(Posicion* posicionInicial, Avion* avionApuntado);
+	ServerAvionEnemigoRandom(Posicion* posicionInicial);
 	~ServerAvionEnemigoRandom();
 
-	void mover();
+	void vivir();
 };
 
 #endif /* SRC_GAME_MODEL_SERVERAVIONENEMIGORANDOM_H_ */

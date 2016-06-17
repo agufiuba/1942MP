@@ -11,6 +11,7 @@
 #include "../../libs/data/stage_data.h"
 #include "../../libs/data/game_data.h"
 #include "../../game/model/Player.h"
+#include "../../game/model/ServerAvionEnemigoRandom.h"
 #include <queue>
 #include <map>
 #include <string>
@@ -78,6 +79,7 @@ class Server {
     void sendTeamWin( string winningTeam );
     void sendCoopLose();
     void checkAliveClose( int clientFD );
+    void makeEnemyMove();
 
   public:
     Server( const char* configFileName );
