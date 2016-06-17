@@ -29,7 +29,7 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 	  ed->direction = 'N';	  
 	} else {
 		srand(time(NULL));
-		d = static_cast<Direction>( rand() % 5 );
+		d = static_cast<Direction>( rand() % 4 );
 
 		switch( d ) {
 		  case U:
