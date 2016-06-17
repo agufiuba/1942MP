@@ -958,7 +958,10 @@ void Server::makeEnemyMove() {
 		if (i >= 1000000000) {
 			cout << "corriendo " << i << endl;
 			data = avionEnemigo->vivir();
-			this->sendEnemyData( data ); 
+			// send on valid direction
+			// TODO: review implementation of vivir() method
+			if ( data->direction != 'N' )
+			  this->sendEnemyData( data ); 
 			i = 0;
 		}
 		i++;
