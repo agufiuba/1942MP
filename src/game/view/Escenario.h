@@ -25,6 +25,7 @@
 #include "../controller/Timer.h"
 #include "../controller/HandlerPlayersControllers.h"
 #include "../controller/ControllerMissiles.h"
+#include "../controller/HandlerEnemigos.h"
 #include "../../xml/conf/GameConf.h"
 #include "../../xml/parser/GameParser.h"
 #include "../../xml/conf/EscenarioConf.h"
@@ -75,6 +76,8 @@ private:
 	Controller* myControl;
 	HandlerPlayersControllers* controllers;
 	HandlerPowerUp* hPowerUp;
+	HandlerEnemigos* hEnemigos;
+	map<string, Vivible*> mapaEnemigos;
 
 	vector<Isla*> fondosVivibles;
 	vector<Enemy*> enemigos;
@@ -99,8 +102,6 @@ private:
 	void getPowerUp();
 	void loadScoreData();
 	void hitEnemy(vector<Vivible*>* disparos);
-	void deleteEnemys();
-	void actualizarEnemigos();
 	bool escenarioCreado;
 	void planesColision();
 	void enemyOtherPlayerColision();

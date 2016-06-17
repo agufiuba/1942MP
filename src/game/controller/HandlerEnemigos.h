@@ -34,5 +34,6 @@ public:
 	void createEnemigo(string id, string type, int posX, int posY);
 	void hacerVivir();
 	void matar(string id);
+	void deleteEnemys();
 };
 #endif /* SRC_GAME_CONTROLLER_HANDLERENEMIGOS_H_ */

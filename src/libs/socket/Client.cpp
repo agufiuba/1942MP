@@ -28,7 +28,6 @@ Client::Client(const char* configFileName) {
     this->coopTeamScore = 0;
     this->alphaTeamScore = 0;
     this->betaTeamScore = 0;
-    this->destroyEne = false;
     this->winner = false;
     this->loser = false;
 }
@@ -52,7 +51,6 @@ Client::Client(string ip, string puerto) {
     this->coopTeamScore = 0;
     this->alphaTeamScore = 0;
     this->betaTeamScore = 0;
-    this->destroyEne = false;
     this->winner = false;
     this->loser = false;
 }
@@ -78,7 +76,6 @@ Client::Client(string ip, string puerto,
     this->coopTeamScore = 0;
     this->alphaTeamScore = 0;
     this->betaTeamScore = 0;
-    this->destroyEne = false;
     this->winner = false;
     this->loser = false;
 }
@@ -93,6 +90,11 @@ void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers) {
 void Client::setPowerUpHandler(HandlerPowerUp* hPowerUp) {
 	this->hPowerUp = hPowerUp;
 }
+
+void Client::setEnemyHandler(HandlerEnemigos* hEnemigos) {
+	this->hEnemigos = hEnemigos;
+}
+
 
 bool Client::allPlayersReady(){
   return (this->configComplete && this->ready);
@@ -282,7 +284,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					} else if (e->value == 'Y') {
 							this->hPowerUp->matar(string(e->name));
 					} else if (e->value == 'X') {
-							this->destroyEne = true;
+							this->hEnemigos->destroyEnemys();
 					} else if (e->value == QUITGAME ) {
 					   cout << "QUITGAME TRIGGERED BY: " << string(e->name) << endl; 
 					   this->pc->killPlayer( string( e->name ) );
@@ -748,18 +750,6 @@ void Client::setAlphaTeamScore( int score ) {
 
 void Client::setBetaTeamScore( int score ) {
   this->betaTeamScore = score;
-}
-
-void Client::setNotDestroyEnemys() {
-  this->destroyEne = false;
-}
-
-void Client::setDestroyEnemys() {
-  this->destroyEne = true;
-}
-
-bool Client::destroyEnemys() {
-	return this->destroyEne;
 }
 
 void Client::quitGame() {

@@ -7,6 +7,8 @@
 
 #include "HandlerEnemigos.h"
 
+using namespace std;
+
 HandlerEnemigos::HandlerEnemigos(SDL_Renderer* renderer, Resolucion* resolucion, Screen* screen) {
 	this->renderer = renderer;
 	this->resolucion = resolucion;
@@ -63,5 +65,11 @@ void HandlerEnemigos::mover(string id, char evento) {
 		case 'X': enemigo->morir();
 							this->matar(id);
 							break;									//Morir
+	}
+}
+
+void HandlerEnemigos::deleteEnemys() {
+	for (map<string, Vivible*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
+		it->second->morir();
 	}
 }

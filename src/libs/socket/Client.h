@@ -23,6 +23,7 @@ class Client {
   private:
     HandlerPlayersControllers* pc;
     HandlerPowerUp* hPowerUp;
+    HandlerEnemigos* hEnemigos;
     string ip;
     string puerto;
     Player* player;
@@ -56,7 +57,6 @@ class Client {
     GameData* gameData;
     bool playerResume;
 
-    bool destroyEne;
 
   public:
     Client( const char* configFileName );
@@ -80,9 +80,7 @@ class Client {
     bool sendPlayerDeath();
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
     void setPowerUpHandler(HandlerPowerUp* hPowerUp);
-    void setNotDestroyEnemys();
-    void setDestroyEnemys();
-    bool destroyEnemys();
+    void setEnemyHandler(HandlerEnemigos* hEnemigos);
     vector<PlayerData*> getPlayers();
     vector<PlayerScore*> getPlayersScoreData();
     GameConf* getConfig();

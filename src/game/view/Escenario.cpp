@@ -41,6 +41,8 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client) {
 	this->teamAlphaScoreView = NULL;
 	this->teamBetaScoreView = NULL;
 	flota = 0;
+
+	hEnemigos = new HandlerEnemigos(gRenderer, resolucion, escenarioScreen);
 }
 
 Escenario::~Escenario() {
@@ -70,7 +72,7 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 //	cout<<"3"<<endl;
 	hPowerUp->hacerVivir();
 //	cout<<"4"<<endl;
-	this->actualizarEnemigos();
+	hEnemigos->hacerVivir();
 //	cout<<"5"<<endl;
 	this->hitEnemy(&(myControl->controlDeMisiles->getVivibles()->vectorObjetos));
 //	cout<<"6"<<endl;
@@ -201,6 +203,8 @@ void Escenario::configurarEnemigos() {
 		int velocidadDisparos = gc->enemigos[i]->velocidadDisparos;
 		int x = gc->enemigos[i]->x;
 		int y = gc->enemigos[i]->y;
+
+		hEnemigos->createEnemigo("1", "random", x, y);
 
 		//TODO: Cambiar constructor de creador de enemigos.
 		// Hay que incluir la velocidad de disparos, pedido por Key
@@ -907,7 +911,7 @@ void Escenario::getPowerUp() {
 						unCliente->sendData(ce->ametralladora(myControl->getVivible()->getId()));
 					}
 					if (resp == 'd') {
-						unCliente->setDestroyEnemys();
+						hEnemigos->deleteEnemys();
 						unCliente->sendData(ce->destroy(myControl->getVivible()->getId()));
 					}
 					if (resp == 'b') {
@@ -960,36 +964,6 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 				}
 			}
 		}
-}
-
-void Escenario::actualizarEnemigos(){
-	if(unCliente->destroyEnemys()) {
-		this->deleteEnemys();
-		unCliente->setNotDestroyEnemys();
-	}
-	int eliminar = -1;
-	for (int i=0; i < enemigos.size(); i++) {
-		if (enemigos[i]->aunVive()){
-			if(enemigos[i]->flota == -1)
-				enemigos[i]->vivirRandom();
-			else
-				enemigos[i]->vivirFlota();
-		}else{
-			eliminar = i;
-		}
-	}
-	if (eliminar >= 0 ){
-		Enemy* objEliminar = enemigos[eliminar];
-		delete objEliminar;
-		enemigos.erase(enemigos.begin()+eliminar);
-	}
-}
-
-void Escenario::deleteEnemys() {
-	for(int i=0;i<this->enemigos.size();i++) {
-		cout<<"Elimino un enemigo"<<endl;
-		this->enemigos[i]->morir();
-	}
 }
 
 void Escenario::planesColision(){
