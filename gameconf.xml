@@ -235,5 +235,5 @@
 		</posicion>
 	</enemigo>
 </enemigos>
-<maxClients>1</maxClients>
+<maxClients>2</maxClients>
 <jugadoresPorEquipo>1</jugadoresPorEquipo>

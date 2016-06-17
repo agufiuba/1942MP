@@ -241,6 +241,7 @@ SDL_Event* Escenario::run() {
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
+	int nivelActual = 1;
 
 /*	thread tPowerUps(&Escenario::getPowerUp, this);
 	tPowerUps.detach();
@@ -254,6 +255,8 @@ SDL_Event* Escenario::run() {
 		if (offset != 0) {
 			pixelesRecorridos = offset + desfasajeConexion;
 			setFondosVivibles(0, pixelesRecorridos);
+			nivelActual = (pixelesRecorridos / LONGITUD_NIVEL) + 1;
+			cout << "NIVEL ACTUAL: " << nivelActual << endl;
 		}
 	}
 
@@ -262,7 +265,7 @@ SDL_Event* Escenario::run() {
 	bool quit = false;
 	int ultimoNivelJugado;
 
-	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
+	for (int numeroNivel = nivelActual; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
 		while (!quit && this->unCliente->isConnected()) {
 
