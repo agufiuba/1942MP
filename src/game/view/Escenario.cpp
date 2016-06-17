@@ -220,8 +220,6 @@ void Escenario::configurarEnemigos() {
 		}
 */
 	hEnemigos->createEnemigo(1,"r", 200, 200);
-	}
-
 }
 
 HandlerPlayersControllers* Escenario::getHandler() {
