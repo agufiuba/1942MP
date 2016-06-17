@@ -952,7 +952,8 @@ void Server::sendPlayersReady(){
 void Server::makeEnemyMove() {
 	int i = 0;
 	EnemyData* data;
-	ServerAvionEnemigo* avionEnemigo = new ServerAvionEnemigoRandom(new Posicion(500, 500));
+	int enemyID = 1;
+	ServerAvionEnemigo* avionEnemigo = new ServerAvionEnemigoRandom( enemyID, new Posicion(500, 500));
 
 	while (this->running) {
 		if (i >= 1000000000) {
