@@ -3,7 +3,6 @@
 typedef struct EnemyData {
   char id[15];
   char playerID[15];
-  int x;
-  int y;
+  char direction;
 } EnemyData;
 #endif
