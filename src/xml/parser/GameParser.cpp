@@ -165,11 +165,13 @@ vector<EnemigoConf*> GameParser::enemigos(XMLDocument *e) {
 EnemigoConf* GameParser::enemigo(XMLElement* e) {
 	EnemigoConf* enemigoConf = new EnemigoConf;
 	string tipo = e->FirstChildElement("tipo")->GetText();
+	string disparosSpriteID = e->FirstChildElement("disparosSpriteID")->GetText();
 	int x, y, velocidadDisparos;
 	e->FirstChildElement("posicion")->FirstChildElement("x")->QueryIntText(&x);
 	e->FirstChildElement("posicion")->FirstChildElement("y")->QueryIntText(&y);
 	e->FirstChildElement("velocidadDisparos")->QueryIntText(&velocidadDisparos);
 	strcpy(enemigoConf->tipo, tipo.c_str());
+	strcpy(enemigoConf->disparosSpriteID, disparosSpriteID.c_str());
 	enemigoConf->x = x;
 	enemigoConf->y = y;
 	enemigoConf->velocidadDisparos = velocidadDisparos;
