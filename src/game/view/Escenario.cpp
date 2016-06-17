@@ -43,6 +43,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client) {
 	flota = 0;
 
 	hEnemigos = new HandlerEnemigos(gRenderer, resolucion, escenarioScreen, gc);
+	this->unCliente->setEnemyHandler(hEnemigos);
 }
 
 Escenario::~Escenario() {
@@ -194,6 +195,7 @@ void Escenario::configurarPowerUps() {
 }
 
 void Escenario::configurarEnemigos() {
+/*
 	if (gc->enemigos.size() <= 0) return;
 
 	for (int i = 0; i < gc->enemigos.size(); i++) {
@@ -216,7 +218,8 @@ void Escenario::configurarEnemigos() {
 		} else if (tipo == "flota") {
 			crearFlota(x, y);
 		}
-
+*/
+	hEnemigos->createEnemigo(1,"r", 200, 200);
 	}
 
 }
