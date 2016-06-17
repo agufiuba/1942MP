@@ -969,9 +969,11 @@ void Server::sendEnemyData( EnemyData* data ) {
   for ( map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end();
 	++it ) {
-    Transmitter* tmt = new Transmitter( it->first, this->logger );
-    tmt->sendData( data );
-    delete tmt;
+    if ( it->second->isActive() ) {
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendData( data );
+      delete tmt;
+    }
   }
 
   delete data;
