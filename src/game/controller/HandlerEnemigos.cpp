@@ -51,19 +51,34 @@ void HandlerEnemigos::matar(int id) {
 }
 
 void HandlerEnemigos::mover(int id, char evento) {
-
 	Enemy* enemigo = mapaEnemigos[id];
 
-	switch(evento) {
-		case 'R': this->velX += velocidadStandard; break; 		//Derecha
-		case 'L': this->velX -= velocidadStandard; break; 		//Izquierda
-		case 'U': this->velY += velocidadStandard; break; 		//Arriba
-		case 'D': this->velY -= velocidadStandard; break; 		//Abajo
-		case 'S': enemigo->disparar()	; break; 								//Disparar
+	if (enemigo != NULL) {
+		switch(evento) {
+			case 'R': if (velX <= 0){
+									this->velX = velocidadStandard;
+								}
+									break; 		//Derecha
+			case 'L': if (velX >= 0){
+									this->velX = -velocidadStandard;
+								}
+									break; 		//Izquierda
+			case 'U': if (velY <= 0){
+									this->velY = velocidadStandard;
+								}
+									break; 		//Arriba
+			case 'D': if (velY >= 0){
+									this->velY = -velocidadStandard;
+								}
+									break; 		//Abajo
 
-		case 'X': enemigo->morir();
-							this->matar(id);
-							break;									//Morir
+			case 'S': enemigo->disparar()	; break; 								//Disparar
+
+			case 'X': enemigo->morir();
+								this->matar(id);
+								break;									//Morir
+
+		}
 	}
 }
 
