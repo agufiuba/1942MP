@@ -42,72 +42,6 @@ ServerAvionEnemigoRandom::~ServerAvionEnemigoRandom(){
 	delete posicion;
 }
 
-string ServerAvionEnemigoRandom::getId() {
-	return this->id;
-}
-
-int ServerAvionEnemigoRandom::getX(){
-	return posicion->getX();
-}
-
-int ServerAvionEnemigoRandom::getY(){
-	return posicion->getY();
-}
-
-int ServerAvionEnemigoRandom::getAnchoFondo() {
-	return anchoFondo;
-}
-
-int ServerAvionEnemigoRandom::getLargoFondo() {
-	return largoFondo;
-}
-
-int ServerAvionEnemigoRandom::getLargo() {
-	return largoVista;
-}
-
-int ServerAvionEnemigoRandom::getAncho() {
-	return anchoVista;
-}
-
-void ServerAvionEnemigoRandom::disparar() {
-	if (contador >= tiempoEntreDisparo){
-		//TODO: hay que agregar el envio de que dispare
-		contador = 0;
-	}
-		contador ++;
-}
-
-bool ServerAvionEnemigoRandom::aunVive(){
-	return viviendo;
-}
-
-void ServerAvionEnemigoRandom::recibirMisil(Misil* misil) {
-	if (tieneHP()) {
-		this->vida -= misil->getDano();
-		cout << "La vida actual es " << this->vida << endl;
-	}
-	if(!tieneHP()){
-		viviendo = false;
-	}
-}
-
-bool ServerAvionEnemigoRandom::tieneHP() {
-	return (this->vida > 0);
-}
-
-void ServerAvionEnemigoRandom::setHP(int hp) {
-	this->vida = hp;
-}
-
-void ServerAvionEnemigoRandom::morir(){
-	this->setHP(0);
-}
-
-Posicion* ServerAvionEnemigoRandom::getPosicion() {
-	return this->posicion;
-}
-
 void ServerAvionEnemigoRandom::mover() {
 	int x, y;
 	time_t temp = time(0);
@@ -135,16 +69,3 @@ void ServerAvionEnemigoRandom::mover() {
 	moverEjeY(y);
 }
 
-void ServerAvionEnemigoRandom::moverEjeX(int velX) {
-	posicion->mover(velX,0);
-	if ((posicion->getX() < 0) || (posicion->getX() + anchoVista > anchoFondo)) {
-		posicion->mover(-velX,0);
-	}
-}
-
-void ServerAvionEnemigoRandom::moverEjeY(int velY) {
-	posicion->mover(0,velY);
-	if ((posicion->getY() - largoVista < 0) || (posicion->getY() > largoFondo)) {
-		posicion->mover(0,-velY);
-	}
-}

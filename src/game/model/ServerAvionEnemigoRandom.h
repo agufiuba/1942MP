@@ -24,62 +24,13 @@
 #include "../view/Screen.h"
 #include "../controller/ControllerMissilesEnemy.h"
 
-class ServerAvionEnemigoRandom {
-private:
-
-	string id;
-	int anchoFondo, largoFondo;
-	int vida;
-	bool viviendo;
-
-	int anchoVista;
-	int largoVista;
-
-	Timer* t;
-
-	Posicion* posicion;
-
-	int contador;
-	int tiempoEntreDisparo;
-
-	void moverEjeX(int velX);
-	void moverEjeY(int velY);
-
-	int angleX;
-	int angleY;
-
-	Avion* avionApuntado;
+class ServerAvionEnemigoRandom :public ServerAvionEnemigo{
 
 public:
 	ServerAvionEnemigoRandom(Posicion* posicionInicial, Avion* avionApuntado);
 	~ServerAvionEnemigoRandom();
 
-	string getId();
-	int getAnchoFondo();
-	int getLargoFondo();
-	int getAncho();
-	int getLargo();
-	int getX();
-	int getY();
-	int getVida();
-
 	void mover();
-
-	bool aunVive();
-	void morir();
-
-	bool tieneHP();
-	void setHP(int hp);
-	void recibirMisil(Misil* misil);
-
-	void disparar();
-
-	Posicion* getPosicion();
-
-	bool firsttime;
-	struct tm* tm;
-	int secsRandom;
-	chrono::time_point<chrono::system_clock> nFlota;
 };
 
 #endif /* SRC_GAME_MODEL_SERVERAVIONENEMIGORANDOM_H_ */
