@@ -7,7 +7,7 @@
 
 #include "ServerAvionEnemigo.h"
 
-ServerAvionEnemigo::ServerAvionEnemigo(Posicion* posicionInicial) {
+ServerAvionEnemigo::ServerAvionEnemigo( int id, Posicion* posicionInicial ) {
 
 	this->id = id;
 	this->vida = 1;
@@ -41,7 +41,7 @@ ServerAvionEnemigo::~ServerAvionEnemigo(){
 	delete posicion;
 }
 
-string ServerAvionEnemigo::getId() {
+int ServerAvionEnemigo::getId() {
 	return this->id;
 }
 

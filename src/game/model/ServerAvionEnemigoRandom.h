@@ -28,7 +28,7 @@
 class ServerAvionEnemigoRandom :public ServerAvionEnemigo{
 
 public:
-	ServerAvionEnemigoRandom(Posicion* posicionInicial);
+	ServerAvionEnemigoRandom( int id, Posicion* posicionInicial);
 	~ServerAvionEnemigoRandom();
 
 	EnemyData* vivir();

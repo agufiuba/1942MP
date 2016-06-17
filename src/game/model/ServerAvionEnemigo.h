@@ -28,7 +28,7 @@
 class ServerAvionEnemigo {
 protected:
 
-	string id;
+	int id;
 	int anchoFondo, largoFondo;
 	int vida;
 	bool viviendo;
@@ -52,9 +52,9 @@ protected:
 	Avion* avionApuntado;
 
 public:
-	ServerAvionEnemigo(Posicion* posicionInicial);
+	ServerAvionEnemigo( int id, Posicion* posicionInicial );
 	~ServerAvionEnemigo();
-	string getId();
+	int getId();
 	int getAnchoFondo();
 	int getLargoFondo();
 	int getAncho();

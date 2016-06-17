@@ -7,7 +7,8 @@
 
 #include "ServerAvionEnemigoRandom.h"
 
-ServerAvionEnemigoRandom::ServerAvionEnemigoRandom(Posicion* posicionInicial):ServerAvionEnemigo(posicionInicial) {
+ServerAvionEnemigoRandom::ServerAvionEnemigoRandom( int id, Posicion* posicionInicial
+):ServerAvionEnemigo(id, posicionInicial) {
 
 }
 
@@ -20,7 +21,7 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 	enum Direction { U, D, R, L };
 	Direction d;
 	EnemyData* ed = new EnemyData;
-	strcpy( ed->id, ( this->id ).c_str() );
+	ed->id = this->id;
 	time_t temp = time(0);
 	localtime(&temp);
 
