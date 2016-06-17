@@ -196,6 +196,8 @@ void Escenario::configurarEnemigos() {
 
 	for (int i = 0; i < gc->enemigos.size(); i++) {
 		string tipo = gc->enemigos[i]->tipo;
+		string disparosSpriteId = gc->enemigos[i]->disparosSpriteID;
+		cout << "Disparo sprite id " << disparosSpriteId << endl;
 		int velocidadDisparos = gc->enemigos[i]->velocidadDisparos;
 		int x = gc->enemigos[i]->x;
 		int y = gc->enemigos[i]->y;
