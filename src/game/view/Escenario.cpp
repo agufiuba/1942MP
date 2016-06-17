@@ -43,6 +43,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client) {
 	flota = 0;
 	hEnemigos = new HandlerEnemigos(gRenderer, resolucion, escenarioScreen, gc);
 	this->unCliente->setEnemyHandler(hEnemigos);
+	youWin = new Sound("youWin.wav");
 	gameOver = new Sound("gameOver.wav");
 }
 
@@ -374,10 +375,7 @@ SDL_Event* Escenario::run() {
 	}
 
 	if (ultimoNivelJugado == CANTIDAD_NIVELES) {
-		musica->stop();
-		gameOver->play();
-		loadScoreScreen(-1);
-		cout << "GAME OVER" << endl;
+		loadScoreScreen(0);
 	}
 
 	delete posicionEscenario;
@@ -411,6 +409,7 @@ void Escenario::limpiarFondosVivibles() {
 }
 
 void Escenario::loadScoreScreen( int stage ) {
+	musica->fadeOut(4000);
   // load score data
   this->loadScoreData();
 
@@ -459,10 +458,12 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   string buttonText = "Continue";
   // win screen
   if ( stage == 0 ) {
+	  youWin->play();
     stageCompleteText = "Congratulations. You Win !!";
     buttonText = "Finish";
   // game over screen
   } else if ( stage == -1 ) {
+	  gameOver->play();
     stageCompleteText = "Game Over";
     buttonText = "Finish";
     // Load skull image
@@ -665,10 +666,12 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
   string buttonText = "Continue";
   // win screen
   if ( stage == 0 ) {
+	  youWin->play();
     stageCompleteText = "Congratulations. You Win !!";
     buttonText = "Finish";
   // game over screen
   } else if ( stage == -1 ) {
+	  gameOver->play();
     stageCompleteText = "Game Over";
     buttonText = "Finish";
     // Load skull image

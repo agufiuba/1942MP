@@ -83,6 +83,7 @@ private:
 	GameConf* gc;
 	Client* unCliente;
 	Music* musica;
+	Sound* youWin;
 	Sound* gameOver;
 
 	void actualizarEscenario(Posicion* posicion);
