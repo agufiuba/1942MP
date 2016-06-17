@@ -121,6 +121,4 @@ void ServerAvionEnemigo::moverEjeY(int velY) {
 	}
 }
 
-void ServerAvionEnemigo::vivir(){
-
-}
+EnemyData* ServerAvionEnemigo::vivir() {}

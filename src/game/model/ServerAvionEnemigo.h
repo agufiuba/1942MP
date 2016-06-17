@@ -17,6 +17,7 @@
 #include "Resolucion.h"
 #include "../model/Posicion.h"
 #include "../../libs/data/player_data.h"
+#include "../../libs/data/enemy_data.h"
 #include "../../xml/conf/AvionConf.h"
 #include <string>
 #include "Misil.h"
@@ -62,7 +63,7 @@ public:
 	int getY();
 	int getVida();
 
-	virtual void vivir();
+	virtual EnemyData* vivir();
 
 	bool aunVive();
 	void morir();
