@@ -65,7 +65,7 @@ bool Transmitter::sendData( EnemyData* data ) {
 	return false;
   }
   // Send data
-  if( send( this->peerFD, data, sizeof( PlayerData ), 0 ) == -1 ) {
+  if( send( this->peerFD, data, sizeof( EnemyData ), 0 ) == -1 ) {
     this->logger->error( SEND_FAIL );
     DEBUG_WARN( SEND_FAIL );
     return false;
