@@ -1,8 +1,8 @@
 #ifndef ENEMY_DATA_H
 #define ENEMY_DATA_H
 typedef struct EnemyData {
-  char id[15];
-  char playerID[15];
+  int id;
   char direction;
+  char playerID[15];
 } EnemyData;
 #endif
