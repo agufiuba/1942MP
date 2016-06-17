@@ -958,7 +958,6 @@ void Server::makeEnemyMove() {
 		if (i >= 1000000000) {
 			cout << "corriendo " << i << endl;
 			avionEnemigo->vivir();
-			cout << "EnemigoPosX: "<< avionEnemigo->getY() << "EnemigoPosY: "<< avionEnemigo->getX() << endl;
 			i = 0;
 		}
 		i++;
