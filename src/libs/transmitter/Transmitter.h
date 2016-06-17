@@ -7,6 +7,7 @@
 #include "../data/active_players.h"
 #include "../data/stage_data.h"
 #include "../data/game_data.h"
+#include "../data/enemy_data.h"
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
 #include "../../xml/conf/AvionConf.h"
@@ -31,6 +32,7 @@ class Transmitter {
     bool sendData( PlayerData* data );
     bool sendData( PlayerScore* data, string id = "SP" );
     bool sendData( PlanesActives* data );
+    bool sendData( EnemyData* data );
     bool sendData( PlayerStatus* data );
     bool sendData( PlayerData* data, string s );
     bool sendData( Evento* e );
@@ -53,6 +55,7 @@ class Transmitter {
     int receiveData( StageData* data );
     int receiveData( PlayerStatus* data );
     int receiveData( PlanesActives* data );
+    int receiveData( EnemyData* data );
     int receiveData( AvionConf* data );
     int receiveData( ElementoConf* data );
     int receiveData( PowerUpConf* data );

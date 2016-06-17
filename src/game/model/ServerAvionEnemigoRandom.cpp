@@ -7,7 +7,8 @@
 
 #include "ServerAvionEnemigoRandom.h"
 
-ServerAvionEnemigoRandom::ServerAvionEnemigoRandom(Posicion* posicionInicial):ServerAvionEnemigo(posicionInicial) {
+ServerAvionEnemigoRandom::ServerAvionEnemigoRandom( int id, Posicion* posicionInicial
+):ServerAvionEnemigo(id, posicionInicial) {
 
 }
 
@@ -16,30 +17,44 @@ ServerAvionEnemigoRandom::~ServerAvionEnemigoRandom(){
 	delete posicion;
 }
 
-void ServerAvionEnemigoRandom::vivir() {
-	int x, y;
+EnemyData* ServerAvionEnemigoRandom::vivir() {
+	enum Direction { U, D, R, L };
+	Direction d;
+	EnemyData* ed = new EnemyData;
+	ed->id = this->id;
 	time_t temp = time(0);
 	localtime(&temp);
 
 	if ((tm->tm_sec - secsRandom) < 1 && !firsttime) {
-		x = angleX;
-		y = angleY;
-	}
-	else {
+	  ed->direction = 'N';	  
+	} else {
 		srand(time(NULL));
-		x = rand() % 11 - 5;
-		y = rand() % 11 - 5;
+		d = static_cast<Direction>( rand() % 5 );
 
-		// centrar +/-
-		x -= (posicion->getX() - anchoFondo / 2) / 120;
-		y -= (posicion->getY() - largoFondo / 2) / 150;
+		switch( d ) {
+		  case U:
+		    cout << "UP" << endl;
+		    ed->direction = 'U';	  
+		    break;
+		  case D:
+		    cout << "DOWN" << endl;
+		    ed->direction = 'D';	  
+		    break;
+		  case R:
+		    cout << "RIGHT" << endl;
+		    ed->direction = 'R';	  
+		    break;
+		  case L:
+		    cout << "LEFT" << endl;
+		    ed->direction = 'L';	  
+		    break;
+		  default:
+		    break;
+		}
+		
 		firsttime = false;
-		angleX = x;
-		angleY = y;
 		secsRandom = tm->tm_sec;
 	}
 
-	moverEjeX(x);
-	moverEjeY(y);
+	return ed;
 }
-

@@ -28,10 +28,10 @@
 class ServerAvionEnemigoRandom :public ServerAvionEnemigo{
 
 public:
-	ServerAvionEnemigoRandom(Posicion* posicionInicial);
+	ServerAvionEnemigoRandom( int id, Posicion* posicionInicial);
 	~ServerAvionEnemigoRandom();
 
-	void vivir();
+	EnemyData* vivir();
 };
 
 #endif /* SRC_GAME_MODEL_SERVERAVIONENEMIGORANDOM_H_ */

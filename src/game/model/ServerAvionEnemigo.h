@@ -17,6 +17,7 @@
 #include "Resolucion.h"
 #include "../model/Posicion.h"
 #include "../../libs/data/player_data.h"
+#include "../../libs/data/enemy_data.h"
 #include "../../xml/conf/AvionConf.h"
 #include <string>
 #include "Misil.h"
@@ -27,7 +28,7 @@
 class ServerAvionEnemigo {
 protected:
 
-	string id;
+	int id;
 	int anchoFondo, largoFondo;
 	int vida;
 	bool viviendo;
@@ -51,9 +52,9 @@ protected:
 	Avion* avionApuntado;
 
 public:
-	ServerAvionEnemigo(Posicion* posicionInicial);
+	ServerAvionEnemigo( int id, Posicion* posicionInicial );
 	~ServerAvionEnemigo();
-	string getId();
+	int getId();
 	int getAnchoFondo();
 	int getLargoFondo();
 	int getAncho();
@@ -62,7 +63,7 @@ public:
 	int getY();
 	int getVida();
 
-	virtual void vivir();
+	virtual EnemyData* vivir();
 
 	bool aunVive();
 	void morir();

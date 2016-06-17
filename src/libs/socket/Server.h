@@ -10,6 +10,7 @@
 #include "../../libs/data/planes_actives.h"
 #include "../../libs/data/stage_data.h"
 #include "../../libs/data/game_data.h"
+#include "../../libs/data/enemy_data.h"
 #include "../../game/model/Player.h"
 #include "../../game/model/ServerAvionEnemigoRandom.h"
 #include <queue>
@@ -80,6 +81,7 @@ class Server {
     void sendCoopLose();
     void checkAliveClose( int clientFD );
     void makeEnemyMove();
+    void sendEnemyData( EnemyData* data );
 
   public:
     Server( const char* configFileName );
