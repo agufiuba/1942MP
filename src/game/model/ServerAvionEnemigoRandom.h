@@ -31,7 +31,7 @@ public:
 	ServerAvionEnemigoRandom(Posicion* posicionInicial);
 	~ServerAvionEnemigoRandom();
 
-	void vivir();
+	EnemyData* vivir();
 };
 
 #endif /* SRC_GAME_MODEL_SERVERAVIONENEMIGORANDOM_H_ */
