@@ -22,12 +22,7 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 	Direction d;
 	EnemyData* ed = new EnemyData;
 	ed->id = this->id;
-	time_t temp = time(0);
-	localtime(&temp);
-
-	if ((tm->tm_sec - secsRandom) < 1 && !firsttime) {
-	  ed->direction = 'N';	  
-	} else {
+		
 		srand(time(NULL));
 		d = static_cast<Direction>( rand() % 4 );
 
@@ -48,13 +43,7 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 		    cout << "LEFT" << endl;
 		    ed->direction = 'L';	  
 		    break;
-		  default:
-		    break;
 		}
 		
-		firsttime = false;
-		secsRandom = tm->tm_sec;
-	}
-
 	return ed;
 }
