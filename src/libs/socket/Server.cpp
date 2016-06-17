@@ -962,6 +962,8 @@ void Server::makeEnemyMove() {
 			// TODO: review implementation of vivir() method
 			if ( data->direction != 'N' )
 			  this->sendEnemyData( data ); 
+
+			delete data;
 			i = 0;
 		}
 		i++;
@@ -978,8 +980,6 @@ void Server::sendEnemyData( EnemyData* data ) {
       delete tmt;
     }
   }
-
-  delete data;
 }
 
 void Server::setTeamPlayer(int team, int cliendFd){
