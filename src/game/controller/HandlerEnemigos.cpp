@@ -9,10 +9,11 @@
 
 using namespace std;
 
-HandlerEnemigos::HandlerEnemigos(SDL_Renderer* renderer, Resolucion* resolucion, Screen* screen) {
+HandlerEnemigos::HandlerEnemigos(SDL_Renderer* renderer, Resolucion* resolucion, Screen* screen, GameConf* gc) {
 	this->renderer = renderer;
 	this->resolucion = resolucion;
 	this->screen = screen;
+	this->gc = gc;
 
 	this->velocidadStandard = 10;
 	this->velX = 0;
@@ -26,11 +27,9 @@ HandlerEnemigos::~HandlerEnemigos() {
 }
 
 void HandlerEnemigos::createEnemigo(string id, string type, int posX, int posY) {
-	//if (type == "random") {
-		//(escenarioScreen, gRenderer, resolucion, p, gc->avion, (Avion*)myControl->getVivible());
-		//Vivible* enemigo = new Enemy(screen, renderer, resolucion, new Posicion(posX, posY), , );
-	//}
-	//this->mapaEnemigos[id] = enemigo;
+		Posicion* p = new Posicion(posX, posY);
+		Enemy* enemy = new Enemy(screen, renderer, resolucion, p, gc->avion);
+		mapaEnemigos[id] = enemy;
 }
 
 void HandlerEnemigos::hacerVivir() {

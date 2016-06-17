@@ -53,10 +53,9 @@ private:
 	ControllerMissilesEnemy* controlDeMisiles;
 	MisilConf* misilConf;
 	Resolucion* resolucion;
-	Avion* avionApuntado;
 
 public:
-	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf, Avion* avionApuntado);
+	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf);
 	~Enemy();
 
 	string getId();

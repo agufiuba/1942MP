@@ -42,7 +42,7 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client) {
 	this->teamBetaScoreView = NULL;
 	flota = 0;
 
-	hEnemigos = new HandlerEnemigos(gRenderer, resolucion, escenarioScreen);
+	hEnemigos = new HandlerEnemigos(gRenderer, resolucion, escenarioScreen, gc);
 }
 
 Escenario::~Escenario() {
@@ -204,13 +204,11 @@ void Escenario::configurarEnemigos() {
 		int x = gc->enemigos[i]->x;
 		int y = gc->enemigos[i]->y;
 
-		hEnemigos->createEnemigo("1", "random", x, y);
-
 		//TODO: Cambiar constructor de creador de enemigos.
 		// Hay que incluir la velocidad de disparos, pedido por Key
 
 		if (tipo == "pequeno") {
-			crearEnemigo(x, y);
+			hEnemigos->createEnemigo("1", "random", x, y);
 		} else if (tipo == "mediano") {
 			//TODO: Crear enemigo mediano
 		} else if (tipo == "grande") {
@@ -926,16 +924,10 @@ void Escenario::getPowerUp() {
 		}
 }
 
-void Escenario::crearEnemigo(int x, int y) {
-	Posicion* p = new Posicion(x, y);
-	Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion, (Avion*)myControl->getVivible());
-	enemigos.push_back(e);
-}
-
 void Escenario::crearFlota(int x, int y) {
     for (int i = 0; i < 5; i++) {
         Posicion* p = new Posicion(x, y);
-        Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion, (Avion*)myControl->getVivible());
+        Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
         e->flota = flota;
         e->posFlota = i;
         enemigos.push_back(e);

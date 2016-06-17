@@ -117,7 +117,6 @@ public:
 	void setPlayer(Player* player);
 	void configurarAvionAmigo(PlayerData* playerData);
 	void configurarMiAvion(PlayerData* playerData);
-	void crearEnemigo(int, int);
     void crearFlota(int, int);
     int flota;
 };

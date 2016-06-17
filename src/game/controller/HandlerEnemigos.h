@@ -23,12 +23,13 @@ private:
 	SDL_Renderer* renderer;
 	Resolucion* resolucion;
 	Screen* screen;
+	GameConf* gc;
 	int velocidadStandard;
 	int velX,velY;
 
 public:
 	map<string, Vivible*> mapaEnemigos;
-	HandlerEnemigos(SDL_Renderer* renderer, Resolucion* resolucion, Screen* screen);
+	HandlerEnemigos(SDL_Renderer* renderer, Resolucion* resolucion, Screen* screen, GameConf* gc);
 	virtual ~HandlerEnemigos();
 	void mover(string id, char event);
 	void createEnemigo(string id, string type, int posX, int posY);
