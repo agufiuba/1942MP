@@ -951,17 +951,30 @@ void Server::sendPlayersReady(){
 
 void Server::makeEnemyMove() {
 	int i = 0;
-
+	EnemyData* data;
 	ServerAvionEnemigo* avionEnemigo = new ServerAvionEnemigoRandom(new Posicion(500, 500));
 
 	while (this->running) {
 		if (i >= 1000000000) {
 			cout << "corriendo " << i << endl;
-			avionEnemigo->vivir();
+			data = avionEnemigo->vivir();
+			this->sendEnemyData( data ); 
 			i = 0;
 		}
 		i++;
 	}
+}
+
+void Server::sendEnemyData( EnemyData* data ) {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    Transmitter* tmt = new Transmitter( it->first, this->logger );
+    tmt->sendData( data );
+    delete tmt;
+  }
+
+  delete data;
 }
 
 void Server::setTeamPlayer(int team, int cliendFd){
