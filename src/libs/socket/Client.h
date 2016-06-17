@@ -1,5 +1,6 @@
 #ifndef CLIENT_H
 #define CLIENT_H
+#include "../data/enemy_data.h"
 #include "../data/player_data.h"
 #include "../data/player_status.h"
 #include "../data/player_score.h"

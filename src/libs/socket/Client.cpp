@@ -432,6 +432,9 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			 } else if ( dataID == "OK" ){
 //			   cout<<"Llega el OK"<<endl;
 			   this->ready = true;
+			 } else if ( dataID == "ED" ) {
+				 	EnemyData* data = new EnemyData;
+			    this->hEnemigos->mover(data->id, data->direction);
 			 }
 		}
 
