@@ -950,14 +950,12 @@ void Server::sendPlayersReady(){
 }
 
 void Server::makeEnemyMove() {
-	int i = 0;
 	EnemyData* data;
 	int enemyID = 1;
 	ServerAvionEnemigo* avionEnemigo = new ServerAvionEnemigoRandom( enemyID, new Posicion(500, 500));
-
+	
+	usleep( 1000000 );
 	while (this->running) {
-		if (i >= 1000000000) {
-			cout << "corriendo " << i << endl;
 			data = avionEnemigo->vivir();
 			// send on valid direction
 			// TODO: review implementation of vivir() method
@@ -965,9 +963,7 @@ void Server::makeEnemyMove() {
 			  this->sendEnemyData( data ); 
 
 			delete data;
-			i = 0;
-		}
-		i++;
+			usleep ( 25000 );
 	}
 }
 

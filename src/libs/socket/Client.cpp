@@ -434,7 +434,11 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			   this->ready = true;
 			 } else if ( dataID == "ED" ) {
 				 	EnemyData* data = new EnemyData;
-			    this->hEnemigos->mover(data->id, data->direction);
+					if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
+					  cout << "ID: " << to_string( data->id ) << endl;
+					  cout << "DIRECTION: " << data->direction << endl;
+					  this->hEnemigos->mover(data->id, data->direction);
+					}
 			 }
 		}
 
