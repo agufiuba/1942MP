@@ -636,7 +636,7 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
     scoreScreen->renderTexture( "buttonText", buttonTextCenter, 605 );
 
     if( clicked ) {
-      clicked = false;
+    	clicked = false;
       if( ( mouseX > buttonCenter ) && ( mouseX < ( buttonCenter + 250 ) )
 	  && ( mouseY > 600 ) && ( mouseY < ( 600 + 50 ) ) ) {
 	// send ready signal
@@ -944,15 +944,15 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 			int xp = x + (*it)->getAncho();
 			int y = (*it)->posY;
 			int yp = y + (*it)->getLargo();
-			for (int var = 0; var < hEnemigos->mapaEnemigos.size(); ++var) {
-				int x2 = hEnemigos->getEnemigo(var)->getX();
-				int x2p = x2 + hEnemigos->getEnemigo(var)->getAncho()-5;
-				int y2 = hEnemigos->getEnemigo(var)->getY();
-				int y2p = y2 + hEnemigos->getEnemigo(var)->getLargo()-5;
+			for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
+				int x2 = hEnemigos->getEnemigo(itEnemigo->first)->getX();
+				int x2p = x2 + hEnemigos->getEnemigo(itEnemigo->first)->getAncho()-5;
+				int y2 = hEnemigos->getEnemigo(itEnemigo->first)->getY();
+				int y2p = y2 + hEnemigos->getEnemigo(itEnemigo->first)->getLargo()-5;
 				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-				if (touched && hEnemigos->getEnemigo(var)->aunVive()) {
+				if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 					cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
-					hEnemigos->getEnemigo(var)->recibirMisil((Misil*)*it);
+					hEnemigos->getEnemigo(itEnemigo->first)->recibirMisil((Misil*)*it);
 					(*it)->morir();
 				}
 			}
@@ -967,20 +967,20 @@ void Escenario::planesColision(){
 		int y = avion->getY();
 		int xp = x + avion->getAncho()-5;
 		int yp = y + avion->getLargo()-5;
-		for (int var = 0; var < hEnemigos->mapaEnemigos.size(); ++var) {
-			int x2 = hEnemigos->getEnemigo(var)->getX();
-			int x2p = x2 + hEnemigos->getEnemigo(var)->getAncho();
-			int y2 = hEnemigos->getEnemigo(var)->getY();
-			int y2p = y2 + hEnemigos->getEnemigo(var)->getLargo();
+		for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
+			int x2 = hEnemigos->getEnemigo(itEnemigo->first)->getX();
+			int x2p = x2 + hEnemigos->getEnemigo(itEnemigo->first)->getAncho();
+			int y2 = hEnemigos->getEnemigo(itEnemigo->first)->getY();
+			int y2p = y2 + hEnemigos->getEnemigo(itEnemigo->first)->getLargo();
 			touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-			if (touched && hEnemigos->getEnemigo(var)->aunVive()) {
+			if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 				cout << "**** CHOQUE: ENEMIGOS VS MI AVION ****" << endl;
-				hEnemigos->getEnemigo(var)->morir();
+				hEnemigos->getEnemigo(itEnemigo->first)->morir();
 				this->player->die();
 				myControl->getVivible()->morir();
 				this->unCliente->sendPlayerDeath();
 			}
-			this->hitPlanes(&(hEnemigos->getEnemigo(var)->getControllerMissiles()->getVivibles()->vectorObjetos), avion);
+			this->hitPlanes(&(hEnemigos->getEnemigo(itEnemigo->first)->getControllerMissiles()->getVivibles()->vectorObjetos), avion);
 		}
 	}
 }
@@ -995,18 +995,18 @@ void Escenario::enemyOtherPlayerColision() {
 			int xp = x + it->second->getVivible()->getAncho();
 			int y = it->second->getVivible()->getY();
 			int yp = y + it->second->getVivible()->getLargo();
-			for (int var = 0; var < hEnemigos->mapaEnemigos.size(); ++var) {
-				int x2 = hEnemigos->getEnemigo(var)->getX();
-				int x2p = x2 + hEnemigos->getEnemigo(var)->getAncho();
-				int y2 = hEnemigos->getEnemigo(var)->getY();
-				int y2p = y2 + hEnemigos->getEnemigo(var)->getLargo();
+			for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
+				int x2 = hEnemigos->getEnemigo(itEnemigo->first)->getX();
+				int x2p = x2 + hEnemigos->getEnemigo(itEnemigo->first)->getAncho();
+				int y2 = hEnemigos->getEnemigo(itEnemigo->first)->getY();
+				int y2p = y2 + hEnemigos->getEnemigo(itEnemigo->first)->getLargo();
 				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-				if (touched && hEnemigos->getEnemigo(var)->aunVive()) {
+				if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 					cout << "**** CHOQUE: ENEMIGOS VS AVION DE OTRO JUGADOR ****" << endl;
-					hEnemigos->getEnemigo(var)->morir();
+					hEnemigos->getEnemigo(itEnemigo->first)->morir();
 					it->second->getVivible()->morir();
 				}
-				this->hitPlanes(&(hEnemigos->getEnemigo(var)->getControllerMissiles()->getVivibles()->vectorObjetos),it->second->getVivible());
+				this->hitPlanes(&(hEnemigos->getEnemigo(itEnemigo->first)->getControllerMissiles()->getVivibles()->vectorObjetos),it->second->getVivible());
 			}
 			this->hitEnemy(&(it->second->getMissiles()->getVivibles()->vectorObjetos));
 		}
