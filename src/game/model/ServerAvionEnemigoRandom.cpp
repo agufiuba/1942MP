@@ -7,7 +7,7 @@
 
 #include "ServerAvionEnemigoRandom.h"
 
-ServerAvionEnemigoRandom::ServerAvionEnemigoRandom(Posicion* posicionInicial):ServerAvionEnemigo(Posicion* posicionInicial) {
+ServerAvionEnemigoRandom::ServerAvionEnemigoRandom(Posicion* posicionInicial):ServerAvionEnemigo(posicionInicial) {
 
 }
 

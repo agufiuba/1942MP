@@ -120,3 +120,7 @@ void ServerAvionEnemigo::moverEjeY(int velY) {
 		posicion->mover(0,-velY);
 	}
 }
+
+void ServerAvionEnemigo::vivir(){
+
+}

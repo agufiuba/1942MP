@@ -952,12 +952,13 @@ void Server::sendPlayersReady(){
 void Server::makeEnemyMove() {
 	int i = 0;
 
-	ServerAvionEnemigoRandom* avionEnemigo = new ServerAvionEnemigoRandom(new Posicion(500, 500));
+	ServerAvionEnemigo* avionEnemigo = new ServerAvionEnemigoRandom(new Posicion(500, 500));
 
 	while (this->running) {
 		if (i >= 1000000000) {
 			cout << "corriendo " << i << endl;
 			avionEnemigo->vivir();
+			cout << "EnemigoPosX: "<< avionEnemigo->getY() << "EnemigoPosY: "<< avionEnemigo->getX() << endl;
 			i = 0;
 		}
 		i++;
