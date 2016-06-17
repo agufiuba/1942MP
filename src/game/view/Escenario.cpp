@@ -208,7 +208,7 @@ void Escenario::configurarEnemigos() {
 		// Hay que incluir la velocidad de disparos, pedido por Key
 
 		if (tipo == "pequeno") {
-			hEnemigos->createEnemigo("1", "random", x, y);
+			hEnemigos->createEnemigo(1,"r", x, y);
 		} else if (tipo == "mediano") {
 			//TODO: Crear enemigo mediano
 		} else if (tipo == "grande") {
@@ -930,7 +930,7 @@ void Escenario::crearFlota(int x, int y) {
         Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
         e->flota = flota;
         e->posFlota = i;
-        enemigos.push_back(e);
+        //enemigos.push_back(e);
     }
     flota++;
 }
@@ -943,15 +943,15 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 			int xp = x + (*it)->getAncho();
 			int y = (*it)->posY;
 			int yp = y + (*it)->getLargo();
-			for (int var = 0; var < enemigos.size(); ++var) {
-				int x2 = enemigos[var]->getX();
-				int x2p = x2 + enemigos[var]->getAncho()-5;
-				int y2 = enemigos[var]->getY();
-				int y2p = y2 + enemigos[var]->getLargo()-5;
+			for (int var = 0; var < hEnemigos->mapaEnemigos.size(); ++var) {
+				int x2 = hEnemigos->getEnemigo(var)->getX();
+				int x2p = x2 + hEnemigos->getEnemigo(var)->getAncho()-5;
+				int y2 = hEnemigos->getEnemigo(var)->getY();
+				int y2p = y2 + hEnemigos->getEnemigo(var)->getLargo()-5;
 				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-				if (touched && enemigos[var]->aunVive()) {
+				if (touched && hEnemigos->getEnemigo(var)->aunVive()) {
 					cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
-					enemigos[var]->recibirMisil((Misil*)*it);
+					hEnemigos->getEnemigo(var)->recibirMisil((Misil*)*it);
 					(*it)->morir();
 				}
 			}
@@ -966,20 +966,20 @@ void Escenario::planesColision(){
 		int y = avion->getY();
 		int xp = x + avion->getAncho()-5;
 		int yp = y + avion->getLargo()-5;
-		for (int var = 0; var < enemigos.size(); ++var) {
-			int x2 = enemigos[var]->getX();
-			int x2p = x2 + enemigos[var]->getAncho();
-			int y2 = enemigos[var]->getY();
-			int y2p = y2 + enemigos[var]->getLargo();
+		for (int var = 0; var < hEnemigos->mapaEnemigos.size(); ++var) {
+			int x2 = hEnemigos->getEnemigo(var)->getX();
+			int x2p = x2 + hEnemigos->getEnemigo(var)->getAncho();
+			int y2 = hEnemigos->getEnemigo(var)->getY();
+			int y2p = y2 + hEnemigos->getEnemigo(var)->getLargo();
 			touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-			if (touched && enemigos[var]->aunVive()) {
+			if (touched && hEnemigos->getEnemigo(var)->aunVive()) {
 				cout << "**** CHOQUE: ENEMIGOS VS MI AVION ****" << endl;
-				enemigos[var]->morir();
+				hEnemigos->getEnemigo(var)->morir();
 				this->player->die();
 				myControl->getVivible()->morir();
 				this->unCliente->sendPlayerDeath();
 			}
-			this->hitPlanes(&(enemigos[var]->getControllerMissiles()->getVivibles()->vectorObjetos), avion);
+			this->hitPlanes(&(hEnemigos->getEnemigo(var)->getControllerMissiles()->getVivibles()->vectorObjetos), avion);
 		}
 	}
 }
@@ -994,18 +994,18 @@ void Escenario::enemyOtherPlayerColision() {
 			int xp = x + it->second->getVivible()->getAncho();
 			int y = it->second->getVivible()->getY();
 			int yp = y + it->second->getVivible()->getLargo();
-			for (int var = 0; var < enemigos.size(); ++var) {
-				int x2 = enemigos[var]->getX();
-				int x2p = x2 + enemigos[var]->getAncho();
-				int y2 = enemigos[var]->getY();
-				int y2p = y2 + enemigos[var]->getLargo();
+			for (int var = 0; var < hEnemigos->mapaEnemigos.size(); ++var) {
+				int x2 = hEnemigos->getEnemigo(var)->getX();
+				int x2p = x2 + hEnemigos->getEnemigo(var)->getAncho();
+				int y2 = hEnemigos->getEnemigo(var)->getY();
+				int y2p = y2 + hEnemigos->getEnemigo(var)->getLargo();
 				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-				if (touched && enemigos[var]->aunVive()) {
+				if (touched && hEnemigos->getEnemigo(var)->aunVive()) {
 					cout << "**** CHOQUE: ENEMIGOS VS AVION DE OTRO JUGADOR ****" << endl;
-					enemigos[var]->morir();
+					hEnemigos->getEnemigo(var)->morir();
 					it->second->getVivible()->morir();
 				}
-				this->hitPlanes(&(enemigos[var]->getControllerMissiles()->getVivibles()->vectorObjetos),it->second->getVivible());
+				this->hitPlanes(&(hEnemigos->getEnemigo(var)->getControllerMissiles()->getVivibles()->vectorObjetos),it->second->getVivible());
 			}
 			this->hitEnemy(&(it->second->getMissiles()->getVivibles()->vectorObjetos));
 		}

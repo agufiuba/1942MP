@@ -21,12 +21,12 @@ HandlerEnemigos::HandlerEnemigos(SDL_Renderer* renderer, Resolucion* resolucion,
 }
 
 HandlerEnemigos::~HandlerEnemigos() {
-	for (map<string, Vivible*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
+	for (map<int, Enemy*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
 		delete it->second;
 	}
 }
 
-void HandlerEnemigos::createEnemigo(string id, string type, int posX, int posY) {
+void HandlerEnemigos::createEnemigo(int id, string type, int posX, int posY) {
 		Posicion* p = new Posicion(posX, posY);
 		Enemy* enemy = new Enemy(screen, renderer, resolucion, p, gc->avion);
 		mapaEnemigos[id] = enemy;
@@ -35,7 +35,7 @@ void HandlerEnemigos::createEnemigo(string id, string type, int posX, int posY) 
 void HandlerEnemigos::hacerVivir() {
 	//mutex theMutex;
 	//theMutex.lock();
-	for (map<string, Vivible*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
+	for (map<int, Enemy*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
 		if(it->second->aunVive()){
 			it->second->vivir(velX, velY);
 		} else {
@@ -46,13 +46,13 @@ void HandlerEnemigos::hacerVivir() {
 	//theMutex.unlock();
 }
 
-void HandlerEnemigos::matar(string id) {
+void HandlerEnemigos::matar(int id) {
 	this->mapaEnemigos[id]->morir();
 }
 
-void HandlerEnemigos::mover(string id, char evento) {
+void HandlerEnemigos::mover(int id, char evento) {
 
-	Vivible* enemigo = mapaEnemigos[id];
+	Enemy* enemigo = mapaEnemigos[id];
 
 	switch(evento) {
 		case 'R': this->velX += velocidadStandard; break; 		//Derecha
@@ -68,7 +68,11 @@ void HandlerEnemigos::mover(string id, char evento) {
 }
 
 void HandlerEnemigos::deleteEnemys() {
-	for (map<string, Vivible*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
+	for (map<int, Enemy*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
 		it->second->morir();
 	}
+}
+
+Enemy* HandlerEnemigos::getEnemigo(int id) {
+	return this->mapaEnemigos[id];
 }

@@ -14,6 +14,7 @@
 #include "../../game/model/Enemy.h"
 #include "../../game/controller/HandlerPlayersControllers.h"
 #include "../../game/controller/HandlerPowerUp.h"
+#include "../../game/controller/HandlerEnemigos.h"
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>

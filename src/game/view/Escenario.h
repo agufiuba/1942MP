@@ -77,10 +77,8 @@ private:
 	HandlerPlayersControllers* controllers;
 	HandlerPowerUp* hPowerUp;
 	HandlerEnemigos* hEnemigos;
-	map<string, Vivible*> mapaEnemigos;
 
 	vector<Isla*> fondosVivibles;
-	vector<Enemy*> enemigos;
 
 	GameConf* gc;
 	Client* unCliente;
