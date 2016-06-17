@@ -15,7 +15,7 @@ HandlerEnemigos::HandlerEnemigos(SDL_Renderer* renderer, Resolucion* resolucion,
 	this->screen = screen;
 	this->gc = gc;
 
-	this->velocidadStandard = 10;
+	this->velocidadStandard = 5;
 	this->velX = 0;
 	this->velY = 0;
 }
@@ -51,9 +51,11 @@ void HandlerEnemigos::matar(int id) {
 }
 
 void HandlerEnemigos::mover(int id, char evento) {
+	map<int, Enemy*>::iterator it = this->mapaEnemigos.find( id );
+	if ( it == this->mapaEnemigos.end() ) return;
+
 	Enemy* enemigo = mapaEnemigos[id];
 
-	if (enemigo != NULL) {
 		switch(evento) {
 			case 'R': if (velX <= 0){
 									this->velX = velocidadStandard;
@@ -79,7 +81,6 @@ void HandlerEnemigos::mover(int id, char evento) {
 								break;									//Morir
 
 		}
-	}
 }
 
 void HandlerEnemigos::deleteEnemys() {
