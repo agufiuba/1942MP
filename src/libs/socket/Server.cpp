@@ -618,6 +618,19 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 		this->gameData->countPlayersTeam2++;
 		this->setTeamPlayer(2, cfd);
 		this->sendGameDataAll();
+	} else if ( dataID == "SE" ) {
+	  EnemyStatus* data = new EnemyStatus;
+	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
+	    cout << "ENEMY ID: " << to_string( data->id ) << endl;
+	    cout << "ENEMY STATUS: " << data->status << endl;
+	    if ( data->status == 'D' ) {
+	      mutex m;
+	      m.lock();
+	      delete this->enemys[ data->id ];
+	      this->enemys.erase( this->enemys.find( data->id ) );
+	      m.unlock();
+	    }
+	  }
 	}
       }
 
@@ -944,26 +957,32 @@ void Server::sendPlayersReady(){
 	  tmt->sendDataID("OK");
 	  delete tmt;
 	}
+	thread tCreateEnemys( &Server::createEnemys, this);
+	tCreateEnemys.detach();
+
 	thread tMoveEnemy( &Server::makeEnemyMove, this);
 	tMoveEnemy.detach();
   }
 }
 
-void Server::makeEnemyMove() {
-	EnemyData* data;
+void Server::createEnemys() {
 	int enemyID = 1;
 	ServerAvionEnemigo* avionEnemigo = new ServerAvionEnemigoRandom( enemyID, new Posicion(500, 500));
-	
-	usleep( 1000000 );
-	while (this->running) {
-			data = avionEnemigo->vivir();
-			// send on valid direction
-			// TODO: review implementation of vivir() method
-			if ( data->direction != 'N' )
-			  this->sendEnemyData( data ); 
+	this->enemys[ enemyID ] =  avionEnemigo;
+}
 
-			delete data;
-			usleep ( 25000 );
+void Server::makeEnemyMove() {
+  mutex m;
+	EnemyData* data;
+	map<int, ServerAvionEnemigo*>::iterator it;
+	while (this->running) {
+			usleep( 1000000 );
+			m.lock();
+			for ( it = this->enemys.begin(); it != this->enemys.end(); ++it ) {
+			  data = it->second->vivir();
+			  this->sendEnemyData( data ); 
+			}
+			m.unlock();
 	}
 }
 
@@ -977,6 +996,7 @@ void Server::sendEnemyData( EnemyData* data ) {
       delete tmt;
     }
   }
+  delete data;
 }
 
 void Server::setTeamPlayer(int team, int cliendFd){

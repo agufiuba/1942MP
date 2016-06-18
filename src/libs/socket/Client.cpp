@@ -439,6 +439,13 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					  cout << "DIRECTION: " << data->direction << endl;
 					  this->hEnemigos->mover(data->id, data->direction);
 					}
+			 } else if ( dataID == "SE" ) {
+					EnemyStatus* data = new EnemyStatus;
+					if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
+					  // process enemy status
+					  cout << "ENEMY ID: " << to_string( data->id ) << endl;
+					  cout << "ENEMY STATUS: " << data->status << endl;
+					}
 			 }
 		}
 
@@ -782,4 +789,14 @@ void Client::setCoopMode( bool mode ) {
 
 void Client::setTeamMode( bool mode ) {
   this->gameData->teamMode = mode;
+}
+
+void Client::sendEnemyDeath( int id ) {
+  EnemyStatus* data = new EnemyStatus;
+  data->id = id;
+  data->status = 'D';
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendData( data );
+  delete data;
+  delete tmt;
 }

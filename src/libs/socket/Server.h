@@ -11,6 +11,7 @@
 #include "../../libs/data/stage_data.h"
 #include "../../libs/data/game_data.h"
 #include "../../libs/data/enemy_data.h"
+#include "../../libs/data/enemy_status.h"
 #include "../../game/model/Player.h"
 #include "../../game/model/ServerAvionEnemigoRandom.h"
 #include <queue>
@@ -40,6 +41,8 @@ class Server {
     //vector<int> players2;
     int posicionInicialX;
     int posicionInicialY;
+
+    map<int, ServerAvionEnemigo*> enemys;
 
     Logger* logger;
     GameConf* config;
@@ -81,6 +84,7 @@ class Server {
     void sendCoopLose();
     void checkAliveClose( int clientFD );
     void makeEnemyMove();
+    void createEnemys();
     void sendEnemyData( EnemyData* data );
 
   public:
