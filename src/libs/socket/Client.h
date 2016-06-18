@@ -48,6 +48,7 @@ class Client {
 	vector<SpriteConf*> sprites;
     vector<PlayerData*> allPlayers;
     vector<PlayerScore*> playersScoreData;
+    vector<EnemyStatus*> enemys;
     int clientsPlaying;
 
     static const int MAX_UNREACHABLE_TIME = 5;
@@ -123,5 +124,7 @@ class Client {
     void setCoopMode( bool mode );
     void setTeamMode( bool mode );
     void sendEnemyDeath( int id = -1 );
+    vector<EnemyStatus*> getEnemys();
+    void resetEnemys();
 };
 #endif

@@ -89,7 +89,6 @@ private:
 	void setFondosVivibles(int x, int y);
 	void configurarFondosVivibles();
 	void configurarPowerUps();
-	void configurarEnemigos();
 	void limpiarFondosVivibles();
 	bool isFinNivel(int numeroNivel);
 	void loadScoreScreen( int stage = 0 );

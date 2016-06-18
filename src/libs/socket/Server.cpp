@@ -35,6 +35,7 @@ Server::Server( const char* configFileName ) {
   this->alphaTeamScore = 0;
   this->betaTeamScore = 0;
   this->coopTeamScore = 0;
+  this->enemyID = 0;
 }
 
 Server::~Server() {
@@ -781,6 +782,7 @@ void Server::closeClient( int cfd ) {
     this->alphaTeamScore = 0;
     this->betaTeamScore = 0;
     this->coopTeamScore = 0;
+    this->enemyID = 0;
   }
   cout << "Cantidad de clientes conectados: " << this->clientCount << endl;
   this->logger->info( "Cantidad de Clientes Conectados: " + to_string( this->clientCount ) );
@@ -977,13 +979,37 @@ void Server::sendPlayersReady(){
 }
 
 void Server::createEnemys() {
-	int enemyID = 1;
-	ServerAvionEnemigo* avionEnemigo = new ServerAvionEnemigoRandom( enemyID, new Posicion(500, 500));
-	this->enemys[ enemyID ] =  avionEnemigo;
+  this->createEnemy( 'r', 500, 500 );
+  this->createEnemy( 'r', 200, 600 );
+  this->createEnemy( 'm', 100, 200 );
+  this->createEnemy( 'm', 600, 300 );
+  this->createEnemy( 'm', 300, 100 );
+}
 
-	enemyID = 2;
-	ServerAvionEnemigo* avionEnemigo2 = new ServerAvionEnemigoRandom( enemyID, new Posicion(600, 600));
-	this->enemys[ enemyID ] =  avionEnemigo2;
+void Server::createEnemy( char type, int x, int y ) {
+  this->enemyID++;
+  ServerAvionEnemigo* enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
+  EnemyStatus* data = new EnemyStatus;
+  data->id = this->enemyID;
+  data->type = type;
+  data->x = x;
+  data->y = y;
+  data->status = 'C';
+  this->enemys[ enemyID ] =  enemy;
+  this->sendEnemyCreation( data );
+}
+
+void Server::sendEnemyCreation( EnemyStatus* data ) {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    if ( it->second->isActive() ) {
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendData( data );
+      delete tmt;
+    }
+  }
+  delete data;
 }
 
 void Server::makeEnemyMove() {

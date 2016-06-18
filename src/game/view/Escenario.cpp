@@ -73,6 +73,18 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 //	cout<<"3"<<endl;
 	hPowerUp->hacerVivir();
 //	cout<<"4"<<endl;
+	mutex m;
+	m.lock();
+	for( int i = 0; i < this->unCliente->getEnemys().size(); i++ ) {
+	  EnemyStatus* es = this->unCliente->getEnemys()[i];
+	  this->hEnemigos->createEnemigo( es->id, es->type, es->x, es->y ); 
+	  //TODO: CAMBIAR A QUIEN LE APUNTA EL ENEMIGO 
+	  this->hEnemigos->setAvionApuntar( es->id, myControl->getVivible()->getId());
+	  delete es;
+	}
+	this->unCliente->resetEnemys();
+	m.unlock();
+
 	hEnemigos->hacerVivir();
 //	cout<<"5"<<endl;
 	this->hitEnemy(&(myControl->controlDeMisiles->getVivibles()->vectorObjetos));
@@ -194,38 +206,6 @@ void Escenario::configurarPowerUps() {
 	}
 }
 
-void Escenario::configurarEnemigos() {
-/*
-	if (gc->enemigos.size() <= 0) return;
-
-	for (int i = 0; i < gc->enemigos.size(); i++) {
-		string tipo = gc->enemigos[i]->tipo;
-		string disparosSpriteId = gc->enemigos[i]->disparosSpriteID;
-		cout << "Disparo sprite id " << disparosSpriteId << endl;
-		int velocidadDisparos = gc->enemigos[i]->velocidadDisparos;
-		int x = gc->enemigos[i]->x;
-		int y = gc->enemigos[i]->y;
-
-		//TODO: Cambiar constructor de creador de enemigos.
-		// Hay que incluir la velocidad de disparos, pedido por Key
-
-		if (tipo == "pequeno") {
-			hEnemigos->createEnemigo(1,"r", x, y);
-		} else if (tipo == "mediano") {
-			//TODO: Crear enemigo mediano
-		} else if (tipo == "grande") {
-			//TODO: Crear enemigo grande
-		} else if (tipo == "flota") {
-			crearFlota(x, y);
-		}
-*/
-	hEnemigos->createEnemigo(1,'r', 500, 500);
-	hEnemigos->setAvionApuntar(1, myControl->getVivible()->getId()); // TODO: esto se deberia setear por mensaje del servidor
-
-	hEnemigos->createEnemigo(2,'m', 600, 600);
-	hEnemigos->setAvionApuntar(2, myControl->getVivible()->getId());
-}
-
 HandlerPlayersControllers* Escenario::getHandler() {
 	return this->controllers;
 }
@@ -256,7 +236,6 @@ SDL_Event* Escenario::run() {
 	pixelesRecorridos = 0;
 	configurarFondosVivibles();
 	configurarPowerUps();
-	configurarEnemigos();
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;

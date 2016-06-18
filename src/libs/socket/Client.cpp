@@ -442,9 +442,18 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			 } else if ( dataID == "SE" ) {
 					EnemyStatus* data = new EnemyStatus;
 					if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
+					  mutex m;
 					  // process enemy status
 					  cout << "ENEMY ID: " << to_string( data->id ) << endl;
+					  cout << "ENEMY TYPE: " << data->type<< endl;
+					  cout << "ENEMY POS X: " << to_string( data->x ) << endl;
+					  cout << "ENEMY POS Y: " << to_string( data->y ) << endl;
 					  cout << "ENEMY STATUS: " << data->status << endl;
+					  if ( data->status == 'C' ) {
+					    m.lock();
+					    this->enemys.push_back( data );
+					    m.unlock();
+					  }
 					}
 			 }
 		}
@@ -799,4 +808,12 @@ void Client::sendEnemyDeath( int id ) {
   tmt->sendData( data );
   delete data;
   delete tmt;
+}
+
+vector<EnemyStatus*> Client::getEnemys() {
+  return this->enemys;
+}
+
+void Client::resetEnemys() {
+  this->enemys.clear();
 }
