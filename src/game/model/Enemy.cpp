@@ -96,24 +96,27 @@ GameConf* Enemy::getConfiguracion() {
 
 void Enemy::moverEjeX(int velX) {
 	posicion->mover(velX,0);
-	if ((posicion->getX() < 0) || (posicion->getX() + getAncho() > getAnchoFondo())) {
-		posicion->mover(-velX,0);
-	}
+	// if ((posicion->getX() < 0) || (posicion->getX() + getAncho() > getAnchoFondo())) {
+	// 	posicion->mover(-velX,0);
+	// }
 }
 
 void Enemy::moverEjeY(int velY) {
 	posicion->mover(0,velY);
-	if ((posicion->getY() - getLargo() < 0) || (posicion->getY() > getLargoFondo())) {
-		posicion->mover(0,-velY);
-	}
+	// if ((posicion->getY() - getLargo() < 0) || (posicion->getY() > getLargoFondo())) {
+	// 	posicion->mover(0,-velY);
+	// }
 }
 
 void Enemy::disparar() {
+	if(posicion->getY() + getLargo() > 0 && posicion->getY() < getLargoFondo() &&
+		posicion->getX() + getAncho() > 0 && posicion->getX() < getAnchoFondo()) {
 	if (contador >= tiempoEntreDisparo){
 		controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + 12,this->getY(), resolucion, misilConf, avionApuntado->getX(), avionApuntado->getY());
 		contador = 0;
 	}
 		contador ++;
+	}
 }
 
 void Enemy::setAvionApuntado(Avion* avion) {
