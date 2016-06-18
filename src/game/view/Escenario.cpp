@@ -239,21 +239,18 @@ SDL_Event* Escenario::run() {
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
 	int nivelActual = 1;
+	bool reinicio = false;
 
-/*	thread tPowerUps(&Escenario::getPowerUp, this);
-	tPowerUps.detach();
-
-	thread tShot(&Escenario::hitEnemy, this);
-	tShot.detach();*/
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
 	if (!this->unCliente->reinicia) {
 
 		int offset = this->unCliente->getStageOffset();
 		if (offset != 0) {
+			reinicio = true;
 			pixelesRecorridos = offset + desfasajeConexion;
 			setFondosVivibles(0, pixelesRecorridos);
 			nivelActual = (pixelesRecorridos / LONGITUD_NIVEL) + 1;
-			cout << "NIVEL ACTUAL: " << nivelActual << endl;
+			actualizarPosicionEscenario(posicionEscenario);
 		}
 	}
 
@@ -264,7 +261,10 @@ SDL_Event* Escenario::run() {
 
 	for (int numeroNivel = nivelActual; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
-		arrancarAviones();
+		if (!reinicio) {
+			arrancarAviones();
+			reinicio = false;
+		}
 
 		while (!quit && this->unCliente->isConnected()) {
 
@@ -348,6 +348,9 @@ SDL_Event* Escenario::run() {
 			}
 
 			ultimoNivelJugado = numeroNivel;
+			posicionEscenario->print();
+			cout << "pxRecorridos: " << pixelesRecorridos << endl;
+
 			verificarEstacionamiento(numeroNivel);
 
 			if (isFinNivel(numeroNivel)) {
@@ -397,6 +400,17 @@ void Escenario::verificarEstacionamiento(int numeroNivel) {
 
 bool Escenario::isFinNivel(int numeroNivel) {
 	return pixelesRecorridos >= LONGITUD_NIVEL * numeroNivel;
+}
+
+void Escenario::actualizarPosicionEscenario(Posicion* posicionEscenario) {
+	int recorridosAux = pixelesRecorridos - desfasajeConexion;
+	int divisor = LIMITE_IMAGEN - SCREEN_HEIGHT - VELOCIDAD_SCREEN;
+	int resto = recorridosAux % divisor;
+	int posicionNueva = LIMITE_IMAGEN - resto;
+	posicionEscenario->setPosicion(0,posicionNueva);
+	posicionEscenario->print();
+	cout << "ACTUALICE POSICION" << endl;
+	posicionEscenario->print();
 }
 
 void Escenario::limpiarFondosVivibles() {

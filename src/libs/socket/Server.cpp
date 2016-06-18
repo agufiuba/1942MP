@@ -676,7 +676,7 @@ void Server::checkAliveClose( int clientFD ) {
   this->closeClient( clientFD );
   this->players[ clientFD ]->deactivate();
   // 10 sec wait
-  usleep( 10000000 );
+  usleep( 10000000 * 5);
   // if player didn't resume
   if ( this->players.find( clientFD ) != this->players.end() ) {
     this->freePlayerSlot( clientFD );
