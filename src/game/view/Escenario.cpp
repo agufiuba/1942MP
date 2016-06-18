@@ -221,6 +221,9 @@ void Escenario::configurarEnemigos() {
 */
 	hEnemigos->createEnemigo(1,'r', 500, 500);
 	hEnemigos->setAvionApuntar(1, myControl->getVivible()->getId()); // TODO: esto se deberia setear por mensaje del servidor
+
+	hEnemigos->createEnemigo(2,'m', 600, 600);
+	hEnemigos->setAvionApuntar(2, myControl->getVivible()->getId());
 }
 
 HandlerPlayersControllers* Escenario::getHandler() {

@@ -34,7 +34,8 @@ void HandlerEnemigos::createEnemigo(int id, char type, int posX, int posY) {
 		}else if (type == 'f') {
 
 		}else if (type == 'm') {
-
+			Enemy* mediano = new EnemyMediano(screen, renderer, resolucion, p, gc);
+			mapaEnemigos[id] = mediano;
 		}else if (type == 'g') {
 
 		}

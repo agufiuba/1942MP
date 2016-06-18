@@ -18,8 +18,8 @@ EnemyView::EnemyView(SDL_Renderer * unRenderer, string tipo){
 		cout << "Vista del avion no ha sido cargada correctamente.." << endl;
 	}
 
-	anchoVista = 50;
-	largoVista = 50;
+	anchoVista = 70;
+	largoVista = 70;
 	cargarClips();
 
 }

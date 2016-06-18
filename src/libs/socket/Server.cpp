@@ -980,6 +980,10 @@ void Server::createEnemys() {
 	int enemyID = 1;
 	ServerAvionEnemigo* avionEnemigo = new ServerAvionEnemigoRandom( enemyID, new Posicion(500, 500));
 	this->enemys[ enemyID ] =  avionEnemigo;
+
+	enemyID = 2;
+	ServerAvionEnemigo* avionEnemigo2 = new ServerAvionEnemigoRandom( enemyID, new Posicion(600, 600));
+	this->enemys[ enemyID ] =  avionEnemigo2;
 }
 
 void Server::makeEnemyMove() {

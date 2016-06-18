@@ -19,7 +19,7 @@
 #include "../controller/ControllerMissilesEnemy.h"
 
 class Enemy {
-private:
+protected:
 
 	int id;
 	int anchoFondo, largoFondo;
