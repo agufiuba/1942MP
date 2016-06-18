@@ -20,6 +20,7 @@ public:
 	virtual void setAmetralladora() {};
 	virtual void setBalaNormal() {};
 	virtual ControllerMissiles* getMissiles(){return 0;}
+	virtual void hacerVueltereta() {};
 };
 
 

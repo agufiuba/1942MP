@@ -83,6 +83,8 @@ private:
 	GameConf* gc;
 	Client* unCliente;
 	Music* musica;
+	Sound* youWin;
+	Sound* gameOver;
 
 	void actualizarEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
@@ -105,6 +107,8 @@ private:
 	void hitEnemyMissileByOtherPlayer(ControllerMissiles* controller);
 	void enemyOtherPlayerMissileColision();
 	void hitPlanes(vector<Vivible*>* disparos, Vivible* avion);
+	void arrancarAviones();
+
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client);
 	~Escenario();

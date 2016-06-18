@@ -70,3 +70,12 @@ void HandlerPlayersControllers::killPlayer( string playerID ) {
   this->mapaControllers[ playerID ]->press( sdlEvent );
   delete sdlEvent;
 }
+
+void HandlerPlayersControllers::hacerVueltereta() {
+	for (map<string, IController*>::iterator it = this->mapaControllers.begin(); it != this->mapaControllers.end(); ++it) {
+		if(it->second->getVivible()->aunVive()){
+			Avion* otroAvion = (Avion*)it->second->getVivible();
+			otroAvion->inicializoVueltereta();
+		}
+	}
+}

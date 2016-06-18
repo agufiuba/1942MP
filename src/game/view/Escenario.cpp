@@ -41,15 +41,17 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client) {
 	this->teamAlphaScoreView = NULL;
 	this->teamBetaScoreView = NULL;
 	flota = 0;
-
 	hEnemigos = new HandlerEnemigos(gRenderer, resolucion, escenarioScreen, gc);
 	this->unCliente->setEnemyHandler(hEnemigos);
+	youWin = new Sound("youWin.wav");
+	gameOver = new Sound("gameOver.wav");
 }
 
 Escenario::~Escenario() {
 	delete this->player;
 	resolucion->~Resolucion();
 	delete musica;
+	delete gameOver;
 	escenarioCreado = false;
 	delete escenarioScreen;
 	delete myControl;
@@ -64,13 +66,10 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir();
 	}
-/*  Aca estan los Vivir y las Colisiones */
-//	cout<<"1"<<endl;
-	myControl->hacerVivir();
+
+	/*  Aca estan los Vivir y las Colisiones */
 	controllers->hacerVivir();
-//	cout<<"2"<<endl;
 	this->getPowerUp();
-//	cout<<"3"<<endl;
 	hPowerUp->hacerVivir();
 //	cout<<"4"<<endl;
 	mutex m;
@@ -88,9 +87,9 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	hEnemigos->hacerVivir();
 //	cout<<"5"<<endl;
 	this->hitEnemy(&(myControl->controlDeMisiles->getVivibles()->vectorObjetos));
-//	cout<<"6"<<endl;
+	myControl->hacerVivir();
+
 	if (!unCliente->getGameData()->practiceMode){
-//		cout<<"Con colision"<<endl;
 		this->planesColision();
 		this->enemyOtherPlayerColision();
 	} else {
@@ -239,6 +238,7 @@ SDL_Event* Escenario::run() {
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
+	int nivelActual = 1;
 
 /*	thread tPowerUps(&Escenario::getPowerUp, this);
 	tPowerUps.detach();
@@ -252,14 +252,19 @@ SDL_Event* Escenario::run() {
 		if (offset != 0) {
 			pixelesRecorridos = offset + desfasajeConexion;
 			setFondosVivibles(0, pixelesRecorridos);
+			nivelActual = (pixelesRecorridos / LONGITUD_NIVEL) + 1;
+			cout << "NIVEL ACTUAL: " << nivelActual << endl;
 		}
 	}
 
 	actualizarEscenario(posicionEscenario);
 	Uint32 start;
 	bool quit = false;
+	int ultimoNivelJugado;
 
-	for (int numeroNivel = 1; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
+	for (int numeroNivel = nivelActual; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
+
+		arrancarAviones();
 
 		while (!quit && this->unCliente->isConnected()) {
 
@@ -342,6 +347,7 @@ SDL_Event* Escenario::run() {
 
 			}
 
+			ultimoNivelJugado = numeroNivel;
 			verificarEstacionamiento(numeroNivel);
 
 			if (isFinNivel(numeroNivel)) {
@@ -349,7 +355,6 @@ SDL_Event* Escenario::run() {
 	    
 				// load score screen
 				this->loadScoreScreen( numeroNivel );
-
 				delete musica;
 				musica = new Music("musicaDeFondo.mp3");
 				musica->play();
@@ -368,6 +373,10 @@ SDL_Event* Escenario::run() {
 			}
 		}
 
+	}
+
+	if (ultimoNivelJugado == CANTIDAD_NIVELES && !quit) {
+		loadScoreScreen(0);
 	}
 
 	delete posicionEscenario;
@@ -401,6 +410,7 @@ void Escenario::limpiarFondosVivibles() {
 }
 
 void Escenario::loadScoreScreen( int stage ) {
+	musica->fadeOut(4000);
   // load score data
   this->loadScoreData();
 
@@ -449,10 +459,12 @@ void Escenario::loadTeamModeScoreScreen( int stage ) {
   string buttonText = "Continue";
   // win screen
   if ( stage == 0 ) {
+	  youWin->play();
     stageCompleteText = "Congratulations. You Win !!";
     buttonText = "Finish";
   // game over screen
   } else if ( stage == -1 ) {
+	  gameOver->play();
     stageCompleteText = "Game Over";
     buttonText = "Finish";
     // Load skull image
@@ -655,10 +667,12 @@ void Escenario::loadCoopModeScoreScreen( int stage ) {
   string buttonText = "Continue";
   // win screen
   if ( stage == 0 ) {
+	  youWin->play();
     stageCompleteText = "Congratulations. You Win !!";
     buttonText = "Finish";
   // game over screen
   } else if ( stage == -1 ) {
+	  gameOver->play();
     stageCompleteText = "Game Over";
     buttonText = "Finish";
     // Load skull image
@@ -1037,4 +1051,9 @@ void Escenario::hitPlanes(vector<Vivible*>* disparos,Vivible* avion){
 		}
 	}
 
+}
+
+void Escenario::arrancarAviones() {
+	myControl->hacerVueltereta();
+	controllers->hacerVueltereta();
 }

@@ -131,3 +131,6 @@ void Controller::setBalaNormal(){
 	controlDeMisiles->setBalaNormal();
 }
 
+void Controller::hacerVueltereta() {
+	obj->inicializoVueltereta();
+}
