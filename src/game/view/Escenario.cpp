@@ -219,7 +219,7 @@ void Escenario::configurarEnemigos() {
 			crearFlota(x, y);
 		}
 */
-	hEnemigos->createEnemigo(1,"r", 500, 500);
+	hEnemigos->createEnemigo(1,'r', 500, 500);
 	hEnemigos->setAvionApuntar(1, myControl->getVivible()->getId()); // TODO: esto se deberia setear por mensaje del servidor
 }
 
