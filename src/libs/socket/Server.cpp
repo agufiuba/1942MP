@@ -981,9 +981,9 @@ void Server::sendPlayersReady(){
 void Server::createEnemys() {
   this->createEnemy( 'r', 500, 500 );
   this->createEnemy( 'r', 200, 600 );
-  this->createEnemy( 'r', 100, 200 );
-  this->createEnemy( 'r', 600, 300 );
-  this->createEnemy( 'r', 300, 100 );
+  this->createEnemy( 'm', 100, 200 );
+  this->createEnemy( 'm', 600, 300 );
+  this->createEnemy( 'm', 300, 100 );
 }
 
 void Server::createEnemy( char type, int x, int y ) {
