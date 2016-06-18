@@ -46,7 +46,13 @@ void HandlerEnemigos::hacerVivir() {
 	//theMutex.lock();
 	for (map<int, Enemy*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
 		if(it->second->aunVive()){
-			it->second->vivir(velX, velY);
+			if(it->second->flota == -1)
+				it->second->vivirRandom();
+			else{
+				// if(it->second->flota == -2)
+				// 	it->second->vivirGrande();
+				it->second->vivirFlota();
+			}
 		} else {
 			delete it->second;
 			this->mapaEnemigos.erase(it);
