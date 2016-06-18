@@ -890,7 +890,7 @@ void Escenario::loadWaitForPlayersScreen() {
 
 void Escenario::getPowerUp() {
 		Vivible* avion = myControl->getVivible();
-		if (avion->tieneHP()) {
+		if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
 			int x = avion->getX();
 			int y = avion->getY();
 			int xp = x + avion->getAncho()-5;
@@ -963,7 +963,7 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 void Escenario::planesColision(){
 	Vivible* avion = myControl->getVivible();
 	bool touched = false;
-	if (avion->tieneHP()) {
+	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
 		int x = avion->getX();
 		int y = avion->getY();
 		int xp = x + avion->getAncho()-5;
@@ -991,7 +991,7 @@ void Escenario::enemyOtherPlayerColision() {
 	map<string, IController*>* othersPlanes = &(this->controllers->mapaControllers);
 	int eliminar = -1;
 	for (map<string, IController*>::iterator it = othersPlanes->begin(); it != othersPlanes->end(); it++) {
-		if (it->second->getVivible()->aunVive()){
+		if (it->second->getVivible()->aunVive() && !((Avion*)it->second->getVivible())->haciendoVueltereta()){
 			bool touched = false;
 			int x = it->second->getVivible()->getX();
 			int xp = x + it->second->getVivible()->getAncho();
@@ -1026,7 +1026,7 @@ void Escenario::enemyOtherPlayerMissileColision() {
 }
 
 void Escenario::hitPlanes(vector<Vivible*>* disparos,Vivible* avion){
-	if (avion->tieneHP()) {
+	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
 		int x = avion->getX();
 		int y = avion->getY();
 		int xp = x + avion->getAncho()-5;
