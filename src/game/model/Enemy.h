@@ -10,17 +10,17 @@
 #include "Resolucion.h"
 #include "../model/Posicion.h"
 #include "../../libs/data/player_data.h"
-#include "../../xml/conf/AvionConf.h"
+#include "../../xml/conf/GameConf.h"
 #include <string>
 #include "Misil.h"
 #include "../view/ExplosionView.h"
 #include "../view/Screen.h"
 #include "../controller/ControllerMissilesEnemy.h"
 
-class Enemy: public Vivible {
+class Enemy {
 private:
 
-	string id;
+	int id;
 	int anchoFondo, largoFondo;
 	int velocidadStandard;
 	int vida;
@@ -36,7 +36,7 @@ private:
 	AvionView* vistaAvion;
 	ExplosionView* explosion;
 	Posicion* posicion;
-	AvionConf* configuracion;
+	GameConf* configuracion;
 	int contador;
 	int tiempoEntreDisparo;
 
@@ -53,12 +53,14 @@ private:
 	ControllerMissilesEnemy* controlDeMisiles;
 	MisilConf* misilConf;
 	Resolucion* resolucion;
+	int posApuntadoX;
+	int posApuntadoY;
 
 public:
-	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf);
+	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, GameConf* conf);
 	~Enemy();
 
-	string getId();
+	int getId();
 	int getAnchoFondo();
 	int getLargoFondo();
 	int getAncho();
@@ -67,7 +69,7 @@ public:
 	int getY();
 	int getVida();
 
-	AvionConf* getConfiguracion();
+	GameConf* getConfiguracion();
 
 	void setVelocidadStandard(int vel);
 

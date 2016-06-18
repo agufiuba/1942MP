@@ -28,7 +28,7 @@ HandlerEnemigos::~HandlerEnemigos() {
 
 void HandlerEnemigos::createEnemigo(int id, string type, int posX, int posY) {
 		Posicion* p = new Posicion(posX, posY);
-		Enemy* enemy = new Enemy(screen, renderer, resolucion, p, gc->avion);
+		Enemy* enemy = new Enemy(screen, renderer, resolucion, p, gc);
 		mapaEnemigos[id] = enemy;
 }
 

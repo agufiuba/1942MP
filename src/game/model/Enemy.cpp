@@ -2,14 +2,13 @@
 
 using namespace std;
 
-Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf) {
+Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, GameConf* conf) {
 
-	this->id = id;
 	this->configuracion = conf;
 	this->vida = 1;
 
 	this->screen = screen;
-	vistaAvion = new AvionView(renderer, "verde", conf->avionSpriteID);
+	vistaAvion = new AvionView(renderer, "verde", conf->avion->avionSpriteID);
 	explosion = NULL;
 	viviendo = true;
 
@@ -34,11 +33,14 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	nFlota = chrono::system_clock::now();
 
 	misilConf = new MisilConf();
-	strcpy(misilConf->disparosSpriteID,conf->disparosSpriteID);
-	misilConf->velocidadDisparos = conf->velocidadDisparos + conf->velocidadDesplazamiento;
+	strcpy(misilConf->disparosSpriteID,conf->enemigos[1]->disparosSpriteID);
+	misilConf->velocidadDisparos = conf->enemigos[1]->velocidadDisparos + 3;
 	controlDeMisiles = new ControllerMissilesEnemy(misilConf, renderer);
 	contador = 0;
 	tiempoEntreDisparo = 20;
+
+	posApuntadoX = 500;
+	posApuntadoY = 500;
 }
 
 Enemy::~Enemy(){
@@ -54,7 +56,7 @@ Enemy::~Enemy(){
 	delete controlDeMisiles;
 }
 
-string Enemy::getId() {
+int Enemy::getId() {
 	return this->id;
 }
 
@@ -86,7 +88,7 @@ int Enemy::getLargo() {
 	}
 }
 
-AvionConf* Enemy::getConfiguracion() {
+GameConf* Enemy::getConfiguracion() {
 	return this->configuracion;
 }
 
@@ -106,7 +108,7 @@ void Enemy::moverEjeY(int velY) {
 
 void Enemy::disparar() {
 	if (contador >= tiempoEntreDisparo){
-		controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + 12,this->getY(), resolucion, misilConf, 500, 500);
+		controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + 12,this->getY(), resolucion, misilConf, posApuntadoX, posApuntadoY);
 		contador = 0;
 	}
 		contador ++;
@@ -185,8 +187,10 @@ void Enemy::vivir(int velX, int velY){
 //			vistaAvion->conectar();
 //		}
 //		if (!realizandoVueltereta) {
+			disparar();
+			mostrarDisparo();
 			mover(velX, velY);
-			mostrar(angleX, angleY);
+			mostrar(velX, velY);
 //		} else {
 //			realizoVueltereta();
 //		}

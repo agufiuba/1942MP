@@ -928,7 +928,7 @@ void Escenario::getPowerUp() {
 void Escenario::crearFlota(int x, int y) {
     for (int i = 0; i < 5; i++) {
         Posicion* p = new Posicion(x, y);
-        Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc->avion);
+        Enemy* e = new Enemy(escenarioScreen, gRenderer, resolucion, p, gc);
         e->flota = flota;
         e->posFlota = i;
         //enemigos.push_back(e);
