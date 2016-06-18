@@ -915,6 +915,7 @@ void Escenario::getPowerUp() {
 					if (resp == 'd') {
 						hEnemigos->deleteEnemys();
 						unCliente->sendData(ce->destroy(myControl->getVivible()->getId()));
+						this->unCliente->sendEnemyDeath();
 					}
 					if (resp == 'b') {
 						this->unCliente->addScoreToPlayer( 250 );
@@ -980,6 +981,7 @@ void Escenario::planesColision(){
 			if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 				cout << "**** CHOQUE: ENEMIGOS VS MI AVION ****" << endl;
 				hEnemigos->getEnemigo(itEnemigo->first)->morir();
+				this->unCliente->sendEnemyDeath( itEnemigo->first );
 				this->player->die();
 				myControl->getVivible()->morir();
 				this->unCliente->sendPlayerDeath();
