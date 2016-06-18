@@ -41,6 +41,8 @@ class Server {
     //vector<int> players2;
     int posicionInicialX;
     int posicionInicialY;
+    int estacionamientoX = 0;
+    int estacionamientoY = 0;
 
     map<int, ServerAvionEnemigo*> enemys;
     int enemyID;

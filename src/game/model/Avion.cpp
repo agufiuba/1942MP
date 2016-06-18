@@ -18,7 +18,7 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	this->posicion = posicionInicial;
 
-	posicionAEstacionar = new Posicion(posicionInicial->getX(),posicionInicial->getY());
+	posicionAEstacionar = new Posicion(playerData->estacionamientoX, playerData->estacionamientoY);
 
 	anchoFondo = resolucion->getWidthScreen();
 	largoFondo = resolucion->getHeightScreen();

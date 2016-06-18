@@ -50,7 +50,7 @@
 	</fondo>
 	<nivel>
 		<longitudNivel>4000</longitudNivel>
-		<cantidadNiveles>2</cantidadNiveles>
+		<cantidadNiveles>3</cantidadNiveles>
 	</nivel>
 	<elementos>
 		<elemento>
@@ -235,5 +235,5 @@
 		</posicion>
 	</enemigo>
 </enemigos>
-<maxClients>1</maxClients>
+<maxClients>2</maxClients>
 <jugadoresPorEquipo>1</jugadoresPorEquipo>

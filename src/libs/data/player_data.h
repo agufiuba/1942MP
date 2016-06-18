@@ -5,6 +5,8 @@ typedef struct PlayerData {
   char color[10];
   int x;
   int y;
+  int estacionamientoX;
+  int estacionamientoY;
   int team;
   int score;
   int coopTeamScore;

@@ -87,6 +87,7 @@ private:
 	Sound* gameOver;
 
 	void actualizarEscenario(Posicion* posicion);
+	void actualizarPosicionEscenario(Posicion* posicion);
 	void aplicarFPS(Uint32 start);
 	void setFondosVivibles(int x, int y);
 	void configurarFondosVivibles();

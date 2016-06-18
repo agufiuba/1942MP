@@ -57,7 +57,7 @@ void Game::cargarEscenario() {
       PlayerData* pData = this->unCliente->getPlayers()[i];
       if( this->clientId == pData->name ) {
 //    	  cout<<"team del Data: "<<this->team<<endl;
-		  this->player = new Player( pData->name, pData->color, pData->x, pData->y, this->team);
+		  this->player = new Player( pData->name, pData->color, pData->x, pData->y, pData->estacionamientoX, pData->estacionamientoY, this->team);
 		  // set player and teams score
 		  this->player->addScore( pData->score );
 		  this->unCliente->setCoopTeamScore( pData->coopTeamScore );
