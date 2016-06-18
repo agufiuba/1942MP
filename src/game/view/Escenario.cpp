@@ -66,13 +66,10 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	for (int i = 0; i < fondosVivibles.size(); i++) {
 		fondosVivibles[i]->vivir();
 	}
-/*  Aca estan los Vivir y las Colisiones */
-//	cout<<"1"<<endl;
-	myControl->hacerVivir();
+
+	/*  Aca estan los Vivir y las Colisiones */
 	controllers->hacerVivir();
-//	cout<<"2"<<endl;
 	this->getPowerUp();
-//	cout<<"3"<<endl;
 	hPowerUp->hacerVivir();
 //	cout<<"4"<<endl;
 	mutex m;
@@ -90,9 +87,9 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	hEnemigos->hacerVivir();
 //	cout<<"5"<<endl;
 	this->hitEnemy(&(myControl->controlDeMisiles->getVivibles()->vectorObjetos));
-//	cout<<"6"<<endl;
+	myControl->hacerVivir();
+
 	if (!unCliente->getGameData()->practiceMode){
-//		cout<<"Con colision"<<endl;
 		this->planesColision();
 		this->enemyOtherPlayerColision();
 	} else {
@@ -267,6 +264,8 @@ SDL_Event* Escenario::run() {
 
 	for (int numeroNivel = nivelActual; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
+		arrancarAviones();
+
 		while (!quit && this->unCliente->isConnected()) {
 
 			start = SDL_GetTicks();
@@ -356,7 +355,6 @@ SDL_Event* Escenario::run() {
 	    
 				// load score screen
 				this->loadScoreScreen( numeroNivel );
-
 				delete musica;
 				musica = new Music("musicaDeFondo.mp3");
 				musica->play();
@@ -377,7 +375,7 @@ SDL_Event* Escenario::run() {
 
 	}
 
-	if (ultimoNivelJugado == CANTIDAD_NIVELES) {
+	if (ultimoNivelJugado == CANTIDAD_NIVELES && !quit) {
 		loadScoreScreen(0);
 	}
 
@@ -1053,4 +1051,9 @@ void Escenario::hitPlanes(vector<Vivible*>* disparos,Vivible* avion){
 		}
 	}
 
+}
+
+void Escenario::arrancarAviones() {
+	myControl->hacerVueltereta();
+	controllers->hacerVueltereta();
 }

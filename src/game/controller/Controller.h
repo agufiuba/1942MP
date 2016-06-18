@@ -36,6 +36,7 @@ public:
 	Controller(Vivible* unObj, SDL_Renderer* renderer, Resolucion* resolucion, Client* client);
 	~Controller();
 	void press(SDL_Event *event);
+	void hacerVueltereta();
 	void hacerVivir();
 	Vivible* getVivible();
 

@@ -107,6 +107,8 @@ private:
 	void hitEnemyMissileByOtherPlayer(ControllerMissiles* controller);
 	void enemyOtherPlayerMissileColision();
 	void hitPlanes(vector<Vivible*>* disparos, Vivible* avion);
+	void arrancarAviones();
+
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client);
 	~Escenario();

@@ -29,6 +29,7 @@ public:
 	void setPlayer(Avion* vivible);
 	void mover(string id, char event);
 	void hacerVivir();
+	void hacerVueltereta();
 	void killPlayer( string playerID );
 	map<string, IController*> getMapaControllers();
 };
