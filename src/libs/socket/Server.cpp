@@ -641,6 +641,8 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 		this->enemys.erase( this->enemys.find( data->id ) );
 		m.unlock();
 	      }
+	    } else if (data->status == 'R') {
+	    	this->createEnemys();
 	    }
 	  }
 	}
@@ -980,9 +982,6 @@ void Server::sendPlayersReady(){
 
 void Server::createEnemys() {
   this->createEnemy( 'r', 500, 500 );
-  this->createEnemy( 'r', 200, 600 );
-  this->createEnemy( 'm', 100, 200 );
-  this->createEnemy( 'm', 600, 300 );
   this->createEnemy( 'm', 300, 100 );
 }
 

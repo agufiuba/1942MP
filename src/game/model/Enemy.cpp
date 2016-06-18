@@ -37,7 +37,7 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	misilConf->velocidadDisparos = conf->enemigos[1]->velocidadDisparos + 3;
 	controlDeMisiles = new ControllerMissilesEnemy(misilConf, renderer);
 	contador = 0;
-	tiempoEntreDisparo = 20;
+	tiempoEntreDisparo = 30;
 
 }
 

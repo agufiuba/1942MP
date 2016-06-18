@@ -124,6 +124,7 @@ class Client {
     void setCoopMode( bool mode );
     void setTeamMode( bool mode );
     void sendEnemyDeath( int id = -1 );
+    void sendRecoverEnemysAlive();
     vector<EnemyStatus*> getEnemys();
     void resetEnemys();
 };

@@ -810,6 +810,15 @@ void Client::sendEnemyDeath( int id ) {
   delete tmt;
 }
 
+void Client::sendRecoverEnemysAlive() {
+  EnemyStatus* data = new EnemyStatus;
+  data->status = 'R';
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendData( data );
+  delete data;
+  delete tmt;
+}
+
 vector<EnemyStatus*> Client::getEnemys() {
   return this->enemys;
 }

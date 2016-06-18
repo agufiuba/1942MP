@@ -45,6 +45,8 @@ void Game::cargarEscenario() {
 	    this->unCliente->setConfigComplete(false);
 		this->unCliente->sendGetConfig();
 		while(!unCliente->isConfigComplete()){}
+
+		this->unCliente->sendRecoverEnemysAlive();
 	}
 //	cout<<"creo escenario"<<endl;
     this->unCliente->reset =false;
