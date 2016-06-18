@@ -11,7 +11,7 @@
 using namespace std;
 
 typedef struct EnemigoConf {
-    char tipo[30];
+    char tipo[1];
     char disparosSpriteID[30];
     int velocidadDisparos;
 	int x;

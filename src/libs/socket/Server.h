@@ -14,6 +14,7 @@
 #include "../../libs/data/enemy_status.h"
 #include "../../game/model/Player.h"
 #include "../../game/model/ServerAvionEnemigoRandom.h"
+#include <vector>
 #include <queue>
 #include <map>
 #include <string>

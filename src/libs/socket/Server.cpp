@@ -991,11 +991,18 @@ void Server::sendPlayersReady(){
 }
 
 void Server::createEnemys() {
-  this->createEnemy( 'r', 500, 500 );
-  this->createEnemy( 'm', 300, 100 );
+
+	vector<EnemigoConf*> enemigosConf = this->config->enemigos;
+	for (int i = 0; i < enemigosConf.size(); i++) {
+		EnemigoConf* enemigoConf = enemigosConf[i];
+
+		this->createEnemy(*enemigoConf->tipo, enemigoConf->x, enemigoConf->y);
+	}
+
 }
 
 void Server::createEnemy( char type, int x, int y ) {
+	cout << "EL ENEMIGO TIENE TIPO: " << type << endl;
   this->enemyID++;
   ServerAvionEnemigo* enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
   EnemyStatus* data = new EnemyStatus;
