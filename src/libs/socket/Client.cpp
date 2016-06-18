@@ -28,7 +28,6 @@ Client::Client(const char* configFileName) {
     this->coopTeamScore = 0;
     this->alphaTeamScore = 0;
     this->betaTeamScore = 0;
-    this->destroyEne = false;
     this->winner = false;
     this->loser = false;
 }
@@ -52,7 +51,6 @@ Client::Client(string ip, string puerto) {
     this->coopTeamScore = 0;
     this->alphaTeamScore = 0;
     this->betaTeamScore = 0;
-    this->destroyEne = false;
     this->winner = false;
     this->loser = false;
 }
@@ -78,7 +76,6 @@ Client::Client(string ip, string puerto,
     this->coopTeamScore = 0;
     this->alphaTeamScore = 0;
     this->betaTeamScore = 0;
-    this->destroyEne = false;
     this->winner = false;
     this->loser = false;
 }
@@ -93,6 +90,11 @@ void Client::setHandler(HandlerPlayersControllers* handlerPlayersControllers) {
 void Client::setPowerUpHandler(HandlerPowerUp* hPowerUp) {
 	this->hPowerUp = hPowerUp;
 }
+
+void Client::setEnemyHandler(HandlerEnemigos* hEnemigos) {
+	this->hEnemigos = hEnemigos;
+}
+
 
 bool Client::allPlayersReady(){
   return (this->configComplete && this->ready);
@@ -282,7 +284,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					} else if (e->value == 'Y') {
 							this->hPowerUp->matar(string(e->name));
 					} else if (e->value == 'X') {
-							this->destroyEne = true;
+							this->hEnemigos->deleteEnemys();
 					} else if (e->value == QUITGAME ) {
 					   cout << "QUITGAME TRIGGERED BY: " << string(e->name) << endl; 
 					   this->pc->killPlayer( string( e->name ) );
@@ -430,6 +432,29 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			 } else if ( dataID == "OK" ){
 //			   cout<<"Llega el OK"<<endl;
 			   this->ready = true;
+			 } else if ( dataID == "ED" ) {
+				 	EnemyData* data = new EnemyData;
+					if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
+					  cout << "ID: " << to_string( data->id ) << endl;
+					  cout << "DIRECTION: " << data->direction << endl;
+					  this->hEnemigos->mover(data->id, data->direction);
+					}
+			 } else if ( dataID == "SE" ) {
+					EnemyStatus* data = new EnemyStatus;
+					if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
+					  mutex m;
+					  // process enemy status
+					  cout << "ENEMY ID: " << to_string( data->id ) << endl;
+					  cout << "ENEMY TYPE: " << data->type<< endl;
+					  cout << "ENEMY POS X: " << to_string( data->x ) << endl;
+					  cout << "ENEMY POS Y: " << to_string( data->y ) << endl;
+					  cout << "ENEMY STATUS: " << data->status << endl;
+					  if ( data->status == 'C' ) {
+					    m.lock();
+					    this->enemys.push_back( data );
+					    m.unlock();
+					  }
+					}
 			 }
 		}
 
@@ -750,18 +775,6 @@ void Client::setBetaTeamScore( int score ) {
   this->betaTeamScore = score;
 }
 
-void Client::setNotDestroyEnemys() {
-  this->destroyEne = false;
-}
-
-void Client::setDestroyEnemys() {
-  this->destroyEne = true;
-}
-
-bool Client::destroyEnemys() {
-	return this->destroyEne;
-}
-
 void Client::quitGame() {
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendDataID( "QG" );
@@ -785,4 +798,22 @@ void Client::setCoopMode( bool mode ) {
 
 void Client::setTeamMode( bool mode ) {
   this->gameData->teamMode = mode;
+}
+
+void Client::sendEnemyDeath( int id ) {
+  EnemyStatus* data = new EnemyStatus;
+  data->id = id;
+  data->status = 'D';
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendData( data );
+  delete data;
+  delete tmt;
+}
+
+vector<EnemyStatus*> Client::getEnemys() {
+  return this->enemys;
+}
+
+void Client::resetEnemys() {
+  this->enemys.clear();
 }

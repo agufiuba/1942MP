@@ -35,6 +35,7 @@ Server::Server( const char* configFileName ) {
   this->alphaTeamScore = 0;
   this->betaTeamScore = 0;
   this->coopTeamScore = 0;
+  this->enemyID = 0;
 }
 
 Server::~Server() {
@@ -618,6 +619,30 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 		this->gameData->countPlayersTeam2++;
 		this->setTeamPlayer(2, cfd);
 		this->sendGameDataAll();
+	} else if ( dataID == "SE" ) {
+	  EnemyStatus* data = new EnemyStatus;
+	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
+	    cout << "ENEMY ID: " << to_string( data->id ) << endl;
+	    cout << "ENEMY STATUS: " << data->status << endl;
+	    if ( data->status == 'D' ) {
+	      mutex m;
+	      if ( data->id == -1 ) {
+		m.lock();
+		for( map<int, ServerAvionEnemigo*>::iterator it = this->enemys.begin();
+		     it != this->enemys.end();
+		     ++it ) {
+		  delete it->second;
+		}
+		this->enemys.clear();
+		m.unlock();
+	      } else {
+		m.lock();
+		delete this->enemys[ data->id ];
+		this->enemys.erase( this->enemys.find( data->id ) );
+		m.unlock();
+	      }
+	    }
+	  }
 	}
       }
 
@@ -757,6 +782,7 @@ void Server::closeClient( int cfd ) {
     this->alphaTeamScore = 0;
     this->betaTeamScore = 0;
     this->coopTeamScore = 0;
+    this->enemyID = 0;
   }
   cout << "Cantidad de clientes conectados: " << this->clientCount << endl;
   this->logger->info( "Cantidad de Clientes Conectados: " + to_string( this->clientCount ) );
@@ -944,7 +970,74 @@ void Server::sendPlayersReady(){
 	  tmt->sendDataID("OK");
 	  delete tmt;
 	}
+	thread tCreateEnemys( &Server::createEnemys, this);
+	tCreateEnemys.detach();
+
+	thread tMoveEnemy( &Server::makeEnemyMove, this);
+	tMoveEnemy.detach();
   }
+}
+
+void Server::createEnemys() {
+  this->createEnemy( 'r', 500, 500 );
+  this->createEnemy( 'r', 200, 600 );
+  this->createEnemy( 'm', 100, 200 );
+  this->createEnemy( 'm', 600, 300 );
+  this->createEnemy( 'm', 300, 100 );
+}
+
+void Server::createEnemy( char type, int x, int y ) {
+  this->enemyID++;
+  ServerAvionEnemigo* enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
+  EnemyStatus* data = new EnemyStatus;
+  data->id = this->enemyID;
+  data->type = type;
+  data->x = x;
+  data->y = y;
+  data->status = 'C';
+  this->enemys[ enemyID ] =  enemy;
+  this->sendEnemyCreation( data );
+}
+
+void Server::sendEnemyCreation( EnemyStatus* data ) {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    if ( it->second->isActive() ) {
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendData( data );
+      delete tmt;
+    }
+  }
+  delete data;
+}
+
+void Server::makeEnemyMove() {
+  mutex m;
+	EnemyData* data;
+	map<int, ServerAvionEnemigo*>::iterator it;
+	while (this->running) {
+			usleep( 1000000 );
+			m.lock();
+			for ( it = this->enemys.begin(); it != this->enemys.end(); ++it ) {
+			  data = it->second->vivir();
+			  this->sendEnemyData( data ); 
+			}
+			m.unlock();
+	}
+}
+
+void Server::sendEnemyData( EnemyData* data ) {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    if ( it->second->isActive() ) {
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendData( data );
+      delete tmt;
+    }
+  }
+  delete data;
 }
 
 void Server::setTeamPlayer(int team, int cliendFd){

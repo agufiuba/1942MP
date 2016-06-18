@@ -25,6 +25,7 @@
 #include "../controller/Timer.h"
 #include "../controller/HandlerPlayersControllers.h"
 #include "../controller/ControllerMissiles.h"
+#include "../controller/HandlerEnemigos.h"
 #include "../../xml/conf/GameConf.h"
 #include "../../xml/parser/GameParser.h"
 #include "../../xml/conf/EscenarioConf.h"
@@ -75,9 +76,9 @@ private:
 	Controller* myControl;
 	HandlerPlayersControllers* controllers;
 	HandlerPowerUp* hPowerUp;
+	HandlerEnemigos* hEnemigos;
 
 	vector<Isla*> fondosVivibles;
-	vector<Enemy*> enemigos;
 
 	GameConf* gc;
 	Client* unCliente;
@@ -88,7 +89,6 @@ private:
 	void setFondosVivibles(int x, int y);
 	void configurarFondosVivibles();
 	void configurarPowerUps();
-	void configurarEnemigos();
 	void limpiarFondosVivibles();
 	bool isFinNivel(int numeroNivel);
 	void loadScoreScreen( int stage = 0 );
@@ -99,8 +99,6 @@ private:
 	void getPowerUp();
 	void loadScoreData();
 	void hitEnemy(vector<Vivible*>* disparos);
-	void deleteEnemys();
-	void actualizarEnemigos();
 	bool escenarioCreado;
 	void planesColision();
 	void enemyOtherPlayerColision();
@@ -116,7 +114,6 @@ public:
 	void setPlayer(Player* player);
 	void configurarAvionAmigo(PlayerData* playerData);
 	void configurarMiAvion(PlayerData* playerData);
-	void crearEnemigo(int, int);
     void crearFlota(int, int);
     int flota;
 };

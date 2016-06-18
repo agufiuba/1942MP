@@ -59,6 +59,36 @@ bool Transmitter::sendData( PlayerData* data ) {
   return true;
 }
 
+bool Transmitter::sendData( EnemyData* data ) {
+  // Send data id
+  if( !( this->sendDataID( "ED" ) ) ) {
+	return false;
+  }
+  // Send data
+  if( send( this->peerFD, data, sizeof( EnemyData ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+    return false;
+  }
+
+  return true;
+}
+
+bool Transmitter::sendData( EnemyStatus* data ) {
+  // Send data id
+  if( !( this->sendDataID( "SE" ) ) ) {
+	return false;
+  }
+  // Send data
+  if( send( this->peerFD, data, sizeof( EnemyStatus ), 0 ) == -1 ) {
+    this->logger->error( SEND_FAIL );
+    DEBUG_WARN( SEND_FAIL );
+    return false;
+  }
+
+  return true;
+}
+
 bool Transmitter::sendData( PlayerScore* data, string id ) {
   // Send data id
   if( !( this->sendDataID( id ) ) ) {
@@ -371,4 +401,12 @@ int Transmitter::receiveData( ActivePlayers* e ) {
 
 int Transmitter::receiveData( GameData* data ) {
   return recv( this->peerFD, data, sizeof( GameData ), 0 ) ;
+}
+
+int Transmitter::receiveData( EnemyData* data ) {
+  return recv( this->peerFD, data, sizeof( EnemyData ), 0 ) ;
+}
+
+int Transmitter::receiveData( EnemyStatus* data ) {
+  return recv( this->peerFD, data, sizeof( EnemyStatus ), 0 ) ;
 }

@@ -2,14 +2,13 @@
 
 using namespace std;
 
-Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf, Avion* avionApuntado) {
+Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, GameConf* conf) {
 
-	this->id = id;
 	this->configuracion = conf;
 	this->vida = 1;
 
 	this->screen = screen;
-	vistaAvion = new AvionView(renderer, "verde", conf->avionSpriteID);
+	vistaAvion = new EnemyView(renderer, "avionEnemigo3.bmp");
 	explosion = NULL;
 	viviendo = true;
 
@@ -34,12 +33,12 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	nFlota = chrono::system_clock::now();
 
 	misilConf = new MisilConf();
-	strcpy(misilConf->disparosSpriteID,conf->disparosSpriteID);
-	misilConf->velocidadDisparos = conf->velocidadDisparos + conf->velocidadDesplazamiento;
+	strcpy(misilConf->disparosSpriteID,conf->enemigos[1]->disparosSpriteID);
+	misilConf->velocidadDisparos = conf->enemigos[1]->velocidadDisparos + 3;
 	controlDeMisiles = new ControllerMissilesEnemy(misilConf, renderer);
-	this->avionApuntado = avionApuntado;
 	contador = 0;
 	tiempoEntreDisparo = 20;
+
 }
 
 Enemy::~Enemy(){
@@ -55,8 +54,12 @@ Enemy::~Enemy(){
 	delete controlDeMisiles;
 }
 
-string Enemy::getId() {
+int Enemy::getID() {
 	return this->id;
+}
+
+void Enemy::setID( int id ) {
+  this->id = id;
 }
 
 void Enemy::setVelocidadStandard(int vel){
@@ -87,7 +90,7 @@ int Enemy::getLargo() {
 	}
 }
 
-AvionConf* Enemy::getConfiguracion() {
+GameConf* Enemy::getConfiguracion() {
 	return this->configuracion;
 }
 
@@ -111,6 +114,10 @@ void Enemy::disparar() {
 		contador = 0;
 	}
 		contador ++;
+}
+
+void Enemy::setAvionApuntado(Avion* avion) {
+	this->avionApuntado = avion;
 }
 
 void Enemy::mostrarDisparo() {
@@ -186,8 +193,10 @@ void Enemy::vivir(int velX, int velY){
 //			vistaAvion->conectar();
 //		}
 //		if (!realizandoVueltereta) {
+			disparar();
+			mostrarDisparo();
 			mover(velX, velY);
-			mostrar(angleX, angleY);
+			mostrar(velX, velY);
 //		} else {
 //			realizoVueltereta();
 //		}

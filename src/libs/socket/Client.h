@@ -1,5 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
+#include "../data/enemy_data.h"
+#include "../data/enemy_status.h"
 #include "../data/player_data.h"
 #include "../data/player_status.h"
 #include "../data/player_score.h"
@@ -14,6 +16,7 @@
 #include "../../game/model/Enemy.h"
 #include "../../game/controller/HandlerPlayersControllers.h"
 #include "../../game/controller/HandlerPowerUp.h"
+#include "../../game/controller/HandlerEnemigos.h"
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +26,7 @@ class Client {
   private:
     HandlerPlayersControllers* pc;
     HandlerPowerUp* hPowerUp;
+    HandlerEnemigos* hEnemigos;
     string ip;
     string puerto;
     Player* player;
@@ -44,6 +48,7 @@ class Client {
 	vector<SpriteConf*> sprites;
     vector<PlayerData*> allPlayers;
     vector<PlayerScore*> playersScoreData;
+    vector<EnemyStatus*> enemys;
     int clientsPlaying;
 
     static const int MAX_UNREACHABLE_TIME = 5;
@@ -56,7 +61,6 @@ class Client {
     GameData* gameData;
     bool playerResume;
 
-    bool destroyEne;
 
   public:
     Client( const char* configFileName );
@@ -80,9 +84,7 @@ class Client {
     bool sendPlayerDeath();
     void setHandler(HandlerPlayersControllers* handlerPlayersControllers);
     void setPowerUpHandler(HandlerPowerUp* hPowerUp);
-    void setNotDestroyEnemys();
-    void setDestroyEnemys();
-    bool destroyEnemys();
+    void setEnemyHandler(HandlerEnemigos* hEnemigos);
     vector<PlayerData*> getPlayers();
     vector<PlayerScore*> getPlayersScoreData();
     GameConf* getConfig();
@@ -121,5 +123,8 @@ class Client {
     bool losses();
     void setCoopMode( bool mode );
     void setTeamMode( bool mode );
+    void sendEnemyDeath( int id = -1 );
+    vector<EnemyStatus*> getEnemys();
+    void resetEnemys();
 };
 #endif

@@ -4,23 +4,24 @@
 #include <iostream>
 #include <ctime>
 #include <chrono>
-#include "../view/AvionView.h"
+#include "../view/EnemyView.h"
 #include "Vivible.h"
+
 #include "../controller/Timer.h"
 #include "Resolucion.h"
 #include "../model/Posicion.h"
 #include "../../libs/data/player_data.h"
-#include "../../xml/conf/AvionConf.h"
+#include "../../xml/conf/GameConf.h"
 #include <string>
 #include "Misil.h"
 #include "../view/ExplosionView.h"
 #include "../view/Screen.h"
 #include "../controller/ControllerMissilesEnemy.h"
 
-class Enemy: public Vivible {
-private:
+class Enemy {
+protected:
 
-	string id;
+	int id;
 	int anchoFondo, largoFondo;
 	int velocidadStandard;
 	int vida;
@@ -33,10 +34,10 @@ private:
 	Timer* t;
 
 	Screen* screen;
-	AvionView* vistaAvion;
+	EnemyView* vistaAvion;
 	ExplosionView* explosion;
 	Posicion* posicion;
-	AvionConf* configuracion;
+	GameConf* configuracion;
 	int contador;
 	int tiempoEntreDisparo;
 
@@ -53,13 +54,15 @@ private:
 	ControllerMissilesEnemy* controlDeMisiles;
 	MisilConf* misilConf;
 	Resolucion* resolucion;
+
 	Avion* avionApuntado;
 
 public:
-	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, AvionConf* conf, Avion* avionApuntado);
+	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, GameConf* conf);
 	~Enemy();
 
-	string getId();
+	void setID( int id );
+	int getID();
 	int getAnchoFondo();
 	int getLargoFondo();
 	int getAncho();
@@ -68,7 +71,7 @@ public:
 	int getY();
 	int getVida();
 
-	AvionConf* getConfiguracion();
+	GameConf* getConfiguracion();
 
 	void setVelocidadStandard(int vel);
 
@@ -96,6 +99,8 @@ public:
     void disparar();
     void mostrarDisparo();
     ControllerMissilesEnemy* getControllerMissiles();
+
+    void setAvionApuntado(Avion* avion);
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */
