@@ -625,10 +625,21 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	    cout << "ENEMY STATUS: " << data->status << endl;
 	    if ( data->status == 'D' ) {
 	      mutex m;
-	      m.lock();
-	      delete this->enemys[ data->id ];
-	      this->enemys.erase( this->enemys.find( data->id ) );
-	      m.unlock();
+	      if ( data->id == -1 ) {
+		m.lock();
+		for( map<int, ServerAvionEnemigo*>::iterator it = this->enemys.begin();
+		     it != this->enemys.end();
+		     ++it ) {
+		  delete it->second;
+		}
+		this->enemys.clear();
+		m.unlock();
+	      } else {
+		m.lock();
+		delete this->enemys[ data->id ];
+		this->enemys.erase( this->enemys.find( data->id ) );
+		m.unlock();
+	      }
 	    }
 	  }
 	}

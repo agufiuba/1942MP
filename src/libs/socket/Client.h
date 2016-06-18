@@ -122,6 +122,6 @@ class Client {
     bool losses();
     void setCoopMode( bool mode );
     void setTeamMode( bool mode );
-    void sendEnemyDeath( int id );
+    void sendEnemyDeath( int id = -1 );
 };
 #endif
