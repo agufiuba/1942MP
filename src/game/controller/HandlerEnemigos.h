@@ -28,6 +28,7 @@ private:
 	GameConf* gc;
 	int velocidadStandard;
 	int velX,velY;
+	map<string, Avion*> mapaAvionesApuntables;
 
 public:
 	map<int, Enemy*> mapaEnemigos;
@@ -39,5 +40,7 @@ public:
 	void hacerVivir();
 	void matar(int id);
 	void deleteEnemys();
+	void addAvionesApuntables(Avion* avion);
+	void setAvionApuntar(int idEnemigo, string idAvion);
 };
 #endif /* SRC_GAME_CONTROLLER_HANDLERENEMIGOS_H_ */

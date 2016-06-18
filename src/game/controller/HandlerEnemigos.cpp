@@ -92,3 +92,18 @@ void HandlerEnemigos::deleteEnemys() {
 Enemy* HandlerEnemigos::getEnemigo(int id) {
 	return this->mapaEnemigos[id];
 }
+
+void HandlerEnemigos::setAvionApuntar(int idEnemigo, string idAvion) {
+	map<int, Enemy*>::iterator it = this->mapaEnemigos.find( idEnemigo );
+	if ( it == this->mapaEnemigos.end() ) return;
+	map<string, Avion*>::iterator it2 = this->mapaAvionesApuntables.find( idAvion );
+	if ( it2 == this->mapaAvionesApuntables.end() ) return;
+
+	Avion* avion = this->mapaAvionesApuntables[idAvion];
+	this->mapaEnemigos[idEnemigo]->setAvionApuntado(avion);
+}
+
+void HandlerEnemigos::addAvionesApuntables(Avion* avion) {
+	this->mapaAvionesApuntables[avion->getId()] = avion;
+}
+

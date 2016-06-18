@@ -39,8 +39,6 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	contador = 0;
 	tiempoEntreDisparo = 20;
 
-	posApuntadoX = 500;
-	posApuntadoY = 500;
 }
 
 Enemy::~Enemy(){
@@ -108,10 +106,14 @@ void Enemy::moverEjeY(int velY) {
 
 void Enemy::disparar() {
 	if (contador >= tiempoEntreDisparo){
-		controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + 12,this->getY(), resolucion, misilConf, posApuntadoX, posApuntadoY);
+		controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + 12,this->getY(), resolucion, misilConf, avionApuntado->getX(), avionApuntado->getY());
 		contador = 0;
 	}
 		contador ++;
+}
+
+void Enemy::setAvionApuntado(Avion* avion) {
+	this->avionApuntado = avion;
 }
 
 void Enemy::mostrarDisparo() {

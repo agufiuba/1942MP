@@ -219,7 +219,8 @@ void Escenario::configurarEnemigos() {
 			crearFlota(x, y);
 		}
 */
-	hEnemigos->createEnemigo(1,"r", 200, 200);
+	hEnemigos->createEnemigo(1,"r", 500, 500);
+	hEnemigos->setAvionApuntar(1, myControl->getVivible()->getId()); // TODO: esto se deberia setear por mensaje del servidor
 }
 
 HandlerPlayersControllers* Escenario::getHandler() {
@@ -229,11 +230,13 @@ HandlerPlayersControllers* Escenario::getHandler() {
 void Escenario::configurarAvionAmigo(PlayerData* playerData) {
 	Vivible* avionAmigo = new Avion(playerData, escenarioScreen, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
 	controllers->setPlayer((Avion*) avionAmigo);
+	hEnemigos->addAvionesApuntables((Avion*) avionAmigo);
 }
 
 void Escenario::configurarMiAvion(PlayerData* playerData) {
 	Vivible* avion = new Avion(playerData, escenarioScreen, gRenderer, resolucion, new Posicion(playerData->x, playerData->y), gc->avion);
 	myControl = new Controller(avion, gRenderer, resolucion, this->unCliente);
+	hEnemigos->addAvionesApuntables((Avion*) avion);
 }
 
 void Escenario::setFondosVivibles(int x, int y) {
