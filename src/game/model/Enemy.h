@@ -4,7 +4,9 @@
 #include <iostream>
 #include <ctime>
 #include <chrono>
-#include "../view/AvionView.h"
+#include "../view/EnemyView.h"
+#include "Vivible.h"
+
 #include "../controller/Timer.h"
 #include "Resolucion.h"
 #include "../model/Posicion.h"
@@ -32,7 +34,7 @@ private:
 	Timer* t;
 
 	Screen* screen;
-	AvionView* vistaAvion;
+	EnemyView* vistaAvion;
 	ExplosionView* explosion;
 	Posicion* posicion;
 	GameConf* configuracion;
