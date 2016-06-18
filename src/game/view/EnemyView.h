@@ -19,7 +19,8 @@ public:
 	int getLargoVista();
 	void mostrarRotado(int x, int y, int velX, int velY);
 	void cargarClips();
-
+	void setAnchoVista(int anchoVista);
+	void setLargoVista(int largoVista);
 private:
 	string dir = "src/game/images/";
 	int anchoVista;

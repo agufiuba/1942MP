@@ -22,7 +22,7 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 	Direction d;
 	EnemyData* ed = new EnemyData;
 	ed->id = this->id;
-		
+		cout<<"vivir del random"<<endl;
 		srand(time(NULL));
 		d = static_cast<Direction>( rand() % 4 );
 

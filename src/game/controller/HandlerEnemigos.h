@@ -15,6 +15,7 @@
 #include "../model/Avion.h"
 #include "../model/Enemy.h"
 #include "../model/EnemyMediano.h"
+#include "../model/EnemyGrande.h"
 #include "../model/Vivible.h"
 #include "../../libs/data/game_data.h"
 #include "../view/Screen.h"

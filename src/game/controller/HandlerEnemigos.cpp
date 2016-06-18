@@ -37,22 +37,24 @@ void HandlerEnemigos::createEnemigo(int id, char type, int posX, int posY) {
 			Enemy* mediano = new EnemyMediano(screen, renderer, resolucion, p, gc);
 			mapaEnemigos[id] = mediano;
 		}else if (type == 'g') {
-
+			cout<<"Enemigo Grande: "<<id<<endl;
+			Enemy* grande = new EnemyGrande(screen, renderer, resolucion, p, gc);
+			mapaEnemigos[id] = grande;
 		}
 }
 
 void HandlerEnemigos::hacerVivir() {
-	//mutex theMutex;
-	//theMutex.lock();
+	mutex theMutex;
+	theMutex.lock();
 	for (map<int, Enemy*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
 		if(it->second->aunVive()){
-			it->second->vivir(velX, velY);
+			it->second->vivir();
 		} else {
 			delete it->second;
 			this->mapaEnemigos.erase(it);
 		}
 	}
-	//theMutex.unlock();
+	theMutex.unlock();
 }
 
 void HandlerEnemigos::matar(int id) {
@@ -65,25 +67,30 @@ void HandlerEnemigos::mover(int id, char evento) {
 
 	Enemy* enemigo = mapaEnemigos[id];
 
+	cout<<"Enemigo "<<id<<" se mueve hacia "<<evento<<endl;
 		switch(evento) {
-			case 'R': if (velX <= 0){
-									this->velX = velocidadStandard;
-								}
-									break; 		//Derecha
-			case 'L': if (velX >= 0){
-									this->velX = -velocidadStandard;
-								}
-									break; 		//Izquierda
-			case 'U': if (velY <= 0){
-									this->velY = velocidadStandard;
-								}
-									break; 		//Arriba
-			case 'D': if (velY >= 0){
-									this->velY = -velocidadStandard;
-								}
-									break; 		//Abajo
+			case 'R': if (enemigo->getVelX() <= 0){
+					    enemigo->setVelX(velocidadStandard);
+			  	      }
+					  break; 		//Derecha
+			case 'L': if (enemigo->getVelX() >= 0){
+					  	enemigo->setVelX(-velocidadStandard);
+					  }
+					  break; 		//Izquierda
+			case 'U': if (enemigo->getVelY() <= 0){
+					    enemigo->setVelY(velocidadStandard);
+					  }
+					  break; 		//Arriba
+			case 'D': if (enemigo->getVelY() >= 0){
+						enemigo->setVelY(-velocidadStandard);
+					  }
+					  break; 		//Abajo
 
 			case 'S': enemigo->disparar()	; break; 								//Disparar
+
+			case 'N': enemigo->setVelX(0);
+					  enemigo->setVelY(0);
+					  break;
 
 			case 'X': enemigo->morir();
 								this->matar(id);

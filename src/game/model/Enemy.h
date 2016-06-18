@@ -48,6 +48,8 @@ protected:
 	void moverEjeX(int velX);
 	void moverEjeY(int velY);
 
+	int velX;
+	int velY;
 	int angleX;
 	int angleY;
 
@@ -75,7 +77,7 @@ public:
 
 	void setVelocidadStandard(int vel);
 
-	void vivir(int velX, int velY);
+	void vivir();
 	void vivirRandom();
 	void vivirFlota();
 	bool aunVive();
@@ -101,6 +103,10 @@ public:
     ControllerMissilesEnemy* getControllerMissiles();
 
     void setAvionApuntado(Avion* avion);
+    void setVelX(int vel);
+    void setVelY(int vel);
+    int getVelX();
+    int getVelY();
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */

@@ -20,7 +20,8 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 
 	angleX = 0;
 	angleY = -1;
-
+	velX = 0;
+	velY = 0;
 	t = new Timer();
 
     flota = -1;
@@ -128,6 +129,7 @@ void Enemy::mostrarDisparo() {
 }
 
 void Enemy::mover(int velX, int velY) {
+	cout<<"muevo "<<velX<<" "<<velY<<endl;
 	moverEjeX(velX);
 	moverEjeY(velY);
 }
@@ -139,10 +141,6 @@ void Enemy::mostrar(int velX, int velY){
 
 void Enemy::vivirRandom(){
 	if (tieneHP()) {
-//		if (!viviendo) {
-//			this->viviendo = true;
-//			vistaAvion->conectar();
-//		}
 		disparar();
 		mostrarDisparo();
 		moverRandom();
@@ -189,20 +187,12 @@ void Enemy::vivirFlota(){
 
 }
 
-void Enemy::vivir(int velX, int velY){
+void Enemy::vivir(){
 	if (tieneHP()) {
-//		if ((velX != 0 || velY != 0) && !viviendo) {
-//			this->viviendo = true;
-//			vistaAvion->conectar();
-//		}
-//		if (!realizandoVueltereta) {
 			disparar();
 			mostrarDisparo();
-			mover(velX, velY);
-			mostrar(velX, velY);
-//		} else {
-//			realizoVueltereta();
-//		}
+			mover(this->velX, this->velY);
+			mostrar(this->velX, this->velY);
 	} else {
 		if (vistaAvion != NULL) {
 			delete vistaAvion;
@@ -347,4 +337,21 @@ void Enemy::morir(){
 
 ControllerMissilesEnemy* Enemy::getControllerMissiles(){
 	return this->controlDeMisiles;
+}
+
+void Enemy::setVelX(int velX){
+	this->velX = velX;
+}
+
+void Enemy::setVelY(int velY){
+	this->velY = velY;
+}
+
+
+int Enemy::getVelX(){
+	return this->velX;
+}
+
+int Enemy::getVelY(){
+	return this->velY;
 }

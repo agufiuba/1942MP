@@ -991,20 +991,32 @@ void Server::sendPlayersReady(){
 }
 
 void Server::createEnemys() {
-
+	this->enemyID = 0;
+	this->enemys.clear();
 	vector<EnemigoConf*> enemigosConf = this->config->enemigos;
 	for (int i = 0; i < enemigosConf.size(); i++) {
 		EnemigoConf* enemigoConf = enemigosConf[i];
 
 		this->createEnemy(*enemigoConf->tipo, enemigoConf->x, enemigoConf->y);
 	}
-
+//	this->createEnemy( 'g', 400, -170 );
+//  this->createEnemy( 'r', 500, 500 );
+//  this->createEnemy( 'r', 200, 600 );
+//  this->createEnemy( 'm', 100, 200 );
+//  this->createEnemy( 'm', 600, 300 );
+//  this->createEnemy( 'm', 300, 100 );
 }
 
 void Server::createEnemy( char type, int x, int y ) {
 	cout << "EL ENEMIGO TIENE TIPO: " << type << endl;
   this->enemyID++;
-  ServerAvionEnemigo* enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
+  ServerAvionEnemigo* enemy = NULL;
+  if (type == 'g'){
+	  cout<<"avion grande"<<this->enemyID<<endl;
+	  enemy = new ServerAvionEnemyGrande( this->enemyID, new Posicion(x, y));
+  } else {
+	  enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
+  }
   EnemyStatus* data = new EnemyStatus;
   data->id = this->enemyID;
   data->type = type;
@@ -1037,7 +1049,8 @@ void Server::makeEnemyMove() {
 			m.lock();
 			for ( it = this->enemys.begin(); it != this->enemys.end(); ++it ) {
 			  data = it->second->vivir();
-			  this->sendEnemyData( data ); 
+			  cout<<"envio data del enemigo"<<endl;
+			  this->sendEnemyData( data );
 			}
 			m.unlock();
 	}

@@ -8,5 +8,6 @@ bool Colision::is(int x, int y, int xp, int yp, int x2, int y2, int xp2, int yp2
 }
 
 bool Colision::inside(int x, int y, int xp, int yp, int x2, int y2) {
+//	cout<<"Enemigo: posX "<<x2<<" posXFinal "<<xp2<<" posY "<<y2
 	return (x2 >= x) && (x2 <= xp) && (y2 >= y) && (y2 <= yp);
 }

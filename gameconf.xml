@@ -216,6 +216,33 @@
 			<y>150</y>
 		</posicion>
 	</enemigo>
+	<enemigo>
+		<tipo>r</tipo>
+		<velocidadDisparos>4</velocidadDisparos>
+		<disparosSpriteID>balaRedonda</disparosSpriteID>
+		<posicion>
+			<x>10</x>
+			<y>800</y>
+		</posicion>
+	</enemigo>
+	<enemigo>
+		<tipo>m</tipo>
+		<velocidadDisparos>4</velocidadDisparos>
+		<disparosSpriteID>balaRedonda</disparosSpriteID>
+		<posicion>
+			<x>500</x>
+			<y>150</y>
+		</posicion>
+	</enemigo>
+	<enemigo>
+		<tipo>g</tipo>
+		<velocidadDisparos>4</velocidadDisparos>
+		<disparosSpriteID>balaRedonda</disparosSpriteID>
+		<posicion>
+			<x>400</x>
+			<y>-170</y>
+		</posicion>
+	</enemigo>
 </enemigos>
-<maxClients>2</maxClients>
+<maxClients>1</maxClients>
 <jugadoresPorEquipo>1</jugadoresPorEquipo>

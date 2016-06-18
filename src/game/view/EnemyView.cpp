@@ -37,6 +37,14 @@ int EnemyView::getLargoVista(){
 		return largoVista;
 }
 
+void EnemyView::setAnchoVista(int anchoVista){
+		this->anchoVista = anchoVista;
+}
+
+void EnemyView::setLargoVista(int largoVista){
+		this->largoVista = largoVista;
+}
+
 bool EnemyView::cargarImagenDelAvion(string filename){
 	vistaAvionTexture = new Texture( rendererAvion );
 
@@ -62,7 +70,7 @@ void EnemyView::mostrarRotado( int x, int y, int velX, int velY){
   int frame = 0;
   SDL_Rect* currentClip = &clipsIzquierda[0];
   if(velX == 0 && velY == 0) {
-  	velY = -1;
+  	velY = 1;
   	velX = 0;
   }
   double mod = pow(velX * velX + velY * velY, 0.5);
