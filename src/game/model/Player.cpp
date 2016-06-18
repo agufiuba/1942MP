@@ -3,7 +3,6 @@
 using namespace std;
 
 Player::Player( string name, string color, int x, int y, int team, int health ) {
-	cout << "CRENADO PLAYER 1 " << endl;
   this->name = name;
   this->color = color;
   this->x = x;
@@ -18,7 +17,6 @@ Player::Player( string name, string color, int x, int y, int team, int health ) 
 }
 
 Player::Player( string name, string color, int x, int y, int xEst, int yEst, int team, int health ) {
-	cout << "CRENADO PLAYER 2 " << endl;
   this->name = name;
   this->color = color;
   this->x = x;

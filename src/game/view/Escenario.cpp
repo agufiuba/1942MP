@@ -239,14 +239,14 @@ SDL_Event* Escenario::run() {
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
 	int nivelActual = 1;
-	bool reinicio = false;
+	bool reinicioConQ = false;
 
 	//Reinicia mediante R no entra a buscar el offset, sino si (caso: salio por Q y vuelve a ingresar)
 	if (!this->unCliente->reinicia) {
 
 		int offset = this->unCliente->getStageOffset();
 		if (offset != 0) {
-			reinicio = true;
+			reinicioConQ = true;
 			pixelesRecorridos = offset + desfasajeConexion;
 			setFondosVivibles(0, pixelesRecorridos);
 			nivelActual = (pixelesRecorridos / LONGITUD_NIVEL) + 1;
@@ -261,10 +261,10 @@ SDL_Event* Escenario::run() {
 
 	for (int numeroNivel = nivelActual; numeroNivel < (CANTIDAD_NIVELES + 1); numeroNivel++) {
 
-		if (!reinicio) {
+		if (!reinicioConQ) {
 			arrancarAviones();
-			reinicio = false;
 		}
+		reinicioConQ = false;
 
 		while (!quit && this->unCliente->isConnected()) {
 
@@ -348,9 +348,6 @@ SDL_Event* Escenario::run() {
 			}
 
 			ultimoNivelJugado = numeroNivel;
-//			posicionEscenario->print();
-//			cout << "pxRecorridos: " << pixelesRecorridos << endl;
-
 			verificarEstacionamiento(numeroNivel);
 
 			if (isFinNivel(numeroNivel)) {
@@ -390,7 +387,6 @@ SDL_Event* Escenario::run() {
 void Escenario::verificarEstacionamiento(int numeroNivel) {
 	Avion* avion = (Avion*)myControl->getVivible();
 	if (!avion->estaEstacionando() && (pixelesRecorridos + 400) >= LONGITUD_NIVEL * numeroNivel) {
-		cout << "verificar estacionamiento" << endl;
 		avion->inicializoEstacionar();
 		Evento* e;
 		CompanionEvent* ce = new CompanionEvent();
@@ -408,9 +404,6 @@ void Escenario::actualizarPosicionEscenario(Posicion* posicionEscenario) {
 	int resto = recorridosAux % divisor;
 	int posicionNueva = LIMITE_IMAGEN - resto;
 	posicionEscenario->setPosicion(0,posicionNueva);
-	posicionEscenario->print();
-	cout << "ACTUALICE POSICION" << endl;
-	posicionEscenario->print();
 }
 
 void Escenario::limpiarFondosVivibles() {
