@@ -54,8 +54,12 @@ Enemy::~Enemy(){
 	delete controlDeMisiles;
 }
 
-int Enemy::getId() {
+int Enemy::getID() {
 	return this->id;
+}
+
+void Enemy::setID( int id ) {
+  this->id = id;
 }
 
 void Enemy::setVelocidadStandard(int vel){

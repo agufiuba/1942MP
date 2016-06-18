@@ -1,6 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 #include "../data/enemy_data.h"
+#include "../data/enemy_status.h"
 #include "../data/player_data.h"
 #include "../data/player_status.h"
 #include "../data/player_score.h"
@@ -121,5 +122,6 @@ class Client {
     bool losses();
     void setCoopMode( bool mode );
     void setTeamMode( bool mode );
+    void sendEnemyDeath( int id = -1 );
 };
 #endif
