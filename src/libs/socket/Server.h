@@ -43,6 +43,7 @@ class Server {
     int posicionInicialY;
 
     map<int, ServerAvionEnemigo*> enemys;
+    int enemyID;
 
     Logger* logger;
     GameConf* config;
@@ -86,6 +87,8 @@ class Server {
     void makeEnemyMove();
     void createEnemys();
     void sendEnemyData( EnemyData* data );
+    void sendEnemyCreation( EnemyStatus* data );
+    void createEnemy( char type, int x, int y );
 
   public:
     Server( const char* configFileName );
