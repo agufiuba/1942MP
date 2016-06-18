@@ -348,8 +348,8 @@ SDL_Event* Escenario::run() {
 			}
 
 			ultimoNivelJugado = numeroNivel;
-			posicionEscenario->print();
-			cout << "pxRecorridos: " << pixelesRecorridos << endl;
+//			posicionEscenario->print();
+//			cout << "pxRecorridos: " << pixelesRecorridos << endl;
 
 			verificarEstacionamiento(numeroNivel);
 

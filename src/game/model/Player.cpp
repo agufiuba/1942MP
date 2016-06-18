@@ -3,10 +3,28 @@
 using namespace std;
 
 Player::Player( string name, string color, int x, int y, int team, int health ) {
+	cout << "CRENADO PLAYER 1 " << endl;
   this->name = name;
   this->color = color;
   this->x = x;
   this->y = y;
+  this->xEstacionamiento = x;
+  this->yEstacionamiento = y;
+  this->active = false;
+  this->health = health;
+  this->score = 0;
+  this->team = team;
+  this->ready = false;
+}
+
+Player::Player( string name, string color, int x, int y, int xEst, int yEst, int team, int health ) {
+	cout << "CRENADO PLAYER 2 " << endl;
+  this->name = name;
+  this->color = color;
+  this->x = x;
+  this->y = y;
+  this->xEstacionamiento = xEst;
+  this->yEstacionamiento = yEst;
   this->active = false;
   this->health = health;
   this->score = 0;
@@ -50,6 +68,14 @@ void Player::setX(int x){
 
 void Player::setY(int y){
 	this->y = y;
+}
+
+int Player::getEstacionamientoX() {
+	return this->xEstacionamiento;
+}
+
+int Player::getEstacionamientoY() {
+	return this->yEstacionamiento;
 }
 
 bool Player::isActive() {

@@ -9,6 +9,8 @@ class Player {
     string color;
     int x;
     int y;
+    int xEstacionamiento;
+    int yEstacionamiento;
     bool active;
     int health;
     int score;
@@ -17,6 +19,7 @@ class Player {
 
   public:
     Player( string name, string color, int x, int y, int team, int health = 3 );
+    Player( string name, string color, int x, int y, int xEst, int yEst, int team, int health = 3 );
     ~Player();
     string getName();
     string getColor();
@@ -25,6 +28,8 @@ class Player {
     void resetScore();
     int getX();
     int getY();
+    int getEstacionamientoX();
+    int getEstacionamientoY();
     int getTeam();
 
     void setX(int x);

@@ -226,6 +226,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 			cout<<"Encuentro Player"<<endl;
 			// if running game and player with such name is not active
 			if ( this->running && !(it->second->isActive())) {
+				encontrePlayer = true;
 				// resume player game
 				cout<<"Resume Game"<<endl;
 				selectedColor = it->second->getColor();
@@ -233,6 +234,8 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 				score = it->second->getScore();
 				posicionInicialX = it->second->getX();
 				posicionInicialY = it->second->getY();
+				estacionamientoX = it->second->getEstacionamientoX();
+				estacionamientoY = it->second->getEstacionamientoY();
 				delete it->second;
 				this->players.erase(it);
 				createPlayer = true;
@@ -253,7 +256,12 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 	if (createPlayer && (this->players.size() < this->maxClientCount) ) {
 		// Add new player
 		cout<<"Creo Jugador"<<endl;
-		Player* p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY, selectedTeam);
+		Player* p;
+		if (encontrePlayer) {
+			p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY, estacionamientoX, estacionamientoY, selectedTeam);
+		} else {
+			p = new Player(selectedName, selectedColor, posicionInicialX, posicionInicialY, selectedTeam);
+		}
 		p->addScore( score );
 		theMutex.lock();
 		this->players[cfd] = p;
@@ -346,6 +354,8 @@ void Server::createPlayers() {
       strcpy(pd->color, player->getColor().c_str());
       pd->x = player->getX();
       pd->y = player->getY();
+      pd->estacionamientoX = player->getEstacionamientoX();
+      pd->estacionamientoY = player->getEstacionamientoY();
       pd->team = player->getTeam();
       pd->score = player->getScore();
 
