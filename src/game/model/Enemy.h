@@ -5,7 +5,6 @@
 #include <ctime>
 #include <chrono>
 #include "../view/AvionView.h"
-#include "Vivible.h"
 #include "../controller/Timer.h"
 #include "Resolucion.h"
 #include "../model/Posicion.h"
@@ -60,7 +59,8 @@ public:
 	Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, GameConf* conf);
 	~Enemy();
 
-	int getId();
+	void setID( int id );
+	int getID();
 	int getAnchoFondo();
 	int getLargoFondo();
 	int getAncho();
