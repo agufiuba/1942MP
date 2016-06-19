@@ -660,6 +660,10 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      m.lock();
 	      this->enemys[ data->id ]->activate();  
 	      m.unlock();
+	    } else if ( data->status == 'P' ) {
+	      m.lock();
+	      this->enemys[ data->id ]->updatePosition( data->x, data->y );
+	      m.unlock();
 	    }
 	  }
 	}
