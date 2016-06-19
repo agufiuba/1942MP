@@ -31,12 +31,12 @@ EnemyData* ServerAvionEnemyGrande::vivir() {
 		ed->direction = 'U';
 		this->cantidadDeMovimientos++;
 	}else if(this->cantidadDeMovimientos == this->movimientosMax) {
-		cout << "DOWN" << endl;
-		ed->direction = 'D';
-		this->cantidadDeMovimientos++;
-	} else {
 		cout << "N" << endl;
 		ed->direction = 'N';
+		this->cantidadDeMovimientos++;
+	} else {
+		cout << "Z" << endl;
+		ed->direction = 'Z';
 	}
 	return ed;
 }

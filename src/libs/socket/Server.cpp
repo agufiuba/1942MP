@@ -1050,7 +1050,7 @@ void Server::makeEnemyMove() {
 			  // send movements if enemy is active
 			  if ( it->second->isActive() ) {
 			    data = it->second->vivir();
-			    if ( data->direction != 'N' ) {
+			    if ( data->direction != 'Z' ) {
 			      this->sendEnemyData( data );
 			    }
 			  }
