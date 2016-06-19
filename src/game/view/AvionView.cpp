@@ -77,6 +77,11 @@ void AvionView::cargarClips(){
 		clipsVueltereta[ 5 ].w = anchoVista+10;
 		clipsVueltereta[ 5 ].h = largoVista+45;
 
+		clipsEstacionado[ 0 ].x = 30;
+		clipsEstacionado[ 0 ].y = 0;
+		clipsEstacionado[ 0 ].w = anchoVista+20;
+		clipsEstacionado[ 0 ].h = largoVista-5;
+
 }
 
 bool AvionView::cargarImagenDelAvion( string filename ){
@@ -164,7 +169,7 @@ void AvionView::mostrarVueltereta(int x, int y, int frame){
 
 void AvionView::mostrarEstacionar(int x, int y, int frame){
   SDL_Rect* currentClip;
-  currentClip = &clipsVueltereta[ frame ];
+  currentClip = &clipsEstacionado[ 0 ];
 
   vistaAvionTexture->render( x, y, currentClip );
 }

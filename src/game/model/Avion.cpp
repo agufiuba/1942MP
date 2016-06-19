@@ -27,6 +27,7 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	estacionando = false;
 	realizandoVueltereta = false;
+	realizandoVuelteretaEstacionado = true;
 
 	explosion = new ExplosionView("idExplosion", screen, posicion);
 
@@ -119,9 +120,9 @@ void Avion::mostrarVueltereta(int frame){
 }
 
 void Avion::realizoVueltereta() {
-	int tiempoIda = 1600; //recomendado >> 1600
+	int tiempoIda = 1000;
 	int tiempoVuelta = tiempoIda;
-	int tiempoMuerto = 400; //recomendado >> 400
+	int tiempoMuerto = 400;
 	int frame = 0;
 
 	if (t->tiempoActual() < tiempoIda) {
@@ -130,6 +131,7 @@ void Avion::realizoVueltereta() {
 
 	} else {
 		if (t->tiempoActual() < tiempoIda + tiempoMuerto / 2) {
+			this->realizandoVuelteretaEstacionado = false;
 			frame = 1;
 
 		} else {
@@ -164,7 +166,11 @@ void Avion::realizoVueltereta() {
 			}
 		}
 	}
-	mostrarVueltereta(frame);
+	if (this->realizandoVuelteretaEstacionado) {
+		mostrarEstacionar(0);
+	} else {
+		mostrarVueltereta(frame);
+	}
 }
 
 bool Avion::estaEstacionando() {
@@ -202,16 +208,14 @@ void Avion::estacionar() {
 			}
 		}
 		llegoPuntoDeEstacionamiento = (posicion->getX() == posicionAEstacionar->getX() && posicion->getY() == posicionAEstacionar->getY());
-
+		mostrar(0);
 	} else {
-		//TODO: Aqui deberia enviar al servidor de que el avion ha teriminado de estacionar
-
+		mostrarEstacionar(frame);
+		this->realizandoVuelteretaEstacionado = true;
 		if (realizandoVueltereta){ //Esto porque la idea es que cuando empieza otro nivel haga la vueltereta
 			estacionando = false;
 		}
 	}
-
-	mostrarEstacionar(frame);
 }
 
 void Avion::vivir(int velX, int velY){

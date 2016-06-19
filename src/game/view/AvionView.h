@@ -17,6 +17,7 @@ private:
 	SDL_Rect clipsDerecha[ 2 ];
 	SDL_Rect clipsIzquierda[ 2 ];
 	SDL_Rect clipsVueltereta[ 6 ];
+	SDL_Rect clipsEstacionado[ 1 ];
 	string dir = "src/game/images/";
 	string color;
 

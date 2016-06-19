@@ -85,49 +85,49 @@
 			<spriteID>porta1</spriteID>
 			<posicion>
 				<x>0</x>
-				<y>300</y>
+				<y>450</y>
 			</posicion>
 		</elemento>
 		<elemento>
 			<spriteID>porta1</spriteID>
 			<posicion>
 				<x>200</x>
-				<y>300</y>
+				<y>450</y>
 			</posicion>
 		</elemento>
 		<elemento>
 			<spriteID>porta1</spriteID>
 			<posicion>
 				<x>400</x>
-				<y>300</y>
+				<y>450</y>
 			</posicion>
 		</elemento>
 		<elemento>
 			<spriteID>porta1</spriteID>
 			<posicion>
 				<x>600</x>
-				<y>300</y>
+				<y>450</y>
 			</posicion>
 		</elemento>
 		<elemento>
 			<spriteID>porta1</spriteID>
 			<posicion>
 				<x>800</x>
-				<y>300</y>
+				<y>450</y>
 			</posicion>
 		</elemento>
 		<elemento>
 			<spriteID>porta1</spriteID>
 			<posicion>
 				<x>1000</x>
-				<y>300</y>
+				<y>450</y>
 			</posicion>
 		</elemento>
 		<elemento>
 			<spriteID>porta1</spriteID>
 			<posicion>
 				<x>1200</x>
-				<y>300</y>
+				<y>450</y>
 			</posicion>
 		</elemento>
 	</elementos>
