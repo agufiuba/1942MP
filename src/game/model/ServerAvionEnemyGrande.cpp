@@ -12,7 +12,7 @@ namespace std {
 ServerAvionEnemyGrande::ServerAvionEnemyGrande(int id, Posicion* posicionInicial
 ):ServerAvionEnemigo(id, posicionInicial) {
 	cantidadDeMovimientos = 0;
-	movimientosMax = 9;
+	movimientosMax = 6;
 }
 
 ServerAvionEnemyGrande::~ServerAvionEnemyGrande() {
