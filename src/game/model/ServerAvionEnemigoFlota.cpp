@@ -34,7 +34,6 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 		int tiempoDespuesDeLaVuelta = 8000;
 
 		if (!t->is_started()) {
-			cout << "inicio el timer" << endl;
 			if (this->getX() >= this->getAnchoFondo()) {
 				esquinaDerecha = true;
 			}
@@ -47,12 +46,10 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 			} else {
 				ed->direction = 'R';
 			}
-			cout << "1" << endl;
 
 		} else {
 			if (t->tiempoActual() < tiempoIda + tiempoMuerto / 2) {
 				ed->direction = 'U';
-				cout << "2" << endl;
 
 			} else {
 				if (t->tiempoActual() < tiempoIda + tiempoMuerto) {
@@ -61,21 +58,17 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 					} else {
 						ed->direction = 'L';
 					}
-					cout << "3" << endl;
 
 				} else {
 					if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoMuerto / 2) {
 						ed->direction = 'D';
-						cout << "4" << endl;
 
-					} else {
 						if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoMuerto) {
 							if (esquinaDerecha) {
 								ed->direction = 'L';
 							} else {
 								ed->direction = 'R';
 							}
-							cout << "5" << endl;
 
 						} else {
 							if (t->tiempoActual()
@@ -86,14 +79,12 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 								} else {
 									ed->direction = 'K'; //hacer que vaya solo a la derecha
 								}
-								cout << "6" << endl;
 
 							} else {
 								if (t->tiempoActual()
 										>= tiempoIda + tiempoMuerto + tiempoMuerto
 												+ tiempoDespuesDeLaVuelta) {
 									ed->direction = 'Z'; //hacer que muera
-									cout << "7" << endl;
 								}
 							}
 						}
