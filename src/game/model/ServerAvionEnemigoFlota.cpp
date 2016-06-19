@@ -8,9 +8,10 @@
 #include "ServerAvionEnemigoFlota.h"
 
 
-ServerAvionEnemigoFlota::ServerAvionEnemigoFlota( int id, Posicion* posicionInicial
-):ServerAvionEnemigo(id, posicionInicial) {
+ServerAvionEnemigoFlota::ServerAvionEnemigoFlota( int id, Posicion* posicionInicial, int posicionEnLaFlota)
+:ServerAvionEnemigo(id, posicionInicial) {
 	esquinaDerecha = false;
+	this->tiempoDeEspera = posicionEnLaFlota;
 }
 
 ServerAvionEnemigoFlota::~ServerAvionEnemigoFlota(){
@@ -19,78 +20,82 @@ ServerAvionEnemigoFlota::~ServerAvionEnemigoFlota(){
 }
 
 EnemyData* ServerAvionEnemigoFlota::vivir() {
-	enum Direction { U, D, R, L };
-	Direction d;
-	EnemyData* ed = new EnemyData;
-	ed->id = this->id;
+		enum Direction {
+			U, D, R, L
+		};
+		Direction d;
+		EnemyData* ed = new EnemyData;
+		ed->id = this->id;
 
-	int tiempoIda = 3200; //recomendado >> 1600
-	int tiempoMuerto = 2200; //recomendado >> 400
-	int tiempoDespuesDeLaVuelta = 8000;
+	if (this->tiempoDeEspera == 0) {
 
-	if (!t->is_started()) {
-		cout << "inicio el timer" <<endl;
-		if (this->getX() >= this->getAnchoFondo()) {
-			esquinaDerecha = true;
+		int tiempoIda = 3200;
+		int tiempoMuerto = 2250;
+		int tiempoDespuesDeLaVuelta = 8000;
+
+		if (!t->is_started()) {
+			if (this->getX() >= this->getAnchoFondo()) {
+				esquinaDerecha = true;
+			}
+			t->correr();
 		}
-		t->correr();
-	}
 
-	if (t->tiempoActual() < tiempoIda) {
-		if (esquinaDerecha) {
-			ed->direction = 'L';
-		} else {
-			ed->direction = 'R';
-		}
-		cout << "1" <<endl;
-
-	} else {
-		if (t->tiempoActual() < tiempoIda + tiempoMuerto / 2) {
-			ed->direction = 'U';
-			cout << "2" <<endl;
+		if (t->tiempoActual() < tiempoIda) {
+			if (esquinaDerecha) {
+				ed->direction = 'L';
+			} else {
+				ed->direction = 'R';
+			}
 
 		} else {
-			if (t->tiempoActual() < tiempoIda + tiempoMuerto) {
-				if (esquinaDerecha) {
-					ed->direction = 'R';
-				} else {
-					ed->direction = 'L';
-				}
-				cout << "3" <<endl;
+			if (t->tiempoActual() < tiempoIda + tiempoMuerto / 2) {
+				ed->direction = 'U';
 
 			} else {
-				if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoMuerto / 2) {
-					ed->direction = 'D';
-					cout << "4" <<endl;
+				if (t->tiempoActual() < tiempoIda + tiempoMuerto) {
+					if (esquinaDerecha) {
+						ed->direction = 'R';
+					} else {
+						ed->direction = 'L';
+					}
 
 				} else {
-					if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoMuerto) {
-						if (esquinaDerecha) {
-							ed->direction = 'L';
-						} else {
-							ed->direction = 'R';
-						}
-						cout << "5" <<endl;
+					if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoMuerto / 2) {
+						ed->direction = 'D';
 
 					} else {
-						if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoMuerto + tiempoDespuesDeLaVuelta) {
+						if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoMuerto) {
 							if (esquinaDerecha) {
-								ed->direction = 'Y'; // hacer que vaya solo a la izquierda
+								ed->direction = 'L';
 							} else {
-								ed->direction = 'K'; //hacer que vaya solo a la derecha
+								ed->direction = 'R';
 							}
-							cout << "6" <<endl;
 
 						} else {
-							if (t->tiempoActual() >= tiempoIda + tiempoMuerto + tiempoMuerto + tiempoDespuesDeLaVuelta) {
-								ed->direction = 'X'; //hacer que muera
-								cout << "7" <<endl;
+							if (t->tiempoActual()
+									< tiempoIda + tiempoMuerto + tiempoMuerto
+											+ tiempoDespuesDeLaVuelta) {
+								if (esquinaDerecha) {
+									ed->direction = 'Y'; // hacer que vaya solo a la izquierda
+								} else {
+									ed->direction = 'K'; //hacer que vaya solo a la derecha
+								}
+
+							} else {
+								if (t->tiempoActual()
+										>= tiempoIda + tiempoMuerto + tiempoMuerto
+												+ tiempoDespuesDeLaVuelta) {
+									ed->direction = 'Z'; //hacer que muera
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+	} else {
+		ed->direction = 'N';
+		this->tiempoDeEspera --;
 	}
-	return ed;
+		return ed;
 }

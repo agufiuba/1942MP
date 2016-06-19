@@ -91,6 +91,8 @@ class Server {
     void checkAliveClose( int clientFD );
     void makeEnemyMove();
     void createEnemys();
+    void createFlota(char type, int x, int y, int offset);
+    void preparingAndSendingEnemyCreation(char type, int x, int y, int offset);
     void sendEnemyData( EnemyData* data );
     void sendEnemyCreation( EnemyStatus* data );
     void createEnemy( char type, int x, int y, int offset );
