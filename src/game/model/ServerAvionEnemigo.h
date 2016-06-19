@@ -32,6 +32,7 @@ protected:
 	int anchoFondo, largoFondo;
 	int vida;
 	bool viviendo;
+	bool active;
 
 	int anchoVista;
 	int largoVista;
@@ -62,6 +63,8 @@ public:
 	int getX();
 	int getY();
 	int getVida();
+	bool isActive();
+	void activate();
 
 	virtual EnemyData* vivir();
 
