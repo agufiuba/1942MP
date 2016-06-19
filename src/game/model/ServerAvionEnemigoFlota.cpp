@@ -26,7 +26,7 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 
 	int tiempoIda = 2500; //recomendado >> 1600
 	int tiempoMuerto = 1500; //recomendado >> 400
-	int tiempoDespuesDeLaVuelta = 5000;
+	int tiempoDespuesDeLaVuelta = 8000;
 
 	if (!t->is_started()) {
 		cout << "inicio el timer" <<endl;
