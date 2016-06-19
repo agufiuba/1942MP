@@ -79,7 +79,7 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	     it != enemys.end();
 	     ++it ) {
 	  EnemyStatus* es = *it;
-	  if ( es->offset <= this->pixelesRecorridos ) {
+	  if ( es->offset <= this->pixelesRecorridos + SCREEN_HEIGHT) {
 	    this->hEnemigos->createEnemigo( es->id, es->type, es->x, es->y ); 
 	    //TODO: CAMBIAR A QUIEN LE APUNTA EL ENEMIGO 
 	    this->hEnemigos->setAvionApuntar( es->id, myControl->getVivible()->getId());

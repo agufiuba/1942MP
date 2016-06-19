@@ -13,6 +13,7 @@ using namespace std;
 typedef struct EnemigoConf {
     char tipo[1];
     char disparosSpriteID[30];
+    int apareceEn;
     int velocidadDisparos;
 	int x;
 	int y;
