@@ -29,8 +29,8 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 
 	if (this->tiempoDeEspera == 0) {
 
-		int tiempoIda = 3200; //recomendado >> 1600
-		int tiempoMuerto = 2200; //recomendado >> 400
+		int tiempoIda = 3200;
+		int tiempoMuerto = 2250;
 		int tiempoDespuesDeLaVuelta = 8000;
 
 		if (!t->is_started()) {
@@ -63,6 +63,7 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 					if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoMuerto / 2) {
 						ed->direction = 'D';
 
+					} else {
 						if (t->tiempoActual() < tiempoIda + tiempoMuerto + tiempoMuerto) {
 							if (esquinaDerecha) {
 								ed->direction = 'L';
