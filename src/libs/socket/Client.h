@@ -128,5 +128,6 @@ class Client {
     vector<EnemyStatus*> getEnemys();
     void resetEnemys();
     void removeEnemy( vector<EnemyStatus*>::iterator it );
+    void requestEnemyMovements( int id );
 };
 #endif

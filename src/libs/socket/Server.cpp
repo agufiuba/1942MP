@@ -634,8 +634,8 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
 	    cout << "ENEMY ID: " << to_string( data->id ) << endl;
 	    cout << "ENEMY STATUS: " << data->status << endl;
+	    mutex m;
 	    if ( data->status == 'D' ) {
-	      mutex m;
 	      if ( data->id == -1 ) {
 		m.lock();
 		for( map<int, ServerAvionEnemigo*>::iterator it = this->enemys.begin();
@@ -653,6 +653,10 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      }
 	    } else if (data->status == 'R') {
 	    	this->createEnemys();
+	    } else if ( data->status == 'A' ) {
+	      m.lock();
+	      this->enemys[ data->id ]->activate();  
+	      m.unlock();
 	    }
 	  }
 	}
@@ -1043,9 +1047,13 @@ void Server::makeEnemyMove() {
 			usleep( 1000000 );
 			m.lock();
 			for ( it = this->enemys.begin(); it != this->enemys.end(); ++it ) {
-			  data = it->second->vivir();
-			  cout<<"envio data del enemigo"<<endl;
-			  this->sendEnemyData( data );
+			  // send movements if enemy is active
+			  if ( it->second->isActive() ) {
+			    data = it->second->vivir();
+			    if ( data->direction != 'N' ) {
+			      this->sendEnemyData( data );
+			    }
+			  }
 			}
 			m.unlock();
 	}

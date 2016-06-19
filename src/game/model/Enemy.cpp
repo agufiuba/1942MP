@@ -129,7 +129,7 @@ void Enemy::mostrarDisparo() {
 }
 
 void Enemy::mover(int velX, int velY) {
-	cout<<"muevo "<<velX<<" "<<velY<<endl;
+	//cout<<"muevo "<<velX<<" "<<velY<<endl;
 	moverEjeX(velX);
 	moverEjeY(velY);
 }
