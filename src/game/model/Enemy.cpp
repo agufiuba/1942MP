@@ -355,3 +355,12 @@ int Enemy::getVelX(){
 int Enemy::getVelY(){
 	return this->velY;
 }
+void Enemy::bajarHP() {
+  if ( this->tieneHP() ) {
+    this->vida--;
+    cout << "ENEMY " << this->id << " HP = " << this->vida << endl;
+  } else {
+    this->viviendo = false;
+  }
+}
+

@@ -85,6 +85,7 @@ public:
 	void recibirMisil(Misil* misil);
 	bool tieneHP();
 	void setHP(int hp);
+	void bajarHP();
 
 	Posicion* getPosicion();
 
