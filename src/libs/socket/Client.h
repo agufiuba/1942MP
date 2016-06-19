@@ -127,5 +127,6 @@ class Client {
     void sendRecoverEnemysAlive();
     vector<EnemyStatus*> getEnemys();
     void resetEnemys();
+    void removeEnemy( vector<EnemyStatus*>::iterator it );
 };
 #endif

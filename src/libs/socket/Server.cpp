@@ -997,17 +997,11 @@ void Server::createEnemys() {
 	for (int i = 0; i < enemigosConf.size(); i++) {
 		EnemigoConf* enemigoConf = enemigosConf[i];
 
-		this->createEnemy(*enemigoConf->tipo, enemigoConf->x, enemigoConf->y);
+		this->createEnemy(*enemigoConf->tipo, enemigoConf->x, enemigoConf->y, enemigoConf->apareceEn);
 	}
-//	this->createEnemy( 'g', 400, -170 );
-//  this->createEnemy( 'r', 500, 500 );
-//  this->createEnemy( 'r', 200, 600 );
-//  this->createEnemy( 'm', 100, 200 );
-//  this->createEnemy( 'm', 600, 300 );
-//  this->createEnemy( 'm', 300, 100 );
 }
 
-void Server::createEnemy( char type, int x, int y ) {
+void Server::createEnemy( char type, int x, int y, int offset ) {
 	cout << "EL ENEMIGO TIENE TIPO: " << type << endl;
   this->enemyID++;
   ServerAvionEnemigo* enemy = NULL;
@@ -1022,6 +1016,7 @@ void Server::createEnemy( char type, int x, int y ) {
   data->type = type;
   data->x = x;
   data->y = y;
+  data->offset = offset;
   data->status = 'C';
   this->enemys[ enemyID ] =  enemy;
   this->sendEnemyCreation( data );

@@ -4,6 +4,7 @@ typedef struct EnemyStatus {
   int id;
   int x;
   int y;
+  int offset;
   char type;
   char status;
 } EnemyStatus;
