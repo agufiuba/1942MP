@@ -355,11 +355,3 @@ int Enemy::getVelX(){
 int Enemy::getVelY(){
 	return this->velY;
 }
-
-bool Enemy::colisiono(int x, int y, int xp, int yp) {
-	int x2 = getX();
-	int x2p = getAncho()-5;
-	int y2 = getY();
-	int y2p = getLargo()-5;
-	return Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-}
