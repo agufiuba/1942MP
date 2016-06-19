@@ -31,6 +31,32 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 	EnemyData* ed = new EnemyData;
 	ed->id = this->id;
 
+	int x = this->posicion->getX();
+	int y = this->posicion->getY();
+	bool closeToRightLimit = ( x >= 700 ); 
+	bool closeToLeftLimit = ( x <= 100 ); 
+	bool closeToUpperLimit = ( y >= 700 );
+	bool closeToBottomLimit = ( y <= 100 );
+
+	if ( closeToRightLimit ) {
+	  //cout << "ENEMIGO " << to_string( this->id ) << " CERCA DEL LIMITE DERECHO" << endl;
+	  ed->direction = 'L';
+	  return ed;
+	} else if ( closeToLeftLimit ) {
+	  //cout << "ENEMIGO " << to_string( this->id ) << " CERCA DEL LIMITE IZQUIERDO" << endl;
+	  ed->direction = 'R';
+	  return ed;
+	} else if ( closeToBottomLimit ) {
+	  //cout << "ENEMIGO " << to_string( this->id ) << " CERCA DEL LIMITE INFERIOR" << endl;
+	  ed->direction = 'U';
+	  return ed;
+	} else if ( closeToUpperLimit ) {
+	  //cout << "ENEMIGO " << to_string( this->id ) << " CERCA DEL LIMITE SUPERIOR" << endl;
+	  ed->direction = 'D';
+	  return ed;
+	}
+	
+
       	srand(time(NULL));
 	d = static_cast<Direction>( ( rand() + this->randomSeed ) % 4 );
 	if ( this->dAnt != 4 ) {
