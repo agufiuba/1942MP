@@ -438,6 +438,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					  cout << "ID: " << to_string( data->id ) << endl;
 					  cout << "DIRECTION: " << data->direction << endl;
 					  this->hEnemigos->mover(data->id, data->direction);
+					  this->hEnemigos->setAvionApuntar( data->id, string( data->playerID ) );
 					}
 			 } else if ( dataID == "SE" ) {
 					EnemyStatus* data = new EnemyStatus;
