@@ -358,7 +358,7 @@ int Enemy::getVelY(){
 void Enemy::bajarHP() {
   if ( this->tieneHP() ) {
     this->vida--;
-    cout << "ENEMY " << this->id << " HP = " << this->vida << endl;
+    cout << "ENEMY " << to_string( this->id ) << " HP = " << this->vida << endl;
   } else {
     this->viviendo = false;
   }

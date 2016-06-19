@@ -95,7 +95,7 @@ void ServerAvionEnemigo::recibirMisil(Misil* misil) {
 void ServerAvionEnemigo::bajarHP() {
   if ( this->tieneHP() ) {
     this->vida--;
-    cout << "ENEMY " << this->id << " HP = " << this->vida << endl;
+    cout << "ENEMY " << to_string( this->id ) << " HP = " << this->vida << endl;
   } else {
     this->viviendo = false;
   }
