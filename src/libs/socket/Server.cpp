@@ -1013,6 +1013,8 @@ void Server::createEnemy( char type, int x, int y, int offset ) {
   ServerAvionEnemigo* enemy = NULL;
   if (type == 'g'){
 	  enemy = new ServerAvionEnemyGrande( this->enemyID, new Posicion(x, y));
+  } else if (type == 'f'){
+  	enemy = new ServerAvionEnemigoFlota( this->enemyID, new Posicion(x, y));
   } else {
 	  enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
   }

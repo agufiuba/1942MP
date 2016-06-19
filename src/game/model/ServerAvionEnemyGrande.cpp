@@ -26,6 +26,7 @@ EnemyData* ServerAvionEnemyGrande::vivir() {
 	Direction d;
 	EnemyData* ed = new EnemyData;
 	ed->id = this->id;
+
 	if (this->cantidadDeMovimientos < this->movimientosMax){
 		cout << "UP" << endl;
 		ed->direction = 'U';
