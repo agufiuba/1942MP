@@ -1046,9 +1046,8 @@ void Server::makeEnemyMove() {
   mutex m;
 	EnemyData* data;
 	map<int, ServerAvionEnemigo*>::iterator it;
-			usleep( 800000 );
 	while (this->running) {
-			usleep( 200000 );
+			usleep( 1000000 );
 			m.lock();
 			for ( it = this->enemys.begin(); it != this->enemys.end(); ++it ) {
 			  // send movements if enemy is active

@@ -24,8 +24,8 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 	EnemyData* ed = new EnemyData;
 	ed->id = this->id;
 
-	int tiempoIda = 2500; //recomendado >> 1600
-	int tiempoMuerto = 1500; //recomendado >> 400
+	int tiempoIda = 3200; //recomendado >> 1600
+	int tiempoMuerto = 2200; //recomendado >> 400
 	int tiempoDespuesDeLaVuelta = 8000;
 
 	if (!t->is_started()) {
