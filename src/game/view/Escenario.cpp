@@ -967,7 +967,7 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 					cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
 					hEnemigos->getEnemigo(itEnemigo->first)->recibirMisil((Misil*)*it);
 					(*it)->morir();
-					this->unCliente->sendEnemyDeath( itEnemigo->first );
+					this->unCliente->sendEnemyHit( itEnemigo->first, "" );
 				}
 			}
 		}
