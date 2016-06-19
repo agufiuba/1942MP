@@ -21,6 +21,7 @@ private:
 	int vida;
 	bool viviendo;
 
+	bool realizandoVuelteretaEstacionado;
 	bool realizandoVueltereta;
 
 	bool llegoPuntoDeEstacionamiento;
