@@ -1202,6 +1202,7 @@ void Server::sendTeamWin( string winningTeam ) {
 }
 
 string Server::shootPlayerID() {
+  if ( this->players.size() == 0 ) return "NA";
   if ( this->players.size() == 1 ) {
     return ( this->players.begin() )->second->getName();
   } else {
