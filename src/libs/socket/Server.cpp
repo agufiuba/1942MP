@@ -1013,6 +1013,8 @@ void Server::createEnemy( char type, int x, int y, int offset ) {
   ServerAvionEnemigo* enemy = NULL;
   if (type == 'g'){
 	  enemy = new ServerAvionEnemyGrande( this->enemyID, new Posicion(x, y));
+  } else if (type == 'f'){
+  	enemy = new ServerAvionEnemigoFlota( this->enemyID, new Posicion(x, y));
   } else {
 	  enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
   }
@@ -1044,8 +1046,9 @@ void Server::makeEnemyMove() {
   mutex m;
 	EnemyData* data;
 	map<int, ServerAvionEnemigo*>::iterator it;
+			usleep( 800000 );
 	while (this->running) {
-			usleep( 1000000 );
+			usleep( 200000 );
 			m.lock();
 			for ( it = this->enemys.begin(); it != this->enemys.end(); ++it ) {
 			  // send movements if enemy is active

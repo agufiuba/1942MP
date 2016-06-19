@@ -32,12 +32,12 @@ void HandlerEnemigos::createEnemigo(int id, char type, int posX, int posY) {
 			Enemy* enemy = new Enemy(screen, renderer, resolucion, p, gc);
 			mapaEnemigos[id] = enemy;
 		}else if (type == 'f') {
-
+			Enemy* enemy = new Enemy(screen, renderer, resolucion, p, gc);
+			mapaEnemigos[id] = enemy;
 		}else if (type == 'm') {
 			Enemy* mediano = new EnemyMediano(screen, renderer, resolucion, p, gc);
 			mapaEnemigos[id] = mediano;
 		}else if (type == 'g') {
-			cout<<"Enemigo Grande: "<<id<<endl;
 			Enemy* grande = new EnemyGrande(screen, renderer, resolucion, p, gc);
 			mapaEnemigos[id] = grande;
 		}
@@ -90,6 +90,15 @@ void HandlerEnemigos::mover(int id, char evento) {
 			case 'N': enemigo->setVelX(0);
 					  enemigo->setVelY(0);
 					  break;
+
+			case 'K': enemigo->setVelX(velocidadStandard);
+					  enemigo->setVelY(0);
+					  break;
+
+			case 'Y': enemigo->setVelX(-velocidadStandard);
+					  enemigo->setVelY(0);
+					  break;
+
 
 			case 'X': enemigo->morir();
 								this->matar(id);

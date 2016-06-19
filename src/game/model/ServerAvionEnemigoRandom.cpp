@@ -30,6 +30,7 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 	Direction d;
 	EnemyData* ed = new EnemyData;
 	ed->id = this->id;
+
       	srand(time(NULL));
 	d = static_cast<Direction>( ( rand() + this->randomSeed ) % 4 );
 	if ( this->dAnt != 4 ) {
@@ -38,6 +39,7 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 	    d = static_cast<Direction>( ( rand() + this->randomSeed ) % 4 );
 	  }
 	}
+
 		switch( d ) {
 		  case U:
 		    cout << "UP" << endl;

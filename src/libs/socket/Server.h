@@ -15,6 +15,7 @@
 #include "../../game/model/Player.h"
 #include "../../game/model/ServerAvionEnemigoRandom.h"
 #include "../../game/model/ServerAvionEnemyGrande.h"
+#include "../../game/model/ServerAvionEnemigoFlota.h"
 #include <vector>
 #include <queue>
 #include <map>
