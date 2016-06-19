@@ -72,16 +72,22 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	this->getPowerUp();
 	hPowerUp->hacerVivir();
 //	cout<<"4"<<endl;
+	vector<EnemyStatus*> enemys = this->unCliente->getEnemys();
 	mutex m;
 	m.lock();
-	for( int i = 0; i < this->unCliente->getEnemys().size(); i++ ) {
-	  EnemyStatus* es = this->unCliente->getEnemys()[i];
-	  this->hEnemigos->createEnemigo( es->id, es->type, es->x, es->y ); 
-	  //TODO: CAMBIAR A QUIEN LE APUNTA EL ENEMIGO 
-	  this->hEnemigos->setAvionApuntar( es->id, myControl->getVivible()->getId());
+	for( vector<EnemyStatus*>::iterator it = enemys.begin();
+	     it != enemys.end();
+	     ++it ) {
+	  EnemyStatus* es = *it;
+	  if ( es->offset <= this->pixelesRecorridos ) {
+	    this->hEnemigos->createEnemigo( es->id, es->type, es->x, es->y ); 
+	    //TODO: CAMBIAR A QUIEN LE APUNTA EL ENEMIGO 
+	    this->hEnemigos->setAvionApuntar( es->id, myControl->getVivible()->getId());
+	    this->unCliente->removeEnemy( it );
+	  }
 	  delete es;
 	}
-	this->unCliente->resetEnemys();
+	//this->unCliente->resetEnemys();
 	m.unlock();
 
 	hEnemigos->hacerVivir();
