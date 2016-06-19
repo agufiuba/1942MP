@@ -437,9 +437,20 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
 					  cout << "ID: " << to_string( data->id ) << endl;
 					  cout << "DIRECTION: " << data->direction << endl;
-					  this->hEnemigos->mover(data->id, data->direction);
+					  Posicion* p = this->hEnemigos->mover(data->id, data->direction);
 					  this->hEnemigos->setAvionApuntar( data->id, string( data->playerID ) );
+					  if ( p != NULL ) {
+					    EnemyStatus* es = new EnemyStatus;
+					    es->id = data->id;
+					    es->x = p->getX();
+					    es->y = p->getY();
+					    es->status = 'P';
+					    // send new enemy position to Server
+					    this->sendEnemyMovements( es );
+					    delete es;
+					  }
 					}
+					delete data;
 			 } else if ( dataID == "SE" ) {
 					EnemyStatus* data = new EnemyStatus;
 					if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
@@ -847,6 +858,12 @@ void Client::requestEnemyMovements( int id ) {
   EnemyStatus* data = new EnemyStatus;
   data->id = id;
   data->status = 'A';
+  tmt->sendData( data );
+  delete tmt;
+}
+
+void Client::sendEnemyMovements( EnemyStatus* data ) {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendData( data );
   delete tmt;
 }

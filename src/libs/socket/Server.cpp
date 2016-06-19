@@ -662,10 +662,14 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      m.unlock();
 	    } else if ( data->status == 'P' ) {
 	      m.lock();
-	      this->enemys[ data->id ]->updatePosition( data->x, data->y );
+	      //cout << "NEW POSITION X OF " << to_string( data->id ) << ": " << to_string( data->x ) << endl; 
+	      //cout << "NEW POSITION Y OF " << to_string( data->id ) << ": " << to_string( data->y ) << endl; 
+	      if ( this->enemys.find( data->id ) != this->enemys.end() )
+		this->enemys[ data->id ]->updatePosition( data->x, data->y );
 	      m.unlock();
 	    }
 	  }
+	  delete data;
 	}
       }
 
