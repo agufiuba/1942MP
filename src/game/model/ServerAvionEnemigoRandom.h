@@ -27,10 +27,13 @@
 
 class ServerAvionEnemigoRandom :public ServerAvionEnemigo{
 
+private:
+  int randomSeed;
+  int dAnt;
+  void refreshSeed();
 public:
 	ServerAvionEnemigoRandom( int id, Posicion* posicionInicial);
 	~ServerAvionEnemigoRandom();
-
 	EnemyData* vivir();
 };
 
