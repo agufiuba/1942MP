@@ -28,7 +28,7 @@ Server::Server( const char* configFileName ) {
   this->logger = Logger::instance();
   this->running = false;
   this->stageData = NULL;
-  this->posicionInicialX = 0;
+  this->posicionInicialX = 42;
   this->posicionInicialY = 100;
   this->createGameData();
   //  this->config = XMLParser::parseServerConf( configFileName );
@@ -265,7 +265,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 		p->addScore( score );
 		theMutex.lock();
 		this->players[cfd] = p;
-		posicionInicialX += 100;
+		posicionInicialX += 200;
 		theMutex.unlock();
 	} else {
 		cout<<"No creo jugador"<<endl;
@@ -323,7 +323,7 @@ void Server::sendCurrentStageOffset( int clientFD ) {
 
 void Server::createPlayers() {
   // reset player starting positions
-  this->posicionInicialX = 0;
+  this->posicionInicialX = 42;
   this->posicionInicialY = 100;
 
   map<int, Player*>::iterator it2 = this->players.begin();

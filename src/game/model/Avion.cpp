@@ -27,7 +27,7 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	estacionando = false;
 	realizandoVueltereta = false;
-	realizandoVuelteretaEstacionado = false;
+	realizandoVuelteretaEstacionado = true;
 
 	explosion = new ExplosionView("idExplosion", screen, posicion);
 
