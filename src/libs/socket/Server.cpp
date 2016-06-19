@@ -1009,11 +1009,9 @@ void Server::createEnemys() {
 }
 
 void Server::createEnemy( char type, int x, int y, int offset ) {
-	cout << "EL ENEMIGO TIENE TIPO: " << type << endl;
   this->enemyID++;
   ServerAvionEnemigo* enemy = NULL;
   if (type == 'g'){
-	  cout<<"avion grande"<<this->enemyID<<endl;
 	  enemy = new ServerAvionEnemyGrande( this->enemyID, new Posicion(x, y));
   } else {
 	  enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
