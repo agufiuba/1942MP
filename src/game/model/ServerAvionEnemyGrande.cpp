@@ -26,18 +26,17 @@ EnemyData* ServerAvionEnemyGrande::vivir() {
 	Direction d;
 	EnemyData* ed = new EnemyData;
 	ed->id = this->id;
-	cout<<"-************************Vivir GRANDE****************************"<<endl;
 	if (this->cantidadDeMovimientos < this->movimientosMax){
 		cout << "UP" << endl;
 		ed->direction = 'U';
 		this->cantidadDeMovimientos++;
-//	}else if(this->cantidadDeMovimientos == this->movimientosMax) {
-//		cout << "DOWN" << endl;
-//		ed->direction = 'D';
-//		this->cantidadDeMovimientos++;
-	} else {
-		cout << "NADA" << endl;
+	}else if(this->cantidadDeMovimientos == this->movimientosMax) {
+		cout << "N" << endl;
 		ed->direction = 'N';
+		this->cantidadDeMovimientos++;
+	} else {
+		cout << "Z" << endl;
+		ed->direction = 'Z';
 	}
 	return ed;
 }

@@ -67,7 +67,6 @@ void HandlerEnemigos::mover(int id, char evento) {
 
 	Enemy* enemigo = mapaEnemigos[id];
 
-	cout<<"Enemigo "<<id<<" se mueve hacia "<<evento<<endl;
 		switch(evento) {
 			case 'R': if (enemigo->getVelX() <= 0){
 					    enemigo->setVelX(velocidadStandard);

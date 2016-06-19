@@ -34,6 +34,7 @@ ServerAvionEnemigo::ServerAvionEnemigo( int id, Posicion* posicionInicial ) {
 
 	contador = 0;
 	tiempoEntreDisparo = 20;
+	this->active = false;
 }
 
 ServerAvionEnemigo::~ServerAvionEnemigo(){
@@ -122,3 +123,11 @@ void ServerAvionEnemigo::moverEjeY(int velY) {
 }
 
 EnemyData* ServerAvionEnemigo::vivir() {}
+
+bool ServerAvionEnemigo::isActive() {
+  return this->active;
+}
+
+void ServerAvionEnemigo::activate() {
+  this->active = true;
+}

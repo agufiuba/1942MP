@@ -83,6 +83,7 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	    this->hEnemigos->createEnemigo( es->id, es->type, es->x, es->y ); 
 	    //TODO: CAMBIAR A QUIEN LE APUNTA EL ENEMIGO 
 	    this->hEnemigos->setAvionApuntar( es->id, myControl->getVivible()->getId());
+	    this->unCliente->requestEnemyMovements( es->id );
 	    es->status = 'R';
 	  }
 	}

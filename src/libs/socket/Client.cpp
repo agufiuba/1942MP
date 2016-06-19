@@ -840,3 +840,12 @@ void Client::removeEnemy( vector<EnemyStatus*>::iterator it ) {
   delete *it;
   this->enemys.erase( it );
 }
+
+void Client::requestEnemyMovements( int id ) {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  EnemyStatus* data = new EnemyStatus;
+  data->id = id;
+  data->status = 'A';
+  tmt->sendData( data );
+  delete tmt;
+}
