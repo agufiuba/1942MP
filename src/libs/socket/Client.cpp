@@ -448,6 +448,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					  cout << "ENEMY TYPE: " << data->type<< endl;
 					  cout << "ENEMY POS X: " << to_string( data->x ) << endl;
 					  cout << "ENEMY POS Y: " << to_string( data->y ) << endl;
+					  cout << "ENEMY OFFSET: " << to_string( data->offset ) << endl;
 					  cout << "ENEMY STATUS: " << data->status << endl;
 					  if ( data->status == 'C' ) {
 					    m.lock();
@@ -825,4 +826,8 @@ vector<EnemyStatus*> Client::getEnemys() {
 
 void Client::resetEnemys() {
   this->enemys.clear();
+}
+
+void Client::removeEnemy( vector<EnemyStatus*>::iterator it ) {
+  this->enemys.erase( it );
 }

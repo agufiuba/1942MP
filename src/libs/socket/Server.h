@@ -92,7 +92,7 @@ class Server {
     void createEnemys();
     void sendEnemyData( EnemyData* data );
     void sendEnemyCreation( EnemyStatus* data );
-    void createEnemy( char type, int x, int y );
+    void createEnemy( char type, int x, int y, int offset );
 
   public:
     Server( const char* configFileName );
