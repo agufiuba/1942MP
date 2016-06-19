@@ -244,9 +244,9 @@
 		<disparosSpriteID>balaRedonda</disparosSpriteID>
 		<posicion>
 			<x>400</x>
-			<y>-170</y>
+			<y>-70</y>
 		</posicion>
-		<apareceEn>3000</apareceEn>
+		<apareceEn>1000</apareceEn>
 	</enemigo>
 </enemigos>
 <maxClients>1</maxClients>

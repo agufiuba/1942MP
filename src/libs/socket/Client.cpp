@@ -825,9 +825,18 @@ vector<EnemyStatus*> Client::getEnemys() {
 }
 
 void Client::resetEnemys() {
-  this->enemys.clear();
+  for ( vector<EnemyStatus*>::iterator it = this->enemys.begin();
+	it != this->enemys.end();) {
+    if ( ( *it )->status == 'R' ) {
+      delete *it;
+      it = this->enemys.erase( it );
+    } else {
+      ++it;
+    }
+  }
 }
 
 void Client::removeEnemy( vector<EnemyStatus*>::iterator it ) {
+  delete *it;
   this->enemys.erase( it );
 }

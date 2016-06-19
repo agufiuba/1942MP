@@ -79,15 +79,14 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	     it != enemys.end();
 	     ++it ) {
 	  EnemyStatus* es = *it;
-	  if ( es->offset <= this->pixelesRecorridos + SCREEN_HEIGHT) {
+	  if ( ( this->pixelesRecorridos + SCREEN_HEIGHT ) >= es->offset ) {
 	    this->hEnemigos->createEnemigo( es->id, es->type, es->x, es->y ); 
 	    //TODO: CAMBIAR A QUIEN LE APUNTA EL ENEMIGO 
 	    this->hEnemigos->setAvionApuntar( es->id, myControl->getVivible()->getId());
-	    this->unCliente->removeEnemy( it );
+	    es->status = 'R';
 	  }
-	  delete es;
 	}
-	//this->unCliente->resetEnemys();
+	this->unCliente->resetEnemys();
 	m.unlock();
 
 	hEnemigos->hacerVivir();
