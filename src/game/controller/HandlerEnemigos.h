@@ -37,7 +37,7 @@ public:
 	Enemy* getEnemigo(int id);
 	HandlerEnemigos(SDL_Renderer* renderer, Resolucion* resolucion, Screen* screen, GameConf* gc);
 	virtual ~HandlerEnemigos();
-	void mover(int id, char event);
+	Posicion* mover(int id, char event);
 	void createEnemigo(int id, char type, int posX, int posY);
 	void hacerVivir();
 	void matar(int id);
