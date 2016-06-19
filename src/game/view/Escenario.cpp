@@ -958,11 +958,7 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 			int y = (*it)->posY;
 			int yp = y + (*it)->getLargo();
 			for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
-				int x2 = hEnemigos->getEnemigo(itEnemigo->first)->getX();
-				int x2p = x2 + hEnemigos->getEnemigo(itEnemigo->first)->getAncho()-5;
-				int y2 = hEnemigos->getEnemigo(itEnemigo->first)->getY();
-				int y2p = y2 + hEnemigos->getEnemigo(itEnemigo->first)->getLargo()-5;
-				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+				touched = itEnemigo->second->colisiono(x, y, xp, yp);
 				if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 					cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
 					hEnemigos->getEnemigo(itEnemigo->first)->recibirMisil((Misil*)*it);

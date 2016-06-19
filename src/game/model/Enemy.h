@@ -17,6 +17,7 @@
 #include "../view/ExplosionView.h"
 #include "../view/Screen.h"
 #include "../controller/ControllerMissilesEnemy.h"
+#include "../../colision/Colision.h"
 
 class Enemy {
 protected:
@@ -107,6 +108,7 @@ public:
     void setVelY(int vel);
     int getVelX();
     int getVelY();
+    bool colisiono(int, int, int, int);
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */
