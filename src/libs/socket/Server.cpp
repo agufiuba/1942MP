@@ -1034,6 +1034,7 @@ void Server::preparingAndSendingEnemyCreation(char type, int x, int y, int offse
   data->y = y;
   data->offset = offset;
   data->status = 'C';
+  strcpy( data->playerID, ( this->shootPlayerID() ).c_str() );
   this->sendEnemyCreation( data );
 }
 
@@ -1073,6 +1074,8 @@ void Server::makeEnemyMove() {
 			  if ( it->second->isActive() ) {
 			    data = it->second->vivir();
 			    if ( data->direction != 'Z' ) {
+			      // set player to shoot
+			      strcpy( data->playerID, ( this->shootPlayerID() ).c_str() );
 			      this->sendEnemyData( data );
 			    }
 			  }
@@ -1196,4 +1199,19 @@ void Server::sendTeamWin( string winningTeam ) {
     tmt->sendDataID( winningTeam.c_str() ); 
     delete tmt;
   } 
+}
+
+string Server::shootPlayerID() {
+  if ( this->players.size() == 0 ) return "NA";
+  if ( this->players.size() == 1 ) {
+    return ( this->players.begin() )->second->getName();
+  } else {
+    srand( time( NULL ) );
+    int offset = rand() % ( this->players.size() );
+    map<int, Player*>::iterator it = this->players.begin();
+    for ( int i = 0; i < offset; i++ ) {
+      ++it;
+    }
+    return it->second->getName();
+  }
 }
