@@ -130,5 +130,6 @@ class Client {
     void resetEnemys();
     void removeEnemy( vector<EnemyStatus*>::iterator it );
     void requestEnemyMovements( int id );
+    void sendEnemyHit( int enemyID, string playerID );
 };
 #endif

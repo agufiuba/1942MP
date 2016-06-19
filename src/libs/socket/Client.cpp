@@ -466,6 +466,14 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					    m.lock();
 					    this->enemys.push_back( data );
 					    m.unlock();
+					  } else if ( data->status == 'H' ) {
+					    m.lock();
+					    this->hEnemigos->bajarHP( data->id ); 
+					    m.unlock();
+					  } else if ( data->status == 'D' ) {
+					    m.lock();
+					    this->hEnemigos->matar( data->id );
+					    m.unlock();
 					  }
 					}
 			 }
@@ -866,4 +874,16 @@ void Client::sendEnemyMovements( EnemyStatus* data ) {
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendData( data );
   delete tmt;
+}
+
+void Client::sendEnemyHit( int enemyID, string playerID ) {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  EnemyStatus* data = new EnemyStatus;
+  data->id = enemyID;
+  strcpy( data->playerID, playerID.c_str() ); 
+  data->status = 'H';
+
+  tmt->sendData( data );
+  delete tmt;
+  delete data;
 }

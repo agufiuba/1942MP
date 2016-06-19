@@ -650,8 +650,7 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 		m.unlock();
 	      } else {
 		m.lock();
-		delete this->enemys[ data->id ];
-		this->enemys.erase( this->enemys.find( data->id ) );
+		this->removeEnemy( data->id );
 		m.unlock();
 	      }
 	    } else if (data->status == 'R') {
@@ -666,6 +665,20 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      //cout << "NEW POSITION Y OF " << to_string( data->id ) << ": " << to_string( data->y ) << endl; 
 	      if ( this->enemys.find( data->id ) != this->enemys.end() )
 		this->enemys[ data->id ]->updatePosition( data->x, data->y );
+	      m.unlock();
+	    } else if ( data->status == 'H' ) {
+	      m.lock();
+	      if ( this->enemys.find( data->id ) != this->enemys.end() ) {
+		this->enemys[ data->id ]->bajarHP();
+		// if enemy is still alive, send HP reduction 
+		if ( this->enemys[ data->id ]->aunVive() ) {
+		  this->sendEnemyUpdate( data, cfd );
+		// if enemy is dead, send enemy death
+		} else {
+		  this->removeEnemy( data->id );
+		  this->sendEnemyDeath( data->id, cfd );
+		}
+	      }
 	      m.unlock();
 	    }
 	  }
@@ -1222,4 +1235,39 @@ string Server::shootPlayerID() {
     }
     return it->second->getName();
   }
+}
+
+void Server::removeEnemy( int id ) {
+  delete this->enemys[ id ];
+  this->enemys.erase( this->enemys.find( id ) );
+}
+
+void Server::sendEnemyDeath( int id, int clientFD ) {
+  EnemyStatus* data = new EnemyStatus;
+  data->id = id;
+  data->status = 'D';
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    // do not send to notifier
+    if ( it->first != clientFD ) {
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendData( data ); 
+      delete tmt;
+    }
+  } 
+  delete data;
+}
+
+void Server::sendEnemyUpdate( EnemyStatus* data, int clientFD ) {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    // do not send to notifier
+    if ( it->first != clientFD ) {
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendData( data ); 
+      delete tmt;
+    }
+  } 
 }
