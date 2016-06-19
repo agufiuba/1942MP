@@ -61,9 +61,9 @@ void HandlerEnemigos::matar(int id) {
 	this->mapaEnemigos[id]->morir();
 }
 
-void HandlerEnemigos::mover(int id, char evento) {
+Posicion* HandlerEnemigos::mover(int id, char evento) {
 	map<int, Enemy*>::iterator it = this->mapaEnemigos.find( id );
-	if ( it == this->mapaEnemigos.end() ) return;
+	if ( it == this->mapaEnemigos.end() ) return NULL;
 
 	Enemy* enemigo = mapaEnemigos[id];
 
@@ -102,9 +102,10 @@ void HandlerEnemigos::mover(int id, char evento) {
 
 			case 'X': enemigo->morir();
 								this->matar(id);
-								break;									//Morir
+								return NULL;
 
 		}
+		return new Posicion( enemigo->getX(), enemigo->getY() );
 }
 
 void HandlerEnemigos::deleteEnemys() {

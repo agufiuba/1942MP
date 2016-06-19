@@ -131,3 +131,7 @@ bool ServerAvionEnemigo::isActive() {
 void ServerAvionEnemigo::activate() {
   this->active = true;
 }
+
+void ServerAvionEnemigo::updatePosition( int x, int y ) {
+  this->posicion->setPosicion( x, y ); 
+}

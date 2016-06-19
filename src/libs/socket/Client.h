@@ -60,6 +60,7 @@ class Client {
     bool ready;
     GameData* gameData;
     bool playerResume;
+    void sendEnemyMovements( EnemyStatus* data );
 
 
   public:

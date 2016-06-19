@@ -65,6 +65,7 @@ public:
 	int getVida();
 	bool isActive();
 	void activate();
+	void updatePosition( int x, int y );
 
 	virtual EnemyData* vivir();
 
