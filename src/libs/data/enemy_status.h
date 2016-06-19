@@ -7,5 +7,6 @@ typedef struct EnemyStatus {
   int offset;
   char type;
   char status;
+  char playerID[15];
 } EnemyStatus;
 #endif
