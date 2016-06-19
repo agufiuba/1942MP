@@ -1013,20 +1013,39 @@ void Server::createEnemy( char type, int x, int y, int offset ) {
   ServerAvionEnemigo* enemy = NULL;
   if (type == 'g'){
 	  enemy = new ServerAvionEnemyGrande( this->enemyID, new Posicion(x, y));
+	  this->enemys[ enemyID ] =  enemy;
+	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
+
   } else if (type == 'f'){
-  	enemy = new ServerAvionEnemigoFlota( this->enemyID, new Posicion(x, y));
+  	this->createFlota(type, x, y, offset);
+
   } else {
 	  enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
+	  this->enemys[ enemyID ] =  enemy;
+	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
   }
-  EnemyStatus* data = new EnemyStatus;
+}
+
+void Server::preparingAndSendingEnemyCreation(char type, int x, int y, int offset) {
+	EnemyStatus* data = new EnemyStatus;
   data->id = this->enemyID;
   data->type = type;
   data->x = x;
   data->y = y;
   data->offset = offset;
   data->status = 'C';
-  this->enemys[ enemyID ] =  enemy;
   this->sendEnemyCreation( data );
+}
+
+void Server::createFlota(char type, int x, int y, int offset) {
+	for (int numeroDeFlota = 0 ; numeroDeFlota < 5 ; numeroDeFlota++ ){
+		ServerAvionEnemigo* enemy = new ServerAvionEnemigoFlota( this->enemyID, new Posicion(x, y), numeroDeFlota);
+	  this->enemys[ enemyID ] =  enemy;
+
+	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
+
+		this->enemyID++;
+	}
 }
 
 void Server::sendEnemyCreation( EnemyStatus* data ) {

@@ -28,9 +28,10 @@
 class ServerAvionEnemigoFlota :public ServerAvionEnemigo{
 private:
 	bool esquinaDerecha;
+	int tiempoDeEspera;
 
 public:
-	ServerAvionEnemigoFlota( int id, Posicion* posicionInicial);
+	ServerAvionEnemigoFlota( int id, Posicion* posicionInicial, int posicionEnLaFlota);
 	~ServerAvionEnemigoFlota();
 
 	EnemyData* vivir();
