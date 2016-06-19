@@ -15,7 +15,7 @@ HandlerEnemigos::HandlerEnemigos(SDL_Renderer* renderer, Resolucion* resolucion,
 	this->screen = screen;
 	this->gc = gc;
 
-	this->velocidadStandard = 5;
+	this->velocidadStandard = 4;
 	this->velX = 0;
 	this->velY = 0;
 }
