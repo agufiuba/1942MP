@@ -639,11 +639,14 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      if ( data->id == -1 ) {
 		m.lock();
 		for( map<int, ServerAvionEnemigo*>::iterator it = this->enemys.begin();
-		     it != this->enemys.end();
-		     ++it ) {
-		  delete it->second;
+		     it != this->enemys.end(); ) {
+		  if ( it->second->isActive() ) {
+		    delete it->second;
+		    it = this->enemys.erase( it );
+		  } else {
+		    ++it;
+		  }
 		}
-		this->enemys.clear();
 		m.unlock();
 	      } else {
 		m.lock();
