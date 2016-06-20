@@ -33,6 +33,7 @@ void FlotaObserver::actualizar(int cfdQueEliminoAlAvion) {
 	}
 
 	this->contador++;
+	cout << "FLOTAOBSERVER= "<< contador << endl;
 
 	if ((this->cantidadDeAvionesEnLaFlota == this->contador) && this->todosMatadosPorUnJugador) {
 		//TODO: Hay que avisar que se debe enviar el bonus

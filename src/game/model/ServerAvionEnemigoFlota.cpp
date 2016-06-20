@@ -12,6 +12,7 @@ ServerAvionEnemigoFlota::ServerAvionEnemigoFlota( int id, Posicion* posicionInic
 :ServerAvionEnemigo(id, posicionInicial) {
 	esquinaDerecha = false;
 	this->tiempoDeEspera = posicionEnLaFlota;
+	this->type = 'f';
 }
 
 ServerAvionEnemigoFlota::~ServerAvionEnemigoFlota(){
@@ -106,4 +107,15 @@ void ServerAvionEnemigoFlota::addObserver(FlotaObserver* obs) {
 
 void ServerAvionEnemigoFlota::notify(int cfd) {
 	this->observer->actualizar(cfd);
+}
+
+void ServerAvionEnemigoFlota::bajarHP(int cfd) {
+  if ( this->tieneHP() ) {
+    this->vida--;
+    cout << "ENEMY " << to_string( this->id ) << " HP = " << this->vida << endl;
+  } else {
+    this->viviendo = false;
+  }
+
+  this->notify(cfd);
 }

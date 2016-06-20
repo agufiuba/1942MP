@@ -39,6 +39,7 @@ public:
 	EnemyData* vivir();
 	void addObserver(FlotaObserver* obs);
 	void notify(int cfd);
+	void bajarHP(int cfd);
 };
 
 #endif /* SRC_GAME_MODEL_SERVERAVIONENEMIGOFLOTA_H_ */

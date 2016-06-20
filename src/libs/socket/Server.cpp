@@ -671,7 +671,11 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	    } else if ( data->status == 'H' ) {
 	      m.lock();
 	      if ( this->enemys.find( data->id ) != this->enemys.end() ) {
-		this->enemys[ data->id ]->bajarHP();
+	      	if (this->enemys[ data->id ]->getType() == 'f') {
+	      		((ServerAvionEnemigoFlota*)this->enemys[ data->id ])->bajarHP(cfd);
+	      	}else {
+	      		this->enemys[ data->id ]->bajarHP();
+	      	}
 		// if enemy is still alive, send HP reduction 
 		if ( this->enemys[ data->id ]->aunVive() ) {
 		  this->sendEnemyUpdate( data, cfd );

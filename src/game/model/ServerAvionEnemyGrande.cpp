@@ -14,6 +14,7 @@ ServerAvionEnemyGrande::ServerAvionEnemyGrande(int id, Posicion* posicionInicial
   this->vida = 10;
 	cantidadDeMovimientos = 0;
 	movimientosMax = 6;
+	this->type = 'g';
 }
 
 ServerAvionEnemyGrande::~ServerAvionEnemyGrande() {
