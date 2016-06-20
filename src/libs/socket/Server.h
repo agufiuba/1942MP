@@ -14,6 +14,7 @@
 #include "../../libs/data/enemy_status.h"
 #include "../../game/model/Player.h"
 #include "../../game/model/ServerAvionEnemigoRandom.h"
+#include "../../game/model/ServerAvionEnemigoMedio.h"
 #include "../../game/model/ServerAvionEnemyGrande.h"
 #include "../../game/model/ServerAvionEnemigoFlota.h"
 #include <vector>
@@ -97,6 +98,9 @@ class Server {
     void sendEnemyCreation( EnemyStatus* data );
     void createEnemy( char type, int x, int y, int offset );
     string shootPlayerID();
+    void removeEnemy( int id );
+    void sendEnemyDeath( int id, int clientFD );
+    void sendEnemyUpdate( EnemyStatus* data, int clientFD );
 
   public:
     Server( const char* configFileName );

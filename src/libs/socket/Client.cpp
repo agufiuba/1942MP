@@ -435,8 +435,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 			 } else if ( dataID == "ED" ) {
 				 	EnemyData* data = new EnemyData;
 					if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
-					  cout << "ID: " << to_string( data->id ) << endl;
-					  cout << "DIRECTION: " << data->direction << endl;
+					  /*cout << "ID: " << to_string( data->id ) << endl;
+					  cout << "DIRECTION: " << data->direction << endl;*/
 					  Posicion* p = this->hEnemigos->mover(data->id, data->direction);
 					  this->hEnemigos->setAvionApuntar( data->id, string( data->playerID ) );
 					  if ( p != NULL ) {
@@ -456,15 +456,23 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
 					  mutex m;
 					  // process enemy status
-					  cout << "ENEMY ID: " << to_string( data->id ) << endl;
+					  /*cout << "ENEMY ID: " << to_string( data->id ) << endl;
 					  cout << "ENEMY TYPE: " << data->type<< endl;
 					  cout << "ENEMY POS X: " << to_string( data->x ) << endl;
 					  cout << "ENEMY POS Y: " << to_string( data->y ) << endl;
-					  cout << "ENEMY OFFSET: " << to_string( data->offset ) << endl;
+					  cout << "ENEMY OFFSET: " << to_string( data->offset ) << endl;*/
 					  cout << "ENEMY STATUS: " << data->status << endl;
 					  if ( data->status == 'C' ) {
 					    m.lock();
 					    this->enemys.push_back( data );
+					    m.unlock();
+					  } else if ( data->status == 'H' ) {
+					    m.lock();
+					    this->hEnemigos->bajarHP( data->id ); 
+					    m.unlock();
+					  } else if ( data->status == 'D' ) {
+					    m.lock();
+					    this->hEnemigos->matar( data->id );
 					    m.unlock();
 					  }
 					}
@@ -866,4 +874,16 @@ void Client::sendEnemyMovements( EnemyStatus* data ) {
   Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
   tmt->sendData( data );
   delete tmt;
+}
+
+void Client::sendEnemyHit( int enemyID, string playerID ) {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  EnemyStatus* data = new EnemyStatus;
+  data->id = enemyID;
+  strcpy( data->playerID, playerID.c_str() ); 
+  data->status = 'H';
+
+  tmt->sendData( data );
+  delete tmt;
+  delete data;
 }

@@ -61,6 +61,10 @@ void HandlerEnemigos::matar(int id) {
 	this->mapaEnemigos[id]->morir();
 }
 
+void HandlerEnemigos::bajarHP( int id ) {
+  this->mapaEnemigos[ id ]->bajarHP();
+}
+
 Posicion* HandlerEnemigos::mover(int id, char evento) {
 	map<int, Enemy*>::iterator it = this->mapaEnemigos.find( id );
 	if ( it == this->mapaEnemigos.end() ) return NULL;

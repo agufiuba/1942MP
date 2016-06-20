@@ -41,6 +41,7 @@ public:
 	void createEnemigo(int id, char type, int posX, int posY);
 	void hacerVivir();
 	void matar(int id);
+	void bajarHP( int id );
 	void deleteEnemys();
 	void addAvionesApuntables(Avion* avion);
 	void setAvionApuntar(int idEnemigo, string idAvion);

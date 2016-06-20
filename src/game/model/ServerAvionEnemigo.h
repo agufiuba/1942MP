@@ -75,6 +75,7 @@ public:
 	bool tieneHP();
 	void setHP(int hp);
 	void recibirMisil(Misil* misil);
+	void bajarHP();
 
 	void disparar();
 
