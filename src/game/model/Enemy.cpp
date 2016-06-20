@@ -43,6 +43,7 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 }
 
 Enemy::~Enemy(){
+	cout << "Muere enemy"  << endl;
 	if (!explosion->exploto()) {
 	   posicion->mover(-1, -3);
 	   explosion->explotar(posicion);
@@ -331,6 +332,8 @@ void Enemy::moverFlota() {
 }
 
 void Enemy::morir(){
+//	cout << "largo: " << this->getID() << endl;
+	posicion->print();
 	this->setHP(0);
 //	viviendo = false;
 }

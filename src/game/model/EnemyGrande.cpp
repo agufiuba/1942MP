@@ -19,6 +19,7 @@ EnemyGrande::EnemyGrande(Screen* screen, SDL_Renderer * renderer, Resolucion* &r
 }
 
 EnemyGrande::~EnemyGrande() {
+	cout << "Muere Grande"  << endl;
 	if (!explosion->exploto()) {
 	   posicion->mover(-1, -3);
 	   explosion->explotar(posicion);

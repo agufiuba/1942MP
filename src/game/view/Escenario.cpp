@@ -914,7 +914,7 @@ void Escenario::getPowerUp() {
 				int xp2 = x2 + it->second->getAncho();
 				int y2 = it->second->getY();
 				int yp2 = y2 + it->second->getLargo();
-				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
+				touched = Colision::is(avion, it->second);
 				if (touched && it->second->aunVive()) {
 					char resp = it->second->activarPowerUp();
 					CompanionEvent* ce = new CompanionEvent();
@@ -962,7 +962,8 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 				int x2p = x2 + hEnemigos->getEnemigo(itEnemigo->first)->getAncho()-5;
 				int y2 = hEnemigos->getEnemigo(itEnemigo->first)->getY();
 				int y2p = y2 + hEnemigos->getEnemigo(itEnemigo->first)->getLargo()-5;
-				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+				touched = Colision::is(*it, itEnemigo->second);
+//				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
 				if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 					cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
 					(*it)->morir();

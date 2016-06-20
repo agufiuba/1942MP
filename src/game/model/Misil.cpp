@@ -85,3 +85,11 @@ int Misil::getLargo(){
 void Misil::morir(){
 	this->viviendo = false;
 }
+
+int Misil::getX() {
+	return this->posicion->getX();
+}
+
+int Misil::getY() {
+	return this->posicion->getY();
+}
