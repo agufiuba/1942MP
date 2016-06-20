@@ -25,6 +25,7 @@ Avion::Avion(PlayerData* playerData, Screen* screen, SDL_Renderer * renderer, Re
 
 	t = new Timer();
 
+	conectado = true;
 	estacionando = false;
 	realizandoVueltereta = false;
 	realizandoVuelteretaEstacionado = true;
@@ -221,8 +222,8 @@ void Avion::estacionar() {
 void Avion::vivir(int velX, int velY){
 
 	if (tieneHP()) {
-		if ((velX != 0 || velY != 0) && !viviendo) {
-			this->viviendo = true;
+		if ((velX != 0 || velY != 0) && !conectado) {
+			this->conectado = true;
 			vistaAvion->conectar();
 		}
 		if (estacionando) {
@@ -265,8 +266,10 @@ bool Avion::aunVive(){
 
 void Avion::desconectar(){
 //	this->viviendo = false;
-	if (vistaAvion != NULL)
+	if (vistaAvion != NULL){
 		vistaAvion->desconectar();
+	}
+	this->conectado = false;
 }
 
 void Avion::setAmetralladora(){

@@ -8,10 +8,12 @@
 #include "ServerAvionEnemigoFlota.h"
 
 
-ServerAvionEnemigoFlota::ServerAvionEnemigoFlota( int id, Posicion* posicionInicial, int posicionEnLaFlota)
+ServerAvionEnemigoFlota::ServerAvionEnemigoFlota( int id, Posicion* posicionInicial, int posicionEnLaFlota, int numeroDeFlota)
 :ServerAvionEnemigo(id, posicionInicial) {
 	esquinaDerecha = false;
 	this->tiempoDeEspera = posicionEnLaFlota;
+	this->type = 'f';
+	this->numeroDeFlota = numeroDeFlota;
 }
 
 ServerAvionEnemigoFlota::~ServerAvionEnemigoFlota(){
@@ -98,4 +100,27 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 		this->tiempoDeEspera --;
 	}
 		return ed;
+}
+
+void ServerAvionEnemigoFlota::addObserver(FlotaObserver* obs) {
+	this->observer = obs;
+}
+
+void ServerAvionEnemigoFlota::notify(int cfd) {
+	this->observer->actualizar(cfd);
+}
+
+void ServerAvionEnemigoFlota::bajarHP(int cfd) {
+  if ( this->tieneHP() ) {
+    this->vida--;
+    cout << "ENEMY " << to_string( this->id ) << " HP = " << this->vida << endl;
+  } else {
+    this->viviendo = false;
+  }
+
+  this->notify(cfd);
+}
+
+int ServerAvionEnemigoFlota::getNumeroDeFlota() {
+	return this->numeroDeFlota;
 }

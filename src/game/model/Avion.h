@@ -21,6 +21,8 @@ private:
 	int vida;
 	bool viviendo;
 
+	bool conectado;
+
 	bool realizandoVuelteretaEstacionado;
 	bool realizandoVueltereta;
 

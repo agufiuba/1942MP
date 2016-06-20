@@ -28,6 +28,7 @@
 class ServerAvionEnemigo {
 protected:
 
+	char type;
 	int id;
 	int anchoFondo, largoFondo;
 	int vida;
@@ -55,6 +56,7 @@ protected:
 public:
 	ServerAvionEnemigo( int id, Posicion* posicionInicial );
 	~ServerAvionEnemigo();
+	char getType();
 	int getId();
 	int getAnchoFondo();
 	int getLargoFondo();

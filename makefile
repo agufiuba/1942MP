@@ -105,14 +105,14 @@ SERVER = ./src/libs/socket/Server.cpp
 
 RED = $(CLIENT) $(SERVER)
 
-
 # Otros
 XML_PARSER = ./src/xml/parser/XMLParser.cpp
 K = ./src/utils/K.cpp
 DEFAULTS = ./src/utils/Defaults.cpp
 MENU = ./src/libs/menu/Menu.cpp
+FLOTAOBSERVER = $(MODEL_DIR)/FlotaObserver.cpp
 
-UTILS = $(K) $(DEFAULTS) $(XML_PARSER) $(MENU)
+UTILS = $(K) $(DEFAULTS) $(XML_PARSER) $(MENU) $(FLOTAOBSERVER)
 
 # compile
 
