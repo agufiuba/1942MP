@@ -148,3 +148,7 @@ void ServerAvionEnemigo::activate() {
 void ServerAvionEnemigo::updatePosition( int x, int y ) {
   this->posicion->setPosicion( x, y ); 
 }
+
+char ServerAvionEnemigo::getType() {
+  return this->type;
+}

@@ -34,6 +34,7 @@ protected:
 	int vida;
 	bool viviendo;
 	bool active;
+	char type;
 
 	int anchoVista;
 	int largoVista;

@@ -9,6 +9,7 @@
 
 ServerAvionEnemigoRandom::ServerAvionEnemigoRandom( int id, Posicion* posicionInicial
 ):ServerAvionEnemigo(id, posicionInicial) {
+  this->type = 'r';
   this->randomSeed = id;
   this->dAnt = 4;
 }

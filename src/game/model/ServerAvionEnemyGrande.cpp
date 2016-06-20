@@ -11,6 +11,7 @@ namespace std {
 
 ServerAvionEnemyGrande::ServerAvionEnemyGrande(int id, Posicion* posicionInicial
 ):ServerAvionEnemigo(id, posicionInicial) {
+  this->type = 'g';
   this->vida = 10;
 	cantidadDeMovimientos = 0;
 	movimientosMax = 6;
