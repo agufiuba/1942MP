@@ -44,6 +44,8 @@ public:
 	int getLargo();
 	bool aunVive();
 	int getDano();
+	int getX();
+	int getY();
 
 	void setAmetralladora();
 	void morir();

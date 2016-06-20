@@ -14,6 +14,7 @@ EnemyMediano::EnemyMediano(Screen* screen, SDL_Renderer * renderer, Resolucion* 
 }
 
 EnemyMediano::~EnemyMediano() {
+//	cout << "Muere mediano"  << endl;
 	if (!explosion->exploto()) {
 	   posicion->mover(-1, -3);
 	   explosion->explotar(posicion);

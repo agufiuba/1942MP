@@ -34,8 +34,8 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 	nFlota = chrono::system_clock::now();
 
 	misilConf = new MisilConf();
-	strcpy(misilConf->disparosSpriteID,conf->enemigos[1]->disparosSpriteID);
-	misilConf->velocidadDisparos = conf->enemigos[1]->velocidadDisparos + 3;
+	strcpy(misilConf->disparosSpriteID,conf->enemigos[0]->disparosSpriteID);
+	misilConf->velocidadDisparos = conf->enemigos[0]->velocidadDisparos + 3;
 	controlDeMisiles = new ControllerMissilesEnemy(misilConf, renderer);
 	contador = 0;
 	tiempoEntreDisparo = 30;
@@ -43,6 +43,7 @@ Enemy::Enemy(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, P
 }
 
 Enemy::~Enemy(){
+//	cout << "Muere enemy"  << endl;
 	if (!explosion->exploto()) {
 	   posicion->mover(-1, -3);
 	   explosion->explotar(posicion);

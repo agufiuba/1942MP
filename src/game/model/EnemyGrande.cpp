@@ -19,6 +19,7 @@ EnemyGrande::EnemyGrande(Screen* screen, SDL_Renderer * renderer, Resolucion* &r
 }
 
 EnemyGrande::~EnemyGrande() {
+//	cout << "Muere Grande"  << endl;
 	if (!explosion->exploto()) {
 	   posicion->mover(-1, -3);
 	   explosion->explotar(posicion);
@@ -45,5 +46,14 @@ void EnemyGrande::disparar() {
 		contador = 0;
 	}
 		contador ++;
+	}
+}
+
+int EnemyGrande::getLargo() {
+
+	if (this->vistaAvion != NULL){
+		return vistaAvion->getLargoVista() - 60;
+	} else {
+		return 0;
 	}
 }

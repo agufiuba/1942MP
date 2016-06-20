@@ -902,40 +902,37 @@ void Escenario::loadWaitForPlayersScreen() {
 }
 
 void Escenario::getPowerUp() {
-		Vivible* avion = myControl->getVivible();
-		if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
-			int x = avion->getX();
-			int y = avion->getY();
-			int xp = x + avion->getAncho()-5;
-			int yp = y + avion->getLargo()-5;
-			for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
-				bool touched = false;
-				int x2 = it->second->getX();
-				int xp2 = x2 + it->second->getAncho();
-				int y2 = it->second->getY();
-				int yp2 = y2 + it->second->getLargo();
-				touched = Colision::is(x, y, xp, yp, x2, y2, xp2, yp2);
-				if (touched && it->second->aunVive()) {
-					char resp = it->second->activarPowerUp();
-					CompanionEvent* ce = new CompanionEvent();
-					if (resp == 's') {
-						unCliente->sendData(ce->ametralladora(myControl->getVivible()->getId()));
-					}
-					if (resp == 'd') {
-						hEnemigos->deleteEnemys();
-						unCliente->sendData(ce->destroy(myControl->getVivible()->getId()));
-						this->unCliente->sendEnemyDeath();
-					}
-					if (resp == 'b') {
-						this->unCliente->addScoreToPlayer( 250 );
-					}
-					unCliente->sendData(ce->powerUpDestroy(it->second->getId()));
-					delete ce;
 
-					it->second->morir();
+	Vivible* avion = myControl->getVivible();
+
+	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
+
+		for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
+
+			bool touched = false;
+			touched = Colision::is(avion, it->second);
+			if (touched && it->second->aunVive()) {
+
+				char resp = it->second->activarPowerUp();
+				CompanionEvent* ce = new CompanionEvent();
+				if (resp == 's') {
+					unCliente->sendData(ce->ametralladora(myControl->getVivible()->getId()));
 				}
+				if (resp == 'd') {
+					hEnemigos->deleteEnemys();
+					unCliente->sendData(ce->destroy(myControl->getVivible()->getId()));
+					this->unCliente->sendEnemyDeath();
+				}
+				if (resp == 'b') {
+					this->unCliente->addScoreToPlayer( 250 );
+				}
+				unCliente->sendData(ce->powerUpDestroy(it->second->getId()));
+				delete ce;
+
+				it->second->morir();
 			}
 		}
+	}
 }
 
 void Escenario::crearFlota(int x, int y) {
@@ -950,42 +947,33 @@ void Escenario::crearFlota(int x, int y) {
 }
 
 void Escenario::hitEnemy(vector<Vivible*>* disparos) {
-		int eliminar = -1;
-		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
-			bool touched = false;
-			int x = (*it)->posX;
-			int xp = x + (*it)->getAncho();
-			int y = (*it)->posY;
-			int yp = y + (*it)->getLargo();
-			for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
-				int x2 = hEnemigos->getEnemigo(itEnemigo->first)->getX();
-				int x2p = x2 + hEnemigos->getEnemigo(itEnemigo->first)->getAncho()-5;
-				int y2 = hEnemigos->getEnemigo(itEnemigo->first)->getY();
-				int y2p = y2 + hEnemigos->getEnemigo(itEnemigo->first)->getLargo()-5;
-				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
-				if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
-					cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
-					(*it)->morir();
-					this->unCliente->sendEnemyHit( itEnemigo->first, "" );
-				}
+
+	int eliminar = -1;
+	for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
+
+		bool touched = false;
+		for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
+
+			touched = Colision::is(*it, itEnemigo->second);
+			if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
+				cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
+				//hEnemigos->getEnemigo(itEnemigo->first)->recibirMisil((Misil*)*it);
+				(*it)->morir();
+				this->unCliente->sendEnemyHit( itEnemigo->first, "" );
 			}
 		}
+	}
 }
 
 void Escenario::planesColision(){
 	Vivible* avion = myControl->getVivible();
 	bool touched = false;
+
 	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
-		int x = avion->getX();
-		int y = avion->getY();
-		int xp = x + avion->getAncho()-5;
-		int yp = y + avion->getLargo()-5;
+
 		for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
-			int x2 = hEnemigos->getEnemigo(itEnemigo->first)->getX();
-			int x2p = x2 + hEnemigos->getEnemigo(itEnemigo->first)->getAncho();
-			int y2 = hEnemigos->getEnemigo(itEnemigo->first)->getY();
-			int y2p = y2 + hEnemigos->getEnemigo(itEnemigo->first)->getLargo();
-			touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+
+			touched = Colision::is(avion, itEnemigo->second);
 			if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 				cout << "**** CHOQUE: ENEMIGOS VS MI AVION ****" << endl;
 				hEnemigos->getEnemigo(itEnemigo->first)->morir();
@@ -1002,19 +990,14 @@ void Escenario::planesColision(){
 void Escenario::enemyOtherPlayerColision() {
 	map<string, IController*>* othersPlanes = &(this->controllers->mapaControllers);
 	int eliminar = -1;
+
 	for (map<string, IController*>::iterator it = othersPlanes->begin(); it != othersPlanes->end(); it++) {
 		if (it->second->getVivible()->aunVive() && !((Avion*)it->second->getVivible())->haciendoVueltereta()){
+
 			bool touched = false;
-			int x = it->second->getVivible()->getX();
-			int xp = x + it->second->getVivible()->getAncho();
-			int y = it->second->getVivible()->getY();
-			int yp = y + it->second->getVivible()->getLargo();
 			for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
-				int x2 = hEnemigos->getEnemigo(itEnemigo->first)->getX();
-				int x2p = x2 + hEnemigos->getEnemigo(itEnemigo->first)->getAncho();
-				int y2 = hEnemigos->getEnemigo(itEnemigo->first)->getY();
-				int y2p = y2 + hEnemigos->getEnemigo(itEnemigo->first)->getLargo();
-				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+
+				touched = Colision::is(it->second->getVivible(), itEnemigo->second);
 				if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 					cout << "**** CHOQUE: ENEMIGOS VS AVION DE OTRO JUGADOR ****" << endl;
 					hEnemigos->getEnemigo(itEnemigo->first)->morir();
@@ -1038,25 +1021,19 @@ void Escenario::enemyOtherPlayerMissileColision() {
 }
 
 void Escenario::hitPlanes(vector<Vivible*>* disparos,Vivible* avion){
+
 	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
-		int x = avion->getX();
-		int y = avion->getY();
-		int xp = x + avion->getAncho()-5;
-		int yp = y + avion->getLargo()-5;
+
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
-			bool touched = false;
-			int x2 = (*it)->posX;
-			int x2p = x2 + (*it)->getAncho();
-			int y2 = (*it)->posY;
-			int y2p = y2 + (*it)->getLargo();
-			touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
+
+			bool touched = Colision::is(*it, avion);
 			if (touched && (*it)->aunVive()) {
 				cout << "**** CHOQUE: AVION VS MISILES ****" << endl;
 				((Avion*)avion)->recibirMisil((Misil*)*it);
 				(*it)->morir();
 				this->player->takeHit();
 				if( !( this->player->isAlive() ) ) {
-				  this->unCliente->sendPlayerDeath();
+					this->unCliente->sendPlayerDeath();
 				}
 			}
 

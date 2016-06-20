@@ -68,7 +68,7 @@ public:
 	int getAnchoFondo();
 	int getLargoFondo();
 	int getAncho();
-	int getLargo();
+	virtual int getLargo();
 	int getX();
 	int getY();
 	int getVida();
