@@ -965,7 +965,6 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 				touched = Colision::is(x, y, xp, yp, x2, y2, x2p, y2p);
 				if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 					cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
-					hEnemigos->getEnemigo(itEnemigo->first)->recibirMisil((Misil*)*it);
 					(*it)->morir();
 					this->unCliente->sendEnemyHit( itEnemigo->first, "" );
 				}
