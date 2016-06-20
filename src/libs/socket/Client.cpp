@@ -417,6 +417,12 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				  m.unlock();
 				}
 				delete data;
+			} else if ( dataID == "SA" ) {
+				PlayerScore* data = new PlayerScore;
+				if ((bytesReceived = tmt->receiveData(data)) > 0) {
+				  this->player->addScore( data->score );
+				}
+				delete data;
 			} else if ( dataID == "GD" ) {
 			    GameData* data = new GameData;
 			    if ((bytesReceived = tmt->receiveData( data )) > 0 ) {
@@ -698,8 +704,6 @@ void Client::sendStageClearReady() {
 
 void Client::addScoreToPlayer( int score ) {
   mutex m;
-  // add score to player
-  this->player->addScore( score );
   m.lock();
   if ( this->player->getTeam() == 0 ) this->coopTeamScore += score;
   if ( this->player->getTeam() == 1 ) this->alphaTeamScore += score;

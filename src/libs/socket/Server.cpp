@@ -687,17 +687,27 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      			//TODO: Server debe enviar bonus al cfd este.
 	      			cout << ">> BONUUUUS --> TODOS LOS AVIONES MATADOS POR: "<< cfd << endl;
 	      		}
-	      	}else {
+	      	} else {
 	      		this->enemys[ data->id ]->bajarHP();
 	      	}
+		PlayerScore* ps = new PlayerScore;
+		strcpy( ps->name, ( this->players[ cfd ]->getName() ).c_str() );
+		ps->team = this->players[ cfd ]->getTeam();
+		ps->score = this->enemys[ data->id ]->getHitScore();
+		if ( ps->score > 0 ) {
+		  this->addScoreToPlayer( ps );
+		}
 		// if enemy is still alive, send HP reduction 
 		if ( this->enemys[ data->id ]->aunVive() ) {
 		  this->sendEnemyUpdate( data, cfd );
 		// if enemy is dead, send enemy death
 		} else {
+		  ps->score = this->enemys[ data->id ]->getKillScore();
+		  this->addScoreToPlayer( ps );
 		  this->removeEnemy( data->id );
 		  this->sendEnemyDeath( data->id, cfd );
 		}
+		delete ps;
 	      }
 	      m.unlock();
 	    }
@@ -880,14 +890,17 @@ void Server::addScoreToPlayer( PlayerScore* data ) {
   for ( map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end();
 	++it ) {
+    Transmitter* tmt = new Transmitter( it->first, this->logger );
     if ( it->second->getName() == string( data->name ) ) {
       it->second->addScore( data->score );
-    } else if( it->second->isActive() ) {
+      tmt->sendData( data, "SA" );
+    } 
+
+    if( it->second->isActive() ) {
       // send team score
-      Transmitter* tmt = new Transmitter( it->first, this->logger );
       tmt->sendData( data, "TS" ); 
-      delete tmt;
     }
+    delete tmt;
   }
 
   if ( this->gameData->teamMode ) {
@@ -1284,12 +1297,9 @@ void Server::sendEnemyDeath( int id, int clientFD ) {
   for ( map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end();
 	++it ) {
-    // do not send to notifier
-    if ( it->first != clientFD ) {
-      Transmitter* tmt = new Transmitter( it->first, this->logger );
-      tmt->sendData( data ); 
-      delete tmt;
-    }
+    Transmitter* tmt = new Transmitter( it->first, this->logger );
+    tmt->sendData( data ); 
+    delete tmt;
   } 
   delete data;
 }
@@ -1298,11 +1308,8 @@ void Server::sendEnemyUpdate( EnemyStatus* data, int clientFD ) {
   for ( map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end();
 	++it ) {
-    // do not send to notifier
-    if ( it->first != clientFD ) {
-      Transmitter* tmt = new Transmitter( it->first, this->logger );
-      tmt->sendData( data ); 
-      delete tmt;
-    }
+    Transmitter* tmt = new Transmitter( it->first, this->logger );
+    tmt->sendData( data ); 
+    delete tmt;
   } 
 }
