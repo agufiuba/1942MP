@@ -28,12 +28,12 @@
 class ServerAvionEnemigo {
 protected:
 
-	char type;
 	int id;
 	int anchoFondo, largoFondo;
 	int vida;
 	bool viviendo;
 	bool active;
+	char type;
 
 	int anchoVista;
 	int largoVista;
@@ -80,6 +80,8 @@ public:
 	void bajarHP();
 
 	void disparar();
+	virtual int getHitScore();
+	virtual int getKillScore();
 
 	Posicion* getPosicion();
 

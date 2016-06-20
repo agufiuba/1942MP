@@ -2,6 +2,7 @@
 
 ServerAvionEnemigoMedio::ServerAvionEnemigoMedio( int id, Posicion* posicionInicial):ServerAvionEnemigo(id, posicionInicial) {
   this->vida = 5;
+  this->type = 'm';
   this->randomSeed = id;
   this->dAnt = 4;
 }
@@ -92,4 +93,12 @@ EnemyData* ServerAvionEnemigoMedio::vivir() {
 		}
 		
 	return ed;
+}
+
+int ServerAvionEnemigoMedio::getHitScore() {
+  return 100;
+}
+
+int ServerAvionEnemigoMedio::getKillScore() {
+  return 500;
 }

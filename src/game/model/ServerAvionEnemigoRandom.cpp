@@ -9,6 +9,7 @@
 
 ServerAvionEnemigoRandom::ServerAvionEnemigoRandom( int id, Posicion* posicionInicial
 ):ServerAvionEnemigo(id, posicionInicial) {
+  this->type = 'r';
   this->randomSeed = id;
   this->dAnt = 4;
 }
@@ -99,4 +100,12 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 		}
 		
 	return ed;
+}
+
+int ServerAvionEnemigoRandom::getHitScore() {
+  return 0;
+}
+
+int ServerAvionEnemigoRandom::getKillScore() {
+  return 50;
 }

@@ -8,7 +8,6 @@
 #include "ServerAvionEnemigo.h"
 
 ServerAvionEnemigo::ServerAvionEnemigo( int id, Posicion* posicionInicial ) {
-	this->type = 'r';
 	this->id = id;
 	this->vida = 1;
 
@@ -100,7 +99,8 @@ void ServerAvionEnemigo::bajarHP() {
   if ( this->tieneHP() ) {
     this->vida--;
     cout << "ENEMY " << to_string( this->id ) << " HP = " << this->vida << endl;
-  } else {
+  }
+  if ( !this->tieneHP() ) {
     this->viviendo = false;
   }
 }
@@ -148,3 +148,7 @@ void ServerAvionEnemigo::activate() {
 void ServerAvionEnemigo::updatePosition( int x, int y ) {
   this->posicion->setPosicion( x, y ); 
 }
+
+int ServerAvionEnemigo::getHitScore() { return 0; }
+
+int ServerAvionEnemigo::getKillScore() { return 0; }

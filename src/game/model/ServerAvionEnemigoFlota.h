@@ -36,12 +36,13 @@ private:
 public:
 	ServerAvionEnemigoFlota( int id, Posicion* posicionInicial, int posicionEnLaFlota, int numeroDeFlota);
 	~ServerAvionEnemigoFlota();
-
 	EnemyData* vivir();
 	void addObserver(FlotaObserver* obs);
 	void notify(int cfd);
 	void bajarHP(int cfd);
 	int getNumeroDeFlota();
+	int getHitScore();
+	int getKillScore();
 };
 
 #endif /* SRC_GAME_MODEL_SERVERAVIONENEMIGOFLOTA_H_ */

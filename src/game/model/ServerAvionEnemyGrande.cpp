@@ -11,6 +11,7 @@ namespace std {
 
 ServerAvionEnemyGrande::ServerAvionEnemyGrande(int id, Posicion* posicionInicial
 ):ServerAvionEnemigo(id, posicionInicial) {
+  this->type = 'g';
   this->vida = 10;
 	cantidadDeMovimientos = 0;
 	movimientosMax = 6;
@@ -44,5 +45,12 @@ EnemyData* ServerAvionEnemyGrande::vivir() {
 	return ed;
 }
 
+int ServerAvionEnemyGrande::getHitScore() {
+  return 100;
+}
+
+int ServerAvionEnemyGrande::getKillScore() {
+  return 1000;
+}
 
 } /* namespace std */

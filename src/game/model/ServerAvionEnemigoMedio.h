@@ -28,6 +28,8 @@ public:
 	ServerAvionEnemigoMedio( int id, Posicion* posicionInicial);
 	~ServerAvionEnemigoMedio();
 	EnemyData* vivir();
+	int getHitScore();
+	int getKillScore();
 };
 
 #endif 
