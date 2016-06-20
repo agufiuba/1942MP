@@ -33,7 +33,7 @@ void FlotaObserver::actualizar(int cfdQueEliminoAlAvion) {
 	}
 
 	this->contador++;
-	cout << "FLOTAOBSERVER= "<< contador << endl;
+	//cout << "FLOTAOBSERVER= "<< contador << endl;
 
 }
 
