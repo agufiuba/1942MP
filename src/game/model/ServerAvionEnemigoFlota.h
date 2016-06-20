@@ -24,17 +24,21 @@
 #include "../view/Screen.h"
 #include "../controller/ControllerMissilesEnemy.h"
 #include "../model/ServerAvionEnemigo.h"
+#include "../model/FlotaObserver.h"
 
 class ServerAvionEnemigoFlota :public ServerAvionEnemigo{
 private:
 	bool esquinaDerecha;
 	int tiempoDeEspera;
+	FlotaObserver* observer;
 
 public:
 	ServerAvionEnemigoFlota( int id, Posicion* posicionInicial, int posicionEnLaFlota);
 	~ServerAvionEnemigoFlota();
 
 	EnemyData* vivir();
+	void addObserver(FlotaObserver* obs);
+	void notify(int cfd);
 };
 
 #endif /* SRC_GAME_MODEL_SERVERAVIONENEMIGOFLOTA_H_ */

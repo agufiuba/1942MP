@@ -17,6 +17,7 @@
 #include "../../game/model/ServerAvionEnemigoMedio.h"
 #include "../../game/model/ServerAvionEnemyGrande.h"
 #include "../../game/model/ServerAvionEnemigoFlota.h"
+#include "../../game/model/FlotaObserver.h"
 #include <vector>
 #include <queue>
 #include <map>
@@ -50,6 +51,7 @@ class Server {
 
     map<int, ServerAvionEnemigo*> enemys;
     int enemyID;
+  	FlotaObserver* fo;
 
     Logger* logger;
     GameConf* config;

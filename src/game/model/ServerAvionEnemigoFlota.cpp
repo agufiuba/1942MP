@@ -99,3 +99,11 @@ EnemyData* ServerAvionEnemigoFlota::vivir() {
 	}
 		return ed;
 }
+
+void ServerAvionEnemigoFlota::addObserver(FlotaObserver* obs) {
+	this->observer = obs;
+}
+
+void ServerAvionEnemigoFlota::notify(int cfd) {
+	this->observer->actualizar(cfd);
+}

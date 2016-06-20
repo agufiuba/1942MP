@@ -36,6 +36,8 @@ Server::Server( const char* configFileName ) {
   this->betaTeamScore = 0;
   this->coopTeamScore = 0;
   this->enemyID = 0;
+
+	this->fo = new FlotaObserver();
 }
 
 Server::~Server() {
@@ -1064,15 +1066,21 @@ void Server::preparingAndSendingEnemyCreation(char type, int x, int y, int offse
 }
 
 void Server::createFlota(char type, int x, int y, int offset) {
+
 	for (int numeroDeFlota = 0 ; numeroDeFlota < 5 ; numeroDeFlota++ ){
 		ServerAvionEnemigo* enemy = new ServerAvionEnemigoFlota( this->enemyID, new Posicion(x, y), numeroDeFlota);
-	  this->enemys[ enemyID ] =  enemy;
+	  this->enemys[ enemyID ] = enemy;
+	  ((ServerAvionEnemigoFlota*)enemy)->addObserver(this->fo);
 
 	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
 
 		this->enemyID++;
 	}
 }
+
+/*void Server::observerFlota() {
+
+}*/
 
 void Server::sendEnemyCreation( EnemyStatus* data ) {
   for ( map<int, Player*>::iterator it = this->players.begin();

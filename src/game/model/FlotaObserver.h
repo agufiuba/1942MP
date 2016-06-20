@@ -8,6 +8,8 @@
 #ifndef SRC_GAME_MODEL_FLOTAOBSERVER_H_
 #define SRC_GAME_MODEL_FLOTAOBSERVER_H_
 
+#include <iostream>
+
 class FlotaObserver {
 private:
 	int cfd;
@@ -15,11 +17,12 @@ private:
 	int contador;
 	bool todosMatadosPorUnJugador;
 
-
 public:
 	FlotaObserver();
 	~FlotaObserver();
 	void actualizar(int cfdQueEliminoAlAvion);
+	bool murieronTodos();
+	void reiniciar();
 };
 
 #endif /* SRC_GAME_MODEL_FLOTAOBSERVER_H_ */
