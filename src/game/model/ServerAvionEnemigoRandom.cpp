@@ -101,3 +101,11 @@ EnemyData* ServerAvionEnemigoRandom::vivir() {
 		
 	return ed;
 }
+
+int ServerAvionEnemigoRandom::getHitScore() {
+  return 0;
+}
+
+int ServerAvionEnemigoRandom::getKillScore() {
+  return 50;
+}

@@ -81,6 +81,8 @@ public:
 	void bajarHP();
 
 	void disparar();
+	virtual int getHitScore();
+	virtual int getKillScore();
 
 	Posicion* getPosicion();
 

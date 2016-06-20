@@ -152,3 +152,7 @@ void ServerAvionEnemigo::updatePosition( int x, int y ) {
 char ServerAvionEnemigo::getType() {
   return this->type;
 }
+
+int ServerAvionEnemigo::getHitScore() { return 0; }
+
+int ServerAvionEnemigo::getKillScore() { return 0; }
