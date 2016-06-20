@@ -249,6 +249,16 @@
 		<apareceEn>500</apareceEn>
 	</enemigo>
 	<enemigo>
+		<tipo>f</tipo>
+		<velocidadDisparos>4</velocidadDisparos>
+		<disparosSpriteID>balaRedonda</disparosSpriteID>
+		<posicion>
+			<x>1024</x>
+			<y>500</y>
+		</posicion>
+		<apareceEn>2000</apareceEn>
+	</enemigo>
+	<enemigo>
 		<tipo>g</tipo>
 		<velocidadDisparos>4</velocidadDisparos>
 		<disparosSpriteID>balaRedonda</disparosSpriteID>
@@ -259,5 +269,5 @@
 		<apareceEn>2000</apareceEn>
 	</enemigo>
 </enemigos>
-<maxClients>1</maxClients>
+<maxClients>2</maxClients>
 <jugadoresPorEquipo>1</jugadoresPorEquipo>

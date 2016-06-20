@@ -31,15 +31,17 @@ private:
 	bool esquinaDerecha;
 	int tiempoDeEspera;
 	FlotaObserver* observer;
+	int numeroDeFlota;
 
 public:
-	ServerAvionEnemigoFlota( int id, Posicion* posicionInicial, int posicionEnLaFlota);
+	ServerAvionEnemigoFlota( int id, Posicion* posicionInicial, int posicionEnLaFlota, int numeroDeFlota);
 	~ServerAvionEnemigoFlota();
 
 	EnemyData* vivir();
 	void addObserver(FlotaObserver* obs);
 	void notify(int cfd);
 	void bajarHP(int cfd);
+	int getNumeroDeFlota();
 };
 
 #endif /* SRC_GAME_MODEL_SERVERAVIONENEMIGOFLOTA_H_ */

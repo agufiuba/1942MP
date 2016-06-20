@@ -23,6 +23,7 @@ public:
 	void actualizar(int cfdQueEliminoAlAvion);
 	bool murieronTodos();
 	void reiniciar();
+	bool ultimaFlotaYtodosPorElMismo();
 };
 
 #endif /* SRC_GAME_MODEL_FLOTAOBSERVER_H_ */

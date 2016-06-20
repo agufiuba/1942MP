@@ -51,7 +51,8 @@ class Server {
 
     map<int, ServerAvionEnemigo*> enemys;
     int enemyID;
-  	FlotaObserver* fo;
+  	map<int, FlotaObserver*> flotas;
+  	int numeroDeFlota;
 
     Logger* logger;
     GameConf* config;

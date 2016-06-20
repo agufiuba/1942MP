@@ -37,7 +37,7 @@ Server::Server( const char* configFileName ) {
   this->coopTeamScore = 0;
   this->enemyID = 0;
 
-	this->fo = new FlotaObserver();
+	this->numeroDeFlota = 1000;
 }
 
 Server::~Server() {
@@ -47,6 +47,13 @@ Server::~Server() {
 	it != this->players.end();
 	++it ) {
       delete it->second;
+    }
+  }
+
+  if( !( this->flotas.empty() ) ) {
+    for( map<int, FlotaObserver*>::iterator it2 = this->flotas.begin();
+    it2 != this->flotas.end(); ++it2 ) {
+      delete it2->second;
     }
   }
 
@@ -671,8 +678,15 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	    } else if ( data->status == 'H' ) {
 	      m.lock();
 	      if ( this->enemys.find( data->id ) != this->enemys.end() ) {
+	      	// Si es una Flota, analiza si la FlotaObserver detecto que era la ultima y si fue el mismo
+	      	// cfd el que lo mato
 	      	if (this->enemys[ data->id ]->getType() == 'f') {
-	      		((ServerAvionEnemigoFlota*)this->enemys[ data->id ])->bajarHP(cfd);
+	      		ServerAvionEnemigoFlota* flota = (ServerAvionEnemigoFlota*)this->enemys[ data->id ];
+	      		flota->bajarHP(cfd);
+	      		if (this->flotas[ flota->getNumeroDeFlota() ]->ultimaFlotaYtodosPorElMismo()) {
+	      			//TODO: Server debe enviar bonus al cfd este.
+	      			cout << ">> BONUUUUS --> TODOS LOS AVIONES MATADOS POR: "<< cfd << endl;
+	      		}
 	      	}else {
 	      		this->enemys[ data->id ]->bajarHP();
 	      	}
@@ -1070,16 +1084,21 @@ void Server::preparingAndSendingEnemyCreation(char type, int x, int y, int offse
 }
 
 void Server::createFlota(char type, int x, int y, int offset) {
+	FlotaObserver* fo = new FlotaObserver();
+	this->flotas[ numeroDeFlota ] = fo;
 
-	for (int numeroDeFlota = 0 ; numeroDeFlota < 5 ; numeroDeFlota++ ){
-		ServerAvionEnemigo* enemy = new ServerAvionEnemigoFlota( this->enemyID, new Posicion(x, y), numeroDeFlota);
+	for (int ordenAparicionFlota = 0 ; ordenAparicionFlota < 5 ; ordenAparicionFlota++ ){
+		ServerAvionEnemigo* enemy = new ServerAvionEnemigoFlota( this->enemyID, new Posicion(x, y), ordenAparicionFlota, this->numeroDeFlota);
+	  ((ServerAvionEnemigoFlota*)enemy)->addObserver(fo);
+
 	  this->enemys[ enemyID ] = enemy;
-	  ((ServerAvionEnemigoFlota*)enemy)->addObserver(this->fo);
 
 	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
 
 		this->enemyID++;
 	}
+
+	this->numeroDeFlota++;
 }
 
 /*void Server::observerFlota() {
