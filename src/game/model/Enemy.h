@@ -98,7 +98,7 @@ public:
     int secsRandom;
     chrono::time_point<chrono::system_clock> nFlota;
     void morir();
-    void disparar();
+    virtual void disparar();
     void mostrarDisparo();
     ControllerMissilesEnemy* getControllerMissiles();
 

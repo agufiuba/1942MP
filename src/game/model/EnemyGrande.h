@@ -14,6 +14,8 @@ class EnemyGrande : public Enemy {
 public:
 	EnemyGrande(Screen* screen, SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, GameConf* conf);
 	~EnemyGrande();
+	void disparar();
+	int posXBala;
 };
 
 #endif /* SRC_GAME_MODEL_ENEMYGRANDE_H_ */
