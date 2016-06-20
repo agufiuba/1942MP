@@ -100,7 +100,8 @@ void ServerAvionEnemigo::bajarHP() {
   if ( this->tieneHP() ) {
     this->vida--;
     cout << "ENEMY " << to_string( this->id ) << " HP = " << this->vida << endl;
-  } else {
+  }
+  if ( !this->tieneHP() ) {
     this->viviendo = false;
   }
 }
