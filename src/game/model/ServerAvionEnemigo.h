@@ -28,7 +28,6 @@
 class ServerAvionEnemigo {
 protected:
 
-	char type;
 	int id;
 	int anchoFondo, largoFondo;
 	int vida;

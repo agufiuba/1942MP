@@ -8,7 +8,6 @@
 #include "ServerAvionEnemigo.h"
 
 ServerAvionEnemigo::ServerAvionEnemigo( int id, Posicion* posicionInicial ) {
-	this->type = 'r';
 	this->id = id;
 	this->vida = 1;
 
@@ -148,10 +147,6 @@ void ServerAvionEnemigo::activate() {
 
 void ServerAvionEnemigo::updatePosition( int x, int y ) {
   this->posicion->setPosicion( x, y ); 
-}
-
-char ServerAvionEnemigo::getType() {
-  return this->type;
 }
 
 int ServerAvionEnemigo::getHitScore() { return 0; }
