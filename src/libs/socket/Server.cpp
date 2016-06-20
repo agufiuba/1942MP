@@ -684,8 +684,13 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      		ServerAvionEnemigoFlota* flota = (ServerAvionEnemigoFlota*)this->enemys[ data->id ];
 	      		flota->bajarHP(cfd);
 	      		if (this->flotas[ flota->getNumeroDeFlota() ]->ultimaFlotaYtodosPorElMismo()) {
-	      			//TODO: Server debe enviar bonus al cfd este.
-	      			cout << ">> BONUUUUS --> TODOS LOS AVIONES MATADOS POR: "<< cfd << endl;
+	      			PlayerScore* ps = new PlayerScore;
+	      			strcpy( ps->name, ( this->players[ cfd ]->getName() ).c_str() );
+	      			ps->team = this->players[ cfd ]->getTeam();
+	      			ps->score = 1000;
+	      			this->addScoreToPlayer( ps );
+	      			delete ps;
+	      			//cout << ">> BONUUUUS --> TODOS LOS AVIONES MATADOS POR: "<< cfd << endl;
 	      		}
 	      	} else {
 	      		this->enemys[ data->id ]->bajarHP();
