@@ -46,8 +46,9 @@ class Vivible{
 
 	   virtual void disparar(){};
 
-	int posX;
-	int posY;
+	protected:
+		int posX;
+		int posY;
 };
 
 #endif /* SRC_MODEL_VIVIBLE_H_ */
