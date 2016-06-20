@@ -14,21 +14,6 @@ bool Colision::inside(int x, int y, int xp, int yp, int x2, int y2) {
 
 
 bool Colision::is(Vivible* unVivible, Vivible* otroVivible) {
-
-//	if (unVivible->getLargo() == 170) {
-////		cout << "id: " <<unVivible->getId() << endl;
-//
-//		cout << "Avion grande" << endl;
-//		cout <<unVivible->getX() << "|" << unVivible->getY() << " - " << unVivible->getX() + unVivible->getAncho() << "|" << unVivible->getY() << endl;
-//		cout <<unVivible->getX() << "|" << unVivible->getY() - unVivible->getLargo() << " - " << unVivible->getX() + unVivible->getAncho() << "|" << unVivible->getY() - unVivible->getLargo() << endl;
-//		cout << "Disparo" << endl;
-//		cout <<otroVivible->getX() << "|" << otroVivible->getY() << " - " << otroVivible->getX() + otroVivible->getAncho() << "|" << otroVivible->getY() << endl;
-//		cout <<otroVivible->getX() << "|" << otroVivible->getY() - otroVivible->getLargo() << " - " << otroVivible->getX() + otroVivible->getAncho() << "|" << otroVivible->getY() - otroVivible->getLargo() << endl;
-//	}
-//	cout << "Entro en is" << endl;
-//	otroVivible->getX();
-//	cout << "Pudo agarrar el X" << endl;
-
 	return 	norte(unVivible, otroVivible) &&
 			sur  (unVivible, otroVivible) &&
 			oeste(unVivible, otroVivible) &&

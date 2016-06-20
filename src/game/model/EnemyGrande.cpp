@@ -48,3 +48,12 @@ void EnemyGrande::disparar() {
 		contador ++;
 	}
 }
+
+int EnemyGrande::getLargo() {
+
+	if (this->vistaAvion != NULL){
+		return vistaAvion->getLargoVista() - 60;
+	} else {
+		return 0;
+	}
+}

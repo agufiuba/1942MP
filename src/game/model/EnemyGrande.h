@@ -16,6 +16,7 @@ public:
 	~EnemyGrande();
 	void disparar();
 	int posXBala;
+	int getLargo();
 };
 
 #endif /* SRC_GAME_MODEL_ENEMYGRANDE_H_ */
