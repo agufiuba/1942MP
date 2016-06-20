@@ -114,7 +114,8 @@ void ServerAvionEnemigoFlota::bajarHP(int cfd) {
   if ( this->tieneHP() ) {
     this->vida--;
     cout << "ENEMY " << to_string( this->id ) << " HP = " << this->vida << endl;
-  } else {
+  }
+  if ( !this->tieneHP() ) {
     this->viviendo = false;
   }
 
@@ -123,4 +124,12 @@ void ServerAvionEnemigoFlota::bajarHP(int cfd) {
 
 int ServerAvionEnemigoFlota::getNumeroDeFlota() {
 	return this->numeroDeFlota;
+}
+
+int ServerAvionEnemigoFlota::getHitScore() {
+  return 0;
+}
+
+int ServerAvionEnemigoFlota::getKillScore() {
+  return 100;
 }

@@ -32,6 +32,8 @@ public:
 	ServerAvionEnemyGrande( int id, Posicion* posicionInicial);
 	~ServerAvionEnemyGrande();
 	EnemyData* vivir();
+	int getHitScore();
+	int getKillScore();
 private:
 	int cantidadDeMovimientos;
 	int movimientosMax;

@@ -94,3 +94,11 @@ EnemyData* ServerAvionEnemigoMedio::vivir() {
 		
 	return ed;
 }
+
+int ServerAvionEnemigoMedio::getHitScore() {
+  return 100;
+}
+
+int ServerAvionEnemigoMedio::getKillScore() {
+  return 500;
+}

@@ -45,5 +45,12 @@ EnemyData* ServerAvionEnemyGrande::vivir() {
 	return ed;
 }
 
+int ServerAvionEnemyGrande::getHitScore() {
+  return 100;
+}
+
+int ServerAvionEnemyGrande::getKillScore() {
+  return 1000;
+}
 
 } /* namespace std */
