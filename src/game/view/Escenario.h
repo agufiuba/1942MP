@@ -109,6 +109,7 @@ private:
 	void enemyOtherPlayerMissileColision();
 	void hitPlanes(vector<Vivible*>* disparos, Vivible* avion);
 	void arrancarAviones();
+	void crearPowerUpGrande();
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client);

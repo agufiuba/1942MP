@@ -16,6 +16,7 @@ EnemyGrande::EnemyGrande(Screen* screen, SDL_Renderer * renderer, Resolucion* &r
 		this->vistaAvion->cargarImagenDelAvion("AvionSprites_grande.bmp");
 		this->posXBala = 125;
 		this->tiempoEntreDisparo = 50;
+		this->tipo = 'g';
 }
 
 EnemyGrande::~EnemyGrande() {

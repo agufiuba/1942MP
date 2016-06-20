@@ -93,6 +93,7 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	hEnemigos->hacerVivir();
 //	cout<<"5"<<endl;
 	this->hitEnemy(&(myControl->controlDeMisiles->getVivibles()->vectorObjetos));
+	this->crearPowerUpGrande();
 	myControl->hacerVivir();
 
 	if (!unCliente->getGameData()->practiceMode){
@@ -926,6 +927,9 @@ void Escenario::getPowerUp() {
 				if (resp == 'b') {
 					this->unCliente->addScoreToPlayer( 250 );
 				}
+				if (resp == 'w') {
+					this->unCliente->addScoreToPlayer(1500);
+				}
 				unCliente->sendData(ce->powerUpDestroy(it->second->getId()));
 				delete ce;
 
@@ -1047,4 +1051,11 @@ void Escenario::hitPlanes(vector<Vivible*>* disparos,Vivible* avion){
 void Escenario::arrancarAviones() {
 	myControl->hacerVueltereta();
 	controllers->hacerVueltereta();
+}
+
+void Escenario::crearPowerUpGrande() {
+	if (unCliente->crearPowerUpGrande) {
+		hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, unCliente->powerUpGrande, myControl, "BonusGrande", "1000"));
+		unCliente->crearPowerUpGrande = false;
+	}
 }

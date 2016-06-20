@@ -30,6 +30,8 @@ Client::Client(const char* configFileName) {
     this->betaTeamScore = 0;
     this->winner = false;
     this->loser = false;
+    this->crearPowerUpGrande = false;
+    this->powerUpGrande = new Posicion(0, 0);
 }
 
 Client::Client(string ip, string puerto) {
@@ -479,6 +481,11 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					  } else if ( data->status == 'D' ) {
 					    m.lock();
 					    this->hEnemigos->matar( data->id );
+					    Enemy* e = this->hEnemigos->getEnemigo(data->id);
+					    if (e->tipo == 'g') {
+					    	this->crearPowerUpGrande = true;
+					    	this->powerUpGrande = new Posicion(e->getPosicion()->getX(), e->getPosicion()->getY());
+					    }
 					    m.unlock();
 					  }
 					}

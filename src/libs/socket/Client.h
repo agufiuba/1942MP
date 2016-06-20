@@ -62,7 +62,6 @@ class Client {
     bool playerResume;
     void sendEnemyMovements( EnemyStatus* data );
 
-
   public:
     Client( const char* configFileName );
     Client( string ip, string puerto );
@@ -131,5 +130,7 @@ class Client {
     void removeEnemy( vector<EnemyStatus*>::iterator it );
     void requestEnemyMovements( int id );
     void sendEnemyHit( int enemyID, string playerID );
+    bool crearPowerUpGrande;
+    Posicion* powerUpGrande;
 };
 #endif
