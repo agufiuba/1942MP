@@ -1040,8 +1040,12 @@ void Server::createEnemy( char type, int x, int y, int offset ) {
   } else if (type == 'f'){
   	this->createFlota(type, x, y, offset);
 
-  } else {
+  } else if ( type == 'r' ) {
 	  enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
+	  this->enemys[ enemyID ] =  enemy;
+	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
+  } else if ( type == 'm' ) {
+	  enemy = new ServerAvionEnemigoMedio( this->enemyID, new Posicion(x, y));
 	  this->enemys[ enemyID ] =  enemy;
 	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
   }
