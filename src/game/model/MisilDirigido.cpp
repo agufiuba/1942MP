@@ -126,3 +126,11 @@ int MisilDirigido::getLargo(){
 void MisilDirigido::morir(){
 	this->viviendo = false;
 }
+
+int MisilDirigido::getX() {
+	this->posicion->getX();
+}
+
+int MisilDirigido::getY() {
+	this->posicion->getY();
+}

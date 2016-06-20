@@ -22,7 +22,6 @@ private:
 	static bool oeste(Vivible* unVivible, Enemy* otroVivible);
 
 public:
-	static bool is(int, int, int, int, int, int, int, int);
 	static bool is(Vivible* unVivible, Vivible* otroVivible);
 	static bool is(Vivible* unVivible, Enemy* otroVivible);
 

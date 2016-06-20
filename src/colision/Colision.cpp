@@ -1,19 +1,11 @@
 #include "Colision.h"
 
-bool Colision::is(int x, int y, int xp, int yp, int x2, int y2, int xp2, int yp2) {
-	return (inside(x, y, xp, yp, x2, y2) ||
-			inside(x, y, xp, yp, x2, yp2) ||
-			inside(x, y, xp, yp, xp2, y2) ||
-			inside(x, y, xp, yp, xp2, yp2));
-}
-
-bool Colision::inside(int x, int y, int xp, int yp, int x2, int y2) {
-//	cout<<"Enemigo: posX "<<x2<<" posXFinal "<<xp2<<" posY "<<y2
-	return (x2 >= x) && (x2 <= xp) && (y2 >= y) && (y2 <= yp);
-}
-
-
+/**
+ * unVivible debe ser el vivible mas pequeño,
+ * debido a que verifica si unVivible se encuentra dentro de otroVivible
+ */
 bool Colision::is(Vivible* unVivible, Vivible* otroVivible) {
+
 	return 	norte(unVivible, otroVivible) &&
 			sur  (unVivible, otroVivible) &&
 			oeste(unVivible, otroVivible) &&

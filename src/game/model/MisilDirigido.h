@@ -38,6 +38,8 @@ public:
 	virtual ~MisilDirigido();
 
 	void vivir(int x,int y);
+	int getX();
+	int getY();
 	int getAnchoFondo();
 	int getLargoFondo();
 	int getAncho();
