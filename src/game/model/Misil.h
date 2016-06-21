@@ -48,6 +48,7 @@ public:
 	int getDano();
 	int getX();
 	int getY();
+	Posicion* getPosicion();
 
 	void setAmetralladora();
 	void morir();

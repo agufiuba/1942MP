@@ -68,8 +68,22 @@ bool Colision::is(Misil* misil, Enemy* otroVivible) {
 			este (unVivible, otroVivible);
 }
 
+void Colision::view(Vivible* unVivible, Vivible* otroVivible, Screen* screen) {
+	Posicion* posicionChispazo = new Posicion(unVivible->getX(), otroVivible->getY() - otroVivible->getLargo());
+	ChispazoView* chispazo = new ChispazoView("chispazo", screen, posicionChispazo);
+	delete chispazo;
+	delete posicionChispazo;
+}
 
 
+void Colision::view(Misil* unVivible, Enemy* otroVivible, Screen* screen) {
+	Posicion* posicionChispazo = new Posicion(unVivible->getX(), otroVivible->getY() - otroVivible->getLargo());
+	ChispazoView* chispazo = new ChispazoView("chispazo", screen, posicionChispazo);
+	delete chispazo;
+	delete posicionChispazo;
+}
+
+// TODO: NO borrar por el momento
 
 //	cout << "Velocidad misil" << misil->getVelocidadDisparo() << endl;
 //	if (otroVivible->getLargo() == 110) {

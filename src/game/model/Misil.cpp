@@ -97,3 +97,7 @@ int Misil::getY() {
 int Misil::getVelocidadDisparo() {
 	return this->velocidadDisparo;
 }
+
+Posicion* Misil::getPosicion() {
+	return this->posicion;
+}

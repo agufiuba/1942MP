@@ -3,6 +3,8 @@
 
 #include "../game/model/Vivible.h"
 #include "../game/model/Enemy.h"
+#include "../game/view/ChispazoView.h"
+#include "../game/view/Screen.h"
 
 #include <iostream>
 using namespace std;
@@ -26,6 +28,8 @@ public:
 	static bool is(Vivible* unVivible, Enemy* otroVivible);
 	static bool is(Misil* unVivible, Enemy* otroVivible);
 
+	static void view(Vivible* unVivible, Vivible* otroVivible, Screen* screen);
+	static void view(Misil* unVivible, Enemy* otroVivible, Screen* screen);
 };
 
 #endif

@@ -948,17 +948,18 @@ void Escenario::crearFlota(int x, int y) {
 
 void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 
-	int eliminar = -1;
 	for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
+		Misil* disparo = (Misil*) (*it);
 
 		bool touched = false;
 		for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
-			Misil* disparo = (Misil*) (*it);
-			touched = Colision::is(disparo, itEnemigo->second);
-			if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
+			Enemy* enemigo = itEnemigo->second;
+			touched = Colision::is(disparo, enemigo);
+
+			if (touched && enemigo->aunVive()) {
+				Colision::view(disparo, enemigo, escenarioScreen);
 				cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
-				//hEnemigos->getEnemigo(itEnemigo->first)->recibirMisil((Misil*)*it);
-				(*it)->morir();
+				disparo->morir();
 				this->unCliente->sendEnemyHit( itEnemigo->first, "" );
 			}
 		}
@@ -1025,10 +1026,11 @@ void Escenario::hitPlanes(vector<Vivible*>* disparos,Vivible* avion){
 	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
 
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
-
 			bool touched = Colision::is(*it, avion);
+
 			if (touched && (*it)->aunVive()) {
 				cout << "**** CHOQUE: AVION VS MISILES ****" << endl;
+				Colision::view((*it), avion, escenarioScreen);
 				((Avion*)avion)->recibirMisil((Misil*)*it);
 				(*it)->morir();
 				this->player->takeHit();
