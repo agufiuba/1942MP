@@ -1146,10 +1146,6 @@ void Server::createFlota(char type, int x, int y, int offset) {
 	this->numeroDeFlota++;
 }
 
-/*void Server::observerFlota() {
-
-}*/
-
 void Server::sendEnemyCreation( EnemyStatus* data ) {
   for ( map<int, Player*>::iterator it = this->players.begin();
 	it != this->players.end();
