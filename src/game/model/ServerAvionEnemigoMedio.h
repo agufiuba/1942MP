@@ -24,7 +24,11 @@ private:
   int randomSeed;
   int dAnt;
   void refreshSeed();
+  void hitBy(int);
+  int cfd;
 public:
+	void bajarHP(int);
+  	bool mismoJugador;
 	ServerAvionEnemigoMedio( int id, Posicion* posicionInicial);
 	~ServerAvionEnemigoMedio();
 	EnemyData* vivir();

@@ -705,7 +705,21 @@ void Server::receiveClientData( int cfd, string clientIP ) {
                 cout << "BONUS POR MATAR AL GRANDE SOLO" << endl;
               }
             } else {
-	      		  this->enemys[ data->id ]->bajarHP();
+              if (this->enemys[data->id]->getType() == 'm') {
+                ServerAvionEnemigoMedio* medio = (ServerAvionEnemigoMedio*)this->enemys[data->id];
+                medio->bajarHP(cfd);
+                if (!medio->aunVive() && medio->mismoJugador) {
+                  PlayerScore* bonus = new PlayerScore;
+                  strcpy(bonus->name, (this->players[cfd]->getName()).c_str());
+                  bonus->team = this->players[cfd]->getTeam();
+                  bonus->score = 500;
+                  this->addScoreToPlayer(bonus);
+                  cout << "BONUS POR MATAR AL MEDIANO SOLO" << endl;
+                }
+              }
+              else {
+	      		    this->enemys[ data->id ]->bajarHP();
+              }
             }
 	      	}
 		PlayerScore* ps = new PlayerScore;
