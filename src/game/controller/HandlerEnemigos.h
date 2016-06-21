@@ -43,6 +43,7 @@ public:
 	void matar(int id);
 	void bajarHP( int id );
 	void deleteEnemys();
+	void clearEnemies();
 	void addAvionesApuntables(Avion* avion);
 	void setAvionApuntar(int idEnemigo, string idAvion);
 };

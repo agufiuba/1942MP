@@ -118,6 +118,14 @@ void HandlerEnemigos::deleteEnemys() {
 	}
 }
 
+void HandlerEnemigos::clearEnemies() {
+  for (map<int, Enemy*>::iterator it = this->mapaEnemigos.begin(); it != this->mapaEnemigos.end(); ++it) {
+    delete it->second;
+  }
+
+  this->mapaEnemigos.clear();
+}
+
 Enemy* HandlerEnemigos::getEnemigo(int id) {
 	return this->mapaEnemigos[id];
 }
