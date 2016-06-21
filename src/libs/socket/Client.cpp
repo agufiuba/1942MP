@@ -55,6 +55,8 @@ Client::Client(string ip, string puerto) {
     this->betaTeamScore = 0;
     this->winner = false;
     this->loser = false;
+    this->crearPowerUpGrande = false;
+    this->powerUpGrande = new Posicion(0, 0);
 }
 
 Client::Client(string ip, string puerto,
@@ -80,6 +82,8 @@ Client::Client(string ip, string puerto,
     this->betaTeamScore = 0;
     this->winner = false;
     this->loser = false;
+    this->crearPowerUpGrande = false;
+    this->powerUpGrande = new Posicion(0, 0);
 }
 
 Client::~Client() {
