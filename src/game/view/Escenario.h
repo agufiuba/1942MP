@@ -105,11 +105,11 @@ private:
 	bool escenarioCreado;
 	void planesColision();
 	void enemyOtherPlayerColision();
-	void hitEnemyMissileByOtherPlayer(ControllerMissiles* controller);
 	void enemyOtherPlayerMissileColision();
 	void hitPlanes(vector<Vivible*>* disparos, Vivible* avion);
 	void arrancarAviones();
 	void crearPowerUpGrande();
+	void hitEnemyMissileByOtherPlayer(vector<Vivible*>* disparos);
 
 public:
 	Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client);

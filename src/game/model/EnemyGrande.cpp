@@ -34,16 +34,23 @@ EnemyGrande::~EnemyGrande() {
 }
 
 void EnemyGrande::disparar() {
+//	cout<<"Disparo Grande"<<endl;
 	bool estaEnMovimiento = !(this->velX == 0 && this->velY == 0);
 	if(posicion->getY() + getLargo() > 0 && posicion->getY() < getLargoFondo() &&
 		posicion->getX() + getAncho() > 0 && posicion->getX() < getAnchoFondo()) {
 	if (contador >= tiempoEntreDisparo && !estaEnMovimiento){
-		int posBalaInicial = -200;
-		for (int var = 0; var < 18; ++var) {
+//		int posBalaInicial = 100;
+//		for (int var = 0; var < 4; ++var) {
 //			cout<<"Disparo "<<posBalaInicial <<endl;
-			controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + this->posXBala,this->getY()-this->getLargo()/2, resolucion, misilConf, posBalaInicial, 0);
-			posBalaInicial = posBalaInicial+100;
-		}
+//			controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + this->posXBala,this->getY()-this->getLargo()/2, resolucion, misilConf, 0, 0);
+			controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + this->posXBala,this->getY()-this->getLargo()/2, resolucion, misilConf, 100, 0);
+			controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + this->posXBala,this->getY()-this->getLargo()/2, resolucion, misilConf, 300, 0);
+			controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + this->posXBala,this->getY()-this->getLargo()/2, resolucion, misilConf, 500, 0);
+			controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + this->posXBala,this->getY()-this->getLargo()/2, resolucion, misilConf, 700, 0);
+			controlDeMisiles->crearNuevoMisilEnPosicion(this->getX() + this->posXBala,this->getY()-this->getLargo()/2, resolucion, misilConf, 900, 0);
+
+//			posBalaInicial = posBalaInicial+200;
+//		}
 		contador = 0;
 	}
 		contador ++;

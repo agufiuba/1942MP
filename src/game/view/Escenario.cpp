@@ -975,6 +975,25 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 	}
 }
 
+
+void Escenario::hitEnemyMissileByOtherPlayer(vector<Vivible*>* disparos) {
+	for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
+		Misil* disparo = (Misil*) (*it);
+
+		bool touched = false;
+		for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
+			Enemy* enemigo = itEnemigo->second;
+			touched = Colision::is(disparo, enemigo);
+			if (touched && enemigo->aunVive()) {
+				Colision::view(disparo, enemigo, escenarioScreen);
+				cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
+				disparo->morir();
+			}
+		}
+	}
+}
+
+
 void Escenario::planesColision(){
 	Vivible* avion = myControl->getVivible();
 	bool touched = false;
@@ -1015,7 +1034,7 @@ void Escenario::enemyOtherPlayerColision() {
 				}
 				this->hitPlanes(&(hEnemigos->getEnemigo(itEnemigo->first)->getControllerMissiles()->getVivibles()->vectorObjetos),it->second->getVivible());
 			}
-			//this->hitEnemy(&(it->second->getMissiles()->getVivibles()->vectorObjetos));
+			this->hitEnemyMissileByOtherPlayer(&(it->second->getMissiles()->getVivibles()->vectorObjetos));
 		}
 	}
 }
@@ -1025,7 +1044,7 @@ void Escenario::enemyOtherPlayerMissileColision() {
 	map<string, IController*>* othersPlanes = &(this->controllers->mapaControllers);
 	for (map<string, IController*>::iterator it = othersPlanes->begin(); it != othersPlanes->end(); it++) {
 		if (it->second->getVivible()->aunVive()){
-			//this->hitEnemy(&(it->second->getMissiles()->getVivibles()->vectorObjetos));
+			this->hitEnemyMissileByOtherPlayer(&(it->second->getMissiles()->getVivibles()->vectorObjetos));
 		}
 	}
 }

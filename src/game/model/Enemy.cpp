@@ -111,6 +111,7 @@ void Enemy::moverEjeY(int velY) {
 }
 
 void Enemy::disparar() {
+//	cout<<"Disparo Enemy"<<endl;
 	if(posicion->getY() + getLargo() > 0 && posicion->getY() < getLargoFondo() &&
 		posicion->getX() + getAncho() > 0 && posicion->getX() < getAnchoFondo()) {
 	if (contador >= tiempoEntreDisparo){
