@@ -52,7 +52,7 @@ void MisilDirigido::mover(){
 	posicion->mover(vectorVelocidad->getX(), vectorVelocidad->getY());
 	posY = posicion->getY();
 	posX = posicion->getX();
-	if (posY + getLargo() > getLargoFondo()) {
+	if (posY - getLargo() > getLargoFondo() || posY < 0 || posX + getAncho() < 0 || posX > getAnchoFondo()) {
 		viviendo = false;
 	}
 }
