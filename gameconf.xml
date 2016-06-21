@@ -269,5 +269,5 @@
 		<apareceEn>2000</apareceEn>
 	</enemigo>
 </enemigos>
-<maxClients>2</maxClients>
+<maxClients>1</maxClients>
 <jugadoresPorEquipo>1</jugadoresPorEquipo>

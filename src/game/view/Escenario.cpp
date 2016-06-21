@@ -953,8 +953,8 @@ void Escenario::hitEnemy(vector<Vivible*>* disparos) {
 
 		bool touched = false;
 		for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
-
-			touched = Colision::is(*it, itEnemigo->second);
+			Misil* disparo = (Misil*) (*it);
+			touched = Colision::is(disparo, itEnemigo->second);
 			if (touched && hEnemigos->getEnemigo(itEnemigo->first)->aunVive()) {
 				cout << "**** CHOQUE: ENEMIGOS VS MISILES ****" << endl;
 				//hEnemigos->getEnemigo(itEnemigo->first)->recibirMisil((Misil*)*it);

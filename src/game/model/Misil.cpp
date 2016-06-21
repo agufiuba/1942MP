@@ -28,7 +28,7 @@ Misil::Misil(SDL_Renderer* renderer, Posicion* posicion, Resolucion* resolucion,
 
 	t = new Timer();
 	dano = 1;
-
+	velocidadDisparo = config->velocidadDisparos;
 }
 
 Misil::~Misil() {
@@ -92,4 +92,8 @@ int Misil::getX() {
 
 int Misil::getY() {
 	return this->posicion->getY();
+}
+
+int Misil::getVelocidadDisparo() {
+	return this->velocidadDisparo;
 }

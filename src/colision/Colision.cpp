@@ -30,20 +30,6 @@ bool Colision::oeste(Vivible* unVivible, Vivible* otroVivible) {
 
 bool Colision::is(Vivible* unVivible, Enemy* otroVivible) {
 
-//	if (unVivible->getLargo() == 170) {
-////		cout << "id: " <<unVivible->getId() << endl;
-//
-//		cout << "Avion grande" << endl;
-//		cout <<unVivible->getX() << "|" << unVivible->getY() << " - " << unVivible->getX() + unVivible->getAncho() << "|" << unVivible->getY() << endl;
-//		cout <<unVivible->getX() << "|" << unVivible->getY() - unVivible->getLargo() << " - " << unVivible->getX() + unVivible->getAncho() << "|" << unVivible->getY() - unVivible->getLargo() << endl;
-//		cout << "Disparo" << endl;
-//		cout <<otroVivible->getX() << "|" << otroVivible->getY() << " - " << otroVivible->getX() + otroVivible->getAncho() << "|" << otroVivible->getY() << endl;
-//		cout <<otroVivible->getX() << "|" << otroVivible->getY() - otroVivible->getLargo() << " - " << otroVivible->getX() + otroVivible->getAncho() << "|" << otroVivible->getY() - otroVivible->getLargo() << endl;
-//	}
-//	cout << "Entro en is" << endl;
-//	otroVivible->getX();
-//	cout << "Pudo agarrar el X" << endl;
-
 	return 	norte(unVivible, otroVivible) &&
 			sur  (unVivible, otroVivible) &&
 			oeste(unVivible, otroVivible) &&
@@ -51,6 +37,7 @@ bool Colision::is(Vivible* unVivible, Enemy* otroVivible) {
 }
 
 bool Colision::norte(Vivible* unVivible, Enemy* otroVivible) {
+
 	return ((otroVivible->getY() - otroVivible->getLargo()) - unVivible->getY() <= 0);
 }
 
@@ -65,3 +52,43 @@ bool Colision::este(Vivible* unVivible, Enemy* otroVivible) {
 bool Colision::oeste(Vivible* unVivible, Enemy* otroVivible) {
 	return (unVivible->getX() - (otroVivible->getX() + otroVivible->getAncho()) <= 0);
 }
+
+bool Colision::is(Misil* misil, Enemy* otroVivible) {
+
+	Vivible* unVivible = (Vivible*)misil;
+	bool norteBool = true;
+
+	if (misil->getVelocidadDisparo() <= 90) {
+		norteBool = norte(unVivible, otroVivible);
+	}
+
+	return 	norteBool &&
+			sur  (unVivible, otroVivible) &&
+			oeste(unVivible, otroVivible) &&
+			este (unVivible, otroVivible);
+}
+
+
+
+
+//	cout << "Velocidad misil" << misil->getVelocidadDisparo() << endl;
+//	if (otroVivible->getLargo() == 110) {
+//
+//		cout << "Misil" << endl;
+//		cout <<unVivible->getX() << "|" << unVivible->getY() << " - " << unVivible->getX() + unVivible->getAncho() << "|" << unVivible->getY() << endl;
+//		cout <<unVivible->getX() << "|" << unVivible->getY() - unVivible->getLargo() << " - " << unVivible->getX() + unVivible->getAncho() << "|" << unVivible->getY() - unVivible->getLargo() << endl;
+//		cout << "enemigo" << endl;
+//		cout <<otroVivible->getX() << "|" << otroVivible->getY() << " - " << otroVivible->getX() + otroVivible->getAncho() << "|" << otroVivible->getY() << endl;
+//		cout <<otroVivible->getX() << "|" << otroVivible->getY() - otroVivible->getLargo() << " - " << otroVivible->getX() + otroVivible->getAncho() << "|" << otroVivible->getY() - otroVivible->getLargo() << endl;
+//	}
+
+// 	int yMisilAux = misil->getY();
+//
+//	while (yMisilAux < 700 && !norteBool) {
+//		cout << "Probando " << yMisilAux << endl;
+//		norteBool = (otroVivible->getY() - otroVivible->getLargo()) - yMisilAux <= 0;
+//		yMisilAux+=20;
+//	}
+//
+//	norteBool = (norteBool && misil->getY() > otroVivible->getY());
+//	cout << "Y " << misil->getY() << " - " << otroVivible->getY() << endl;

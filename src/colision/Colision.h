@@ -24,6 +24,7 @@ private:
 public:
 	static bool is(Vivible* unVivible, Vivible* otroVivible);
 	static bool is(Vivible* unVivible, Enemy* otroVivible);
+	static bool is(Misil* unVivible, Enemy* otroVivible);
 
 };
 

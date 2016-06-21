@@ -22,6 +22,7 @@ class Misil: public Vivible {
 private:
 	int anchoFondo, largoFondo;
 	int dano;
+	int velocidadDisparo;
 	MisilView* vistaMisil;
 	Posicion* posicion;
 	Sound* sonido;
@@ -42,6 +43,7 @@ public:
 	int getLargoFondo();
 	int getAncho();
 	int getLargo();
+	int getVelocidadDisparo();
 	bool aunVive();
 	int getDano();
 	int getX();
