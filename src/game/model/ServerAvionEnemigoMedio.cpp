@@ -5,6 +5,8 @@ ServerAvionEnemigoMedio::ServerAvionEnemigoMedio( int id, Posicion* posicionInic
   this->type = 'm';
   this->randomSeed = id;
   this->dAnt = 4;
+  this->cfd = 0;
+  this->mismoJugador = true;
 }
 
 ServerAvionEnemigoMedio::~ServerAvionEnemigoMedio(){
@@ -101,4 +103,20 @@ int ServerAvionEnemigoMedio::getHitScore() {
 
 int ServerAvionEnemigoMedio::getKillScore() {
   return 500;
+}
+
+void ServerAvionEnemigoMedio::hitBy(int cfdAvion) {
+	if(cfd == 0) cfd = cfdAvion;
+	mismoJugador = mismoJugador && (cfd == cfdAvion);
+}
+
+void ServerAvionEnemigoMedio::bajarHP(int cfdAvion) {
+  if ( this->tieneHP() ) {
+    this->vida--;
+    cout << "ENEMY " << to_string( this->id ) << " HP = " << this->vida << endl;
+  }
+  if ( !this->tieneHP() ) {
+    this->viviendo = false;
+  }
+	hitBy(cfdAvion);
 }
