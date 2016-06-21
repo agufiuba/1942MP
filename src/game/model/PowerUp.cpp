@@ -9,7 +9,7 @@
 
 using namespace std;
 
-PowerUp::PowerUp(SDL_Renderer * renderer, Resolucion* &resolucion, Posicion* posicionInicial, IController* control, string type, string id) {
+PowerUp::PowerUp(Posicion* posicionInicial, string type, string id) {
 
 	//this->configuracion = conf; //TODO: hay que agregar que guarde su configuracion de XML
 

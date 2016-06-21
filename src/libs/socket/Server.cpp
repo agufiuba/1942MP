@@ -36,8 +36,8 @@ Server::Server( const char* configFileName ) {
   this->betaTeamScore = 0;
   this->coopTeamScore = 0;
   this->enemyID = 0;
-
 	this->numeroDeFlota = 1000;
+  this->powerupID = 0;
 }
 
 Server::~Server() {
@@ -745,7 +745,21 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	    }
 	  }
 	  delete data;
-	}
+	} else if (dataID == "PO") {
+    PowerUpStatus* data = new PowerUpStatus;
+    if ((bytesReceived = tmt->receiveData(data)) > 0) {
+      mutex m;
+      m.lock();
+      for(map<int, PowerUp*>::iterator it = this->powerups.begin(); it != this->powerups.end()) {
+        if (it->second->getId() == data->id) {
+          delete it->second;
+          it = this->enemys.erase( it );
+        } else {
+          ++it;
+        }
+      }
+    }
+  }
       }
 
       // Check peer disconnection or timeout
@@ -1081,6 +1095,20 @@ void Server::sendPlayersReady(){
 	thread tMoveEnemy( &Server::makeEnemyMove, this);
 	tMoveEnemy.detach();
   }
+}
+
+void Server::createPowerUps() {
+  this->powerups.clear();
+  vector<PowerUpConf*> powconf = this->config->powerUps;
+  for (int i = 0; i < powconf.size(); i++) {
+    PowerUpConf* puc = powconf[i];
+    this->createPowerUp();
+  }
+}
+
+void Server::createPowerUp() {
+  this->powerupID++;
+  PowerUp* p = NULL;
 }
 
 void Server::createEnemys() {

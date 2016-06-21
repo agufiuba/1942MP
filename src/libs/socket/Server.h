@@ -18,6 +18,7 @@
 #include "../../game/model/ServerAvionEnemyGrande.h"
 #include "../../game/model/ServerAvionEnemigoFlota.h"
 #include "../../game/model/FlotaObserver.h"
+#include "../../game/model/PowerUp.h"
 #include <vector>
 #include <queue>
 #include <map>
@@ -53,6 +54,9 @@ class Server {
     int enemyID;
   	map<int, FlotaObserver*> flotas;
   	int numeroDeFlota;
+
+    map<int, PowerUp*> powerups;
+    int powerupID;
 
     Logger* logger;
     GameConf* config;

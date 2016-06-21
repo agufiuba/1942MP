@@ -9,6 +9,7 @@
 #include "../data/game_data.h"
 #include "../data/enemy_data.h"
 #include "../data/enemy_status.h"
+#include "../data/powerup_status.h"
 #include "../logger/Logger.h"
 #include "../../xml/conf/GameConf.h"
 #include "../../xml/conf/AvionConf.h"
@@ -47,6 +48,7 @@ class Transmitter {
     bool sendData( StageData* data, string id );
     bool sendData( ActivePlayers* data );
     bool sendData( GameData* data );
+    bool sendData( PowerUpStatus* data );
     bool sendEndDataConf( int cantidad );
     bool sendDataDisconnect( PlayerData* data );
     bool sendGetConfig();

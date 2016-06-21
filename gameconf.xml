@@ -199,16 +199,6 @@
 </avion>
 <enemigos>
 	<enemigo>
-		<tipo>r</tipo>
-		<velocidadDisparos>4</velocidadDisparos>
-		<disparosSpriteID>balaRedonda</disparosSpriteID>
-		<posicion>
-			<x>550</x>
-			<y>500</y>
-		</posicion>
-		<apareceEn>1000</apareceEn>
-	</enemigo>
-	<enemigo>
 		<tipo>m</tipo>
 		<velocidadDisparos>4</velocidadDisparos>
 		<disparosSpriteID>balaRedonda</disparosSpriteID>
@@ -217,46 +207,6 @@
 			<y>700</y>
 		</posicion>
 		<apareceEn>1000</apareceEn>
-	</enemigo>
-	<enemigo>
-		<tipo>r</tipo>
-		<velocidadDisparos>4</velocidadDisparos>
-		<disparosSpriteID>balaRedonda</disparosSpriteID>
-		<posicion>
-			<x>700</x>
-			<y>300</y>
-		</posicion>
-		<apareceEn>1000</apareceEn>
-	</enemigo>
-	<enemigo>
-		<tipo>m</tipo>
-		<velocidadDisparos>4</velocidadDisparos>
-		<disparosSpriteID>balaRedonda</disparosSpriteID>
-		<posicion>
-			<x>500</x>
-			<y>700</y>
-		</posicion>
-		<apareceEn>2000</apareceEn>
-	</enemigo>
-	<enemigo>
-		<tipo>f</tipo>
-		<velocidadDisparos>4</velocidadDisparos>
-		<disparosSpriteID>balaRedonda</disparosSpriteID>
-		<posicion>
-			<x>-80</x>
-			<y>450</y>
-		</posicion>
-		<apareceEn>500</apareceEn>
-	</enemigo>
-	<enemigo>
-		<tipo>f</tipo>
-		<velocidadDisparos>4</velocidadDisparos>
-		<disparosSpriteID>balaRedonda</disparosSpriteID>
-		<posicion>
-			<x>1024</x>
-			<y>500</y>
-		</posicion>
-		<apareceEn>2000</apareceEn>
 	</enemigo>
 	<enemigo>
 		<tipo>g</tipo>
@@ -269,5 +219,5 @@
 		<apareceEn>2000</apareceEn>
 	</enemigo>
 </enemigos>
-<maxClients>1</maxClients>
+<maxClients>2</maxClients>
 <jugadoresPorEquipo>1</jugadoresPorEquipo>
