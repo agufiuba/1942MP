@@ -98,10 +98,16 @@ Evento* CompanionEvent::powerUpDestroy(string n) {
     return e;
 }
 
-
 Evento* CompanionEvent::outPractice(string n){
 	Evento* e = new Evento();
     e->value = OUTPRACTICE;
+    strcpy(e->name, n.c_str());
+    return e;
+}
+
+Evento* CompanionEvent::clearEnemies(string n){
+	Evento* e = new Evento();
+    e->value = CLEAR_ENEMIES;
     strcpy(e->name, n.c_str());
     return e;
 }

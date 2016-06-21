@@ -14,6 +14,7 @@
 #define MENSAJE_INCORRECTO 'I'
 #define AMETRALLADORA 'A'
 #define DESTROY 'X'
+#define CLEAR_ENEMIES 'V'
 #define ESTACIONO 'P'
 #define EXPLOSION 'W'
 #define POWERUPDESTROY 'Y'
