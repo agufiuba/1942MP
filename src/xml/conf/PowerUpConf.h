@@ -10,6 +10,7 @@ typedef struct PowerUpConf {
     char tipo[30];
     int x;
     int y;
+    int apareceEn;
 } PowerUpConf;
 
 #endif

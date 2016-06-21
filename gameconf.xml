@@ -138,6 +138,7 @@
 				<x>350</x>
 				<y>800</y>
 			</posicion>
+			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
 			<tipo>Destroy</tipo>
@@ -145,6 +146,7 @@
 				<x>150</x>
 				<y>300</y>
 			</posicion>
+			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
 			<tipo>Bonus</tipo>
@@ -152,6 +154,7 @@
 				<x>550</x>
 				<y>100</y>
 			</posicion>
+			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
 			<tipo>Bonus</tipo>
@@ -159,6 +162,7 @@
 				<x>650</x>
 				<y>1000</y>
 			</posicion>
+			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
 			<tipo>Bonus</tipo>
@@ -166,6 +170,7 @@
 				<x>850</x>
 				<y>1200</y>
 			</posicion>
+			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
 			<tipo>Bonus</tipo>
@@ -173,6 +178,7 @@
 				<x>50</x>
 				<y>2000</y>
 			</posicion>
+			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
 			<tipo>Bonus</tipo>
@@ -180,6 +186,7 @@
 				<x>125</x>
 				<y>2300</y>
 			</posicion>
+			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
 			<tipo>Bonus</tipo>
@@ -187,6 +194,7 @@
 				<x>470</x>
 				<y>3900</y>
 			</posicion>
+			<apareceEn>1000</apareceEn>
 		</powerUp>
 	</powerUps>
 </escenario>
@@ -279,5 +287,5 @@
 		<apareceEn>18000</apareceEn>
 	</enemigo>
 </enemigos>
-<maxClients>4</maxClients>
+<maxClients>1</maxClients>
 <jugadoresPorEquipo>2</jugadoresPorEquipo>

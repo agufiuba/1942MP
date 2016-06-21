@@ -125,12 +125,14 @@ vector<PowerUpConf*> GameParser::powerUps(XMLElement *e) {
 PowerUpConf* GameParser::powerUp(XMLElement *e) {
     PowerUpConf* powerUpConf = new PowerUpConf;
     string tipo = e->FirstChildElement("tipo")->GetText();
-    int x, y;
+    int x, y, apareceEn;
     e->FirstChildElement("posicion")->FirstChildElement("x")->QueryIntText(&x);
     e->FirstChildElement("posicion")->FirstChildElement("y")->QueryIntText(&y);
+    e->FirstChildElement("apareceEn")->QueryIntText(&apareceEn);
     strcpy(powerUpConf->tipo, tipo.c_str());
     powerUpConf->x = x;
     powerUpConf->y = y;
+    powerUpConf->apareceEn = apareceEn;
     return powerUpConf;
 }
 
