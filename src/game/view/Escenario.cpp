@@ -358,6 +358,11 @@ SDL_Event* Escenario::run() {
 			verificarEstacionamiento(numeroNivel);
 
 			if (isFinNivel(numeroNivel)) {
+				this->hEnemigos->clearEnemies();
+				CompanionEvent* ce = new CompanionEvent();
+				this->unCliente->sendData(ce->clearEnemies(myControl->getVivible()->getId()));
+				delete ce;
+				this->unCliente->sendEnemyDeath();
 				musica->fadeOut(4000);
 	    
 				// load score screen

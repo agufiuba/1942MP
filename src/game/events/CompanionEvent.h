@@ -22,6 +22,7 @@ public:
     static Evento* explosion(string n);
     static Evento* powerUpDestroy(string n);
     static Evento* outPractice(string n);
+    static Evento* clearEnemies( string n );
 };
 
 #endif
