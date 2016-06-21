@@ -291,6 +291,8 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 							this->hPowerUp->matar(string(e->name));
 					} else if (e->value == 'X') {
 							this->hEnemigos->deleteEnemys();
+					} else if (e->value == 'V') {
+							this->hEnemigos->clearEnemies();
 					} else if (e->value == QUITGAME ) {
 					   cout << "QUITGAME TRIGGERED BY: " << string(e->name) << endl; 
 					   this->pc->killPlayer( string( e->name ) );
