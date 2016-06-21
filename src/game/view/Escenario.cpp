@@ -906,7 +906,7 @@ void Escenario::getPowerUp() {
 
 	Vivible* avion = myControl->getVivible();
 
-	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
+	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta() && !((Avion*)avion)->estaEstacionando()) {
 
 		for (map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin(); it != hPowerUp->mapaPowerUp.end(); it++) {
 
@@ -974,7 +974,7 @@ void Escenario::planesColision(){
 	Vivible* avion = myControl->getVivible();
 	bool touched = false;
 
-	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
+	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta() && !((Avion*)avion)->estaEstacionando()) {
 
 		for (map<int, Enemy*>::iterator itEnemigo = this->hEnemigos->mapaEnemigos.begin(); itEnemigo != this->hEnemigos->mapaEnemigos.end(); ++itEnemigo) {
 
@@ -1027,7 +1027,7 @@ void Escenario::enemyOtherPlayerMissileColision() {
 
 void Escenario::hitPlanes(vector<Vivible*>* disparos,Vivible* avion){
 
-	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta()) {
+	if (avion->tieneHP() && !((Avion*)avion)->haciendoVueltereta() && !((Avion*)avion)->estaEstacionando()) {
 
 		for (vector<Vivible*>::iterator it = disparos->begin(); it != disparos->end(); it++) {
 			bool touched = Colision::is(*it, avion);
