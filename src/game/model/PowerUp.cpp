@@ -122,6 +122,11 @@ char PowerUp::activarPowerUp() {
 			return 'b';
 	}
 
+	if( this->type == "BonusGrande") {
+			cout << "PowerUp Bonus Grande" << endl;
+			return 'w';
+	}
+
 	if( this->type == "Destroy") {
 			cout << "PowerUp Destroy" << endl;
 			//Envio al servidor un evento Destroy para que este elimine todos los enemigos que tenga en la Queue

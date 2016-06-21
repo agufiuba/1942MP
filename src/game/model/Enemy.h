@@ -108,6 +108,7 @@ public:
     void setVelY(int vel);
     int getVelX();
     int getVelY();
+    char tipo = 'x';
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */

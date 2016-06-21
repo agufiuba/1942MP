@@ -16,6 +16,8 @@ ServerAvionEnemyGrande::ServerAvionEnemyGrande(int id, Posicion* posicionInicial
 	cantidadDeMovimientos = 0;
 	movimientosMax = 6;
 	this->type = 'g';
+	this->cfd = 0;
+	this->mismoJugador = true;
 }
 
 ServerAvionEnemyGrande::~ServerAvionEnemyGrande() {
@@ -23,6 +25,10 @@ ServerAvionEnemyGrande::~ServerAvionEnemyGrande() {
 	delete posicion;
 }
 
+void ServerAvionEnemyGrande::hitBy(int cfdAvion) {
+	if(cfd == 0) cfd = cfdAvion;
+	mismoJugador = mismoJugador && (cfd == cfdAvion);
+}
 
 EnemyData* ServerAvionEnemyGrande::vivir() {
 	enum Direction { U, D, R, L };
@@ -51,6 +57,17 @@ int ServerAvionEnemyGrande::getHitScore() {
 
 int ServerAvionEnemyGrande::getKillScore() {
   return 1000;
+}
+
+void ServerAvionEnemyGrande::bajarHP(int cfdAvion) {
+	if ( this->tieneHP() ) {
+    this->vida--;
+    cout << "ENEMY " << to_string( this->id ) << " HP = " << this->vida << endl;
+  }
+  if ( !this->tieneHP() ) {
+    this->viviendo = false;
+  }
+	hitBy(cfdAvion);
 }
 
 } /* namespace std */

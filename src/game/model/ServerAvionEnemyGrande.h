@@ -34,6 +34,10 @@ public:
 	EnemyData* vivir();
 	int getHitScore();
 	int getKillScore();
+	void hitBy(int);
+	void bajarHP(int);
+	int cfd;
+	bool mismoJugador;
 private:
 	int cantidadDeMovimientos;
 	int movimientosMax;

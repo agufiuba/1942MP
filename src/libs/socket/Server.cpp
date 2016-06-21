@@ -693,7 +693,20 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      			//cout << ">> BONUUUUS --> TODOS LOS AVIONES MATADOS POR: "<< cfd << endl;
 	      		}
 	      	} else {
-	      		this->enemys[ data->id ]->bajarHP();
+            if(this->enemys[data->id]->getType() == 'g') {
+              ServerAvionEnemyGrande* grande = (ServerAvionEnemyGrande*)this->enemys[data->id];
+              grande->bajarHP(cfd);
+              if(!grande->aunVive() && grande->mismoJugador) {
+                PlayerScore* bonus = new PlayerScore;
+                strcpy(bonus->name, (this->players[cfd]->getName()).c_str());
+                bonus->team = this->players[cfd]->getTeam();
+                bonus->score = 1500;
+                this->addScoreToPlayer(bonus);
+                cout << "BONUS POR MATAR AL GRANDE SOLO" << endl;
+              }
+            } else {
+	      		  this->enemys[ data->id ]->bajarHP();
+            }
 	      	}
 		PlayerScore* ps = new PlayerScore;
 		strcpy( ps->name, ( this->players[ cfd ]->getName() ).c_str() );
