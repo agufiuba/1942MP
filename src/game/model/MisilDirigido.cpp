@@ -66,11 +66,11 @@ Posicion* MisilDirigido::apuntar(int posicionApuntadoX, int posicionApuntadoY, i
 	double proporcion;
 
 	if (ejeX == 0) {
-		velX = velocidad;
-		velY = 0;
-	} else if (ejeY == 0) {
-		velX = 0;
 		velY = velocidad;
+		velX = 0;
+	} else if (ejeY == 0) {
+		velY = 0;
+		velX = velocidad;
 	} else if (abs(ejeX) == abs(ejeY)) {
 		velX = velocidad;
 		velY = velocidad;
