@@ -417,7 +417,6 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
 				  // add score to corresponding team
 				  m.lock();
-				  cout << "AAAAA" << endl;
 				  if ( data->team == 0 ) this->coopTeamScore += data->score;
 				  if ( data->team == 1 ) this->alphaTeamScore += data->score;
 				  if ( data->team == 2 ) this->betaTeamScore += data->score;
@@ -715,12 +714,12 @@ void Client::sendStageClearReady() {
 }
 
 void Client::addScoreToPlayer( int score ) {
-  // mutex m;
-  // m.lock();
-  // if ( this->player->getTeam() == 0 ) this->coopTeamScore += score;
-  // if ( this->player->getTeam() == 1 ) this->alphaTeamScore += score;
-  // if ( this->player->getTeam() == 2 ) this->betaTeamScore += score;
-  // m.unlock();
+  mutex m;
+  m.lock();
+  if ( this->player->getTeam() == 0 ) this->coopTeamScore += score;
+  if ( this->player->getTeam() == 1 ) this->alphaTeamScore += score;
+  if ( this->player->getTeam() == 2 ) this->betaTeamScore += score;
+  m.unlock();
 
   // create player score data
   PlayerScore* ps = new PlayerScore;
