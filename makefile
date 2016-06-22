@@ -143,7 +143,7 @@ all: $(OBJS)
 #-g3 -DDEBUG_ALL -gdwarf-2 -g
 	
 run:
-	./$(EXE) $(p)
+	./$(EXE) $(p) $(conf)
 	
 valgrind:
-	valgrind --leak-check=full ./$(EXE) $(p)
+	valgrind --leak-check=full ./$(EXE) $(p) $(conf)

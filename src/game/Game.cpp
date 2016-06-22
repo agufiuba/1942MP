@@ -16,8 +16,6 @@
 Game::Game( uint32_t sdlFlags ) {
   this->sdlHandler = new XM_SDL( sdlFlags );
   this->running = false;
-  gc = GameParser::parse("gameconf.xml");
-  Resolucion::INSTANCE(gc->escenario->ancho, gc->escenario->alto);
   this->windowWidth = Resolucion::INSTANCE()->getWidthScreen();
   this->windowHeight = Resolucion::INSTANCE()->getHeightScreen();
   this->windowTitle = "1942MP Arcade";

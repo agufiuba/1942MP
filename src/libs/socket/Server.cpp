@@ -16,7 +16,8 @@
 using namespace std;
 
 Server::Server( const char* configFileName ) {
-  this->config = GameParser::parse("gameconf.xml");
+  this->file = configFileName;
+  this->config = GameParser::parse(file);
   this->socketFD = 0;
   this->clientCount = 0;
   this->readyPlayers = 0;
@@ -431,7 +432,7 @@ void Server::sendPlanesActives(int cfd){
 
 
 void Server::sendConf(int cfd){
-  this->config = GameParser::parse("gameconf.xml");
+  this->config = GameParser::parse(file);
   Transmitter* tmt = new Transmitter( cfd, this->logger );
 
   AvionConf* avion = this->config->avion;

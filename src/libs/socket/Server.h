@@ -30,6 +30,7 @@ using namespace std;
 
 class Server {
   private:
+	string file;
     int socketFD;
     int clientCount;
     int maxClientCount;

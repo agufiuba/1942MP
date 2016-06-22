@@ -4,7 +4,11 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  const char* configFileName = argv[1] ? argv[1] : "default-sc.xml";
+  for (int i=0; i < argc; i++) {
+	  cout << "Levantando " << argv[i] << endl;
+  }
+  const char* configFileName = argv[2] ? argv[2] : "gameconf.xml";
+  cout << "Cargando archivo " << configFileName << endl;
 
   Server* server = new Server( configFileName );
   function<void(void)> initialize = bind( &Server::initialize, server );

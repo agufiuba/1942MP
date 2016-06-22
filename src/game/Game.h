@@ -58,7 +58,7 @@ class Game {
     void checkGameMode();
 
   public:
-    Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING );
+    Game( uint32_t sdlFlags = SDL_INIT_EVERYTHING);
     ~Game();
     void start();
     bool connectingToServer();
