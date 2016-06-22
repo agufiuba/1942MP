@@ -23,6 +23,14 @@ ServerPowerUp::ServerPowerUp( char type, Posicion* posicionInicial ) {
 	largoFondo = 700;
 
 	this->active = false;
+	this->apareceEn = 0;
+}
+
+int ServerPowerUp::getApareceEn(){
+	return this->apareceEn;
+}
+void ServerPowerUp::setApareceEn(int apareceEn){
+	this->apareceEn = apareceEn;
 }
 
 ServerPowerUp::~ServerPowerUp(){

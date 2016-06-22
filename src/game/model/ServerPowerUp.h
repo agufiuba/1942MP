@@ -26,6 +26,8 @@ private:
 	bool active;
 	char type;
 
+	int apareceEn;
+
 	int anchoVista;
 	int largoVista;
 
@@ -42,6 +44,9 @@ public:
 	int getLargoFondo();
 	int getAncho();
 	int getLargo();
+
+	int getApareceEn();
+	void setApareceEn(int apareceEn);
 
 	char getType();
 

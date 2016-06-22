@@ -103,6 +103,7 @@ class Server {
     void makeEnemyMove();
     void createEnemys();
     void resumeClientEnemys();
+    void resumeClientPowerUp();
     void createFlota(char type, int x, int y, int offset);
     void preparingAndSendingEnemyCreation(char type, int x, int y, int offset);
     void sendEnemyData( EnemyData* data );
