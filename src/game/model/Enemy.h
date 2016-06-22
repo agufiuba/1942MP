@@ -109,7 +109,6 @@ public:
     int getVelX();
     int getVelY();
     char tipo = 'x';
-    int currentHP();
 };
 
 #endif /* SRC_MODEL_Enemy_H_ */

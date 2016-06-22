@@ -367,6 +367,3 @@ void Enemy::bajarHP() {
   }
 }
 
-int Enemy::currentHP() {
-	return this->vida;
-}
