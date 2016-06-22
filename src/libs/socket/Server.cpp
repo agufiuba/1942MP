@@ -1213,7 +1213,7 @@ void Server::resumeClientPowerUp() {
   for ( map<int, ServerPowerUp*>::iterator it = powerUps.begin();it != powerUps.end(); ++it) {
     PowerUpData* data = new PowerUpData;
     data->id = it->first;
-    data->type = it->second->type;
+    data->type = it->second->getType();
     data->x = it->second->getX();
     data->y = it->second->getY();
     data->offset = it->second->getApareceEn();
