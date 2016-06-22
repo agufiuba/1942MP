@@ -929,3 +929,14 @@ void Client::sendEnemyHit( int enemyID, string playerID ) {
   delete tmt;
   delete data;
 }
+
+void Client::sendPowerUpHit( int powerUpID ) {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  PowerUpData* data = new PowerUpData;
+  data->id = powerUpID;
+  data->status = 'H';
+
+  tmt->sendData( data );
+  delete tmt;
+  delete data;
+}

@@ -135,5 +135,6 @@ class Client {
     void sendEnemyHit( int enemyID, string playerID );
     bool crearPowerUpGrande;
     Posicion* powerUpGrande;
+    void sendPowerUpHit( int powerUpID );
 };
 #endif

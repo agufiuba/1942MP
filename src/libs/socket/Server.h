@@ -112,6 +112,7 @@ class Server {
     void createPowerUps();
     void createPowerUp( char type, int x, int y, int offset );
     void sendPowerUpCreation( PowerUpData* data );
+    void activatePowerUp( PowerUpData* data, int clientFD );
 
   public:
     Server( const char* configFileName );

@@ -670,11 +670,8 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 		m.unlock();
 	      }
 	    } else if (data->status == 'R') {
-	      thread tCreateEnemys( &Server::createEnemys, this);
-	      tCreateEnemys.detach();
-
-	      thread tCreatePU( &Server::createPowerUps, this);
-	      tCreatePU.detach();
+	      this->createEnemys();
+	      this->createPowerUps();
 	    } else if ( data->status == 'A' ) {
 	      m.lock();
 	      this->enemys[ data->id ]->activate();  
@@ -754,6 +751,15 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      }
 	      m.unlock();
 	    }
+	  }
+	  delete data;
+	} else if ( dataID == "PU" ) {
+	  PowerUpData* data = new PowerUpData;
+	  mutex m;
+	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
+	    m.lock();
+	    this->activatePowerUp( data, cfd );
+	    m.unlock();
 	  }
 	  delete data;
 	}
@@ -1121,7 +1127,7 @@ void Server::createPowerUps() {
 
 void Server::createPowerUp( char type, int x, int y, int offset ) {
   this->powerUpID++;
-  //this->powerUps[ powerUpID ] = new ServerPowerUp( type, new Posicion( x, y ) );
+  this->powerUps[ powerUpID ] = new ServerPowerUp( type, new Posicion( x, y ) );
   PowerUpData* data = new PowerUpData;
   data->id = this->powerUpID;
   data->type = type;
@@ -1391,4 +1397,27 @@ void Server::sendEnemyUpdate( EnemyStatus* data, int clientFD ) {
     tmt->sendData( data ); 
     delete tmt;
   } 
+}
+
+void Server::activatePowerUp( PowerUpData* data, int clientFD ) {
+  if ( this->powerUps.find( data->id ) == this->powerUps.end() ) return;
+  switch ( this->powerUps[ data->id ]->getType() ) {
+    case 's':
+      break;
+    case 'b':{
+      PlayerScore* ps = new PlayerScore;
+      strcpy( ps->name, ( this->players[ clientFD ]->getName() ).c_str() );
+      ps->team = this->players[ clientFD ]->getTeam();
+      ps->score = 250;
+      this->addScoreToPlayer( ps );
+      delete ps;
+      break;
+    }
+    case 'w':
+      break;
+    case 'd':
+      break;
+  }
+  delete this->powerUps[ data->id ];
+  this->powerUps.erase( this->powerUps.find( data->id ) );
 }
