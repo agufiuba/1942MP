@@ -764,9 +764,19 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	  PowerUpData* data = new PowerUpData;
 	  mutex m;
 	  if( ( bytesReceived = tmt->receiveData( data ) ) > 0 ) {
-	    m.lock();
-	    this->activatePowerUp( data, cfd );
-	    m.unlock();
+	    if ( data->status == 'H' ) {
+	      m.lock();
+	      this->activatePowerUp( data, cfd );
+	      m.unlock();
+	    } else if ( data->status == 'M' ) {
+	      m.lock();
+	      cout << "NEW POSITION X OF " << to_string( data->id ) << ": " << to_string( data->x ) << endl; 
+	      cout << "NEW POSITION Y OF " << to_string( data->id ) << ": " << to_string( data->y ) << endl; 
+	      if ( this->powerUps.find( data->id ) != this->powerUps.end() )
+		this->powerUps[ data->id ]->updatePosition( data->x, data->y );
+	      m.unlock();
+
+	    }
 	  }
 	  delete data;
 	}

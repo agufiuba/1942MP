@@ -940,3 +940,9 @@ void Client::sendPowerUpHit( int powerUpID ) {
   delete tmt;
   delete data;
 }
+
+void Client::sendPowerUpMovements( PowerUpData* data ) {
+  Transmitter* tmt = new Transmitter( this->socketFD, this->logger );
+  tmt->sendData( data );
+  delete tmt;
+}
