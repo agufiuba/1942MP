@@ -11,6 +11,8 @@ ServerAvionEnemigo::ServerAvionEnemigo( int id, Posicion* posicionInicial ) {
 	this->id = id;
 	this->vida = 1;
 
+	this->apareceEn = 0;
+
 	anchoVista = 70; //TODO: hardcodeado por ahora, porque hay que conseguirlo desde el cliente
 	largoVista = 60;
 
@@ -152,3 +154,10 @@ void ServerAvionEnemigo::updatePosition( int x, int y ) {
 int ServerAvionEnemigo::getHitScore() { return 0; }
 
 int ServerAvionEnemigo::getKillScore() { return 0; }
+
+int ServerAvionEnemigo::getApareceEn() {
+	return this->apareceEn;
+}
+void ServerAvionEnemigo::setApareceEn(int apareceEn) {
+	this->apareceEn = apareceEn;
+}

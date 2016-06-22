@@ -59,6 +59,8 @@ class Server {
     map<int, ServerPowerUp*> powerUps;
     int powerUpID;
 
+    bool resumePlayer;
+
     Logger* logger;
     GameConf* config;
     static const int BACKLOG = 5;
@@ -100,6 +102,7 @@ class Server {
     void checkAliveClose( int clientFD );
     void makeEnemyMove();
     void createEnemys();
+    void resumeClientEnemys();
     void createFlota(char type, int x, int y, int offset);
     void preparingAndSendingEnemyCreation(char type, int x, int y, int offset);
     void sendEnemyData( EnemyData* data );
