@@ -100,7 +100,6 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	    }
 	    this->hPowerUp->setPowerUp(	new PowerUp( gRenderer, resolucion, new Posicion( pud->x, pud->y ), 
 					myControl, tipo, to_string( pud->id )));
-	    //this->unCliente->requestEnemyMovements( es->id );
 	    pud->status = 'R';
 	  }
 	}
