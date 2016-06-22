@@ -651,6 +651,12 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 		for( map<int, ServerAvionEnemigo*>::iterator it = this->enemys.begin();
 		     it != this->enemys.end(); ) {
 		  if ( it->second->isActive() ) {
+		    PlayerScore* ps = new PlayerScore;
+		    strcpy( ps->name, ( this->players[ cfd ]->getName() ).c_str() );
+		    ps->team = this->players[ cfd ]->getTeam();
+		    ps->score = this->enemys[ it->first ]->getKillScore();
+		    this->addScoreToPlayer( ps );
+		    delete ps;
 		    delete it->second;
 		    it = this->enemys.erase( it );
 		  } else {
@@ -664,7 +670,11 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 		m.unlock();
 	      }
 	    } else if (data->status == 'R') {
-	    	this->createEnemys();
+	      thread tCreateEnemys( &Server::createEnemys, this);
+	      tCreateEnemys.detach();
+
+	      thread tCreatePU( &Server::createPowerUps, this);
+	      tCreatePU.detach();
 	    } else if ( data->status == 'A' ) {
 	      m.lock();
 	      this->enemys[ data->id ]->activate();  
