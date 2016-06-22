@@ -771,8 +771,8 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      m.unlock();
 	    } else if ( data->status == 'M' ) {
 	      m.lock();
-	      cout << "NEW POSITION X OF " << to_string( data->id ) << ": " << to_string( data->x ) << endl; 
-	      cout << "NEW POSITION Y OF " << to_string( data->id ) << ": " << to_string( data->y ) << endl; 
+	      //cout << "NEW POSITION X OF " << to_string( data->id ) << ": " << to_string( data->x ) << endl; 
+	      //cout << "NEW POSITION Y OF " << to_string( data->id ) << ": " << to_string( data->y ) << endl; 
 	      if ( this->powerUps.find( data->id ) != this->powerUps.end() )
 		this->powerUps[ data->id ]->updatePosition( data->x, data->y );
 	      m.unlock();

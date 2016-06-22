@@ -725,13 +725,6 @@ void Client::sendStageClearReady() {
 }
 
 void Client::addScoreToPlayer( int score ) {
-  mutex m;
-  m.lock();
-  if ( this->player->getTeam() == 0 ) this->coopTeamScore += score;
-  if ( this->player->getTeam() == 1 ) this->alphaTeamScore += score;
-  if ( this->player->getTeam() == 2 ) this->betaTeamScore += score;
-  m.unlock();
-
   // create player score data
   PlayerScore* ps = new PlayerScore;
   strcpy( ps->name, ( this->player->getName() ).c_str() );
