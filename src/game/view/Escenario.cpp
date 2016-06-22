@@ -949,9 +949,15 @@ void Escenario::getPowerUp() {
 					unCliente->sendData(ce->ametralladora(myControl->getVivible()->getId()));
 				}
 				if (resp == 'd') {
+					for (map<int, Enemy*>::iterator e = hEnemigos->mapaEnemigos.begin(); e!=hEnemigos->mapaEnemigos.end(); e++) {
+						int currentHP = e->second->currentHP();
+						for (int i = 0; i < currentHP; i++) {
+							unCliente->sendEnemyHit(e->first, "");
+						}
+					}
 					hEnemigos->deleteEnemys();
-					unCliente->sendData(ce->destroy(myControl->getVivible()->getId()));
-					this->unCliente->sendEnemyDeath();
+					// unCliente->sendData(ce->destroy(myControl->getVivible()->getId()));
+					// this->unCliente->sendEnemyDeath();
 				}
 				if (resp == 'b') {
 					this->unCliente->addScoreToPlayer( 250 );
