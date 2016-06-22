@@ -107,6 +107,19 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	m.unlock();
 
 	hPowerUp->hacerVivir();
+	// Send new power up positions
+	for ( map<string, PowerUp*>::iterator it = hPowerUp->mapaPowerUp.begin();
+	      it != hPowerUp->mapaPowerUp.end();
+	      ++it ) {
+	  PowerUp* pu = it->second;
+	  PowerUpData* pud = new PowerUpData;
+	  pud->id = stoi( it->first );
+	  pud->x = pu->getX();
+	  pud->y = pu->getY();
+	  pud->status = 'M';
+	  this->unCliente->sendPowerUpMovements( pud );
+	  delete pud;
+	}
 	this->getPowerUp();
 //	cout<<"4"<<endl;
 /*
