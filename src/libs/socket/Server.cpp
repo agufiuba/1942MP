@@ -39,6 +39,8 @@ Server::Server( const char* configFileName ) {
   this->powerUpID = 0;
 
 	this->numeroDeFlota = 1000;
+
+	this->resumePlayer = false;
 }
 
 Server::~Server() {
@@ -237,6 +239,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 			// if running game and player with such name is not active
 			if ( this->running && !(it->second->isActive())) {
 				encontrePlayer = true;
+				this->resumePlayer = true;
 				// resume player game
 				cout<<"Resume Game"<<endl;
 				selectedColor = it->second->getColor();
@@ -303,6 +306,10 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 		cout << "send players" << endl;
 		this->createPlayers();
 		if( !( this->running ) ) this->running = true;
+		if(this->resumePlayer) {
+			this->resumeClientEnemys();
+			this->resumePlayer = false;
+		}
 	}
 	theMutex.unlock();
 }
@@ -1156,6 +1163,7 @@ void Server::createEnemy( char type, int x, int y, int offset ) {
   ServerAvionEnemigo* enemy = NULL;
   if (type == 'g'){
 	  enemy = new ServerAvionEnemyGrande( this->enemyID, new Posicion(x, y));
+	  enemy->setApareceEn(offset);
 	  this->enemys[ enemyID ] =  enemy;
 	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
 
@@ -1164,12 +1172,28 @@ void Server::createEnemy( char type, int x, int y, int offset ) {
 
   } else if ( type == 'r' ) {
 	  enemy = new ServerAvionEnemigoRandom( this->enemyID, new Posicion(x, y));
+	  enemy->setApareceEn(offset);
 	  this->enemys[ enemyID ] =  enemy;
 	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
   } else if ( type == 'm' ) {
 	  enemy = new ServerAvionEnemigoMedio( this->enemyID, new Posicion(x, y));
+	  enemy->setApareceEn(offset);
 	  this->enemys[ enemyID ] =  enemy;
 	  this->preparingAndSendingEnemyCreation(type, x, y, offset);
+  }
+}
+
+void Server::resumeClientEnemys() {
+  for ( map<int, ServerAvionEnemigo*>::iterator it = enemys.begin();it != enemys.end(); ++it) {
+  	EnemyStatus* data = new EnemyStatus;
+  	data->id = it->first;
+  	data->type = it->second->getType();
+		data->x = it->second->getX();
+  	data->y = it->second->getY();
+  	data->offset = it->second->getApareceEn();
+		data->status = 'C';
+    strcpy( data->playerID, ( this->shootPlayerID() ).c_str() );
+    this->sendEnemyCreation( data );
   }
 }
 
@@ -1192,7 +1216,7 @@ void Server::createFlota(char type, int x, int y, int offset) {
 	for (int ordenAparicionFlota = 0 ; ordenAparicionFlota < 5 ; ordenAparicionFlota++ ){
 		ServerAvionEnemigo* enemy = new ServerAvionEnemigoFlota( this->enemyID, new Posicion(x, y), ordenAparicionFlota, this->numeroDeFlota);
 	  ((ServerAvionEnemigoFlota*)enemy)->addObserver(fo);
-
+	  enemy->setApareceEn(offset);
 	  this->enemys[ enemyID ] = enemy;
 
 	  this->preparingAndSendingEnemyCreation(type, x, y, offset);

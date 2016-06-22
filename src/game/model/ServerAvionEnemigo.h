@@ -35,6 +35,8 @@ protected:
 	bool active;
 	char type;
 
+	int apareceEn;
+
 	int anchoVista;
 	int largoVista;
 
@@ -68,6 +70,9 @@ public:
 	bool isActive();
 	void activate();
 	void updatePosition( int x, int y );
+
+	int getApareceEn();
+	void setApareceEn(int apareceEn);
 
 	virtual EnemyData* vivir();
 
