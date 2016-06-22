@@ -3,5 +3,9 @@
 typedef struct PowerUpData {
   int id;
   char type;
+  char status;
+  int x;
+  int y;
+  int offset;
 } PowerUpData;
 #endif
