@@ -308,6 +308,7 @@ void Server::addPlayer(PlayerData* data, int cfd) {
 		if( !( this->running ) ) this->running = true;
 		if(this->resumePlayer) {
 			this->resumeClientEnemys();
+			this->resumeClientPowerUp();
 			this->resumePlayer = false;
 		}
 	}
@@ -1145,6 +1146,7 @@ void Server::createPowerUps() {
 void Server::createPowerUp( char type, int x, int y, int offset ) {
   this->powerUpID++;
   this->powerUps[ powerUpID ] = new ServerPowerUp( type, new Posicion( x, y ) );
+  this->powerUps[ powerUpID ]->setApareceEn(offset);
   PowerUpData* data = new PowerUpData;
   data->id = this->powerUpID;
   data->type = type;
@@ -1204,6 +1206,19 @@ void Server::resumeClientEnemys() {
 		data->status = 'C';
     strcpy( data->playerID, ( this->shootPlayerID() ).c_str() );
     this->sendEnemyCreation( data );
+  }
+}
+
+void Server::resumeClientPowerUp() {
+  for ( map<int, ServerPowerUp*>::iterator it = powerUps.begin();it != powerUps.end(); ++it) {
+    PowerUpData* data = new PowerUpData;
+    data->id = it->first;
+    data->type = it->second->type;
+    data->x = it->second->getX();
+    data->y = it->second->getY();
+    data->offset = it->second->getApareceEn();
+    data->status = 'C';
+    this->sendPowerUpCreation( data );
   }
 }
 
