@@ -43,6 +43,8 @@ Escenario::Escenario(GameConf* configuracion, XM_SDL* sdl, Client* client) {
 	flota = 0;
 	hEnemigos = new HandlerEnemigos(gRenderer, resolucion, escenarioScreen, gc);
 	this->unCliente->setEnemyHandler(hEnemigos);
+	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
+	this->unCliente->setPowerUpHandler(hPowerUp);
 	youWin = new Sound("youWin.wav");
 	gameOver = new Sound("gameOver.wav");
 }
@@ -68,12 +70,50 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	}
 
 	/*  Aca estan los Vivir y las Colisiones */
+	myControl->hacerVivir();
 	controllers->hacerVivir();
-	this->getPowerUp();
-	hPowerUp->hacerVivir();
-//	cout<<"4"<<endl;
-	vector<EnemyStatus*> enemys = this->unCliente->getEnemys();
+/*
+    POWERUP FACTORY
+*/
 	mutex m;
+	vector<PowerUpData*> powerUps = this->unCliente->getPowerUps();
+	m.lock();
+	for( vector<PowerUpData*>::iterator it = powerUps.begin();
+	     it != powerUps.end();
+	     ++it ) {
+	  PowerUpData* pud = *it;
+	  if ( ( this->pixelesRecorridos + SCREEN_HEIGHT ) >= pud->offset ) {
+	    string tipo;
+	    switch ( pud->type ) {
+	      case 's':
+		tipo = "Shot";
+		break;
+	      case 'b':
+		tipo = "Bonus";
+		break;
+	      case 'w':
+		tipo = "BonusGrande";
+		break;
+	      case 'd':
+		tipo = "Destroy";
+		break;
+	    }
+	    this->hPowerUp->setPowerUp(	new PowerUp( gRenderer, resolucion, new Posicion( pud->x, pud->y ), 
+					myControl, tipo, to_string( pud->id )));
+	    //this->unCliente->requestEnemyMovements( es->id );
+	    pud->status = 'R';
+	  }
+	}
+	this->unCliente->resetPowerUps();
+	m.unlock();
+
+	hPowerUp->hacerVivir();
+	this->getPowerUp();
+//	cout<<"4"<<endl;
+/*
+    ENEMY FACTORY
+*/
+	vector<EnemyStatus*> enemys = this->unCliente->getEnemys();
 	m.lock();
 	for( vector<EnemyStatus*>::iterator it = enemys.begin();
 	     it != enemys.end();
@@ -81,7 +121,6 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	  EnemyStatus* es = *it;
 	  if ( ( this->pixelesRecorridos + SCREEN_HEIGHT ) >= es->offset ) {
 	    this->hEnemigos->createEnemigo( es->id, es->type, es->x, es->y ); 
-	    //TODO: CAMBIAR A QUIEN LE APUNTA EL ENEMIGO 
 	    this->hEnemigos->setAvionApuntar( es->id, string( es->playerID ) );
 	    this->unCliente->requestEnemyMovements( es->id );
 	    es->status = 'R';
@@ -94,7 +133,6 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 //	cout<<"5"<<endl;
 	this->hitEnemy(&(myControl->controlDeMisiles->getVivibles()->vectorObjetos));
 	this->crearPowerUpGrande();
-	myControl->hacerVivir();
 
 	if (!unCliente->getGameData()->practiceMode){
 		this->planesColision();
@@ -200,18 +238,6 @@ void Escenario::configurarFondosVivibles() {
 	}
 }
 
-void Escenario::configurarPowerUps() {
-	hPowerUp = new HandlerPowerUp(gRenderer, resolucion);
-	unCliente->setPowerUpHandler(hPowerUp);
-	if (gc->powerUps.size() <= 0) return;
-//	cout << gc->powerUps.size() << " power ups creados" << endl;
-	for (int i = 0; i < gc->powerUps.size(); i++) {
-		string tipo = gc->powerUps[i]->tipo;
-		Posicion* posicion = new Posicion(gc->powerUps[i]->x, gc->powerUps[i]->y);
-		hPowerUp->setPowerUp(new PowerUp(gRenderer, resolucion, posicion, myControl, tipo, to_string(i)));
-	}
-}
-
 HandlerPlayersControllers* Escenario::getHandler() {
 	return this->controllers;
 }
@@ -241,7 +267,6 @@ SDL_Event* Escenario::run() {
 		cout<<"Modo Practica"<<endl;
 	pixelesRecorridos = 0;
 	configurarFondosVivibles();
-	configurarPowerUps();
 
 	Posicion* posicionEscenario = new Posicion(0, 0);
 	escenarioCreado = true;
