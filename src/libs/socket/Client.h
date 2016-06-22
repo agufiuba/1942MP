@@ -2,6 +2,7 @@
 #define CLIENT_H
 #include "../data/enemy_data.h"
 #include "../data/enemy_status.h"
+#include "../data/powerup_data.h"
 #include "../data/player_data.h"
 #include "../data/player_status.h"
 #include "../data/player_score.h"
@@ -43,12 +44,12 @@ class Client {
     int stageOffset;
     PlanesActives* planes;
 	vector<ElementoConf*> elementos;
-	vector<PowerUpConf*> powerUps;
 	vector<EnemigoConf*> enemigos;
 	vector<SpriteConf*> sprites;
     vector<PlayerData*> allPlayers;
     vector<PlayerScore*> playersScoreData;
     vector<EnemyStatus*> enemys;
+    vector<PowerUpData*> powerUps;
     int clientsPlaying;
 
     static const int MAX_UNREACHABLE_TIME = 5;
@@ -126,7 +127,9 @@ class Client {
     void sendEnemyDeath( int id = -1 );
     void sendRecoverEnemysAlive();
     vector<EnemyStatus*> getEnemys();
+    vector<PowerUpData*> getPowerUps();
     void resetEnemys();
+    void resetPowerUps();
     void removeEnemy( vector<EnemyStatus*>::iterator it );
     void requestEnemyMovements( int id );
     void sendEnemyHit( int enemyID, string playerID );

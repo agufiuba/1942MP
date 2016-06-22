@@ -12,12 +12,15 @@
 #include "../../libs/data/game_data.h"
 #include "../../libs/data/enemy_data.h"
 #include "../../libs/data/enemy_status.h"
+#include "../../libs/data/powerup_data.h"
 #include "../../game/model/Player.h"
+#include "../../game/model/ServerPowerUp.h"
 #include "../../game/model/ServerAvionEnemigoRandom.h"
 #include "../../game/model/ServerAvionEnemigoMedio.h"
 #include "../../game/model/ServerAvionEnemyGrande.h"
 #include "../../game/model/ServerAvionEnemigoFlota.h"
 #include "../../game/model/FlotaObserver.h"
+#include "../../game/model/PowerUp.h"
 #include <vector>
 #include <queue>
 #include <map>
@@ -53,6 +56,8 @@ class Server {
     int enemyID;
   	map<int, FlotaObserver*> flotas;
   	int numeroDeFlota;
+    map<int, ServerPowerUp*> powerUps;
+    int powerUpID;
 
     Logger* logger;
     GameConf* config;
@@ -104,6 +109,9 @@ class Server {
     void removeEnemy( int id );
     void sendEnemyDeath( int id, int clientFD );
     void sendEnemyUpdate( EnemyStatus* data, int clientFD );
+    void createPowerUps();
+    void createPowerUp( char type, int x, int y, int offset );
+    void sendPowerUpCreation( PowerUpData* data );
 
   public:
     Server( const char* configFileName );
