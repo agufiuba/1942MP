@@ -133,7 +133,7 @@
 	</elementos>
 	<powerUps>
 		<powerUp>
-			<tipo>Shot</tipo>
+			<tipo>s</tipo>
 			<posicion>
 				<x>350</x>
 				<y>800</y>
@@ -141,7 +141,7 @@
 			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
-			<tipo>Destroy</tipo>
+			<tipo>d</tipo>
 			<posicion>
 				<x>150</x>
 				<y>300</y>
@@ -149,7 +149,7 @@
 			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
-			<tipo>Bonus</tipo>
+			<tipo>b</tipo>
 			<posicion>
 				<x>550</x>
 				<y>100</y>
@@ -157,7 +157,7 @@
 			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
-			<tipo>Bonus</tipo>
+			<tipo>b</tipo>
 			<posicion>
 				<x>650</x>
 				<y>1000</y>
@@ -165,36 +165,36 @@
 			<apareceEn>1000</apareceEn>
 		</powerUp>
 		<powerUp>
-			<tipo>Bonus</tipo>
+			<tipo>b</tipo>
 			<posicion>
 				<x>850</x>
 				<y>1200</y>
 			</posicion>
-			<apareceEn>1000</apareceEn>
+			<apareceEn>2000</apareceEn>
 		</powerUp>
 		<powerUp>
-			<tipo>Bonus</tipo>
+			<tipo>d</tipo>
 			<posicion>
 				<x>50</x>
 				<y>2000</y>
 			</posicion>
-			<apareceEn>1000</apareceEn>
+			<apareceEn>2000</apareceEn>
 		</powerUp>
 		<powerUp>
-			<tipo>Bonus</tipo>
+			<tipo>b</tipo>
 			<posicion>
 				<x>125</x>
 				<y>2300</y>
 			</posicion>
-			<apareceEn>1000</apareceEn>
+			<apareceEn>3000</apareceEn>
 		</powerUp>
 		<powerUp>
-			<tipo>Bonus</tipo>
+			<tipo>s</tipo>
 			<posicion>
 				<x>470</x>
 				<y>3900</y>
 			</posicion>
-			<apareceEn>1000</apareceEn>
+			<apareceEn>3000</apareceEn>
 		</powerUp>
 	</powerUps>
 </escenario>
@@ -288,4 +288,4 @@
 	</enemigo>
 </enemigos>
 <maxClients>1</maxClients>
-<jugadoresPorEquipo>2</jugadoresPorEquipo>
+<jugadoresPorEquipo>1</jugadoresPorEquipo>

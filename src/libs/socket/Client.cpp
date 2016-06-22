@@ -335,9 +335,18 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					//					cout<<data->y <<endl;
 				}
 			} else if (dataID == "PU") {
-				PowerUpConf* data = new PowerUpConf;
+				PowerUpData* data = new PowerUpData;
+				mutex m;
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
+					cout << "POWER UP ID: " << to_string( data->id )<< endl;
+					cout << "POWER UP TYPE: " << data->type << endl;
+					cout << "POWER UP X: " << to_string( data->x ) << endl;
+					cout << "POWER UP Y: " << to_string( data->y ) << endl;
+					cout << "POWER UP OFFSET: " << to_string( data->offset ) << endl;
+					cout << "POWER UP STATUS: " << data->status << endl;
+					m.lock(); 
 					this->powerUps.push_back(data);
+					m.unlock();
 					//					cout<<data->tipo <<endl;
 					//					cout<<data->x <<endl;
 					//					cout<<data->y <<endl;
@@ -373,7 +382,7 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					int cant = atoi(data);
 					this->config->maxClients = cant;
 					this->config->elementos = this->elementos;
-					this->config->powerUps = this->powerUps;
+					/*this->config->powerUps = this->powerUps;*/
 					this->config->enemigos = this->enemigos;
 					this->config->sprites = this->sprites;
 					this->configComplete = true;
@@ -683,10 +692,10 @@ void Client::resetConfig() {
 		this->sprites.pop_back();
 		//cout<<"elimino sprite"<<endl;
 	}
-	while (this->powerUps.size() > 0) {
+	/*while (this->powerUps.size() > 0) {
 		this->powerUps.pop_back();
 		//cout<<"elimino power up"<<endl;
-	}
+	}*/
 	while (this->enemigos.size() > 0) {
 		this->enemigos.pop_back();
 	}
@@ -861,12 +870,28 @@ vector<EnemyStatus*> Client::getEnemys() {
   return this->enemys;
 }
 
+vector<PowerUpData*> Client::getPowerUps() {
+  return this->powerUps;
+}
+
 void Client::resetEnemys() {
   for ( vector<EnemyStatus*>::iterator it = this->enemys.begin();
 	it != this->enemys.end();) {
     if ( ( *it )->status == 'R' ) {
       delete *it;
       it = this->enemys.erase( it );
+    } else {
+      ++it;
+    }
+  }
+}
+
+void Client::resetPowerUps() {
+  for ( vector<PowerUpData*>::iterator it = this->powerUps.begin();
+	it != this->powerUps.end();) {
+    if ( ( *it )->status == 'R' ) {
+      delete *it;
+      it = this->powerUps.erase( it );
     } else {
       ++it;
     }

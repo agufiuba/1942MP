@@ -36,6 +36,7 @@ Server::Server( const char* configFileName ) {
   this->betaTeamScore = 0;
   this->coopTeamScore = 0;
   this->enemyID = 0;
+  this->powerUpID = 0;
 
 	this->numeroDeFlota = 1000;
 }
@@ -446,7 +447,7 @@ void Server::sendConf(int cfd){
     }
   }
 
-  vector<PowerUpConf*> powerUps = this->config->powerUps;
+  /*vector<PowerUpConf*> powerUps = this->config->powerUps;
     for (int var = 0; var < powerUps.size(); ++var) {
     	PowerUpConf* powerUp = powerUps[var];
       if( !( tmt->sendData( powerUp ) ) ) {
@@ -454,7 +455,7 @@ void Server::sendConf(int cfd){
         this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::send powerUps" );
       }
     }
-
+*/
     vector<EnemigoConf*> enemigos = this->config->enemigos;
     for (int var = 0; var < enemigos.size(); var++) {
     	EnemigoConf* enemigo = enemigos[var];
@@ -1078,6 +1079,9 @@ void Server::sendPlayersReady(){
 	thread tCreateEnemys( &Server::createEnemys, this);
 	tCreateEnemys.detach();
 
+	thread tCreatePU( &Server::createPowerUps, this);
+	tCreatePU.detach();
+
 	thread tMoveEnemy( &Server::makeEnemyMove, this);
 	tMoveEnemy.detach();
   }
@@ -1092,6 +1096,43 @@ void Server::createEnemys() {
 
 		this->createEnemy(*enemigoConf->tipo, enemigoConf->x, enemigoConf->y, enemigoConf->apareceEn);
 	}
+}
+
+void Server::createPowerUps() {
+  this->powerUpID = 0;
+  vector<PowerUpConf*> powerUpsConf = this->config->powerUps;
+  for ( vector<PowerUpConf*>::iterator it = powerUpsConf.begin();
+	it != powerUpsConf.end();
+	++it ) {
+    PowerUpConf* puc = *it;
+    this->createPowerUp( *puc->tipo, puc->x, puc->y, puc->apareceEn );
+  }
+}
+
+void Server::createPowerUp( char type, int x, int y, int offset ) {
+  this->powerUpID++;
+  //this->powerUps[ powerUpID ] = new ServerPowerUp( type, new Posicion( x, y ) );
+  PowerUpData* data = new PowerUpData;
+  data->id = this->powerUpID;
+  data->type = type;
+  data->x = x;
+  data->y = y;
+  data->offset = offset;
+  data->status = 'C';
+  this->sendPowerUpCreation( data );
+}
+
+void Server::sendPowerUpCreation( PowerUpData* data ) {
+  for ( map<int, Player*>::iterator it = this->players.begin();
+	it != this->players.end();
+	++it ) {
+    if ( it->second->isActive() ) {
+      Transmitter* tmt = new Transmitter( it->first, this->logger );
+      tmt->sendData( data );
+      delete tmt;
+    }
+  }
+  delete data;
 }
 
 void Server::createEnemy( char type, int x, int y, int offset ) {
