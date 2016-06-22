@@ -301,9 +301,6 @@ SDL_Event* Escenario::run() {
 
 			start = SDL_GetTicks();
 
-			// TODO: remove when adding score via game events, testing purposes only
-			// this->unCliente->addScoreToPlayer( 1 );	
-			
 			if (this->unCliente->reset) {
 				SDL_Event* eventReset = new SDL_Event();
 				eventReset->key.keysym.sym = SDLK_r;
@@ -328,10 +325,6 @@ SDL_Event* Escenario::run() {
 				myControl->press(&evento);
 
 				if( evento.type == SDL_KEYDOWN ) {
-					  // TODO: remove, only for testing score additions
-					  if ( evento.key.keysym.sym == SDLK_g ) {
-					    this->unCliente->addScoreToPlayer( 50 );
-					  }
 					if (evento.type == SDL_QUIT || evento.key.keysym.sym == SDLK_q || evento.key.keysym.sym == SDLK_r || this->unCliente->reset) {
 					  // reset client score on game reset
 					  if( evento.key.keysym.sym == SDLK_r ) {
@@ -350,29 +343,6 @@ SDL_Event* Escenario::run() {
 						usleep(100);
 
 						break;
-					}
-
-					//TODO: Este fue agregado para PROBAR el cambio a ametralladora
-					// Si tocas t cuando el powerUp salio de la pantalla obviamente va a tirar segmentation fault
-					if (evento.key.keysym.sym == SDLK_t) {
-						hPowerUp->activar("1");
-					}
-
-					//TODO: Este fue agregado para PROBAR el destroy que lo debe hacer el server
-					// Si tocas t cuando el powerUp salio de la pantalla obviamente va a tirar segmentation fault
-					if (evento.key.keysym.sym == SDLK_x) {
-						hPowerUp->activar("2");
-					}
-
-//					TODO: Esto fue agregado para probar cuando me disparan
-					if (evento.key.keysym.sym == SDLK_d) {
-						Avion* avion = (Avion*)myControl->getVivible();
-						Misil* disparoEnemigo = new Misil(gRenderer, new Posicion(0,0), resolucion, NULL);
-						avion->recibirMisil(disparoEnemigo);
-						this->player->takeHit();
-						if( !( this->player->isAlive() ) ) {
-						  this->unCliente->sendPlayerDeath();
-						}
 					}
 				}
 
@@ -954,7 +924,7 @@ void Escenario::getPowerUp() {
 					this->unCliente->sendEnemyDeath();
 				}
 				if (resp == 'b') {
-					this->unCliente->addScoreToPlayer( 250 );
+				    this->unCliente->sendPowerUpHit( stoi( it->second->getId() ) );
 				}
 				if (resp == 'w') {
 					this->unCliente->addScoreToPlayer(1500);
