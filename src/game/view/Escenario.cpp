@@ -70,8 +70,8 @@ void Escenario::actualizarEscenario(Posicion* pos) {
 	}
 
 	/*  Aca estan los Vivir y las Colisiones */
-	myControl->hacerVivir();
 	controllers->hacerVivir();
+	myControl->hacerVivir();
 /*
     POWERUP FACTORY
 */
@@ -1068,9 +1068,11 @@ void Escenario::hitPlanes(vector<Vivible*>* disparos,Vivible* avion){
 				Colision::view((*it), avion, escenarioScreen);
 				((Avion*)avion)->recibirMisil((Misil*)*it);
 				(*it)->morir();
-				this->player->takeHit();
-				if( !( this->player->isAlive() ) ) {
+				if ( myControl->getVivible()->getId() == avion->getId() ) {
+				  this->player->takeHit();
+				  if( !( this->player->isAlive() ) ) {
 					this->unCliente->sendPlayerDeath();
+				  }
 				}
 			}
 

@@ -347,36 +347,34 @@ void Client::receiving(const int MAX_DATA_SIZE, const char *IP) {
 					m.lock(); 
 					this->powerUps.push_back(data);
 					m.unlock();
-					//					cout<<data->tipo <<endl;
-					//					cout<<data->x <<endl;
-					//					cout<<data->y <<endl;
 				}
 			} else if (dataID == "EN") {
 				EnemigoConf* data = new EnemigoConf;
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
 					this->enemigos.push_back(data);
-					//					cout<<data->tipo <<endl;
-					//					cout<<data->x <<endl;
-					//					cout<<data->y <<endl;
+										cout<<data->tipo <<endl;
+										cout<<data->x <<endl;
+										cout<<data->y <<endl;
 				}
 			} else if (dataID == "ES") {
 				EscenarioConf* data = new EscenarioConf;
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
 					this->config->escenario = data;
-					//					cout<<data->alto <<endl;
-					//					cout<<data->ancho <<endl;
-					//					cout<<data->fondo <<endl;
+										cout<<data->alto <<endl;
+										cout<<data->ancho <<endl;
+										cout<<data->fondo <<endl;
 				}
 			} else if (dataID == "SC") {
 				SpriteConf* data = new SpriteConf;
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
 					this->sprites.push_back(data);
-					//					cout<<data->path <<endl;
-					//					cout<<data->id <<endl;
-					//					cout<<data->alto <<endl;
-					//					cout<<data->ancho <<endl;
+										cout<<data->path <<endl;
+										cout<<data->id <<endl;
+									cout<<data->alto <<endl;
+										cout<<data->ancho <<endl;
 				}
 			} else if (dataID == "FN") {
+			  cout << "ME LLEGO FN" << endl;
 				char data[1];
 				if ((bytesReceived = tmt->receiveData(data)) > 0) {
 					int cant = atoi(data);

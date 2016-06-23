@@ -174,6 +174,9 @@ void Server::listenForConnections( int cfd, struct sockaddr_storage client_addr 
       // send used planes and game data      
       this->sendPlanesActives( cfd );
       this->sendGameData( cfd );
+      
+      // send stage config
+      this->sendConf(cfd);
 
       // create timeout check thread
       thread tCheckAliveSend( &Server::checkAliveSend, this, cfd );
@@ -350,7 +353,7 @@ void Server::createPlayers() {
     // if player not active
     if( !( it2->second->isActive() ) ) {
       // send stage config
-      this->sendConf(it2->first);
+      //this->sendConf(it2->first);
 
       // if game already started
       if( this->running ) {
@@ -1100,6 +1103,12 @@ void Server::sendPlayersReady(){
   }
   theMutex.unlock();
   if ( playerReady ){
+	this->createEnemys();
+	this->createPowerUps();
+
+	thread tMoveEnemy( &Server::makeEnemyMove, this);
+	tMoveEnemy.detach();
+
 	  cout<<"Iniciando la Partida"<<endl;
 	  cout<<"Equipos Configurados  "<<endl;
 	// send other players data
@@ -1110,14 +1119,6 @@ void Server::sendPlayersReady(){
 	  tmt->sendDataID("OK");
 	  delete tmt;
 	}
-	thread tCreateEnemys( &Server::createEnemys, this);
-	tCreateEnemys.detach();
-
-	thread tCreatePU( &Server::createPowerUps, this);
-	tCreatePU.detach();
-
-	thread tMoveEnemy( &Server::makeEnemyMove, this);
-	tMoveEnemy.detach();
   }
 }
 
@@ -1409,9 +1410,17 @@ string Server::shootPlayerID() {
   if ( this->players.size() == 1 ) {
     return ( this->players.begin() )->second->getName();
   } else {
+    map<int, Player*> p;
+    for ( map<int, Player*>::iterator it = this->players.begin();
+	  it != this->players.end();
+	  ++it ) {
+      if ( it->second->isAlive() ) {
+	p[ it->first ] = it->second;
+      }
+    }
     srand( time( NULL ) );
-    int offset = rand() % ( this->players.size() );
-    map<int, Player*>::iterator it = this->players.begin();
+    int offset = rand() % ( p.size() );
+    map<int, Player*>::iterator it = p.begin();
     for ( int i = 0; i < offset; i++ ) {
       ++it;
     }
