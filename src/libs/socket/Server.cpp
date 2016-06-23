@@ -174,6 +174,7 @@ void Server::listenForConnections( int cfd, struct sockaddr_storage client_addr 
       // send used planes and game data      
       this->sendPlanesActives( cfd );
       this->sendGameData( cfd );
+      this->sendConf(cfd);
 
       // create timeout check thread
       thread tCheckAliveSend( &Server::checkAliveSend, this, cfd );
@@ -348,10 +349,11 @@ void Server::createPlayers() {
 
   for (int i = 0; i < this->players.size(); i++) {
     // if player not active
+	  cout << "Send " << i << endl;
+//      this->sendConf(it2->first);
     if( !( it2->second->isActive() ) ) {
       // send stage config
-      this->sendConf(it2->first);
-
+    	 cout << "Send in if " << i << endl;
       // if game already started
       if( this->running ) {
 	// get stage offset
@@ -465,6 +467,7 @@ void Server::sendConf(int cfd){
     }
 */
     vector<EnemigoConf*> enemigos = this->config->enemigos;
+    cout << "MANDANDO ENEMIGOS " << endl;
     for (int var = 0; var < enemigos.size(); var++) {
     	EnemigoConf* enemigo = enemigos[var];
     	if (!tmt->sendData(enemigo)) {
@@ -474,6 +477,7 @@ void Server::sendConf(int cfd){
     }
 
   vector<SpriteConf* > sprites = this->config->sprites;
+  cout << "MANDANDO SPRITES " << endl;
   for (int var = 0; var < sprites.size(); ++var) {
     SpriteConf* sprite = sprites[var];
     if( !( tmt->sendData( sprite ) ) ) {
@@ -482,10 +486,12 @@ void Server::sendConf(int cfd){
     }
   }
 
-  if( !( tmt->sendEndDataConf(this->clientCount)) ) {
+  cout << "VOY A ENVIAR EN SEND END" << endl;
+  while( !( tmt->sendEndDataConf(this->clientCount)) ) {
     DEBUG_WARN( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
     this->logger->error( "No se pude enviar respuesta a cliente. JOB: Server::sendConf" );
   }
+  cout << "YA TERMINE" << endl;
 //  cout<<"Envio toda la Configuracion"<<endl;
   delete tmt;
 }
@@ -1100,6 +1106,18 @@ void Server::sendPlayersReady(){
   }
   theMutex.unlock();
   if ( playerReady ){
+//		thread tCreateEnemys( &Server::createEnemys, this);
+//		tCreateEnemys.detach();
+//
+//		thread tCreatePU( &Server::createPowerUps, this);
+//		tCreatePU.detach();
+
+		this->createEnemys();
+		this->createPowerUps();
+
+		thread tMoveEnemy( &Server::makeEnemyMove, this);
+		tMoveEnemy.detach();
+
 	  cout<<"Iniciando la Partida"<<endl;
 	  cout<<"Equipos Configurados  "<<endl;
 	// send other players data
@@ -1110,14 +1128,6 @@ void Server::sendPlayersReady(){
 	  tmt->sendDataID("OK");
 	  delete tmt;
 	}
-	thread tCreateEnemys( &Server::createEnemys, this);
-	tCreateEnemys.detach();
-
-	thread tCreatePU( &Server::createPowerUps, this);
-	tCreatePU.detach();
-
-	thread tMoveEnemy( &Server::makeEnemyMove, this);
-	tMoveEnemy.detach();
   }
 }
 
@@ -1409,9 +1419,15 @@ string Server::shootPlayerID() {
   if ( this->players.size() == 1 ) {
     return ( this->players.begin() )->second->getName();
   } else {
+	  map<int, Player*> p;
+	for (map<int, Player*>::iterator it = this->players.begin(); it != this->players.end(); ++it) {
+		if (it->second->isAlive()) {
+			p[it->first] = it->second;
+		}
+	}
     srand( time( NULL ) );
-    int offset = rand() % ( this->players.size() );
-    map<int, Player*>::iterator it = this->players.begin();
+    int offset = rand() % ( p.size() );
+    map<int, Player*>::iterator it = p.begin();
     for ( int i = 0; i < offset; i++ ) {
       ++it;
     }
