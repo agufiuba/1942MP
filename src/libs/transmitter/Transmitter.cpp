@@ -299,6 +299,7 @@ bool Transmitter::sendData( SpriteConf* data ){
 bool Transmitter::sendEndDataConf(int cantidad){
  // Send data id
   if( !( this->sendDataID( "FN" ) ) ) {
+	  cout << "NO SE ENVIO EL FN" << endl;
 	return false;
   }
 
