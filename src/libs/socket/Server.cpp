@@ -688,7 +688,9 @@ void Server::receiveClientData( int cfd, string clientIP ) {
 	      this->createPowerUps();
 	    } else if ( data->status == 'A' ) {
 	      m.lock();
-	      this->enemys[ data->id ]->activate();  
+        if (this->enemys.find(data->id) != this->enemys.end()) {
+	        this->enemys[data->id]->activate();  
+        }
 	      m.unlock();
 	    } else if ( data->status == 'P' ) {
 	      m.lock();

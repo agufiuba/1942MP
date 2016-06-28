@@ -41,6 +41,7 @@ void Game::cargarEscenario() {
   while (exitEven->key.keysym.sym == SDLK_r || this->unCliente->reset) {
 	if (!inicia){
 		this->unCliente->reinicia = true;
+		this->unCliente->clearEnemies();
 		cout<<"SE HA REINICIADO EL JUEGO"<<endl;
 	    this->unCliente->setConfigComplete(false);
 		this->unCliente->sendGetConfig();

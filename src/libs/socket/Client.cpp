@@ -949,3 +949,15 @@ void Client::sendPowerUpMovements( PowerUpData* data ) {
   tmt->sendData( data );
   delete tmt;
 }
+
+void Client::clearEnemies() {
+  cout << "CLEAR ENEMIESSSSSSSSSSSSSSSSSSSSSS" << endl;
+  mutex m;
+  m.lock();
+  for ( vector<EnemyStatus*>::iterator it = this->enemys.begin();
+	it != this->enemys.end(); ++it) {
+    delete *it;
+  }
+  this->enemys.clear();
+  m.unlock();
+}
