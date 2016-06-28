@@ -137,5 +137,6 @@ class Client {
     Posicion* powerUpGrande;
     void sendPowerUpHit( int powerUpID );
     void sendPowerUpMovements( PowerUpData* data );
+    void clearEnemies();
 };
 #endif

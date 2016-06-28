@@ -342,6 +342,7 @@ SDL_Event* Escenario::run() {
 					  // reset client score on game reset
 					  if( evento.key.keysym.sym == SDLK_r ) {
 					    this->unCliente->requestScoreReset();
+					    this->unCliente->clearEnemies();
 					  }
 						quit = true;
 

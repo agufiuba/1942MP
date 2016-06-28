@@ -949,3 +949,11 @@ void Client::sendPowerUpMovements( PowerUpData* data ) {
   tmt->sendData( data );
   delete tmt;
 }
+
+void Client::clearEnemies() {
+  for ( vector<EnemyStatus*>::iterator it = this->enemys.begin();
+	it != this->enemys.end();) {
+    delete *it;
+  }
+  this->enemys.clear();
+}
